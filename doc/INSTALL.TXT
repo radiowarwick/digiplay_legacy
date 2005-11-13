@@ -1,0 +1,60 @@
+RaW Digital Playout Component Suite
+-----------------------------------
+
+This document provides a guide as to the components in this package.
+
+Configuration
+-------------
+Configuration for this software is stored in /etc/digiplay. A sample config
+file is included called digiplay.conf. This should be copied to /etc and named
+'digiplay'.
+
+Database Configuration
+----------------------
+1. Install postgresql database server
+2. From digiplay root directory do as root:
+		psql template1
+3. Then enter: \i db/digiplay.sql
+	this will generate the admin and digiuser database accounts, and create
+	the digiplay database, tables, sequences and constraints.
+4. Then enter: \i db/data.sql
+	this will enter necessary data in the database which is needed.
+5. Exit psql, and run: db/permissions
+	this sets up the default permission on the database for digiplay_user.
+
+Note: You may need to configure /etc/postgresql/pg_hba.conf if you try to
+connect to the database from another machine.
+
+Compilation of Code
+-------------------
+This software requires the following packages to be installed:
+	libpqxx-dev
+	libreadline4
+	libreadline4-dev
+	libqt3-dev
+	libqt3c102
+
+For development of the Digiplay Studio GUI the following packages are required:
+	qt3-designer
+	qt3-dev-tools
+	qt3-doc
+
+To generate code documentation:
+	doxygen
+	
+Then do
+	make sueplay		(Sustainer Service Playout Engine)
+	make suesched		(Sustainer Service Scheduling Engine)
+	make sue			(Compile both sueplay and suesched)
+	make admin			(Digital Playout Admin Software)
+	make studio_play	(Studio Playout application)
+	make studio_search	(Studio Search application)
+	make studio			(Compiles both studio applications)
+
+	make docs			(Generates the Doxygen code documentation)
+
+	make all			(Make the lot!)
+
+	make install		(Installs the binaries in the INSTALL directory)
+	make uninstall		(Removes the binaries from their INSTALL directory)
+						INSTALL is specified in the Makefile

@@ -1,0 +1,2 @@
+psql -c 'delete from audioartists; delete from artists; delete from sust_sched; delete from audio; delete from albums;alter sequence audioartists_id_seq restart 1; alter sequence artists_id_seq restart 1; alter sequence sust_sched_id_seq restart 1; alter sequence audio_id_seq restart 1; alter sequence albums_id_seq restart 1; delete from jinglepackage; alter sequence jinglepackage_id_seq restart 1' digiplay
+psql -c '\i data.sql' digiplay

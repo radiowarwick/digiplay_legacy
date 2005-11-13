@@ -1,0 +1,357 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>frmAdmin</class>
+<widget class="QMainWindow">
+    <property name="name">
+        <cstring>frmAdmin</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>800</width>
+            <height>600</height>
+        </rect>
+    </property>
+    <property name="minimumSize">
+        <size>
+            <width>8</width>
+            <height>108</height>
+        </size>
+    </property>
+    <property name="maximumSize">
+        <size>
+            <width>800</width>
+            <height>600</height>
+        </size>
+    </property>
+    <property name="baseSize">
+        <size>
+            <width>800</width>
+            <height>600</height>
+        </size>
+    </property>
+    <property name="caption">
+        <string>Digiplay Administration</string>
+    </property>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>txtStatusBar</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>6</x>
+                <y>510</y>
+                <width>780</width>
+                <height>20</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Ready.</string>
+        </property>
+    </widget>
+    <widget class="QTabWidget">
+        <property name="name">
+            <cstring>tabWidget3</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>10</y>
+                <width>780</width>
+                <height>500</height>
+            </rect>
+        </property>
+        <widget class="QWidget">
+            <property name="name">
+                <cstring>tab</cstring>
+            </property>
+            <attribute name="title">
+                <string>Manage Tracks</string>
+            </attribute>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>lblNewTracks</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>10</y>
+                        <width>221</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>New Tracks on System:</string>
+                </property>
+            </widget>
+            <widget class="QPushButton">
+                <property name="name">
+                    <cstring>btnManageEdit</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>430</y>
+                        <width>90</width>
+                        <height>31</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Edit Info...</string>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>lblCurrentTracks</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>390</x>
+                        <y>10</y>
+                        <width>291</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Tracks Currently on System</string>
+                </property>
+            </widget>
+            <widget class="QListBox">
+                <property name="name">
+                    <cstring>lstManageNew</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>31</y>
+                        <width>261</width>
+                        <height>400</height>
+                    </rect>
+                </property>
+            </widget>
+            <widget class="QPushButton">
+                <property name="name">
+                    <cstring>btnManageScan</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>290</x>
+                        <y>40</y>
+                        <width>80</width>
+                        <height>30</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Scan...</string>
+                </property>
+            </widget>
+            <widget class="QListBox">
+                <property name="name">
+                    <cstring>lstManageCurrent</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>390</x>
+                        <y>30</y>
+                        <width>370</width>
+                        <height>401</height>
+                    </rect>
+                </property>
+            </widget>
+            <widget class="QPushButton">
+                <property name="name">
+                    <cstring>btnManageAddAll</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>290</x>
+                        <y>80</y>
+                        <width>80</width>
+                        <height>31</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Add All</string>
+                </property>
+            </widget>
+        </widget>
+        <widget class="QWidget">
+            <property name="name">
+                <cstring>tab</cstring>
+            </property>
+            <attribute name="title">
+                <string>Modify Track Details</string>
+            </attribute>
+        </widget>
+        <widget class="QWidget">
+            <property name="name">
+                <cstring>TabPage</cstring>
+            </property>
+            <attribute name="title">
+                <string>Edit Station Cart Wall</string>
+            </attribute>
+        </widget>
+        <widget class="QWidget">
+            <property name="name">
+                <cstring>TabPage</cstring>
+            </property>
+            <attribute name="title">
+                <string>Sustainer Playlist</string>
+            </attribute>
+            <widget class="QPushButton">
+                <property name="name">
+                    <cstring>pushButton4</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>158</x>
+                        <y>116</y>
+                        <width>101</width>
+                        <height>61</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>pushButton4</string>
+                </property>
+            </widget>
+            <widget class="QListView">
+                <property name="name">
+                    <cstring>lstSustDirectory</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>368</x>
+                        <y>6</y>
+                        <width>391</width>
+                        <height>451</height>
+                    </rect>
+                </property>
+            </widget>
+        </widget>
+    </widget>
+</widget>
+<menubar>
+    <property name="name">
+        <cstring>MenuBar</cstring>
+    </property>
+    <item text="&amp;Help" name="helpMenu">
+        <action name="helpContentsAction"/>
+        <action name="helpIndexAction"/>
+        <separator/>
+        <action name="helpAboutAction"/>
+    </item>
+</menubar>
+<toolbars>
+    <toolbar dock="2">
+        <property name="name">
+            <cstring>toolBar</cstring>
+        </property>
+        <property name="label">
+            <string>Tools</string>
+        </property>
+        <action name="helpContentsAction"/>
+        <action name="helpIndexAction"/>
+        <separator/>
+        <action name="helpAboutAction"/>
+    </toolbar>
+</toolbars>
+<actions>
+    <action>
+        <property name="name">
+            <cstring>helpContentsAction</cstring>
+        </property>
+        <property name="text">
+            <string>Contents</string>
+        </property>
+        <property name="menuText">
+            <string>&amp;Contents...</string>
+        </property>
+        <property name="accel">
+            <string></string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>helpIndexAction</cstring>
+        </property>
+        <property name="text">
+            <string>Index</string>
+        </property>
+        <property name="menuText">
+            <string>&amp;Index...</string>
+        </property>
+        <property name="accel">
+            <string></string>
+        </property>
+    </action>
+    <action>
+        <property name="name">
+            <cstring>helpAboutAction</cstring>
+        </property>
+        <property name="text">
+            <string>About</string>
+        </property>
+        <property name="menuText">
+            <string>&amp;About</string>
+        </property>
+        <property name="accel">
+            <string></string>
+        </property>
+    </action>
+</actions>
+<connections>
+    <connection>
+        <sender>helpIndexAction</sender>
+        <signal>activated()</signal>
+        <receiver>frmAdmin</receiver>
+        <slot>helpIndex()</slot>
+    </connection>
+    <connection>
+        <sender>helpContentsAction</sender>
+        <signal>activated()</signal>
+        <receiver>frmAdmin</receiver>
+        <slot>helpContents()</slot>
+    </connection>
+    <connection>
+        <sender>helpAboutAction</sender>
+        <signal>activated()</signal>
+        <receiver>frmAdmin</receiver>
+        <slot>helpAbout()</slot>
+    </connection>
+    <connection>
+        <sender>btnManageScan</sender>
+        <signal>pressed()</signal>
+        <receiver>frmAdmin</receiver>
+        <slot>ScanTracks()</slot>
+    </connection>
+    <connection>
+        <sender>btnManageAddAll</sender>
+        <signal>pressed()</signal>
+        <receiver>frmAdmin</receiver>
+        <slot>AddTracks()</slot>
+    </connection>
+    <connection>
+        <sender>pushButton4</sender>
+        <signal>pressed()</signal>
+        <receiver>frmAdmin</receiver>
+        <slot>test()</slot>
+    </connection>
+</connections>
+<includes>
+    <include location="local" impldecl="in implementation">frmAdmin.ui.h</include>
+</includes>
+<slots>
+    <slot>helpIndex()</slot>
+    <slot>helpContents()</slot>
+    <slot>helpAbout()</slot>
+    <slot>ScanTracks()</slot>
+    <slot>AddTracks()</slot>
+    <slot>UpdateLists()</slot>
+    <slot>test()</slot>
+</slots>
+<functions>
+    <function access="private" specifier="non virtual">init()</function>
+</functions>
+<pixmapinproject/>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

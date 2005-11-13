@@ -1,0 +1,19 @@
+Installation and Use
+====================
+See ./docs/INSTALL.TXT for details
+
+Project Hierarchy
+=================
+Please follow the structure below when adding components and applications.
+
+digiplay
+ |
+ |-> Apps (Application software: sustainer, admin application, studio apps)
+ |			Create subdirectories for each QT app as they tend to have a lot
+ |			of baggage!
+ |
+ |-> Components (Components objects for use in the applications)
+ |
+ |-> db (Database schema, and related files)
+ |
+ |-> Docs (Documentation and usage instructions etc) 

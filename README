@@ -9,8 +9,8 @@ Please follow the structure below when adding components and applications.
 digiplay
  |
  |-> Apps (Application software: sustainer, admin application, studio apps)
- |			Create subdirectories for each QT app as they tend to have a lot
- |			of baggage!
+ |	     Create subdirectories for each QT app as they tend to have a lot
+ |	     of baggage!
  |
  |-> Components (Components objects for use in the applications)
  |

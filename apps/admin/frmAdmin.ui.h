@@ -90,7 +90,6 @@ void frmAdmin::ScanTracks()
 		cout << "Scanning: " << path << endl;
 		dirp = opendir(path.c_str());
 		while (dirp) {
-			errno = 0;
 			if ((dp = readdir(dirp)) != NULL) {
 				filename = dp->d_name;
 				if (filename.length() > 5) {
@@ -115,10 +114,6 @@ void frmAdmin::ScanTracks()
 				}
 			}
 			else {
-				if (errno == 0) {
-					closedir(dirp);
-					break;
-				}
 				closedir(dirp);
 				break;
 			}

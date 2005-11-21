@@ -2,13 +2,11 @@
 #include "executor/spi.h"       /* this is what you need to work with SPI */
 #include "commands/trigger.h"   /* ... and triggers */
 
-extern Datum trigf(PG_FUNCTION_ARGS);
+extern Datum trig_configuration(PG_FUNCTION_ARGS);
 
-PG_FUNCTION_INFO_V1(trigf);
+PG_FUNCTION_INFO_V1(trig_configuration);
 
-Datum
-trigf(PG_FUNCTION_ARGS)
-{
+Datum trig_configuration(PG_FUNCTION_ARGS) {
     TriggerData *trigdata = (TriggerData *) fcinfo->context;
     TupleDesc   tupdesc;
     HeapTuple   rettuple;
@@ -44,7 +42,9 @@ trigf(PG_FUNCTION_ARGS)
         elog(INFO, "trigf (fired %s): SPI_connect returned %d", when, ret);
 
     /* get number of rows in table */
-    ret = SPI_exec("SELECT count(*) FROM ttest", 0);
+/*    ret = SPI_exec("SELECT count(*) FROM 'NOTIFY trig101'", 0); */
+	ret = SPI_exec("INSERT INTO configuration (param_id,parameter,val,location) VALUES (2,'player3_md5','',1)",1);
+	elog(NOTICE,"Return code: %d",ret);
 
     if (ret < 0)
         elog(NOTICE, "trigf (fired %s): SPI_exec returned %d", when, ret);
@@ -55,7 +55,7 @@ trigf(PG_FUNCTION_ARGS)
                                     1,
                                     &isnull));
 
-    elog (INFO, "trigf (fired %s): there are %d rows in ttest", when, i);
+    elog (INFO, "trigf (fired %s): there are %d rows in FISH ", when, i);
 
     SPI_finish();
 

@@ -131,7 +131,7 @@ void schedule::exportToDatabase() {
             << t.trim_end_smpl << ","		// End trim
             << t.fade_in_smpl << "," 		// End point of fade in
             << t.fade_out_smpl << ")";		// Start point of fade out
-        T->exec(SQL);
+        T->exec(SQL.str());
     }
 }
 

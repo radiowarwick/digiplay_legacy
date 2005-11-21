@@ -44,30 +44,35 @@ void scheduler::doSchedule(long seconds) {
 
 	// Check we're not aiming to schedule a stupid amount of time
 	if (seconds > 86400) {
-		cout << "   -> max scheduling slot is 24hrs (86400)" << endl;
+		cout << "   -> ERROR: max scheduling slot is 24hrs (86400)" << endl;
 		return;
 	}
 	target_length_smpl = seconds * 44100;
 
 	initialise();
 
-	doFill();
-	doMinimise();
+	// Process schedule. Only succeeds if the entire chain completes,
+	// else it tries again.
+	while (!(
+		doFill() 
+		&& doMinimise()
 #if (DO_CROSSFADES == 1)
-	doCrossfades();
+		&& doCrossfades()
 #endif
 
 #if (DO_FINAL_FADE == 1)
-	doFadeOut();
+		&& doFadeOut()
 #endif
-
+		)) {
+	}
+	S->printToScreen();
+	
 #if (DO_EXPORT == 1)
 	S->exportToDatabase();	
 #endif
 	
 	complete();
 	cout << " -> Scheduling complete!" << endl;
-	S->printToScreen();
 	cout << endl;
 }
 
@@ -75,7 +80,6 @@ void scheduler::doSchedule(long seconds) {
  */
 bool scheduler::initialise() {
 	bins = new vector<sched_bin*>;
-	S->newSchedule();
 	srand(time(0));
 	
 	cout << " -> Loading audio data..." << endl;
@@ -107,7 +111,6 @@ bool scheduler::complete() {
 	for (unsigned int i = 0; i < bins->size(); i++)
 		delete bins->at(i);
 	delete bins;
-//	delete bin_w;
 	return true;
 }
 
@@ -151,18 +154,16 @@ unsigned long scheduler::getScheduleRemainTime() {
  * TODO: Insert jingles and adverts
  */
 bool scheduler::doFill() {
-	cout << " -> Filling schedule..." << endl;
+	cout << " -> Filling schedule..." << flush;
+    S->newSchedule();
 	int bin;
 	int checkcount = 0;
 	long time_from_last_jingle = 0;
-	bool have_jingles = (bins->at(5)->size() > 0);
-	if (!have_jingles)
-		cout << "   -> Warning: No jingles will be scheduled!" << endl;
 	
 	track t;
 	//Add tracks until schedule length EXCEEDS required length
 	while (S->getLength_smpl() < target_length_smpl) {
-		if (time_from_last_jingle > 15*60*ONE_SECOND && have_jingles) {
+		if (time_from_last_jingle > 15*60*ONE_SECOND) {
 			time_from_last_jingle = 0;
 			bin = 5;
 		}
@@ -183,7 +184,8 @@ bool scheduler::doFill() {
 			checkcount++;
 			// give up after 50 attempts (and trying different bins)
 			if (checkcount > 50) {
-				cout << "   -> FATAL: Not enough tracks for this duration!" 
+				cout << "failed!" << endl;
+				cout << " -> ERROR: Not enough tracks for this duration!" 
 					<< endl;
 				return false;
 			}
@@ -198,6 +200,8 @@ bool scheduler::doFill() {
 		S->add(t,-1);
 		time_from_last_jingle += t.length_smpl;
 	}
+	cout << "done." << endl;
+	cout << "   -> Schedule length: " << S->getLength_pretty() << endl;
 	return true;
 }
 
@@ -206,19 +210,18 @@ bool scheduler::doFill() {
 bool scheduler::doMinimise() {
 	cout << " -> Minimising schedule...." << flush;
 	
-	if (S->getLength_smpl() <= target_length_smpl + (30 * ONE_SECOND)) {
+	if (S->getLength_smpl() <= target_length_smpl + (90 * ONE_SECOND)) {
 		cout << "skipped." << endl;
-		cout << "   -> Current schedule is within tolerance." << endl;
+		cout << "   -> INFO: Current schedule is within tolerance." << endl;
 		return true;
 	}
-	else cout << endl;
 
 	int no_improve_count = 0;
 	unsigned long old_length = 0;
 	unsigned long excess = 0;
 
 	// Minimise while schedule too long unless we've failed to improve 50 times
-	while (S->getLength_smpl() > target_length_smpl + (30 * ONE_SECOND) 
+	while (S->getLength_smpl() > target_length_smpl + (90 * ONE_SECOND) 
 												&& no_improve_count < 50) {
 		old_length = S->getLength_smpl();
 		excess = old_length - target_length_smpl;
@@ -241,11 +244,13 @@ bool scheduler::doMinimise() {
 		
 		// If we've failed to replace any tracks after 50 attempts, give up!
 		if (no_improve_count > 50) {
-			cout << "   -> Note: failed to reduce schedule size." << endl;
+			cout << "failed." << endl;
 			return false;
 		}
 	}
 	// Have successfully minimised schedule to within tolerance
+	cout << "done." << endl;
+	cout << "   -> Schedule length: " << S->getLength_pretty() << endl;
 	return true;
 }
 
@@ -253,7 +258,7 @@ bool scheduler::doMinimise() {
  * for each track.
  */
 bool scheduler::doCrossfades() {
-	cout << " -> Inserting crossfades..." << endl;
+	cout << " -> Computing Crossfades...";
 	track t, t_next, t_previous;
 	for (unsigned int i = 0; i < S->size(); i++) {
 		t = S->at(i);
@@ -273,6 +278,8 @@ bool scheduler::doCrossfades() {
 		S->remove(i);
 		S->add(t,i);
 	}
+	cout << "done." << endl;
+	cout << "   -> Schedule length: " << S->getLength_pretty() << endl;
 	return true;
 }
 		
@@ -361,13 +368,20 @@ bool scheduler::doCrossfades() {
 /* Fades out the last track to make accurate timing
  */
 bool scheduler::doFadeOut() {
-	cout << " -> Computing final fade-out..." << endl;
+	cout << " -> Computing final fade-out..." << flush;
+    if (S->getLength_smpl() < target_length_smpl) {
+		cout << "failed!" << endl;
+        cout << "   -> ERROR: Crossfades made schedule too short!" << endl;
+		cout << endl;
+        return false;
+    }
 	unsigned long excess = S->getLength_smpl() - target_length_smpl;
 	track t = S->at(S->size() - 1);
 	t.trim_end_smpl = t.trim_start_smpl + t.length_smpl - excess;
 	t.fade_out_smpl = t.trim_end_smpl - (5 * ONE_SECOND);
 	S->remove(S->size() - 1);
 	S->add(t,-1);
+	cout << "done." << endl;
 	return true;
 }
 

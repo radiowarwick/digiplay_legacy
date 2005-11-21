@@ -37,6 +37,9 @@ STUDIO_PLAY_OBJ=		apps/studio_play/main.o \
 						components/triggerThread.o \
 						components/track.o
 STUDIO_SEARCH_OBJ=		apps/studio_search/main.o \
+						components/libsearch.o \
+						components/track.o \
+						components/config_reader.o \
 						apps/studio_search/frmSearch.o \
 						.tmp/moc_frmSearch.o
 ADMIN_OBJ=				apps/admin/main.o \

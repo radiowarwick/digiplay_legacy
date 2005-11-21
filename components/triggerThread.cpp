@@ -24,16 +24,11 @@ triggerThread::triggerThread(QWidget *o, QString dbstring, int loc, int count) {
 }
 
 void triggerThread::run() {
-	vector<studioTrigger*> *T = new vector<studioTrigger*>;
-	for (int i = 0; i < trigger_count; i++) {
-		QString S, temp;
-		temp.setNum(i,10);
-		if (i < 10) temp = "0" + temp;
-		S = "trig" + S.setNum(location) + temp;
-		T->push_back(new studioTrigger(C,S.ascii(),i));
-		T->at(i)->initialise(receiver);
-		cout << "Added trigger: " << T->at(i)->name() << endl;
-	}
+	QString S;
+	S = "trig_config_loc" + S.setNum(location);
+	studioTrigger *T = new studioTrigger(C,S.ascii(),0);
+	T->initialise(receiver);
+	cout << T->name() << endl;
 	while (enabled) {
 		usleep(100000);
 		C->get_notifs();

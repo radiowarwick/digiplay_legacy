@@ -1,22 +1,27 @@
 #include "libsearch.h"
 
 libsearch::libsearch() {
-    config_reader *Conf = new config_reader("digiplay");
+ 
+    /* Read in configuration for database connection */
+    config_reader *conf = new config_reader("digiplay");
 
     string DB_CONNECT = "";
-    if (Conf->isDefined("DB_HOST"))
-        DB_CONNECT += "hostaddr=" + Conf->getParam("DB_HOST") + " ";
-    if (Conf->isDefined("DB_NAME"))
-        DB_CONNECT += "dbname=" + Conf->getParam("DB_NAME") + " ";
-    if (Conf->isDefined("DB_USER"))
-        DB_CONNECT += "user=" + Conf->getParam("DB_USER") + " ";
+    if (conf->isDefined("DB_HOST"))
+        DB_CONNECT += "hostaddr=" + conf->getParam("DB_HOST") + " ";
+    if (conf->isDefined("DB_NAME"))
+        DB_CONNECT += "dbname=" + conf->getParam("DB_NAME") + " ";
+    if (conf->isDefined("DB_USER"))
+        DB_CONNECT += "user=" + conf->getParam("DB_USER") + " ";
 
- if (DB_CONNECT == "") {
-     cout << "FATAL: No database connection defined" << endl;
-        cout << "  -> Check /etc/digiplay defined database connection" << endl;
-        exit(-1);
+    if (DB_CONNECT == "") {
+      cout << "FATAL: No database connection defined" << endl;
+      cout << "  -> Check /etc/digiplay defined database connection" << endl;
+      exit(-1);
     }
-    delete Conf;
+
+    delete conf;
+
+    /* Create the new connection */
     C = new Connection( DB_CONNECT );
 }
 
@@ -24,6 +29,15 @@ libsearch::~libsearch() {
 
 }
 
+/* 
+ * query
+ *
+ * Uses the first parameter as a search string in the database.
+ *
+ * Potential resource issue here, for example, searching for the
+ * word 'The' is going to return a whole lot of results.  Might want
+ * to return results incrementally as the search progresses.
+ */
 vector<track*>* libsearch::query(string search_string) {
  string SQL;
  lastQuery_string = search_string;
@@ -40,36 +54,53 @@ vector<track*>* libsearch::query(string search_string) {
   "AND audioartists.artist=artists.id "
   "AND albums.id=audio.music_album";
 
- if (searchArtist_flag == false && searchTitle_flag == false && searchAlbum_flag == false) {
+ if (searchArtist_flag == false &&
+     searchTitle_flag == false && 
+     searchAlbum_flag == false) 
+ {
+   /* Do nothing */
  }
- else if (searchTitle_flag == true) {
-     SQL += " AND (audio.title ILIKE '%" + search_string + "%'";
-     if (searchArtist_flag == true)
-  SQL += " OR artists.name ILIKE '%" + search_string + "%'";
-     if (searchAlbum_flag == true)
-  SQL += " OR albums.name ILIKE '%" + search_string + "%'";
-     SQL += ") ORDER BY audio.title";
+ else if (searchTitle_flag == true)
+ {
+   SQL += " AND (audio.title ILIKE '%" + search_string + "%'";
+     
+   if (searchArtist_flag == true) {
+     SQL += " OR artists.name ILIKE '%" + search_string + "%'";
+   }
+   
+   if (searchAlbum_flag == true) {
+     SQL += " OR albums.name ILIKE '%" + search_string + "%'";
+   }
+   
+   SQL += ") ORDER BY audio.title";
  }
- else if (searchArtist_flag == true) {
-     SQL += " AND (artists.name ILIKE '%" + search_string + "%'";
-      if (searchAlbum_flag == true)
-   SQL += " OR albums.name ILIKE '%" + search_string + "%'";
-     SQL += ") ORDER BY audio.title";      
+ else if (searchArtist_flag == true)
+ {
+   SQL += " AND (artists.name ILIKE '%" + search_string + "%'";
+   if (searchAlbum_flag == true) {
+     SQL += " OR albums.name ILIKE '%" + search_string + "%'";
+   }
+   SQL += ") ORDER BY audio.title";      
   }
  else 
-     SQL += " AND (albums.name ILIKE '%" + search_string + "%') ORDER BY audio.title";
- 
-  if (searchLimit_value > 0) {
+ { 
+   SQL += " AND (albums.name ILIKE '%" + search_string + "%') ORDER BY audio.title";
+ }
+
+ if (searchLimit_value > 0) {
   stringstream S;
   S << searchLimit_value;
   SQL += " LIMIT " + S.str();
  }
+
  Result R = T->exec(SQL);
- for (int i = 0; i < R.size(); i++) {
+
+ for (int i = 0; i < (int)R.size(); i++) {
   int id = atoi(R[i]["id"].c_str());
   track* t = new track(T,id);
   Q->push_back(t);
  }
+
  T->abort();
  delete T;
  return Q;
@@ -81,47 +112,49 @@ bool libsearch::searchTitle() {
 }
 
 bool libsearch::searchTitle(bool flag) {
- searchTitle_flag = flag;
- return searchTitle_flag;
+  searchTitle_flag = flag;
+  return searchTitle_flag;
 }
 
 bool libsearch::searchArtist() {
 //            searchArtist_flag = false;
-            return searchArtist_flag;
+  return searchArtist_flag;
 }
 
 bool libsearch::searchArtist(bool flag) {
- searchArtist_flag = flag;
- return searchArtist_flag;
+  searchArtist_flag = flag;
+  return searchArtist_flag;
 }
 
 bool libsearch::searchAlbum() {
 //            searchAlbum_flag = false;
- return searchAlbum_flag;
+   return searchAlbum_flag;
 }
 
 bool libsearch::searchAlbum(bool flag) {
- searchAlbum_flag = flag;
- return searchAlbum_flag;
+   searchAlbum_flag = flag;
+   return searchAlbum_flag;
 }
 
 int libsearch::searchLimit() {
- return searchLimit_value;
+  return searchLimit_value;
 }
 
 int libsearch::searchLimit(int value) {
- searchLimit_value = value;
- return searchLimit_value;
+  searchLimit_value = value;
+  return searchLimit_value;
 }
 
 string libsearch::lastQuery() {
- return lastQuery_string;
+  return lastQuery_string;
 }
 
 track* libsearch::getTrack(int ID) {
- T = new Transaction(*C,"");
- track* t = new track(T,ID);
- T->abort();
- delete T;
- return t;
+	
+  T = new Transaction(*C,"");
+  track* t = new track(T,ID);
+  T->abort();
+  delete T;
+  
+  return t;
 }

@@ -54,6 +54,11 @@ void frmPlayout::init() {
 	btnReset1->setPixmap(*pixReset);
 	btnReset2->setPixmap(*pixReset);
 	btnReset3->setPixmap(*pixReset);
+	btnStnCWallPrev->setPixmap(*pixSeekback);
+	btnStnCWallNext->setPixmap(*pixSeekforward);
+	btnUsrCWallPrev->setPixmap(*pixSeekback);
+	btnUsrCWallNext->setPixmap(*pixSeekforward);
+	
 	
 	cout << "Initialising Digital Playout Interface..." << endl;
 	player1 = new playerThread(this, 1);

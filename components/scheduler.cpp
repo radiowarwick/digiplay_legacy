@@ -197,8 +197,10 @@ bool scheduler::doFill() {
 		checkcount = 0;
 		
 		// Add new track to schedule, -1 => add to back of schedule
-		S->add(t,-1);
-		time_from_last_jingle += t.length_smpl;
+		if (!t.isNull) {
+			S->add(t,-1);
+			time_from_last_jingle += t.length_smpl;
+		}
 	}
 	cout << "done." << endl;
 	cout << "   -> Schedule length: " << S->getLength_pretty() << endl;
@@ -269,11 +271,13 @@ bool scheduler::doCrossfades() {
 			t_next = S->at(i+1);
 		}
 		if (t.bin != 5 && t_previous.bin != 5) {
-			t.fade_in_smpl = t.trim_start_smpl + 220500;
+			if (t.length_smpl > 441000 && t_previous.length_smpl > 441000)
+				t.fade_in_smpl = t.trim_start_smpl + 220500;
 		}
 		
 		if (t.bin != 5 && t_next.bin != 5) {
-			t.fade_out_smpl = t.trim_end_smpl - 220500;
+			if (t.length_smpl > 441000 && t_next.length_smpl > 441000)
+				t.fade_out_smpl = t.trim_end_smpl - 220500;
 		}
 		S->remove(i);
 		S->add(t,i);

@@ -43,8 +43,13 @@ track sched_bin::at(unsigned int index) {
 }
 
 track sched_bin::getRandom() {
-	int x = (int)((float)bin.size() * rand()/(RAND_MAX+1.0));
-	return at(x);
+	if (size() > 0) {
+		int x = (int)((float)bin.size() * rand()/(RAND_MAX+1.0));
+		return at(x);
+	}
+	else {
+		return t_null;
+	}
 }
 
 track sched_bin::getShorter(track t_old, unsigned long min_smpl) {

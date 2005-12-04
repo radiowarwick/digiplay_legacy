@@ -16,7 +16,6 @@
 #include "pthread.h"
 using namespace std;
 
-#include "config_reader.h"
 #include "audiochannel.h"
 
 #define BUFFER_SIZE 256

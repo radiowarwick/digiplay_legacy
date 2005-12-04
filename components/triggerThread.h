@@ -39,7 +39,7 @@ class triggerThread : public QThread {
 
 	private:
 		QWidget *receiver;
-		Connection *C;
+		QString db_connect;
 		bool enabled;
 		int location;
 		int trigger_count;

@@ -1,6 +1,6 @@
 <!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>frmSearch</class>
-<widget class="QMainWindow">
+<widget class="QDialog">
     <property name="name">
         <cstring>frmSearch</cstring>
     </property>
@@ -22,8 +22,8 @@
     </property>
     <property name="minimumSize">
         <size>
-            <width>21</width>
-            <height>22</height>
+            <width>1024</width>
+            <height>768</height>
         </size>
     </property>
     <property name="maximumSize">
@@ -302,57 +302,9 @@
     <property name="caption">
         <string>RaW // Radio Warwick // Digital Playout System</string>
     </property>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>lblClock</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>750</x>
-                <y>0</y>
-                <width>270</width>
-                <height>57</height>
-            </rect>
-        </property>
-        <property name="font">
-            <font>
-                <family>Sans Serif</family>
-                <pointsize>36</pointsize>
-                <bold>1</bold>
-            </font>
-        </property>
-        <property name="text">
-            <string>17:56:56</string>
-        </property>
-        <property name="alignment">
-            <set>AlignVCenter|AlignRight</set>
-        </property>
-    </widget>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>lblDate</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>810</x>
-                <y>50</y>
-                <width>210</width>
-                <height>20</height>
-            </rect>
-        </property>
-        <property name="font">
-            <font>
-                <family>Sans Serif</family>
-                <bold>1</bold>
-            </font>
-        </property>
-        <property name="text">
-            <string>Fri 26th September 2004</string>
-        </property>
-        <property name="alignment">
-            <set>AlignVCenter|AlignRight</set>
-        </property>
-    </widget>
+    <property name="modal">
+        <bool>true</bool>
+    </property>
     <widget class="QLabel">
         <property name="name">
             <cstring>textLabel7</cstring>
@@ -360,7 +312,7 @@
         <property name="geometry">
             <rect>
                 <x>540</x>
-                <y>80</y>
+                <y>30</y>
                 <width>201</width>
                 <height>20</height>
             </rect>
@@ -374,22 +326,6 @@
             <string>Show Plan:</string>
         </property>
     </widget>
-    <widget class="QPushButton">
-        <property name="name">
-            <cstring>pushButton44</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>10</y>
-                <width>150</width>
-                <height>51</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Log In</string>
-        </property>
-    </widget>
     <widget class="QTextBrowser">
         <property name="name">
             <cstring>txtShowPlanDetail</cstring>
@@ -397,9 +333,9 @@
         <property name="geometry">
             <rect>
                 <x>540</x>
-                <y>530</y>
+                <y>490</y>
                 <width>471</width>
-                <height>211</height>
+                <height>210</height>
             </rect>
         </property>
         <property name="text">
@@ -461,9 +397,9 @@ Large text so it's easy to read.&lt;/font&gt;</string>
         <property name="geometry">
             <rect>
                 <x>540</x>
-                <y>110</y>
+                <y>50</y>
                 <width>470</width>
-                <height>410</height>
+                <height>430</height>
             </rect>
         </property>
         <property name="paletteBackgroundColor">
@@ -491,6 +427,210 @@ Large text so it's easy to read.&lt;/font&gt;</string>
             <enum>AllColumns</enum>
         </property>
     </widget>
+    <widget class="QFrame">
+        <property name="name">
+            <cstring>frame5</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>719</y>
+                <width>1030</width>
+                <height>50</height>
+            </rect>
+        </property>
+        <property name="paletteBackgroundColor">
+            <color>
+                <red>209</red>
+                <green>184</green>
+                <blue>255</blue>
+            </color>
+        </property>
+        <property name="frameShape">
+            <enum>StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+            <enum>Plain</enum>
+        </property>
+        <property name="lineWidth">
+            <number>0</number>
+        </property>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblDate</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>340</x>
+                    <y>6</y>
+                    <width>440</width>
+                    <height>30</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <family>Sans Serif</family>
+                    <pointsize>16</pointsize>
+                    <bold>1</bold>
+                </font>
+            </property>
+            <property name="text">
+                <string>Fri 26th September 2004</string>
+            </property>
+            <property name="alignment">
+                <set>AlignVCenter|AlignLeft</set>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblClock</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>182</x>
+                    <y>3</y>
+                    <width>140</width>
+                    <height>33</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <family>Sans Serif</family>
+                    <pointsize>28</pointsize>
+                    <bold>1</bold>
+                </font>
+            </property>
+            <property name="text">
+                <string>17:56:56</string>
+            </property>
+            <property name="alignment">
+                <set>AlignTop|AlignLeft</set>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>pixmapLabel1</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>0</x>
+                    <y>0</y>
+                    <width>180</width>
+                    <height>50</height>
+                </rect>
+            </property>
+            <property name="paletteBackgroundColor">
+                <color>
+                    <red>209</red>
+                    <green>184</green>
+                    <blue>255</blue>
+                </color>
+            </property>
+            <property name="text">
+                <string>RaW Digiplay</string>
+            </property>
+            <property name="scaledContents">
+                <bool>true</bool>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel2_3</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>184</x>
+                    <y>29</y>
+                    <width>660</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <family>Sans Serif</family>
+                    <bold>1</bold>
+                </font>
+            </property>
+            <property name="text">
+                <string>studio@radio.warwick.ac.uk     |     07786 100 666     |     024 765 73077</string>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>pushButton44</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>874</x>
+                    <y>5</y>
+                    <width>150</width>
+                    <height>40</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <family>Sans Serif</family>
+                    <pointsize>20</pointsize>
+                    <bold>1</bold>
+                </font>
+            </property>
+            <property name="text">
+                <string>Log In</string>
+            </property>
+        </widget>
+    </widget>
+    <widget class="QFrame">
+        <property name="name">
+            <cstring>frame4</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>1030</width>
+                <height>30</height>
+            </rect>
+        </property>
+        <property name="paletteBackgroundColor">
+            <color>
+                <red>209</red>
+                <green>184</green>
+                <blue>255</blue>
+            </color>
+        </property>
+        <property name="frameShape">
+            <enum>StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+            <enum>Plain</enum>
+        </property>
+        <property name="lineWidth">
+            <number>0</number>
+        </property>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel3_2</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>0</y>
+                    <width>180</width>
+                    <height>31</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <family>Sans Serif</family>
+                    <pointsize>18</pointsize>
+                    <bold>1</bold>
+                </font>
+            </property>
+            <property name="text">
+                <string>RaW Eng Show</string>
+            </property>
+        </widget>
+    </widget>
     <widget class="QTabWidget">
         <property name="name">
             <cstring>tabWidget2</cstring>
@@ -501,18 +641,15 @@ Large text so it's easy to read.&lt;/font&gt;</string>
         <property name="geometry">
             <rect>
                 <x>10</x>
-                <y>80</y>
+                <y>40</y>
                 <width>520</width>
-                <height>662</height>
+                <height>670</height>
             </rect>
         </property>
         <property name="font">
             <font>
                 <pointsize>10</pointsize>
             </font>
-        </property>
-        <property name="tabShape">
-            <enum>Rounded</enum>
         </property>
         <widget class="QWidget">
             <property name="name">
@@ -571,68 +708,19 @@ RaW Digiplay Development Team</string>
         </widget>
         <widget class="QWidget">
             <property name="name">
-                <cstring>library</cstring>
+                <cstring>playlist</cstring>
             </property>
             <attribute name="title">
-                <string>Library</string>
+                <string>Playlist</string>
             </attribute>
-            <widget class="QCheckBox">
-                <property name="name">
-                    <cstring>ArtistCheckBox</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>90</x>
-                        <y>50</y>
-                        <width>70</width>
-                        <height>20</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Artist</string>
-                </property>
-                <property name="checked">
-                    <bool>true</bool>
-                </property>
-            </widget>
-            <widget class="QCheckBox">
-                <property name="name">
-                    <cstring>TitleCheckBox</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>190</x>
-                        <y>50</y>
-                        <width>60</width>
-                        <height>20</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Title</string>
-                </property>
-                <property name="checked">
-                    <bool>true</bool>
-                </property>
-            </widget>
-            <widget class="QCheckBox">
-                <property name="name">
-                    <cstring>AlbumCheckBox</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>290</x>
-                        <y>50</y>
-                        <width>91</width>
-                        <height>20</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Album</string>
-                </property>
-                <property name="checked">
-                    <bool>true</bool>
-                </property>
-            </widget>
+        </widget>
+        <widget class="QWidget">
+            <property name="name">
+                <cstring>search</cstring>
+            </property>
+            <attribute name="title">
+                <string>Search</string>
+            </attribute>
             <widget class="QLabel">
                 <property name="name">
                     <cstring>textLabel2</cstring>
@@ -640,8 +728,8 @@ RaW Digiplay Development Team</string>
                 <property name="geometry">
                     <rect>
                         <x>10</x>
-                        <y>20</y>
-                        <width>121</width>
+                        <y>10</y>
+                        <width>60</width>
                         <height>20</height>
                     </rect>
                 </property>
@@ -649,20 +737,17 @@ RaW Digiplay Development Team</string>
                     <string>Search:</string>
                 </property>
             </widget>
-            <widget class="QLabel">
+            <widget class="QLineEdit">
                 <property name="name">
-                    <cstring>Searchlable</cstring>
+                    <cstring>txtLibrarySearchText</cstring>
                 </property>
                 <property name="geometry">
                     <rect>
-                        <x>10</x>
-                        <y>50</y>
-                        <width>67</width>
+                        <x>70</x>
+                        <y>10</y>
+                        <width>350</width>
                         <height>20</height>
                     </rect>
-                </property>
-                <property name="text">
-                    <string>Search by:</string>
                 </property>
             </widget>
             <widget class="QPushButton">
@@ -674,7 +759,7 @@ RaW Digiplay Development Team</string>
                         <x>430</x>
                         <y>10</y>
                         <width>71</width>
-                        <height>31</height>
+                        <height>20</height>
                     </rect>
                 </property>
                 <property name="paletteForegroundColor">
@@ -937,18 +1022,81 @@ RaW Digiplay Development Team</string>
                 <property name="text">
                     <string>Search</string>
                 </property>
+                <property name="autoDefault">
+                    <bool>false</bool>
+                </property>
             </widget>
-            <widget class="QLineEdit">
+            <widget class="QCheckBox">
                 <property name="name">
-                    <cstring>txtLibrarySearchText</cstring>
+                    <cstring>ArtistCheckBox</cstring>
                 </property>
                 <property name="geometry">
                     <rect>
                         <x>90</x>
-                        <y>10</y>
-                        <width>330</width>
-                        <height>30</height>
+                        <y>40</y>
+                        <width>70</width>
+                        <height>20</height>
                     </rect>
+                </property>
+                <property name="text">
+                    <string>Artist</string>
+                </property>
+                <property name="checked">
+                    <bool>true</bool>
+                </property>
+            </widget>
+            <widget class="QCheckBox">
+                <property name="name">
+                    <cstring>AlbumCheckBox</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>290</x>
+                        <y>40</y>
+                        <width>91</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Album</string>
+                </property>
+                <property name="checked">
+                    <bool>true</bool>
+                </property>
+            </widget>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>Searchlable</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>40</y>
+                        <width>67</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Search by:</string>
+                </property>
+            </widget>
+            <widget class="QCheckBox">
+                <property name="name">
+                    <cstring>TitleCheckBox</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>190</x>
+                        <y>40</y>
+                        <width>60</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Title</string>
+                </property>
+                <property name="checked">
+                    <bool>true</bool>
                 </property>
             </widget>
             <widget class="QTable">
@@ -956,32 +1104,20 @@ RaW Digiplay Development Team</string>
                     <property name="text">
                         <string>Title          </string>
                     </property>
-                    <property name="pixmap">
-                        <pixmap></pixmap>
-                    </property>
                 </column>
                 <column>
                     <property name="text">
                         <string>Artist          </string>
-                    </property>
-                    <property name="pixmap">
-                        <pixmap></pixmap>
                     </property>
                 </column>
                 <column>
                     <property name="text">
                         <string>Album          </string>
                     </property>
-                    <property name="pixmap">
-                        <pixmap></pixmap>
-                    </property>
                 </column>
                 <column>
                     <property name="text">
                         <string>ID</string>
-                    </property>
-                    <property name="pixmap">
-                        <pixmap></pixmap>
                     </property>
                 </column>
                 <property name="name">
@@ -990,9 +1126,9 @@ RaW Digiplay Development Team</string>
                 <property name="geometry">
                     <rect>
                         <x>10</x>
-                        <y>70</y>
+                        <y>60</y>
                         <width>490</width>
-                        <height>550</height>
+                        <height>570</height>
                     </rect>
                 </property>
                 <property name="sizePolicy">
@@ -1289,55 +1425,11 @@ RaW Digiplay Development Team</string>
         </widget>
         <widget class="QWidget">
             <property name="name">
-                <cstring>audiowall</cstring>
+                <cstring>messages</cstring>
             </property>
             <attribute name="title">
-                <string>Audio Wall</string>
+                <string>Messages</string>
             </attribute>
-            <widget class="QLabel">
-                <property name="name">
-                    <cstring>textLabel1</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>20</x>
-                        <y>10</y>
-                        <width>631</width>
-                        <height>21</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Select User Audio Wall:</string>
-                </property>
-            </widget>
-            <widget class="QListBox">
-                <item>
-                    <property name="text">
-                        <string>Adverts</string>
-                    </property>
-                </item>
-                <item>
-                    <property name="text">
-                        <string>Music Team Jingles</string>
-                    </property>
-                </item>
-                <item>
-                    <property name="text">
-                        <string>Sport Team Jingles</string>
-                    </property>
-                </item>
-                <property name="name">
-                    <cstring>listBox2_2</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>20</x>
-                        <y>40</y>
-                        <width>480</width>
-                        <height>580</height>
-                    </rect>
-                </property>
-            </widget>
         </widget>
         <widget class="QWidget">
             <property name="name">
@@ -1486,16 +1578,74 @@ RaW Digiplay Development Team</string>
         </widget>
         <widget class="QWidget">
             <property name="name">
-                <cstring>email</cstring>
+                <cstring>scripts</cstring>
             </property>
             <attribute name="title">
-                <string>E-mail</string>
+                <string>Scripts</string>
+            </attribute>
+        </widget>
+        <widget class="QWidget">
+            <property name="name">
+                <cstring>audiowall</cstring>
+            </property>
+            <attribute name="title">
+                <string>Audio Wall</string>
+            </attribute>
+            <widget class="QLabel">
+                <property name="name">
+                    <cstring>textLabel1</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>20</x>
+                        <y>10</y>
+                        <width>631</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Select User Audio Wall:</string>
+                </property>
+            </widget>
+            <widget class="QListBox">
+                <item>
+                    <property name="text">
+                        <string>Adverts</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>Music Team Jingles</string>
+                    </property>
+                </item>
+                <item>
+                    <property name="text">
+                        <string>Sport Team Jingles</string>
+                    </property>
+                </item>
+                <property name="name">
+                    <cstring>listBox2_2</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>20</x>
+                        <y>40</y>
+                        <width>480</width>
+                        <height>580</height>
+                    </rect>
+                </property>
+            </widget>
+        </widget>
+        <widget class="QWidget">
+            <property name="name">
+                <cstring>schedule</cstring>
+            </property>
+            <attribute name="title">
+                <string>Schedule</string>
             </attribute>
         </widget>
     </widget>
 </widget>
-<toolbars>
-</toolbars>
 <connections>
     <connection>
         <sender>btnLibrarySearch</sender>
@@ -1520,6 +1670,7 @@ RaW Digiplay Development Team</string>
     <include location="local" impldecl="in implementation">frmSearch.ui.h</include>
 </includes>
 <slots>
+    <slot>customEvent( QCustomEvent * event )</slot>
     <slot>Library_Search()</slot>
     <slot>PlaylistAdd( int row, int col, int button, const QPoint &amp; mousepos )</slot>
 </slots>

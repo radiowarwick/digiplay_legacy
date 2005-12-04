@@ -17,7 +17,8 @@ void studioTrigger::operator()(int be_pid) {
 
 triggerThread::triggerThread(QWidget *o, QString dbstring, int loc, int count) {
 	receiver = o;
-	C = new Connection(dbstring.ascii());
+	db_connect = dbstring;
+	
 	enabled = true;
 	location = loc;
 	trigger_count = count;
@@ -26,9 +27,9 @@ triggerThread::triggerThread(QWidget *o, QString dbstring, int loc, int count) {
 void triggerThread::run() {
 	QString S;
 	S = "trig_config_loc" + S.setNum(location);
+	Connection *C = new Connection(db_connect.ascii());
 	studioTrigger *T = new studioTrigger(C,S.ascii(),0);
 	T->initialise(receiver);
-	cout << T->name() << endl;
 	while (enabled) {
 		usleep(100000);
 		C->get_notifs();

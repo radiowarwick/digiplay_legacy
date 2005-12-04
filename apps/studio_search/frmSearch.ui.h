@@ -11,11 +11,16 @@
 *****************************************************************************/
 #include <qapplication.h>
 
+#include "clockThread.h"
+#include "triggerThread.h"
 #include "libsearch.h"
 #include "track.h"
-#include "config_reader.h"
+#include "config.h"
 
 libsearch *library_engine = new libsearch();
+triggerThread *dbTrigger;
+config *conf;
+Connection *C;
 vector<track*>* SearchResults;
 vector<track*>* Playlist = new vector<track*>;
 QPixmap *sp_audio, *sp_artist, *sp_album;
@@ -23,6 +28,12 @@ QString path;
 QListViewItem *last_item;
 
 void frmSearch::init() {
+    cout << "Connecting to database..." << endl;
+    conf = new config("digiplay");
+    C = new Connection(conf->getDBConnectString());
+    cout << "Connected." << endl;
+    
+	cout << "Initialising Interface..." << endl;
 	path = qApp->applicationDirPath();
     tblLibrarySearchResults->setColumnWidth(3,0);
 	lstShowPlan->setColumnWidth(0,80);
@@ -35,12 +46,40 @@ void frmSearch::init() {
 	sp_album = new QPixmap(path + "/images/sp_album.bmp");
 	last_item = NULL;
     cout << "Interface initialisation complete." << endl;
+	
+	cout << "Creating trigger on configuration settings..." << endl;
+    dbTrigger = new triggerThread(this, QString(conf->getDBConnectString()), 1, 5); 
+    dbTrigger->start();
+    cout << "Trigger active." << endl;
+
 }
 
 void frmSearch::destroy() {
     for (unsigned int i = 0; i < Playlist->size(); i++)
         delete Playlist->at(i);
     delete Playlist;
+}
+
+void frmSearch::customEvent(QCustomEvent *event) {
+    switch (event->type()) {
+    case 30000: {       // Configuration changed trigger
+            conf->requery();
+            cout << "Configuration data refreshed!" << endl;
+			if (conf->getParam("next_on_showplan") == "" && lstShowPlan->childCount() > 0) {
+				Playlist->erase(Playlist->begin());
+				delete lstShowPlan->firstChild();
+				if (Playlist->size() > 0) {
+					cout << "Notifying next track" << endl;
+					conf->setParam("next_on_showplan",Playlist->at(0)->md5());
+				}
+			}
+			break;
+        }
+	default: {
+            qWarning("Unknown event type: %d", event->type());
+            break;
+        }
+	}
 }
 
 void frmSearch::Library_Search() {
@@ -94,5 +133,8 @@ void frmSearch::PlaylistAdd(int row, int col, int button, const QPoint& mousepos
 	track_album->setPixmap(0, *sp_album );
 	track_title->setOpen(false);
 	last_item = track_title;
+	if (Playlist->size() == 1) {
+		conf->setParam("next_on_showplan",new_track->md5());
+	}
 }
 

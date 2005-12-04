@@ -16,12 +16,12 @@ LIBS_STD=-lpq /usr/lib/libpqxx.a -lreadline -lm -lpthread
 LIBS_QT= $(LIBS_STD) -L/usr/share/qt3/lib -L/usr/X11R6/lib -lqt-mt -lXext -lX11
 
 # Object files for each executable target
-SUEPLAY_OBJ=			components/config_reader.o \
+SUEPLAY_OBJ=			components/config.o \
 						components/audiochannel.o \
 						components/audiomixer.o \
 						components/audioplayer.o \
 						apps/sueplay.o
-SUESCHED_OBJ=			components/config_reader.o \
+SUESCHED_OBJ=			components/config.o \
 						components/sched_bin.o \
 						components/schedule.o \
 						components/scheduler.o \
@@ -29,7 +29,7 @@ SUESCHED_OBJ=			components/config_reader.o \
 STUDIO_PLAY_OBJ=		apps/studio_play/main.o \
 						apps/studio_play/frmPlayout.o \
 						.tmp/moc_frmPlayout.o \
-						components/config_reader.o \
+						components/config.o \
 						components/audioplayer.o \
 						components/audiomixer.o \
 						components/audiochannel.o \
@@ -39,7 +39,9 @@ STUDIO_PLAY_OBJ=		apps/studio_play/main.o \
 STUDIO_SEARCH_OBJ=		apps/studio_search/main.o \
 						components/libsearch.o \
 						components/track.o \
-						components/config_reader.o \
+						components/config.o \
+						components/triggerThread.o \
+						components/clockThread.o \
 						apps/studio_search/frmSearch.o \
 						.tmp/moc_frmSearch.o
 ADMIN_OBJ=				apps/admin/main.o \
@@ -48,7 +50,7 @@ ADMIN_OBJ=				apps/admin/main.o \
 						.tmp/moc_frmAdmin.o \
 						.tmp/moc_frmAdminEditNewInfo.o \
 						components/trackinfo.o \
-						components/config_reader.o
+						components/config.o
 						
 # Compilation commands
 COMPILE=		@echo Compiling $<; $(CC) $(STDFLAGS) -c $(STD_INCLUDE) -o $@ $<
@@ -117,8 +119,8 @@ components/audioplayer.o:		components/audioplayer.cpp \
 components/clockThread.o:		components/clockThread.cpp \
 								components/clockThread.h
 	$(QTCOMPILE)
-components/config_reader.o:		components/config_reader.cpp \
-								components/config_reader.h
+components/config.o:			components/config.cpp \
+								components/config.h
 	$(COMPILE)
 components/libsearch.o:			components/libsearch.cpp \
 								components/libsearch.h

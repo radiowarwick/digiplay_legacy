@@ -13,7 +13,7 @@ using namespace std;
 #include <sys/soundcard.h>
 #include <sys/ioctl.h>
 
-#include "config_reader.h"
+#include "config.h"
 #include "audiomixer.h"
 
 /** An \c audioplayer takes audio from an \c audiomixer and outputs it

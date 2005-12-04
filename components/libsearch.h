@@ -13,7 +13,7 @@ using namespace std;
 using namespace pqxx;
 
 #include "track.h"
-#include "config_reader.h"
+#include "config.h"
 
 class libsearch {
     public:

@@ -12,7 +12,7 @@
 #include "dirent.h"
 #include "sys/types.h"
 
-#include "config_reader.h"
+#include "config.h"
 #include "trackinfo.h"
 
 string DB_CONNECT;
@@ -23,32 +23,17 @@ vector<trackinfo*> *newTracks;
 vector<trackinfo*> *currentTracks;
 	
 void frmAdmin::init() {
-    config_reader *Conf = new config_reader("digiplay");
+    config *Conf = new config("digiplay");
 
-    if (Conf->isDefined("DB_HOST"))
-        DB_CONNECT += "hostaddr=" + Conf->getParam("DB_HOST") + " ";
-    if (Conf->isDefined("DB_NAME"))
-        DB_CONNECT += "dbname=" + Conf->getParam("DB_NAME") + " ";
-    if (Conf->isDefined("DB_USER"))
-        DB_CONNECT += "user=" + Conf->getParam("DB_USER") + " ";
-    if (Conf->isDefined("AUDIO_PATH"))
-        AUDIO_PATH = Conf->getParam("AUDIO_PATH");
-
-    if (AUDIO_PATH == "") {
-        cout << "FATAL: Missing or invalid AUDIO_PATH setting" << endl;
-        cout << "  -> Check /etc/digiplay is correct" << endl;
-        exit(-1);
-    }
+	C  = new Connection( Conf->getDBConnectString() );
+    Transaction T(*C,"");
+    Result R = T.exec("SELECT archives.mountstring AS path FROM archives");
+    cout << R[0]["path"].c_str() << endl;
+	AUDIO_PATH = R[0]["path"].c_str();
 	if (AUDIO_PATH.substr(AUDIO_PATH.size() - 2, 1) != "/") {
 		AUDIO_PATH += "/";
 	}
-    if (DB_CONNECT == "") {
-        cout << "FATAL: No database connection defined" << endl;
-        cout << "  -> Check /etc/digiplay defined database connection" << endl;
-        exit(-1);
-    }
-	cout << "Database: " << DB_CONNECT << endl;
-	C  = new Connection(DB_CONNECT);
+
 	newTracks = new vector<trackinfo*>;
 	currentTracks = new vector<trackinfo*>;
 }

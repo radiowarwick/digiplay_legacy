@@ -20,9 +20,11 @@ using namespace pqxx;
 #include "audiomixer.h"
 #include "audiochannel.h"
 
-#include "config_reader.h"
+#include "config.h"
 
 #define min(a,b) (((a)<(b))?(a):(b))
+
+config *Conf;
 
 int main(int argc, char *argv) {
 	system("clear");
@@ -33,26 +35,12 @@ int main(int argc, char *argv) {
 	string SQL_Item,SQL_Remove;
 	Result R;
 	
-    config_reader *Conf = new config_reader("digiplay");
 	cout << " -> Reading configuration file" << endl;
-    string DB_CONNECT = "";
-    if (Conf->isDefined("DB_HOST"))
-        DB_CONNECT += "hostaddr=" + Conf->getParam("DB_HOST") + " ";
-	if (Conf->isDefined("DB_NAME"))
-        DB_CONNECT += "dbname=" + Conf->getParam("DB_NAME") + " ";
-    if (Conf->isDefined("DB_USER"))
-        DB_CONNECT += "user=" + Conf->getParam("DB_USER") + " ";
-    if (DB_CONNECT == "") {
-        cout << "FATAL: No database connection defined" << endl;
-	    cout << "  -> Check /etc/digiplay defined database connection" << endl;
-        exit(-1);
-    }
-    delete Conf;
-	cout << DB_CONNECT << endl;	
+    Conf = new config("digiplay");
+	
 	cout << " -> Connecting to Database...";
-
 	//Connect to database and get the first item on schedule
-	Connection *C = new Connection( DB_CONNECT );
+	Connection *C = new Connection( Conf->getDBConnectString() );
 	Transaction *T = NULL;
 	SQL_Item = "SELECT archives.mountstring AS path, audio.md5 AS md5, audio.title AS title, audio.length_smpl AS length_smpl, sust_sched.id AS id, sust_sched.trim_start_smpl AS start, sust_sched.trim_end_smpl AS end, sust_sched.fade_in AS fade_in, sust_sched.fade_out AS fade_out FROM sust_sched, audio, archives WHERE sust_sched.audio = audio.id AND archives.id = audio.archive ORDER BY sust_sched.id LIMIT 1";
 	cout << "done." << endl << " -> Creating audio mixer..." << flush;
@@ -64,7 +52,7 @@ int main(int argc, char *argv) {
 	mixer->channel(0)->setVolume(0.0);
 	mixer->channel(1)->setVolume(0.0);
 	cout << "done." << endl;
-	audioplayer *P = new audioplayer("CHANNEL1");
+	audioplayer *P = new audioplayer("channel_1");
 	P->attachMixer(mixer);
 
 	string md5, path;
@@ -112,6 +100,7 @@ int main(int argc, char *argv) {
 					<< R[0]["title"].c_str() << endl;
 			// Try and load the track
 			mixer->channel(active)->load( path + md5, start, end );
+			sleep(1);
 		} while (!mixer->channel(active)->isLoaded());
 		
 		if (R.size() == 0) break;
@@ -146,5 +135,5 @@ int main(int argc, char *argv) {
 	}
 	delete P;
 	delete mixer;
-	
+	delete Conf;
 }

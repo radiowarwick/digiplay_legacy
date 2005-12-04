@@ -10,8 +10,6 @@
 #include "pthread.h"
 using namespace std;
 
-#include "config_reader.h"
-
 #define CACHE_SIZE 1764000
 
 class audiochannel;
@@ -68,6 +66,12 @@ class audiochannel {
 			/// Seeks to the required sample in the audio file
 			void seek(long position);
 
+			/// Adds a callback function for feedback of channel sample
+			void addCounter(void (*f_setCounter)(long,void*),void *obj);
+
+			/// If true, automatically reloads track when playback ends
+			void autoReload(bool reload) {auto_reload = reload;}
+
 			/// Gets audio from the cache
 			short getAudio(char* buffer, unsigned long bytes);
 
@@ -107,13 +111,18 @@ class audiochannel {
 			pthread_t *Thread_Cache;
 			bool mode_play;
 			bool mode_cache;
+			bool auto_reload;
 
+			string f_name;
 			ifstream *f_handle;
 			long f_start_byte;
 			long f_end_byte;
 			long f_length_byte;
 			long f_pos_byte;
 			long packet_size;
+
+			void (*f_counters)(long,void*);
+			void *f_obj;
 
 			vector<fadeSpecification*>* fades;
 			vector<triggerSpecification*>* trigs;

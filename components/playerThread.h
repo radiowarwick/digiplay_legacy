@@ -30,8 +30,8 @@ public:
 	void do_pause();
 	void do_resume();
 	void do_seek(long position);
-	void do_updateCounter(int ms);
-	static void callback_counter(long ms, void *obj);
+	void do_updateCounter(int smpl);
+	static void callback_counter(long smpl, void *obj);
 	
 private:
 	QWidget *receiver;

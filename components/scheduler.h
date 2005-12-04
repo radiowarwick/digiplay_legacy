@@ -14,7 +14,7 @@ using namespace std;
 using namespace pqxx;
 
 #include "schedule.h"
-#include "config_reader.h"
+#include "config.h"
 
 #define BIN1_SQL "SELECT audio.id,audio.md5,audio.length_smpl,audio.start_smpl,audio.end_smpl,audio.intro_smpl,audio.extro_smpl,audio.title,artists.name AS artist FROM audio,artists,audioartists WHERE audioartists.audio=audio.id AND audioartists.artist=artists.id AND sustainer='t' AND type=0 ORDER BY audio.title"
 

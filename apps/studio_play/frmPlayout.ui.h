@@ -19,15 +19,16 @@ using namespace pqxx;
 #include "playerThread.h"
 #include "triggerThread.h"
 #include "track.h"
+#include "config.h"
 
-//Connection *C = new Connection("hostaddr=192.168.1.1 dbname=digiplay user=digiplay_user");
-//Transaction *T = new Transaction(*C,"");
 QString path;
 QPixmap *pixPlay, *pixPause, *pixStop, *pixSeekback, *pixSeekforward, *pixReset;
 playerThread *player1;
 playerThread *player2;
 playerThread *player3;
 triggerThread *dbTrigger;
+Connection *C;
+config *conf;
 
 void frmPlayout::init() {
 	path = qApp->applicationDirPath();
@@ -54,33 +55,39 @@ void frmPlayout::init() {
 	btnReset1->setPixmap(*pixReset);
 	btnReset2->setPixmap(*pixReset);
 	btnReset3->setPixmap(*pixReset);
-	btnStnCWallPrev->setPixmap(*pixSeekback);
-	btnStnCWallNext->setPixmap(*pixSeekforward);
-	btnUsrCWallPrev->setPixmap(*pixSeekback);
-	btnUsrCWallNext->setPixmap(*pixSeekforward);
+	btnSCartPrev->setPixmap(*pixSeekback);
+	btnSCartNext->setPixmap(*pixSeekforward);
+	btnUCartPrev->setPixmap(*pixSeekback);
+	btnUCartNext->setPixmap(*pixSeekforward);
 	
+	cout << "Connecting to database..." << endl;
+	conf = new config("digiplay");
+    QCustomEvent *config_refresh = new QCustomEvent(30000);
+    QApplication::postEvent(this, config_refresh);
+	C = new Connection(conf->getDBConnectString());
+	cout << " -> Connected." << endl;
 	
-	cout << "Initialising Digital Playout Interface..." << endl;
+	cout << "Initialising Digital Playout Hardware..." << endl;
 	player1 = new playerThread(this, 1);
+	player2 = new playerThread(this, 2);	
+	player3 = new playerThread(this, 3);
 	player1->start();
 	usleep(100000);
-	player2 = new playerThread(this, 2);
 	player2->start();
 	usleep(100000);
-	player3 = new playerThread(this, 3);
 	player3->start();
-	usleep(100000);
-	cout << "Interface initialisation complete." << endl;
+	usleep(500000);
+	cout << " -> Hardware initialisation complete." << endl;
 	
 	cout << "Creating trigger on configuration settings..." << endl;
-	QString dbconnect = "hostaddr=192.168.1.1 dbname=digiplay user=digiplay_user";
-	dbTrigger = new triggerThread(this, dbconnect, 1, 5);
+	dbTrigger = new triggerThread(this, QString(conf->getDBConnectString()), 1, 5);
+	cout << " -> Created trigger thread" << endl;
 	dbTrigger->start();
-	cout << "Trigger active." << endl;
+	cout << " -> Trigger active." << endl;
 }
 
 void frmPlayout::destroy() {
-	
+	delete conf;
 }
 
 // START Events ======================================================
@@ -143,7 +150,22 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 	case 20033: {       // Player2 Stop Event
 			btnPlay3->setPixmap(*pixPlay);
 			break;
-		}   
+		}
+	case 30000: {
+			conf->requery();
+			cout << "Configuration data refreshed!" << endl;
+			if (conf->getParam("next_on_showplan") == "") {
+				btnLoadPlaylist1->setEnabled(false);
+				btnLoadPlaylist2->setEnabled(false);
+				btnLoadPlaylist3->setEnabled(false);
+			}
+			else {
+				btnLoadPlaylist1->setEnabled(true);
+				btnLoadPlaylist2->setEnabled(true);
+				btnLoadPlaylist3->setEnabled(true);
+			}
+			break;
+		}
 	default: {
 			qWarning("Unknown event type: %d", event->type());
 			break;
@@ -152,9 +174,25 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 }
 
 void frmPlayout::Player1_Load() {
-	player1->do_load(new QString("/mnt/dps0-0/audio/0/0330d8d87712848bc2f4e40e72abb06d"), 6927,10230667);
-	lblTitle1->setText("My first title");
-	lblArtist1->setText("My first artist");
+	if (conf->getParam("next_on_showplan") == "") {
+		return;
+	}
+	Transaction *T = new Transaction(*C,"");
+	string SQL = "SELECT audio.md5 AS md5, audio.title AS title, artists.name as artist, "
+				 "audio.intro_smpl as start, audio.extro_smpl as end, "
+				 "archives.mountstring AS path "
+				 "FROM audio,artists,audioartists,archives "
+				 "WHERE audio.archive=archives.id AND audioartists.audio=audio.id "
+				 "AND audioartists.artist = artists.id AND audio.md5='" 
+				 + conf->getParam("next_on_showplan") + "'";
+	Result R = T->exec(SQL);
+	delete T;
+	string f = R[0]["path"].c_str() + string("/") + (string(R[0]["md5"].c_str())).substr(0,1)
+			   + string("/") + R[0]["md5"].c_str();
+	player1->do_load(new QString(f), atoi(R[0]["start"].c_str()),atoi(R[0]["end"].c_str()));
+	conf->setParam("next_on_showplan","");
+	lblTitle1->setText(R[0]["title"].c_str());
+	lblArtist1->setText(R[0]["artist"].c_str());
 	btnPlay1->setEnabled(true);
 	btnStop1->setEnabled(true);
 	btnSeekBack1->setEnabled(true);
@@ -163,6 +201,7 @@ void frmPlayout::Player1_Load() {
 }   
 
 void frmPlayout::Player1_Play() {
+	cout << "State: " << player1->getState() << endl;
 	switch (player1->getState()) {
 	case STATE_STOP:
 		player1->do_play();
@@ -185,9 +224,24 @@ void frmPlayout::Player1_Stop() {
 }
 
 void frmPlayout::Player2_Load() {
-	player2->do_load(new QString("/mnt/dps0-0/audio/0/0330d8d87712848bc2f4e40e72abb06d"), 6927,10230667);
-	lblTitle2->setText("My first title");
-	lblArtist2->setText("My first artist");
+	if (conf->getParam("next_on_showplan") == "") {
+		return;
+	}
+	Transaction *T = new Transaction(*C,"");
+	string SQL = "SELECT audio.md5 AS md5, audio.title AS title, artists.name as artist, "
+				 "archives.mountstring AS path "
+				 "FROM audio,artists,audioartists,archives "
+				 "WHERE audio.archive=archives.id AND audioartists.audio=audio.id "
+				 "AND audioartists.artist = artists.id AND audio.md5='" 
+				 + conf->getParam("next_on_showplan") + "'";
+	Result R = T->exec(SQL);
+	delete T;
+	string f = R[0]["path"].c_str() + string("/") + (string(R[0]["md5"].c_str())).substr(0,1)
+			   + string("/") + R[0]["md5"].c_str();
+	player2->do_load(new QString(f), 6927,10230667);
+	conf->setParam("next_on_showplan","");
+	lblTitle2->setText(R[0]["title"].c_str());
+	lblArtist2->setText(R[0]["artist"].c_str());
 	btnPlay2->setEnabled(true);
 	btnStop2->setEnabled(true);
 	btnSeekBack2->setEnabled(true);
@@ -219,9 +273,24 @@ void frmPlayout::Player2_Stop() {
 }
 
 void frmPlayout::Player3_Load() {
-	player3->do_load(new QString("/mnt/dps0-0/audio/0/0330d8d87712848bc2f4e40e72abb06d"), 6927,10230667);
-	lblTitle3->setText("My first title");
-	lblArtist3->setText("My first artist");
+	if (conf->getParam("next_on_showplan") == "") {
+		return;
+	}
+	Transaction *T = new Transaction(*C,"");
+	string SQL = "SELECT audio.md5 AS md5, audio.title AS title, artists.name as artist, "
+				 "archives.mountstring AS path "
+				 "FROM audio,artists,audioartists,archives "
+				 "WHERE audio.archive=archives.id AND audioartists.audio=audio.id "
+				 "AND audioartists.artist = artists.id AND audio.md5='" 
+				 + conf->getParam("next_on_showplan") + "'";
+	Result R = T->exec(SQL);
+	delete T;
+	string f = R[0]["path"].c_str() + string("/") + (string(R[0]["md5"].c_str())).substr(0,1)
+			   + string("/") + R[0]["md5"].c_str();
+	player3->do_load(new QString(f), 6927,10230667);
+	conf->setParam("next_on_showplan","");
+	lblTitle3->setText(R[0]["title"].c_str());
+	lblArtist3->setText(R[0]["artist"].c_str());
 	btnPlay3->setEnabled(true);
 	btnStop3->setEnabled(true);
 	btnSeekBack3->setEnabled(true);
@@ -252,3 +321,39 @@ void frmPlayout::Player3_Stop() {
 	btnPlay3->setEnabled(true);
 }
 
+
+
+void frmPlayout::Player1_Time() {
+    if (lblPlayerTime1->text() == "REMAIN") {
+        lblPlayerTime1->setText("ELAPSED");
+        player1->setTimeMode(TIME_MODE_ELAPSED);
+    }
+    else {
+        lblPlayerTime1->setText("REMAIN");
+        player1->setTimeMode(TIME_MODE_REMAIN);
+    }	
+}
+
+
+void frmPlayout::Player2_Time(){
+    if (lblPlayerTime2->text() == "REMAIN") {
+        lblPlayerTime2->setText("ELAPSED");
+        player2->setTimeMode(TIME_MODE_ELAPSED);
+    }
+    else {
+        lblPlayerTime2->setText("REMAIN");
+        player2->setTimeMode(TIME_MODE_REMAIN);
+    }	
+}
+
+
+void frmPlayout::Player3_Time() {
+    if (lblPlayerTime3->text() == "REMAIN") {
+        lblPlayerTime3->setText("ELAPSED");
+        player3->setTimeMode(TIME_MODE_ELAPSED);
+    }
+    else {
+        lblPlayerTime3->setText("REMAIN");
+        player3->setTimeMode(TIME_MODE_REMAIN);
+    }	
+}

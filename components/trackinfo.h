@@ -20,8 +20,6 @@ using namespace std;
 #include "pqxx/result.h"
 using namespace pqxx;
 
-#include "config_reader.h"
-
 class trackinfo {
 	public:
 		trackinfo(Connection *newC, string md5);

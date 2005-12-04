@@ -8,22 +8,8 @@
  */
 scheduler::scheduler() {
 	// Read configuration from the /etc/digiplay config file
-	config_reader *Conf = new config_reader("digiplay");
-    string DB_CONNECT = "";
-    if (Conf->isDefined("DB_HOST"))
-        DB_CONNECT += "hostaddr=" + Conf->getParam("DB_HOST") + " ";
-    if (Conf->isDefined("DB_NAME"))
-        DB_CONNECT += "dbname=" + Conf->getParam("DB_NAME") + " ";
-    if (Conf->isDefined("DB_USER"))
-        DB_CONNECT += "user=" + Conf->getParam("DB_USER") + " ";
-	if (DB_CONNECT == "") {
-        cout << "FATAL: No database connection defined" << endl;
-        cout << "  -> Check /etc/digiplay defined database connection" << endl;
-        exit(-1);
-	}
-    delete Conf;
-
-    C = new Connection( DB_CONNECT );
+	config *Conf = new config("digiplay");
+    C = new Connection( Conf->getDBConnectString() );
 	T = new Transaction( *C, "");
 	S = new schedule( T );
 }

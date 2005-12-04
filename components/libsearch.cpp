@@ -3,26 +3,10 @@
 libsearch::libsearch() {
  
     /* Read in configuration for database connection */
-    config_reader *conf = new config_reader("digiplay");
-
-    string DB_CONNECT = "";
-    if (conf->isDefined("DB_HOST"))
-        DB_CONNECT += "hostaddr=" + conf->getParam("DB_HOST") + " ";
-    if (conf->isDefined("DB_NAME"))
-        DB_CONNECT += "dbname=" + conf->getParam("DB_NAME") + " ";
-    if (conf->isDefined("DB_USER"))
-        DB_CONNECT += "user=" + conf->getParam("DB_USER") + " ";
-
-    if (DB_CONNECT == "") {
-      cout << "FATAL: No database connection defined" << endl;
-      cout << "  -> Check /etc/digiplay defined database connection" << endl;
-      exit(-1);
-    }
-
-    delete conf;
+    config *conf = new config("digiplay");
 
     /* Create the new connection */
-    C = new Connection( DB_CONNECT );
+    C = new Connection( conf->getDBConnectString() );
 }
 
 libsearch::~libsearch() {

@@ -11,14 +11,18 @@ audiochannel::audiochannel() {
     Cache_Read = Cache_Start;
     Cache_Write = Cache_Start;
     Cache_Free = CACHE_SIZE;
+
 	f_pos_byte = 0;
+	f_start_byte = 0;
+	f_end_byte = 0;
+	f_length_byte = 0;
 	
 	// create the file stream object for reading audio files
 	f_handle = new ifstream();
 
 	// create the pthread object for multithreading the caching of audio
 	Thread_Cache = new pthread_t;
-
+	
 	// allocate memory for the audio output buffer - getAudio()
     audio_buffer = new char[256];
 
@@ -26,6 +30,12 @@ audiochannel::audiochannel() {
 	// false => zero magnitude samples are output in getAudio()
 	// true  => samples from the audio buffer are output
 	mode_play = false;
+
+	// Initialise default values
+	// By default, channel is used as a "play-once" type so don't auto-reload
+	auto_reload = false;
+	f_counters = NULL;
+	f_obj = NULL;
 
 	fades = new vector<fadeSpecification*>;
 	trigs = new vector<triggerSpecification*>;
@@ -48,7 +58,16 @@ audiochannel::~audiochannel() {
  * @param end_smpl the last sample to playback.
 */
 void audiochannel::load(string filename, long start_smpl, long end_smpl) {
+	if (filename == "") return;
+	f_name = filename;
+	
+	// If we're currently playing, we need to stop and set counter to zero
 	mode_play = false;
+	mode_cache = false;
+
+	if (f_counters) f_counters(0,f_obj);
+
+	// Delete any fades and triggers that might be still around
 	for (unsigned short i = 0; i < fades->size(); i++) {
 		delete fades->at(i);
 		fades->erase(fades->begin() + i);
@@ -58,23 +77,31 @@ void audiochannel::load(string filename, long start_smpl, long end_smpl) {
 		delete trigs->at(i);
 		trigs->erase(trigs->begin() + i);
 	}
-	
+
+	// Reset file stream, and load new file
 	f_handle->close();
 	f_handle->clear();
 	f_handle->open(filename.c_str(), ios::in|ios::binary);
 	f_handle->seekg(0,ios::end);
 	
+	// Set file position pointers
 	f_length_byte = f_handle->tellg();
     f_start_byte = start_smpl * 4;
     f_end_byte = end_smpl * 4;
     f_pos_byte = f_start_byte;
-    int ret_cache_thread = pthread_create(Thread_Cache, NULL,
+
+    // Reset cache
+    Cache_Read = Cache_Start;
+    Cache_Write = Cache_Start;
+    Cache_Free = CACHE_SIZE;
+
+	// Begin new caching thread
+	int ret_cache_thread = pthread_create(Thread_Cache, NULL,
                         thread_cache, (void*)this);
     if (ret_cache_thread != 0) {
         cout << "Error creating thread" << endl;
         return;
     }
-	sleep(1);
 }
 
 /** Returns true if the channel has an audio track loaded and is good
@@ -107,20 +134,22 @@ void audiochannel::pause() {
 void audiochannel::resume() {
 	mode_play = true;
 }
+
 /** The audio file is no longer output. All counters are reset.
  */
 void audiochannel::stop() {
 	// Stop playback - don't set mode_cache = false as this would end caching
 	mode_play = false;
 
-	// Reset file and position to start of playback region
-	f_pos_byte = f_start_byte;
-	f_handle->seekg(f_pos_byte, ios::beg);
-
-	// Reset cache
-	Cache_Read = Cache_Start;
-	Cache_Write = Cache_Start;
-	Cache_Free = CACHE_SIZE;
+	// If auto reload is enabled (cd player type application)
+	// then reload the track at the start.
+	if (auto_reload) {	
+		// Reset file and position to start of playback region
+		if (f_counters) f_counters((f_pos_byte-f_start_byte)/4,f_obj);
+	
+		// Reload track
+		load(f_name,f_start_byte,f_end_byte);
+	}
 }
 
 /** Commences reading the audio file at a different position in the file,
@@ -134,6 +163,15 @@ void audiochannel::seek(long position) {
 	Cache_Free = CACHE_SIZE;
 }
 
+/** addCounter
+ * @param f_setCounter Pointer to static function for callback
+ */
+void audiochannel::addCounter(void (*f_setCounter)(long,void*),void *obj) {
+	f_counters = f_setCounter;
+	f_obj = obj;
+	if (f_counters) f_counters((f_pos_byte-f_start_byte)/4,f_obj);
+}
+
 /** Fills a user defined buffer with a user specified number of audio bytes
  * @param buffer Pointer to a user-allocated buffer
  * @param bytes The number of bytes to put into the buffer
@@ -143,8 +181,8 @@ short audiochannel::getAudio(char* buffer, unsigned long bytes) {
     char *ptr = buffer;
 	short count = 0;
     for (unsigned long i = 0; i < bytes; i++) {
-		if (Cache_Free == CACHE_SIZE) {
-			mode_play = false;
+		if (mode_play && CACHE_SIZE - Cache_Free < 1024) {
+			stop();
 		}
     	if (!mode_play) {
 			*ptr = 0;
@@ -160,6 +198,10 @@ short audiochannel::getAudio(char* buffer, unsigned long bytes) {
         if (Cache_Read > Cache_End)
             Cache_Read = Cache_Start; 
     }
+	if (mode_play && f_counters)
+		if ((f_pos_byte - (f_pos_byte % 64)) % 8192 == 0) 
+			f_counters((f_pos_byte-f_start_byte)/4,f_obj);
+
 	return count;
 }
 
@@ -255,9 +297,10 @@ void audiochannel::trigger(unsigned long smpl) {
  * current file is complete.
  */
 void audiochannel::notify() {
-	while (Cache_Free < CACHE_SIZE)
+//	while (Cache_Free < CACHE_SIZE)
+	while (mode_play)
 		usleep(10000);
-	mode_play = false;
+//	mode_play = false;
 }
 
 /** Sleeps (blocks execution of the calling thread) until caching of the
@@ -290,13 +333,14 @@ void audiochannel::cache() {
             if (read_bytes == 0) break;
         }
         else read_bytes = 256;
-
+		
+		
         //Read from file into a 256byte buffer and get length read
         f_handle->read(audio_buffer,read_bytes);
         read_bytes = f_handle->gcount();
 
         //Check we actually read from file
-        if (read_bytes == 0) {
+        if (read_bytes == 0 && mode_cache) {
             cout << "ERROR: Unable to read from file or unexpected end" << endl;
             break; //File messed up, continue onto next track...
         }
@@ -311,6 +355,7 @@ void audiochannel::cache() {
             if (Cache_Write > Cache_End) // circular cache
                 Cache_Write = Cache_Start;
         }
+
     }
     mode_cache = false;
 }

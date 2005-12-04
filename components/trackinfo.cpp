@@ -1,21 +1,17 @@
 #include "trackinfo.h"
 
 trackinfo::trackinfo(Connection *newC, string md5) {
-    config_reader *Conf = new config_reader("digiplay");
-    
-	if (Conf->isDefined("AUDIO_PATH"))
-        AUDIO_PATH = Conf->getParam("AUDIO_PATH");
+	C = newC;
+	Transaction T(*C,"");
+	Result R = T.exec("SELECT archives.mountstring AS path FROM audio, archives "
+			"WHERE audio.archive = archives.id AND audio.md5='" + md5 + "'");
+	cout << R[0]["path"].c_str() << endl;
 	
-    if (AUDIO_PATH == "") {
-        cout << "FATAL: Missing or invalid AUDIO_PATH setting" << endl;
-        cout << "  -> Check /etc/digiplay is correct" << endl;
-        exit(-1);
-	}
+	AUDIO_PATH = R[0]["path"].c_str();
 	if (AUDIO_PATH.substr(AUDIO_PATH.size() - 2, 1) != "/")
 		AUDIO_PATH += "/";
 	AUDIO_PATH += md5.substr(0,1);
 
-	C = newC;
 	strMD5 = md5;
 	strTitle = NULL;
 	strArtist = NULL;

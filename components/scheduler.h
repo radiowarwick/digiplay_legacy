@@ -26,7 +26,7 @@ using namespace pqxx;
 
 #define BIN5_SQL "SELECT audio.id,audio.md5,audio.length_smpl,audio.start_smpl,audio.end_smpl,audio.intro_smpl,audio.extro_smpl,audio.title,artists.name AS artist FROM audio,artists,audioartists WHERE audioartists.audio=audio.id AND audioartists.artist=artists.id AND sustainer='t' AND type=0 ORDER BY audio.title"
 
-#define BIN6_SQL "SELECT audio.id,audio.md5,audio.length_smpl,audio.start_smpl,audio.end_smpl,audio.intro_smpl,audio.extro_smpl,audio.title FROM audio,jinglepackage,jingletypes WHERE jinglepackage.id=audio.jingle_package AND audio.jingle_type=0 AND jinglepackage.enabled='t' AND sustainer='t' AND type=1 ORDER BY audio.title"
+#define BIN6_SQL "SELECT audio.id,audio.md5,audio.length_smpl,audio.start_smpl,audio.end_smpl,audio.intro_smpl,audio.extro_smpl,audio.title FROM audio,audiojinglepkgs,jinglepkgs,jingletypes WHERE audiojinglepkgs.jinglepkg=jinglepkgs.id AND audiojinglepkgs.audio=audio.id AND audio.jingle_type=0 AND jinglepkgs.enabled='t' AND sustainer='t' AND type=1 ORDER BY audio.title"
 
 #define BIN7_SQL "SELECT audio.id,audio.md5,audio.length_smpl,audio.start_smpl,audio.end_smpl,audio.intro_smpl,audio.extro_smpl,audio.title FROM audio WHERE sustainer='t' AND type=2 ORDER BY audio.title"
 

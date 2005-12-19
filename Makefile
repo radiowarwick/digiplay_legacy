@@ -47,9 +47,12 @@ STUDIO_SEARCH_OBJ=		apps/studio_search/main.o \
 ADMIN_OBJ=				apps/admin/main.o \
 						apps/admin/frmAdmin.o \
 						apps/admin/frmAdminEditNewInfo.o \
+						apps/admin/frmAdminAddMusic.o \
 						.tmp/moc_frmAdmin.o \
 						.tmp/moc_frmAdminEditNewInfo.o \
-						components/trackinfo.o \
+						.tmp/moc_frmAdminAddMusic.o \
+						components/systemmanager.o \
+						components/archivemanager.o \
 						components/config.o
 						
 # Compilation commands
@@ -107,6 +110,9 @@ sue_bak:
 	@echo Saved to ~/sust_playlist.bak
 
 # Module targets
+components/archivemanager.o:	components/archivemanager.cpp \
+								components/archivemanager.h
+	$(COMPILE)
 components/audiochannel.o:		components/audiochannel.cpp \
 								components/audiochannel.h
 	$(COMPILE)								
@@ -140,6 +146,9 @@ components/scheduler.o:			components/scheduler.cpp \
 components/studioTrigger.o:		components/studioTrigger.cpp \
 								components/studioTrigger.h
 	$(COMPILE)
+components/systemmanager.o:		components/systemmanager.cpp \
+								components/systemmanager.h
+	$(COMPILE)
 components/track.o:				components/track.cpp \
 								components/track.h
 	$(COMPILE)
@@ -156,7 +165,8 @@ apps/suesched.o:				apps/suesched.cpp
 ###### ADMIN APPLICATION
 apps/admin/main.o:          apps/admin/main.cpp \
                             .tmp/frmAdmin.h \
-                            .tmp/frmAdminEditNewInfo.h
+                            .tmp/frmAdminEditNewInfo.h \
+							.tmp/frmAdminAddMusic.h
 	$(QTCOMPILE)
 
 # frmAdmin
@@ -191,6 +201,22 @@ apps/admin/frmAdminEditNewInfo.o:    .tmp/frmAdminEditNewInfo.cpp \
 	$(UIC) apps/admin/frmAdminEditNewInfo.ui -i frmAdminEditNewInfo.h -o $@
 .tmp/moc_frmAdminEditNewInfo.cpp:	.tmp/frmAdminEditNewInfo.h
 	$(MOC) .tmp/frmAdminEditNewInfo.h -o $@
+
+# frmAdminAddMusic
+apps/admin/frmAdminAddMusic.o:	.tmp/frmAdminAddMusic.cpp \
+							apps/admin/frmAdminAddMusic.ui.h \
+							.tmp/frmAdminAddMusic.h
+	$(QTCOMPILE)
+.tmp/moc_frmAdminAddMusic.o:	.tmp/moc_frmAdminAddMusic.cpp \
+							.tmp/frmAdminAddMusic.h
+	$(QTCOMPILE)
+.tmp/frmAdminAddMusic.h:	apps/admin/frmAdminAddMusic.ui
+	$(UIC) $< -o $@
+.tmp/frmAdminAddMusic.cpp:	.tmp/frmAdminAddMusic.h \
+							apps/admin/frmAdminAddMusic.ui
+	$(UIC) apps/admin/frmAdminAddMusic.ui -i frmAdminAddMusic.h -o $@
+.tmp/moc_frmAdminAddMusic.cpp:	.tmp/frmAdminAddMusic.h
+	$(MOC) .tmp/frmAdminAddMusic.h -o $@
 	
 ###### STUDIO PLAY APPLICATION
 apps/studio_play/main.o:	apps/studio_play/main.cpp \

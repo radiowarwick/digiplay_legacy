@@ -9,164 +9,126 @@
 ** These will automatically be called by the form's constructor and
 ** destructor.
 *****************************************************************************/
-#include "dirent.h"
-#include "sys/types.h"
+#include <iostream>
+using namespace std;
 
-#include "config.h"
-#include "trackinfo.h"
-
-string DB_CONNECT;
-string AUDIO_PATH;	
-
-Connection *C;
-vector<trackinfo*> *newTracks;
-vector<trackinfo*> *currentTracks;
-	
 void frmAdmin::init() {
-    config *Conf = new config("digiplay");
+	Sys = new systemmanager();
+	DisplayArchives();
+}
 
-	C  = new Connection( Conf->getDBConnectString() );
-    Transaction T(*C,"");
-    Result R = T.exec("SELECT archives.mountstring AS path FROM archives");
-    cout << R[0]["path"].c_str() << endl;
-	AUDIO_PATH = R[0]["path"].c_str();
-	if (AUDIO_PATH.substr(AUDIO_PATH.size() - 2, 1) != "/") {
-		AUDIO_PATH += "/";
+
+void frmAdmin::destroy() {
+	
+}
+
+/*
+ * Adds an Archive to the database
+ */
+void frmAdmin::ArchiveAdd() {
+	if (txtArchiveNewName->text() == "" || txtArchiveNewLocalPath->text() == "" || txtArchiveNewRemotePath->text() == "") {
+		QMessageBox::warning(this,"DPS Administration",
+							 "Please fill in all the fields!");
+		return;
 	}
-
-	newTracks = new vector<trackinfo*>;
-	currentTracks = new vector<trackinfo*>;
+	if (Sys->atArchive(txtArchiveNewName->text())) {
+		QMessageBox::critical(this, "DPS Administration",
+							  "An Archive with this name already exists");
+		return;
+	}
+	Sys->addArchive(txtArchiveNewName->text().ascii(),
+					txtArchiveNewLocalPath->text().ascii(),
+					txtArchiveNewRemotePath->text().ascii());
+	DisplayArchives();
+	txtArchiveNewName->setText("");
+	txtArchiveNewLocalPath->setText("");
+	txtArchiveNewRemotePath->setText("");
 }
 
-void frmAdmin::helpIndex()
-{
-
+/*
+ * Drops an archive entry from the database
+ */
+void frmAdmin::ArchiveDrop() {
+	Sys->dropArchive(tblArchives->currentRow());
+	DisplayArchives();
 }
 
-
-void frmAdmin::helpContents()
-{
-
+/*
+ * Refreshes the list of archives on the screen
+ */
+void frmAdmin::DisplayArchives() {
+	archive A;
+	tblArchives->setNumRows(Sys->sizeArchive());
+	for (short i = 0; i < Sys->sizeArchive(); i++) {
+		A = Sys->atArchive(i)->spec();
+		tblArchives->setText(i,0,A.name);
+		tblArchives->setText(i,1,A.localPath);
+		tblArchives->setText(i,2,A.remotePath);
+	}
+	for (short i = 0; i < 3; i++) tblArchives->adjustColumn(i);
 }
 
-
-void frmAdmin::helpAbout()
-{
-
+/* ============================
+ * MUSIC LIBRARY ROUTINES
+ * ============================*/
+/*
+ * Loads the archive managers for each archive in the system
+ */
+void frmAdmin::MusicLoad() {
+	btnMusicLoad->setEnabled(false);
+	lblStatus->setText("Loading audio data...");
+	lblStatus->repaint();
+	for (unsigned short i = 0; i < Sys->sizeArchive(); i++) {
+		Sys->atArchive(i)->load();
+	}
+	DisplayMusic();
+	lstMusicDB->setEnabled(true);
+	btnMusicAdd->setEnabled(true);
+	lblStatus->setText("Ready.");
 }
 
-
-void frmAdmin::ScanTracks()
-{
-	DIR *dirp;
-	struct dirent *dp;
-	string filename, path;
-	trackinfo *newTrack;
-	unsigned int subdir;
-	
-	cout << "Scanning info files..." << endl;
-	txtStatusBar->setText("Scanning audio archives...this may take several minutes...please wait...");
-	txtStatusBar->repaint(true);
-	for (unsigned short i = 48; i < 64; i++) {
-		if (i < 58) subdir = i;
-		else subdir = i + 39;
-	
-		path = AUDIO_PATH + (char)subdir;
-		cout << "Scanning: " << path << endl;
-		dirp = opendir(path.c_str());
-		while (dirp) {
-			if ((dp = readdir(dirp)) != NULL) {
-				filename = dp->d_name;
-				if (filename.length() > 5) {
-					if (filename.substr(filename.length() - 5, 5) == ".info") {
-						newTrack = new trackinfo(C, 
-										filename.substr(filename.length() - 37,
-										filename.length() - 5
-										));
-						if (!newTrack->hasAudio()) {
-							delete newTrack;
-							continue;
-						}
-						newTrack->readFromFile();
-						newTrack->clean();
-						if (newTrack->inDB()) {
-							currentTracks->push_back(newTrack);
-						}
-						else {
-							newTracks->push_back(newTrack);
-						}
-					}
-				}
-			}
-			else {
-				closedir(dirp);
-				break;
-			}
+void frmAdmin::MusicAdd() {
+	lblStatus->setText("Examining inbox. Please wait...");
+	lblStatus->repaint();
+	frmAdminAddMusic *F = new frmAdminAddMusic(this);
+	F->setSystemManager(Sys);
+	archivemanager *A;
+	track t;
+	for (unsigned short i = 0; i < Sys->sizeArchive(); i++) {
+		A = Sys->atArchive(i);
+		for (unsigned long j = 0; j < A->size(DPS_INBOX); j++) {
+			t = A->at(DPS_INBOX,j);
+			QCheckListItem *new_track = new QCheckListItem(F->lstInbox,
+														   t.title + " (" + t.artist + ")",
+														   QCheckListItem::CheckBox);
+			new_track->setOn(true);
 		}
 	}
-	cout << "done." << endl;
-	UpdateLists();
-	stringstream status;
-	status << "Ready. " << newTracks->size() << " tracks to be imported.";
-	txtStatusBar->setText(status.str());
+	F->lstInbox->adjustColumn(0);
+	lblStatus->setText("");
+	F->exec();
+	DisplayMusic();
+	lblStatus->setText("Ready.");
 }
 
 
-void frmAdmin::AddTracks() {
-	stringstream status;
-	txtStatusBar->setText("Adding new tracks to database...");
-	txtStatusBar->repaint(true);
-	unsigned int number_of_tracks = newTracks->size();
-	for (unsigned int i = 0; i < number_of_tracks; i++) {
-		status.str("");
-		status << "Importing track " << i << ".         " << number_of_tracks << "." << endl;
-		txtStatusBar->setText(status.str());
-		txtStatusBar->repaint(true);
-		newTracks->at(0)->audio_trim();
-		newTracks->at(0)->saveToDB();
-		currentTracks->push_back(newTracks->at(0));
-		newTracks->erase(newTracks->begin());
+void frmAdmin::DisplayMusic() {
+	archivemanager *A;
+	track t;
+	lstMusicDB->clear();
+	for (unsigned short i = 0; i < Sys->sizeArchive(); i++) {
+		A = Sys->atArchive(i);
+		for (unsigned long j = 0; j < A->size(DPS_DB); j++) {
+			t = A->at(DPS_DB,j);
+			QListViewItem new_track = new QListViewItem(lstMusicDB,
+														t.title,
+														t.artist);
+		}
 	}
-	UpdateLists();
-	txtStatusBar->setText("Ready.");
 }
 
 
-
-void frmAdmin::UpdateLists() {
-	cout << "Updating display..." << flush;
-	txtStatusBar->setText("Updating Display...");
-	txtStatusBar->repaint(true);
-	QString title;
-	QString artist;
-	lstManageNew->clear();
-	lstManageCurrent->clear();
-	for (unsigned int i = 0; i < newTracks->size(); i++) {
-		title = newTracks->at(i)->title();
-		artist = newTracks->at(i)->artist();
-		lstManageNew->insertItem(title + " (" + artist + ")", -1);
-	}
-	for (unsigned int i = 0; i < currentTracks->size(); i++) {
-		title = currentTracks->at(i)->title();
-		artist = currentTracks->at(i)->artist();
-		lstManageCurrent->insertItem(title + " (" + artist + ")", -1);
-	}
-	cout << "done." << endl;
-}
-
-
-void frmAdmin::test()
-{
-	lstSustDirectory->addColumn( "Item" );
-	lstSustDirectory->addColumn( "Description" );
-	QPixmap folder = QPixmap("./dir_folder.bmp");
-	QPixmap audio = QPixmap("./dir_audio.bmp");
-	QListViewItem *element = new QListViewItem( lstSustDirectory, "root", "this is a root element" );
-	element->setPixmap( 0, folder );
-	QListViewItem *element2 = new QListViewItem( element, "audio1", "this is an audio file" );
-	element2->setPixmap( 0, audio );
-	QListViewItem *element3 = new QListViewItem( element, "folder", "this is a subfolder");
-	element3->setPixmap( 0, folder);
-	QListViewItem *element4 = new QListViewItem( element3, "audio2", "this is another audio file" );
-	element4->setPixmap( 0, audio);
+void frmAdmin::Quit() {
+	delete Sys;
+	exit(0);
 }

@@ -1,0 +1,139 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>frmAdminAddMusic</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>frmAdminAddMusic</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>600</width>
+            <height>505</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Add Music</string>
+    </property>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>btnCancel</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>481</x>
+                <y>10</y>
+                <width>110</width>
+                <height>31</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Close</string>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>lblStatus</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>450</y>
+                <width>581</width>
+                <height>21</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Click 'Add All' to add the new tracks to the system.</string>
+        </property>
+    </widget>
+    <widget class="QListView">
+        <column>
+            <property name="text">
+                <string>Tracks In Inbox</string>
+            </property>
+            <property name="clickable">
+                <bool>true</bool>
+            </property>
+            <property name="resizable">
+                <bool>true</bool>
+            </property>
+        </column>
+        <property name="name">
+            <cstring>lstInbox</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>10</y>
+                <width>460</width>
+                <height>430</height>
+            </rect>
+        </property>
+    </widget>
+    <widget class="QProgressBar">
+        <property name="name">
+            <cstring>pgrAdd</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>470</y>
+                <width>580</width>
+                <height>23</height>
+            </rect>
+        </property>
+    </widget>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>btnAddAll</cstring>
+        </property>
+        <property name="enabled">
+            <bool>false</bool>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>480</x>
+                <y>80</y>
+                <width>110</width>
+                <height>31</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Add All</string>
+        </property>
+    </widget>
+</widget>
+<connections>
+    <connection>
+        <sender>btnAddAll</sender>
+        <signal>released()</signal>
+        <receiver>frmAdminAddMusic</receiver>
+        <slot>AddAll()</slot>
+    </connection>
+    <connection>
+        <sender>btnCancel</sender>
+        <signal>released()</signal>
+        <receiver>frmAdminAddMusic</receiver>
+        <slot>Cancel()</slot>
+    </connection>
+</connections>
+<includes>
+    <include location="local" impldecl="in declaration">systemmanager.h</include>
+    <include location="local" impldecl="in declaration">dps.h</include>
+    <include location="local" impldecl="in implementation">frmAdminAddMusic.ui.h</include>
+</includes>
+<variables>
+    <variable access="private">systemmanager *Sys;</variable>
+</variables>
+<slots>
+    <slot>AddAll()</slot>
+    <slot>Cancel()</slot>
+</slots>
+<functions>
+    <function specifier="non virtual">init()</function>
+    <function>setSystemManager( systemmanager * S )</function>
+</functions>
+<pixmapinproject/>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

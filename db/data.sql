@@ -1,7 +1,5 @@
-/* Archives */
-INSERT INTO archives (id, name, mountstring)
-	VALUES (0,'store1','/mnt/dps0-0/audio');
-	
+BEGIN TRANSACTION;
+
 /* Audio types */
 INSERT INTO audiotypes (id, name, description) 
 	VALUES (0,'music','Music tracks from the CD library or other sources');
@@ -37,16 +35,16 @@ INSERT INTO lifespans (id, name, data, description)
 	VALUES (0,'Permenant','-1','Permenant audio file - i.e. music library');
 
 /* Configuration */
-INSERT INTO configuration (id, parameter, val)
-	VALUES (0,'bin_weighting_1','5');
-INSERT INTO configuration (id, parameter, val)
-	VALUES (1,'bin_weighting_2','9');
-INSERT INTO configuration (id, parameter, val)
-	VALUES (2,'bin_weighting_3','12');
-INSERT INTO configuration (id, parameter, val)
-	VALUES (3,'bin_weighting_4','14');
-INSERT INTO configuration (id, parameter, val)
-	VALUES (4,'bin_weighting_5','15');
+INSERT INTO configuration (id, parameter, val, location)
+	VALUES (0,'bin_weighting_1','5',0);
+INSERT INTO configuration (id, parameter, val, location)
+	VALUES (1,'bin_weighting_2','9',0);
+INSERT INTO configuration (id, parameter, val, location)
+	VALUES (2,'bin_weighting_3','12',0);
+INSERT INTO configuration (id, parameter, val, location)
+	VALUES (3,'bin_weighting_4','14',0);
+INSERT INTO configuration (id, parameter, val, location)
+	VALUES (4,'bin_weighting_5','15',0);
 /* Studio Application configuration */
 INSERT INTO configuration (id, parameter, val, location)
 	VALUES (5,'channel_1','/dev/null',1);
@@ -113,4 +111,6 @@ INSERT INTO configuration (id, parameter, val, location)
     VALUES (35,'user_cartwall_next','',2);
 INSERT INTO configuration (id, parameter, val, location)
     VALUES (36,'user_cartwall_prev','',2);
-
+INSERT INTO configuration (id, parameter, val, location)
+	VALUES (37,'channel_1','/dev/dsp',0);
+END TRANSACTION;

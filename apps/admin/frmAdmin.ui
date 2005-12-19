@@ -1,6 +1,6 @@
 <!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>frmAdmin</class>
-<widget class="QMainWindow">
+<widget class="QDialog">
     <property name="name">
         <cstring>frmAdmin</cstring>
     </property>
@@ -8,40 +8,22 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>800</width>
-            <height>600</height>
+            <width>765</width>
+            <height>679</height>
         </rect>
     </property>
-    <property name="minimumSize">
-        <size>
-            <width>8</width>
-            <height>108</height>
-        </size>
-    </property>
-    <property name="maximumSize">
-        <size>
-            <width>800</width>
-            <height>600</height>
-        </size>
-    </property>
-    <property name="baseSize">
-        <size>
-            <width>800</width>
-            <height>600</height>
-        </size>
-    </property>
     <property name="caption">
-        <string>Digiplay Administration</string>
+        <string>Digital Playout System Administration</string>
     </property>
     <widget class="QLabel">
         <property name="name">
-            <cstring>txtStatusBar</cstring>
+            <cstring>lblStatus</cstring>
         </property>
         <property name="geometry">
             <rect>
-                <x>6</x>
-                <y>510</y>
-                <width>780</width>
+                <x>10</x>
+                <y>650</y>
+                <width>730</width>
                 <height>20</height>
             </rect>
         </property>
@@ -51,306 +33,645 @@
     </widget>
     <widget class="QTabWidget">
         <property name="name">
-            <cstring>tabWidget3</cstring>
+            <cstring>tabAdmin</cstring>
         </property>
         <property name="geometry">
             <rect>
                 <x>10</x>
                 <y>10</y>
-                <width>780</width>
-                <height>500</height>
+                <width>751</width>
+                <height>590</height>
             </rect>
         </property>
         <widget class="QWidget">
             <property name="name">
-                <cstring>tab</cstring>
+                <cstring>tabMusic</cstring>
             </property>
             <attribute name="title">
-                <string>Manage Tracks</string>
+                <string>Music Library</string>
             </attribute>
-            <widget class="QLabel">
+            <widget class="QGroupBox">
                 <property name="name">
-                    <cstring>lblNewTracks</cstring>
+                    <cstring>grpMusicDetails</cstring>
                 </property>
                 <property name="geometry">
                     <rect>
-                        <x>10</x>
+                        <x>490</x>
                         <y>10</y>
-                        <width>221</width>
-                        <height>21</height>
+                        <width>251</width>
+                        <height>381</height>
+                    </rect>
+                </property>
+                <property name="title">
+                    <string>Track Details</string>
+                </property>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>btnMusicEdit</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>130</x>
+                            <y>340</y>
+                            <width>111</width>
+                            <height>31</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Edit...</string>
+                    </property>
+                </widget>
+            </widget>
+            <widget class="QPushButton">
+                <property name="name">
+                    <cstring>btnMusicRecover</cstring>
+                </property>
+                <property name="enabled">
+                    <bool>false</bool>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>590</x>
+                        <y>480</y>
+                        <width>150</width>
+                        <height>40</height>
                     </rect>
                 </property>
                 <property name="text">
-                    <string>New Tracks on System:</string>
+                    <string>Recover Tracks...</string>
                 </property>
             </widget>
             <widget class="QPushButton">
                 <property name="name">
-                    <cstring>btnManageEdit</cstring>
+                    <cstring>btnMusicAdd</cstring>
+                </property>
+                <property name="enabled">
+                    <bool>false</bool>
                 </property>
                 <property name="geometry">
                     <rect>
-                        <x>10</x>
-                        <y>430</y>
-                        <width>90</width>
-                        <height>31</height>
+                        <x>590</x>
+                        <y>440</y>
+                        <width>150</width>
+                        <height>40</height>
                     </rect>
                 </property>
                 <property name="text">
-                    <string>Edit Info...</string>
-                </property>
-            </widget>
-            <widget class="QLabel">
-                <property name="name">
-                    <cstring>lblCurrentTracks</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>390</x>
-                        <y>10</y>
-                        <width>291</width>
-                        <height>21</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Tracks Currently on System</string>
-                </property>
-            </widget>
-            <widget class="QListBox">
-                <property name="name">
-                    <cstring>lstManageNew</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>10</x>
-                        <y>31</y>
-                        <width>261</width>
-                        <height>400</height>
-                    </rect>
+                    <string>Add Tracks...</string>
                 </property>
             </widget>
             <widget class="QPushButton">
                 <property name="name">
-                    <cstring>btnManageScan</cstring>
+                    <cstring>btnMusicLoad</cstring>
                 </property>
                 <property name="geometry">
                     <rect>
-                        <x>290</x>
-                        <y>40</y>
-                        <width>80</width>
-                        <height>30</height>
+                        <x>590</x>
+                        <y>400</y>
+                        <width>150</width>
+                        <height>40</height>
                     </rect>
                 </property>
                 <property name="text">
-                    <string>Scan...</string>
-                </property>
-            </widget>
-            <widget class="QListBox">
-                <property name="name">
-                    <cstring>lstManageCurrent</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>390</x>
-                        <y>30</y>
-                        <width>370</width>
-                        <height>401</height>
-                    </rect>
-                </property>
-            </widget>
-            <widget class="QPushButton">
-                <property name="name">
-                    <cstring>btnManageAddAll</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>290</x>
-                        <y>80</y>
-                        <width>80</width>
-                        <height>31</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Add All</string>
-                </property>
-            </widget>
-        </widget>
-        <widget class="QWidget">
-            <property name="name">
-                <cstring>tab</cstring>
-            </property>
-            <attribute name="title">
-                <string>Modify Track Details</string>
-            </attribute>
-        </widget>
-        <widget class="QWidget">
-            <property name="name">
-                <cstring>TabPage</cstring>
-            </property>
-            <attribute name="title">
-                <string>Edit Station Cart Wall</string>
-            </attribute>
-        </widget>
-        <widget class="QWidget">
-            <property name="name">
-                <cstring>TabPage</cstring>
-            </property>
-            <attribute name="title">
-                <string>Sustainer Playlist</string>
-            </attribute>
-            <widget class="QPushButton">
-                <property name="name">
-                    <cstring>pushButton4</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>158</x>
-                        <y>116</y>
-                        <width>101</width>
-                        <height>61</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>pushButton4</string>
+                    <string>Load Music Library</string>
                 </property>
             </widget>
             <widget class="QListView">
+                <column>
+                    <property name="text">
+                        <string>Title</string>
+                    </property>
+                    <property name="clickable">
+                        <bool>true</bool>
+                    </property>
+                    <property name="resizable">
+                        <bool>true</bool>
+                    </property>
+                </column>
+                <column>
+                    <property name="text">
+                        <string>Artist</string>
+                    </property>
+                    <property name="clickable">
+                        <bool>true</bool>
+                    </property>
+                    <property name="resizable">
+                        <bool>true</bool>
+                    </property>
+                </column>
                 <property name="name">
-                    <cstring>lstSustDirectory</cstring>
+                    <cstring>lstMusicDB</cstring>
+                </property>
+                <property name="enabled">
+                    <bool>false</bool>
                 </property>
                 <property name="geometry">
                     <rect>
-                        <x>368</x>
-                        <y>6</y>
-                        <width>391</width>
-                        <height>451</height>
+                        <x>8</x>
+                        <y>15</y>
+                        <width>470</width>
+                        <height>500</height>
                     </rect>
                 </property>
             </widget>
+            <widget class="QRadioButton">
+                <property name="name">
+                    <cstring>btnMusicTitle</cstring>
+                </property>
+                <property name="enabled">
+                    <bool>false</bool>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>20</x>
+                        <y>520</y>
+                        <width>121</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Display by Title</string>
+                </property>
+            </widget>
+            <widget class="QRadioButton">
+                <property name="name">
+                    <cstring>btnMusicArtist</cstring>
+                </property>
+                <property name="enabled">
+                    <bool>false</bool>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>220</x>
+                        <y>520</y>
+                        <width>151</width>
+                        <height>31</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Display by Artist</string>
+                </property>
+            </widget>
+        </widget>
+        <widget class="QWidget">
+            <property name="name">
+                <cstring>tabJingles</cstring>
+            </property>
+            <attribute name="title">
+                <string>Jingles</string>
+            </attribute>
+        </widget>
+        <widget class="QWidget">
+            <property name="name">
+                <cstring>tabArchives</cstring>
+            </property>
+            <attribute name="title">
+                <string>File Archives</string>
+            </attribute>
+            <widget class="QTable">
+                <column>
+                    <property name="text">
+                        <string>Name</string>
+                    </property>
+                </column>
+                <column>
+                    <property name="text">
+                        <string>Local Path</string>
+                    </property>
+                </column>
+                <column>
+                    <property name="text">
+                        <string>Remote Path</string>
+                    </property>
+                </column>
+                <property name="name">
+                    <cstring>tblArchives</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>18</x>
+                        <y>15</y>
+                        <width>711</width>
+                        <height>231</height>
+                    </rect>
+                </property>
+                <property name="numRows">
+                    <number>3</number>
+                </property>
+                <property name="numCols">
+                    <number>3</number>
+                </property>
+                <property name="focusStyle">
+                    <enum>SpreadSheet</enum>
+                </property>
+            </widget>
+            <widget class="QGroupBox">
+                <property name="name">
+                    <cstring>grpArchiveNew</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>20</x>
+                        <y>310</y>
+                        <width>711</width>
+                        <height>160</height>
+                    </rect>
+                </property>
+                <property name="title">
+                    <string>Add \ Create Archives</string>
+                </property>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>txtArchiveNewName</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>130</x>
+                            <y>20</y>
+                            <width>330</width>
+                            <height>21</height>
+                        </rect>
+                    </property>
+                </widget>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>txtArchiveNewLocalPath</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>130</x>
+                            <y>50</y>
+                            <width>561</width>
+                            <height>21</height>
+                        </rect>
+                    </property>
+                </widget>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>txtArchiveNewRemotePath</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>130</x>
+                            <y>80</y>
+                            <width>561</width>
+                            <height>21</height>
+                        </rect>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>lblArchiveNewName</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>10</x>
+                            <y>20</y>
+                            <width>111</width>
+                            <height>21</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Name:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>lblArchiveNewLocalPath</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>10</x>
+                            <y>50</y>
+                            <width>117</width>
+                            <height>21</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Local Mount Point:</string>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>lblArchiveNewRemotePath</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>10</x>
+                            <y>80</y>
+                            <width>111</width>
+                            <height>21</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>NFS Mount:</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>btnArchiveAdd</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>490</x>
+                            <y>110</y>
+                            <width>200</width>
+                            <height>31</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Add</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>chkArchiveNewCreate</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>130</x>
+                            <y>110</y>
+                            <width>310</width>
+                            <height>30</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Create Archive Structure 
+(must be mounted on Local Mount Point)</string>
+                    </property>
+                </widget>
+            </widget>
+            <widget class="QPushButton">
+                <property name="name">
+                    <cstring>btnArchiveDrop</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>610</x>
+                        <y>250</y>
+                        <width>121</width>
+                        <height>31</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Drop Archive</string>
+                </property>
+            </widget>
+        </widget>
+        <widget class="QWidget">
+            <property name="name">
+                <cstring>tabSustainer</cstring>
+            </property>
+            <attribute name="title">
+                <string>Sustainer</string>
+            </attribute>
+            <widget class="QGroupBox">
+                <property name="name">
+                    <cstring>grpSustainerBins</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>10</y>
+                        <width>721</width>
+                        <height>320</height>
+                    </rect>
+                </property>
+                <property name="title">
+                    <string>Audio Bins Definitions</string>
+                </property>
+                <widget class="QListBox">
+                    <property name="name">
+                        <cstring>lstSustainerBins</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>10</x>
+                            <y>20</y>
+                            <width>251</width>
+                            <height>290</height>
+                        </rect>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>lblSustainerBinName</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>278</x>
+                            <y>15</y>
+                            <width>411</width>
+                            <height>21</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>(No bin selected)</string>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel3</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>278</x>
+                            <y>45</y>
+                            <width>121</width>
+                            <height>21</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Description:</string>
+                    </property>
+                </widget>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>txtSustainerBinDescr</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>278</x>
+                            <y>65</y>
+                            <width>421</width>
+                            <height>21</height>
+                        </rect>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel4</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>280</x>
+                            <y>100</y>
+                            <width>80</width>
+                            <height>21</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Start Time:</string>
+                    </property>
+                </widget>
+                <widget class="QTimeEdit">
+                    <property name="name">
+                        <cstring>timSustainerBinStart</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>370</x>
+                            <y>100</y>
+                            <width>130</width>
+                            <height>22</height>
+                        </rect>
+                    </property>
+                </widget>
+                <widget class="QTimeEdit">
+                    <property name="name">
+                        <cstring>timSustainerBinEnd</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>370</x>
+                            <y>130</y>
+                            <width>130</width>
+                            <height>22</height>
+                        </rect>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel4_2</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>280</x>
+                            <y>130</y>
+                            <width>80</width>
+                            <height>21</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>End Time:</string>
+                    </property>
+                </widget>
+                <widget class="QSpinBox">
+                    <property name="name">
+                        <cstring>spnSustainerBinPriority</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>370</x>
+                            <y>170</y>
+                            <width>60</width>
+                            <height>21</height>
+                        </rect>
+                    </property>
+                    <property name="maxValue">
+                        <number>10</number>
+                    </property>
+                    <property name="value">
+                        <number>5</number>
+                    </property>
+                </widget>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel5</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>280</x>
+                            <y>170</y>
+                            <width>81</width>
+                            <height>21</height>
+                        </rect>
+                    </property>
+                    <property name="text">
+                        <string>Priority:</string>
+                    </property>
+                </widget>
+            </widget>
         </widget>
     </widget>
+    <widget class="QPushButton">
+        <property name="name">
+            <cstring>btnQuit</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>601</x>
+                <y>601</y>
+                <width>150</width>
+                <height>40</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Quit</string>
+        </property>
+    </widget>
 </widget>
-<menubar>
-    <property name="name">
-        <cstring>MenuBar</cstring>
-    </property>
-    <item text="&amp;Help" name="helpMenu">
-        <action name="helpContentsAction"/>
-        <action name="helpIndexAction"/>
-        <separator/>
-        <action name="helpAboutAction"/>
-    </item>
-</menubar>
-<toolbars>
-    <toolbar dock="2">
-        <property name="name">
-            <cstring>toolBar</cstring>
-        </property>
-        <property name="label">
-            <string>Tools</string>
-        </property>
-        <action name="helpContentsAction"/>
-        <action name="helpIndexAction"/>
-        <separator/>
-        <action name="helpAboutAction"/>
-    </toolbar>
-</toolbars>
-<actions>
-    <action>
-        <property name="name">
-            <cstring>helpContentsAction</cstring>
-        </property>
-        <property name="text">
-            <string>Contents</string>
-        </property>
-        <property name="menuText">
-            <string>&amp;Contents...</string>
-        </property>
-        <property name="accel">
-            <string></string>
-        </property>
-    </action>
-    <action>
-        <property name="name">
-            <cstring>helpIndexAction</cstring>
-        </property>
-        <property name="text">
-            <string>Index</string>
-        </property>
-        <property name="menuText">
-            <string>&amp;Index...</string>
-        </property>
-        <property name="accel">
-            <string></string>
-        </property>
-    </action>
-    <action>
-        <property name="name">
-            <cstring>helpAboutAction</cstring>
-        </property>
-        <property name="text">
-            <string>About</string>
-        </property>
-        <property name="menuText">
-            <string>&amp;About</string>
-        </property>
-        <property name="accel">
-            <string></string>
-        </property>
-    </action>
-</actions>
 <connections>
     <connection>
-        <sender>helpIndexAction</sender>
-        <signal>activated()</signal>
+        <sender>btnArchiveAdd</sender>
+        <signal>clicked()</signal>
         <receiver>frmAdmin</receiver>
-        <slot>helpIndex()</slot>
+        <slot>ArchiveAdd()</slot>
     </connection>
     <connection>
-        <sender>helpContentsAction</sender>
-        <signal>activated()</signal>
+        <sender>btnArchiveDrop</sender>
+        <signal>clicked()</signal>
         <receiver>frmAdmin</receiver>
-        <slot>helpContents()</slot>
+        <slot>ArchiveDrop()</slot>
     </connection>
     <connection>
-        <sender>helpAboutAction</sender>
-        <signal>activated()</signal>
+        <sender>btnMusicLoad</sender>
+        <signal>clicked()</signal>
         <receiver>frmAdmin</receiver>
-        <slot>helpAbout()</slot>
+        <slot>MusicLoad()</slot>
     </connection>
     <connection>
-        <sender>btnManageScan</sender>
-        <signal>pressed()</signal>
+        <sender>btnMusicAdd</sender>
+        <signal>clicked()</signal>
         <receiver>frmAdmin</receiver>
-        <slot>ScanTracks()</slot>
+        <slot>MusicAdd()</slot>
     </connection>
     <connection>
-        <sender>btnManageAddAll</sender>
-        <signal>pressed()</signal>
+        <sender>btnQuit</sender>
+        <signal>clicked()</signal>
         <receiver>frmAdmin</receiver>
-        <slot>AddTracks()</slot>
-    </connection>
-    <connection>
-        <sender>pushButton4</sender>
-        <signal>pressed()</signal>
-        <receiver>frmAdmin</receiver>
-        <slot>test()</slot>
+        <slot>Quit()</slot>
     </connection>
 </connections>
 <includes>
+    <include location="local" impldecl="in declaration">systemmanager.h</include>
+    <include location="local" impldecl="in declaration">archivemanager.h</include>
+    <include location="local" impldecl="in declaration">dps.h</include>
+    <include location="local" impldecl="in implementation">qmessagebox.h</include>
+    <include location="local" impldecl="in implementation">frmAdminAddMusic.h</include>
     <include location="local" impldecl="in implementation">frmAdmin.ui.h</include>
 </includes>
+<variables>
+    <variable access="private">systemmanager *Sys;</variable>
+</variables>
 <slots>
-    <slot>helpIndex()</slot>
-    <slot>helpContents()</slot>
-    <slot>helpAbout()</slot>
-    <slot>ScanTracks()</slot>
-    <slot>AddTracks()</slot>
-    <slot>UpdateLists()</slot>
-    <slot>test()</slot>
+    <slot>ArchiveAdd()</slot>
+    <slot>ArchiveDrop()</slot>
+    <slot>MusicLoad()</slot>
+    <slot>MusicAdd()</slot>
+    <slot>Quit()</slot>
 </slots>
 <functions>
-    <function access="private" specifier="non virtual">init()</function>
+    <function specifier="non virtual">init()</function>
+    <function specifier="non virtual">destroy()</function>
+    <function specifier="non virtual">DisplayArchives()</function>
+    <function specifier="non virtual">DisplayMusic()</function>
 </functions>
 <pixmapinproject/>
 <layoutdefaults spacing="6" margin="11"/>

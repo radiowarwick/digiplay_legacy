@@ -12,23 +12,7 @@ using namespace std;
 #include "pqxx/result.h"
 using namespace pqxx;
 
-#ifndef STRUCT_TRACK
-#define STRUCT_TRACK
-struct track {
-	bool isNull;
-	unsigned short bin;
-	unsigned int index;
-	unsigned long audio_id;
-	string md5;
-	string title;
-	string artist;
-	unsigned long length_smpl;
-    unsigned long trim_start_smpl;
-    unsigned long trim_end_smpl;
-    unsigned long fade_in_smpl;
-    unsigned long fade_out_smpl;
-};
-#endif
+#include "dps.h"
 
 class sched_bin {
 	public:

@@ -9,7 +9,14 @@
 scheduler::scheduler() {
 	// Read configuration from the /etc/digiplay config file
 	config *Conf = new config("digiplay");
-    C = new Connection( Conf->getDBConnectString() );
+	try {
+	    C = new Connection( Conf->getDBConnectString() );
+	}
+	catch (...) {
+		cout << "Failed to connect to database" << endl;
+		exit(-1);
+	}
+
 	T = new Transaction( *C, "");
 	S = new schedule( T );
 }

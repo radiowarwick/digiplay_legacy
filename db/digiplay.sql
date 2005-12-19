@@ -2,7 +2,7 @@
 
 --    Driver Used : Microsoft Visual Studio - IBM DB2 Universal Database Driver.
 --    Document    : G:\Data\cc\raw\digiplay\Database Design v2 (VISIO 2002).vsd.
---    Time Created: 18 July 2005 20:55.
+--    Time Created: 18 December 2005 19:35.
 --    Operation   : From Visio Generate Wizard.
 --    Connected data source : No connection.
 --    Connected server      : No connection.
@@ -12,9 +12,31 @@
 
 -- Create digiplay database.
 -- Database "digiplay" cannot be created using SQL create database statement. Use IBM DB2 tools to directly create it.
-create database "digiplay";
-create user "digiplay_user";
+
+create database digiplay;
+create user digiplay_user;
 \c digiplay
+
+
+-- Create new table "audiojinglepkgs".
+-- "audiojinglepkgs" : Table of audiojinglepkgs
+-- 	"id" : id identifies audiojinglepkgs
+-- 	"audio" : audio is of audiojinglepkgs
+-- 	"jinglepkg" : jinglepkg is of audiojinglepkgs  
+create table "audiojinglepkgs" ( 
+	"id" SERIAL,
+	"audio" INTEGER not null,
+	"jinglepkg" INTEGER not null, constraint "audiojinglepkgs_PK" primary key ("id") ); 
+
+-- Create new table "groupaccess".
+-- "groupaccess" : Table of groupaccess
+-- 	"id" : id identifies groupaccess
+-- 	"groupid" : groupid is of groupaccess
+-- 	"privilage" : privilage is of groupaccess  
+create table "groupaccess" ( 
+	"id" SERIAL,
+	"groupid" INTEGER not null,
+	"privilage" INTEGER not null, constraint "groupaccess_PK" primary key ("id") ); 
 
 -- Create new table "audiodir".
 -- "audiodir" : Table of audiodir
@@ -22,7 +44,7 @@ create user "digiplay_user";
 -- 	"audio" : audio is of audiodir
 -- 	"directory" : directory is of audiodir  
 create table "audiodir" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"audio" INTEGER not null,
 	"directory" INTEGER not null, constraint "audiodir_PK" primary key ("id") ); 
 
@@ -32,7 +54,7 @@ create table "audiodir" (
 -- 	"audio" : audio is of audioartists
 -- 	"artist" : artist is of audioartists  
 create table "audioartists" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"audio" INTEGER not null,
 	"artist" INTEGER not null, constraint "audioartists_PK" primary key ("id") ); 
 
@@ -43,7 +65,7 @@ create table "audioartists" (
 -- 	"property" : property is of cartstyle
 -- 	"val" : val is of cartstyle  
 create table "cartstyle" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"cart" INTEGER not null,
 	"property" INTEGER not null,
 	"val" VARCHAR not null, constraint "cartstyle_PK" primary key ("id") ); 
@@ -55,7 +77,7 @@ create table "cartstyle" (
 -- 	"data" : data is of lifespans
 -- 	"description" : description is of lifespans  
 create table "lifespans" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"name" VARCHAR not null,
 	"data" INTEGER,
 	"description" VARCHAR, constraint "lifespans_PK" primary key ("id") ); 
@@ -66,7 +88,7 @@ create table "lifespans" (
 -- 	"name" : name is of cartproperties
 -- 	"note" : note is of cartproperties  
 create table "cartproperties" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"name" VARCHAR not null,
 	"note" VARCHAR, constraint "cartproperties_PK" primary key ("id") ); 
 
@@ -78,7 +100,7 @@ create table "cartproperties" (
 -- 	"time_start" : time_start is of progsched
 -- 	"notes" : notes is of progsched  
 create table "progsched" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"programme" INTEGER not null,
 	"day_start" SMALLINT not null,
 	"time_start" TIME not null,
@@ -90,7 +112,7 @@ create table "progsched" (
 -- 	"programme" : programme is of progartists
 -- 	"artist" : artist is of progartists  
 create table "progartists" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"programme" INTEGER not null,
 	"artist" INTEGER not null, constraint "progartists_PK" primary key ("id") ); 
 
@@ -100,7 +122,7 @@ create table "progartists" (
 -- 	"programme" : programme is of progkeywords
 -- 	"keyword" : keyword is of progkeywords  
 create table "progkeywords" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"programme" INTEGER not null,
 	"keyword" INTEGER not null, constraint "progkeywords_PK" primary key ("id") ); 
 
@@ -113,7 +135,7 @@ create table "progkeywords" (
 -- 	"date_end" : date_end is of programmes
 -- 	"disable_playlist" : disable_playlist is of programmes  
 create table "programmes" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"name" VARCHAR not null,
 	"description" VARCHAR,
 	"date_start" DATE,
@@ -128,7 +150,7 @@ create table "programmes" (
 -- 	"download_date" : download_date is of audiolog
 -- 	"download_time" : download_time is of audiolog  
 create table "audiolog" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"audio" INTEGER not null,
 	"userid" INTEGER not null,
 	"download_date" DATE not null,
@@ -140,7 +162,7 @@ create table "audiolog" (
 -- 	"name" : name is of usercuetypes
 -- 	"description" : description is of usercuetypes  
 create table "usercuetypes" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"name" VARCHAR not null,
 	"description" VARCHAR, constraint "usercuetypes_PK" primary key ("id") ); 
 
@@ -152,7 +174,7 @@ create table "usercuetypes" (
 -- 	"time_start" : time_start is of sust_shows
 -- 	"length" : length is of sust_shows  
 create table "sust_shows" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"usershow" INTEGER not null,
 	"date_start" DATE not null,
 	"time_start" TIME not null,
@@ -165,7 +187,7 @@ create table "sust_shows" (
 -- 	"directory" : directory is of usercartsets
 -- 	"description" : description is of usercartsets  
 create table "usercartsets" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"name" VARCHAR not null,
 	"directory" INTEGER not null,
 	"description" VARCHAR, constraint "usercartsets_PK" primary key ("id") ); 
@@ -176,7 +198,7 @@ create table "usercartsets" (
 -- 	"name" : name is of jingletypes
 -- 	"description" : description is of jingletypes  
 create table "jingletypes" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"name" VARCHAR not null,
 	"description" CHARACTER(10), constraint "jingletypes_PK" primary key ("id") ); 
 
@@ -189,7 +211,7 @@ create table "jingletypes" (
 -- 	"data" : data is of usercues
 -- 	"note" : note is of usercues  
 create table "usercues" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"usershowaudio" INTEGER not null,
 	"type" INTEGER not null,
 	"cue_smpl" INTEGER not null,
@@ -204,7 +226,7 @@ create table "usercues" (
 -- 	"note" : note is of usershownotes
 -- 	"length" : length is of usershownotes  
 create table "usershownotes" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"usershow" INTEGER not null,
 	"playlist_position" SMALLINT not null,
 	"note" VARCHAR,
@@ -219,7 +241,7 @@ create table "usershownotes" (
 -- 	"note" : note is of usershowsaudio
 -- 	"cue_up" : cue_up is of usershowsaudio  
 create table "usershowsaudio" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"usershow" INTEGER not null,
 	"audio" INTEGER not null,
 	"playlist_position" SMALLINT not null,
@@ -236,7 +258,7 @@ create table "usershowsaudio" (
 -- 	"start_time" : start_time is of usershows
 -- 	"length" : length is of usershows  
 create table "usershows" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"name" VARCHAR not null,
 	"userid" INTEGER not null,
 	"directory" INTEGER not null,
@@ -250,7 +272,7 @@ create table "usershows" (
 -- 	"audio" : audio is of stationcartwall
 -- 	"cart" : cart is of stationcartwall  
 create table "stationcartwall" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"audio" INTEGER not null,
 	"cart" INTEGER not null, constraint "stationcartwall_PK" primary key ("id") ); 
 
@@ -260,7 +282,7 @@ create table "stationcartwall" (
 -- 	"name" : name is of sust_sources
 -- 	"description" : description is of sust_sources  
 create table "sust_sources" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"name" VARCHAR not null,
 	"description" VARCHAR not null, constraint "sust_sources_PK" primary key ("id") ); 
 
@@ -270,7 +292,7 @@ create table "sust_sources" (
 -- 	"name" : name is of audiotypes
 -- 	"description" : description is of audiotypes  
 create table "audiotypes" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"name" VARCHAR not null,
 	"description" VARCHAR, constraint "audiotypes_PK" primary key ("id") ); 
 
@@ -283,7 +305,7 @@ create table "audiotypes" (
 -- 	"cart_set" : cart_set is of usercartsaudio
 -- 	"text" : text is of usercartsaudio  
 create table "usercartsaudio" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"cart" INTEGER not null,
 	"audio" INTEGER not null,
 	"userid" INTEGER not null,
@@ -296,7 +318,7 @@ create table "usercartsaudio" (
 -- 	"name" : name is of cartwalls
 -- 	"description" : description is of cartwalls  
 create table "cartwalls" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"name" VARCHAR not null,
 	"description" VARCHAR, constraint "cartwalls_PK" primary key ("id") ); 
 
@@ -307,7 +329,7 @@ create table "cartwalls" (
 -- 	"row" : row is of carts
 -- 	"col" : col is of carts  
 create table "carts" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"wall" INTEGER not null,
 	"row" SMALLINT not null,
 	"col" SMALLINT not null, constraint "carts_PK" primary key ("id") ); 
@@ -318,7 +340,7 @@ create table "carts" (
 -- 	"artist" : artist is of artistskeywords
 -- 	"keyword" : keyword is of artistskeywords  
 create table "artistskeywords" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"artist" INTEGER not null,
 	"keyword" INTEGER not null, constraint "artistskeywords_PK" primary key ("id") ); 
 
@@ -331,7 +353,7 @@ create table "artistskeywords" (
 -- 	"process" : process is of tasks
 -- 	"parameters" : parameters is of tasks  
 create table "tasks" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"name" VARCHAR not null,
 	"description" VARCHAR not null,
 	"sql_query" VARCHAR,
@@ -342,31 +364,33 @@ create table "tasks" (
 -- "archives" : Table of archives
 -- 	"id" : id identifies archives
 -- 	"name" : name is of archives
--- 	"mountstring" : mountstring to archive  
+-- 	"localpath" : mountstring to archive
+-- 	"remotepath" : remotepath is of archives  
 create table "archives" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"name" VARCHAR not null,
-	"mountstring" VARCHAR not null, constraint "archives_PK" primary key ("id") ); 
+	"localpath" VARCHAR not null,
+	"remotepath" VARCHAR not null, constraint "archives_PK" primary key ("id") ); 
 
 -- Create new table "companies".
 -- "companies" : Table of companies
 -- 	"id" : id identifies companies
 -- 	"name" : name is of companies  
 create table "companies" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"name" VARCHAR not null, constraint "companies_PK" primary key ("id") ); 
 
--- Create new table "jinglepackage".
--- "jinglepackage" : Table of jinglepackage
--- 	"id" : id identifies jinglepackage
--- 	"name" : name is of jinglepackage
--- 	"description" : description is of jinglepackage
--- 	"enabled" : enabled is of jinglepackage  
-create table "jinglepackage" ( 
-	"id"  SERIAL,
+-- Create new table "jinglepkgs".
+-- "jinglepkgs" : Table of jinglepkgs
+-- 	"id" : id identifies jinglepkgs
+-- 	"name" : name is of jinglepkgs
+-- 	"description" : description is of jinglepkgs
+-- 	"enabled" : enabled is of jinglepkgs  
+create table "jinglepkgs" ( 
+	"id" SERIAL,
 	"name" VARCHAR not null,
 	"description" VARCHAR not null,
-	"enabled" CHARACTER(1) not null, constraint "jinglepackage_PK" primary key ("id") ); 
+	"enabled" CHARACTER(1) not null, constraint "jinglepkgs_PK" primary key ("id") ); 
 
 -- Create new table "audiogroups".
 -- "audiogroups" : Table of audiogroups
@@ -375,7 +399,7 @@ create table "jinglepackage" (
 -- 	"groupid" : groupid is of audiogroups
 -- 	"permissions" : permissions is of audiogroups  
 create table "audiogroups" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"audio" INTEGER not null,
 	"groupid" INTEGER not null,
 	"permissions" CHARACTER(2), constraint "audiogroups_PK" primary key ("id") ); 
@@ -387,7 +411,7 @@ create table "audiogroups" (
 -- 	"userid" : userid is of audiousers
 -- 	"permissions" : permissions is of audiousers  
 create table "audiousers" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"audio" INTEGER not null,
 	"userid" INTEGER not null,
 	"permissions" CHARACTER(2), constraint "audiousers_PK" primary key ("id") ); 
@@ -411,10 +435,10 @@ create table "audiousers" (
 -- 	"music_track" : music_track is of audio
 -- 	"music_released" : music_released is of audio
 -- 	"jingle_type" : jingle_type is of audio
--- 	"jingle_package" : jingle_package is of audio
 -- 	"advert_company" : advert_company is of audio
 -- 	"advert_description" : advert_description is of audio
 -- 	"sustainer" : sustainer is of audio
+-- 	"flagged" : flagged is of audio
 -- 	"censor" : censor is of audio
 -- 	"notes" : notes is of audio
 -- 	"param_vol" : param_vol is of audio
@@ -423,7 +447,7 @@ create table "audiousers" (
 -- 	"param_endstyle" : param_endstyle is of audio
 -- 	"lifespan" : lifespan is of audio  
 create table "audio" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"md5" CHARACTER(32) not null,
 	"archive" INTEGER not null,
 	"length_smpl" INTEGER not null,
@@ -440,10 +464,10 @@ create table "audio" (
 	"music_track" SMALLINT,
 	"music_released" SMALLINT,
 	"jingle_type" INTEGER,
-	"jingle_package" INTEGER,
 	"advert_company" INTEGER,
 	"advert_description" VARCHAR,
 	"sustainer" CHARACTER(1),
+	"flagged" CHARACTER(1),
 	"censor" CHARACTER(1) not null,
 	"notes" VARCHAR,
 	"param_vol" SMALLINT,
@@ -459,7 +483,7 @@ create table "audio" (
 -- 	"userid" : userid is of dirusers
 -- 	"permissions" : permissions is of dirusers  
 create table "dirusers" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"directory" INTEGER not null,
 	"userid" INTEGER not null,
 	"permissions" CHARACTER(2), constraint "dirusers_PK" primary key ("id") ); 
@@ -471,7 +495,7 @@ create table "dirusers" (
 -- 	"groupid" : groupid is of dirgroups
 -- 	"persmissions" : persmissions is of dirgroups  
 create table "dirgroups" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"directory" INTEGER not null,
 	"groupid" INTEGER not null,
 	"persmissions" CHARACTER(2), constraint "dirgroups_PK" primary key ("id") ); 
@@ -482,7 +506,7 @@ create table "dirgroups" (
 -- 	"groupid" : groupid is of groupmembers
 -- 	"userid" : userid is of groupmembers  
 create table "groupmembers" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"groupid" INTEGER not null,
 	"userid" INTEGER not null, constraint "groupmembers_PK" primary key ("id") ); 
 
@@ -492,7 +516,7 @@ create table "groupmembers" (
 -- 	"name" : name partly identifies groups
 -- 	"description" : description is of groups  
 create table "groups" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"name" VARCHAR not null,
 	"description" VARCHAR not null, constraint "groups_PK" primary key ("id") ); 
 
@@ -503,7 +527,7 @@ create table "groups" (
 -- 	"name" : name is of dir
 -- 	"notes" : notes is of dir  
 create table "dir" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"parent" INTEGER not null,
 	"name" VARCHAR not null,
 	"notes" VARCHAR, constraint "dir_PK" primary key ("id") ); 
@@ -515,7 +539,7 @@ create table "dir" (
 -- 	"configoption" : configoption partly identifies usersconfigs
 -- 	"val" : val is of usersconfigs  
 create table "usersconfigs" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"userid" INTEGER not null,
 	"configoption" INTEGER not null,
 	"val" VARCHAR not null, constraint "usersconfigs_PK" primary key ("id") ); 
@@ -526,7 +550,7 @@ create table "usersconfigs" (
 -- 	"name" : name is of configs
 -- 	"description" : description is of configs  
 create table "configs" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"name" VARCHAR not null,
 	"description" VARCHAR, constraint "configs_PK" primary key ("id") ); 
 
@@ -538,7 +562,7 @@ create table "configs" (
 -- 	"subject" : subject is of email
 -- 	"body" : body is of email  
 create table "email" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"datetime" TIMESTAMP not null,
 	"sender" VARCHAR not null,
 	"subject" VARCHAR,
@@ -550,7 +574,7 @@ create table "email" (
 -- 	"userid" : userid partly identifies useraccess
 -- 	"privilage" : privilage partly identifies useraccess  
 create table "useraccess" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"userid" INTEGER not null,
 	"privilage" INTEGER not null, constraint "useraccess_PK" primary key ("id") ); 
 
@@ -560,7 +584,7 @@ create table "useraccess" (
 -- 	"name" : name is of privilages
 -- 	"description" : description is of privilages  
 create table "privilages" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"name" VARCHAR not null,
 	"description" VARCHAR, constraint "privilages_PK" primary key ("id") ); 
 
@@ -571,7 +595,7 @@ create table "privilages" (
 -- 	"password" : user password if not auth on LDAP
 -- 	"enabled" : enabled is of users  
 create table "users" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"username" VARCHAR not null,
 	"password" CHARACTER(32),
 	"enabled" CHARACTER(1) not null, constraint "users_PK" primary key ("id") ); 
@@ -583,7 +607,7 @@ create table "users" (
 -- 	"day_start" : day_start is of taskschedule
 -- 	"time_start" : time_start is of taskschedule  
 create table "taskschedule" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"task" INTEGER not null,
 	"day_start" SMALLINT not null,
 	"time_start" TIME not null, constraint "taskschedule_PK" primary key ("id") ); 
@@ -592,11 +616,13 @@ create table "taskschedule" (
 -- "configuration" : Table of configuration
 -- 	"id" : id identifies configuration
 -- 	"parameter" : parameter is of configuration
--- 	"val" : val is of configuration  
+-- 	"val" : val is of configuration
+-- 	"location" : location is of configuration  
 create table "configuration" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"parameter" VARCHAR not null,
-	"val" VARCHAR not null, constraint "configuration_PK" primary key ("id") ); 
+	"val" VARCHAR not null,
+	"location" INTEGER not null, constraint "configuration_PK" primary key ("id") ); 
 
 -- Create new table "sust_sched".
 -- "sust_sched" : Table of sust_sched
@@ -612,7 +638,7 @@ create table "configuration" (
 -- 	"fade_in" : fade_in is of sust_sched
 -- 	"fade_out" : fade_out is of sust_sched  
 create table "sust_sched" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"source_type" INTEGER not null,
 	"audio" INTEGER,
 	"extfeed" INTEGER,
@@ -634,7 +660,7 @@ create table "sust_sched" (
 -- 	"time_end" : time_end is of advertschedule
 -- 	"frequency" : frequency is of advertschedule  
 create table "advertschedule" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"advert" INTEGER not null,
 	"start_date" DATE not null,
 	"end_date" DATE not null,
@@ -648,18 +674,20 @@ create table "advertschedule" (
 -- 	"name" : name is of extfeeds
 -- 	"device" : device is of extfeeds  
 create table "extfeeds" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"name" VARCHAR not null,
 	"device" VARCHAR not null, constraint "extfeeds_PK" primary key ("id") ); 
 
 -- Create new table "log".
 -- "log" : Table of log
 -- 	"id" : id identifies log
+-- 	"userid" : userid is of log
 -- 	"datetime" : datetime is of log
 -- 	"track_title" : track_title is of log
 -- 	"track_artist" : track_artist is of log  
 create table "log" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
+	"userid" INTEGER not null,
 	"datetime" TIMESTAMP not null,
 	"track_title" VARCHAR not null,
 	"track_artist" VARCHAR not null, constraint "log_PK" primary key ("id") ); 
@@ -670,7 +698,7 @@ create table "log" (
 -- 	"track" : track is of audiokeywords
 -- 	"keyword" : keyword is of audiokeywords  
 create table "audiokeywords" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"track" INTEGER not null,
 	"keyword" INTEGER not null, constraint "audiokeywords_PK" primary key ("id") ); 
 
@@ -680,7 +708,7 @@ create table "audiokeywords" (
 -- 	"name" : name is of keywords
 -- 	"similar" : similar is of keywords  
 create table "keywords" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"name" VARCHAR not null,
 	"similar" VARCHAR, constraint "keywords_PK" primary key ("id") ); 
 
@@ -692,7 +720,7 @@ create table "keywords" (
 -- 	"source" : source is of albums
 -- 	"reclibid" : reclibid is of albums  
 create table "albums" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"name" VARCHAR not null,
 	"alt_name" VARCHAR,
 	"source" VARCHAR,
@@ -704,9 +732,35 @@ create table "albums" (
 -- 	"name" : name is of artists
 -- 	"alt_name" : alt_name is of artists  
 create table "artists" ( 
-	"id"  SERIAL,
+	"id" SERIAL,
 	"name" VARCHAR not null,
 	"alt_name" VARCHAR, constraint "artists_PK" primary key ("id") ); 
+
+-- Add foreign key constraints to table "audiojinglepkgs".
+alter table "audiojinglepkgs"
+	add constraint "audio_FK12" foreign key (
+		"audio")
+	 references "audio" (
+		"id") on update restrict on delete restrict; 
+
+alter table "audiojinglepkgs"
+	add constraint "jinglepkgs_FK1" foreign key (
+		"jinglepkg")
+	 references "jinglepkgs" (
+		"id") on update restrict on delete restrict; 
+
+-- Add foreign key constraints to table "groupaccess".
+alter table "groupaccess"
+	add constraint "groups_FK4" foreign key (
+		"groupid")
+	 references "groups" (
+		"id") on update restrict on delete restrict; 
+
+alter table "groupaccess"
+	add constraint "privilages_FK2" foreign key (
+		"privilage")
+	 references "privilages" (
+		"id") on update restrict on delete restrict; 
 
 -- Add foreign key constraints to table "audiodir".
 alter table "audiodir"
@@ -957,12 +1011,6 @@ alter table "audio"
 		"id") on update restrict on delete restrict; 
 
 alter table "audio"
-	add constraint "jinglepackage_FK1" foreign key (
-		"jingle_package")
-	 references "jinglepackage" (
-		"id") on update restrict on delete restrict; 
-
-alter table "audio"
 	add constraint "companies_FK1" foreign key (
 		"advert_company")
 	 references "companies" (
@@ -1090,6 +1138,13 @@ alter table "advertschedule"
 	 references "audio" (
 		"id") on update restrict on delete restrict; 
 
+-- Add foreign key constraints to table "log".
+alter table "log"
+	add constraint "users_FK10" foreign key (
+		"userid")
+	 references "users" (
+		"id") on update restrict on delete restrict; 
+
 -- Add foreign key constraints to table "audiokeywords".
 alter table "audiokeywords"
 	add constraint "audio_FK2" foreign key (
@@ -1119,14 +1174,15 @@ order by title;
 
 -- Create view Table1.
 create view jingles (title, package, type, active) as
-select audio.title as title, 
-	jinglepackage.name as package, 
-	jingletypes.name as type,
-	jinglepackage.enabled as active 
-from audio, jinglepackage, jingletypes 
-where audio.jingle_package = jinglepackage.id 
-	and audio.jingle_type = jingletypes.id
-	and audio.type = 1 
+select audio.title as title,
+    jinglepkgs.name as package,
+    jingletypes.name as type,
+    jinglepkgs.enabled as active
+from audio, jinglepkgs, audiojinglepkgs, jingletypes
+where audiojinglepkgs.audio = audio.id
+    and audiojinglepkgs.jinglepkg = jinglepkgs.id
+    and audio.jingle_type = jingletypes.id
+    and audio.type = 1
 order by active desc, package, type, title;
 
 

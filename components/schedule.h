@@ -13,6 +13,7 @@ using namespace std;
 using namespace pqxx;
 
 #include "sched_bin.h"
+#include "dps.h"
 
 class schedule {
 	public:

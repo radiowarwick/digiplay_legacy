@@ -39,10 +39,17 @@ int main(int argc, char *argv) {
     Conf = new config("digiplay");
 	
 	cout << " -> Connecting to Database...";
-	//Connect to database and get the first item on schedule
-	Connection *C = new Connection( Conf->getDBConnectString() );
+	Connection *C;
 	Transaction *T = NULL;
-	SQL_Item = "SELECT archives.mountstring AS path, audio.md5 AS md5, audio.title AS title, audio.length_smpl AS length_smpl, sust_sched.id AS id, sust_sched.trim_start_smpl AS start, sust_sched.trim_end_smpl AS end, sust_sched.fade_in AS fade_in, sust_sched.fade_out AS fade_out FROM sust_sched, audio, archives WHERE sust_sched.audio = audio.id AND archives.id = audio.archive ORDER BY sust_sched.id LIMIT 1";
+	//Connect to database and get the first item on schedule
+	try {
+		C = new Connection( Conf->getDBConnectString() );
+	}
+	catch (...) {
+		cout << "Failed to connect to database" << endl;
+		exit(-1);
+	}
+	SQL_Item = "SELECT archives.localpath AS path, audio.md5 AS md5, audio.title AS title, audio.length_smpl AS length_smpl, sust_sched.id AS id, sust_sched.trim_start_smpl AS start, sust_sched.trim_end_smpl AS end, sust_sched.fade_in AS fade_in, sust_sched.fade_out AS fade_out FROM sust_sched, audio, archives WHERE sust_sched.audio = audio.id AND archives.id = audio.archive ORDER BY sust_sched.id LIMIT 1";
 	cout << "done." << endl << " -> Creating audio mixer..." << flush;
 	
 	// Create and configure audio mixer
@@ -60,7 +67,7 @@ int main(int argc, char *argv) {
 	long length_smpl = 0, trigger = 0;
 	unsigned short active = 0, inactive = 1;
 	bool warn_flag = true;
-
+	
 	// Process schedule table until empty
 	while (true) {
 		// Keep trying until successfully loaded a file that exists!

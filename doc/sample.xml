@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<audio md5="03ef1a1aafa488a5971a7f9002a0e6cf" type="music">
+	<archive name="the archive it's in">
+		<creation date="creation date" user="userid" />
+		<import date="import date" />
+	</archive>
+	<info title="My title">
+		<artist name="My Artist" />
+		<album name="My Album" />
+		<reclib id="C01-0001" />
+		<origin name="reclib" />
+	</info>
+	<audio_data>
+		<length value="12346780" />
+		<trim_start value="12578" />
+		<trim_end value="1478652" />
+		<fade_in value="1234" />
+		<fade_out value="1234" />
+	</audio_data>
+</audio>

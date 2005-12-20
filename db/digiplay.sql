@@ -2,7 +2,7 @@
 
 --    Driver Used : Microsoft Visual Studio - IBM DB2 Universal Database Driver.
 --    Document    : G:\Data\cc\raw\digiplay\Database Design v2 (VISIO 2002).vsd.
---    Time Created: 18 December 2005 19:35.
+--    Time Created: 20 December 2005 12:52.
 --    Operation   : From Visio Generate Wizard.
 --    Connected data source : No connection.
 --    Connected server      : No connection.
@@ -16,7 +16,19 @@
 create database digiplay;
 create user digiplay_user;
 \c digiplay
+begin transaction;
 
+
+
+-- Create new table "sust_bins".
+-- "sust_bins" : Table of sust_bins
+-- 	"id" : id identifies sust_bins
+-- 	"name" : name is of sust_bins
+-- 	"description" : description is of sust_bins  
+create table "sust_bins" ( 
+	"id" SERIAL,
+	"name" VARCHAR not null,
+	"description" VARCHAR, constraint "sust_bins_PK" primary key ("id") ); 
 
 -- Create new table "audiojinglepkgs".
 -- "audiojinglepkgs" : Table of audiojinglepkgs
@@ -437,6 +449,8 @@ create table "audiousers" (
 -- 	"jingle_type" : jingle_type is of audio
 -- 	"advert_company" : advert_company is of audio
 -- 	"advert_description" : advert_description is of audio
+-- 	"origin" : origin is of audio
+-- 	"reclibid" : reclibid is of audio
 -- 	"sustainer" : sustainer is of audio
 -- 	"flagged" : flagged is of audio
 -- 	"censor" : censor is of audio
@@ -466,6 +480,8 @@ create table "audio" (
 	"jingle_type" INTEGER,
 	"advert_company" INTEGER,
 	"advert_description" VARCHAR,
+	"origin" VARCHAR,
+	"reclibid" VARCHAR,
 	"sustainer" CHARACTER(1),
 	"flagged" CHARACTER(1),
 	"censor" CHARACTER(1) not null,
@@ -1186,5 +1202,17 @@ where audiojinglepkgs.audio = audio.id
 order by active desc, package, type, title;
 
 
+-- Create/Recreate user defined triggers for all the newly create and changed tables.
+
+-- Create table level triggers for table configuration.
+create rule r_configuration 
+as on update 
+to configuration 
+do (NOTIFY trig_config_loc1; 
+	NOTIFY trig_config_loc2);
+
+
 
 -- This is the end of the Microsoft Visual Studio generated SQL DDL script.
+end transaction;
+

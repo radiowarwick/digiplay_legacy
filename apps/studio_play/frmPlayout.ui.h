@@ -153,7 +153,6 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 		}
 	case 30000: {
 			conf->requery();
-			cout << "Configuration data refreshed!" << endl;
 			if (conf->getParam("next_on_showplan") == "") {
 				btnLoadPlaylist1->setEnabled(false);
 				btnLoadPlaylist2->setEnabled(false);
@@ -180,12 +179,13 @@ void frmPlayout::Player1_Load() {
 	Transaction *T = new Transaction(*C,"");
 	string SQL = "SELECT audio.md5 AS md5, audio.title AS title, artists.name as artist, "
 				 "audio.intro_smpl as start, audio.extro_smpl as end, "
-				 "archives.mountstring AS path "
+				 "archives.localpath AS path "
 				 "FROM audio,artists,audioartists,archives "
 				 "WHERE audio.archive=archives.id AND audioartists.audio=audio.id "
 				 "AND audioartists.artist = artists.id AND audio.md5='" 
 				 + conf->getParam("next_on_showplan") + "'";
 	Result R = T->exec(SQL);
+	T->abort();
 	delete T;
 	string f = R[0]["path"].c_str() + string("/") + (string(R[0]["md5"].c_str())).substr(0,1)
 			   + string("/") + R[0]["md5"].c_str();
@@ -229,16 +229,18 @@ void frmPlayout::Player2_Load() {
 	}
 	Transaction *T = new Transaction(*C,"");
 	string SQL = "SELECT audio.md5 AS md5, audio.title AS title, artists.name as artist, "
-				 "archives.mountstring AS path "
+				 "audio.intro_smpl as start, audio.extro_smpl as end, "
+				 "archives.localpath AS path "
 				 "FROM audio,artists,audioartists,archives "
 				 "WHERE audio.archive=archives.id AND audioartists.audio=audio.id "
 				 "AND audioartists.artist = artists.id AND audio.md5='" 
 				 + conf->getParam("next_on_showplan") + "'";
 	Result R = T->exec(SQL);
+	T->abort();
 	delete T;
 	string f = R[0]["path"].c_str() + string("/") + (string(R[0]["md5"].c_str())).substr(0,1)
 			   + string("/") + R[0]["md5"].c_str();
-	player2->do_load(new QString(f), 6927,10230667);
+	player2->do_load(new QString(f), atoi(R[0]["start"].c_str()),atoi(R[0]["end"].c_str()));
 	conf->setParam("next_on_showplan","");
 	lblTitle2->setText(R[0]["title"].c_str());
 	lblArtist2->setText(R[0]["artist"].c_str());
@@ -278,16 +280,18 @@ void frmPlayout::Player3_Load() {
 	}
 	Transaction *T = new Transaction(*C,"");
 	string SQL = "SELECT audio.md5 AS md5, audio.title AS title, artists.name as artist, "
-				 "archives.mountstring AS path "
+				 "audio.intro_smpl as start, audio.extro_smpl as end, "
+				 "archives.localpath AS path "
 				 "FROM audio,artists,audioartists,archives "
 				 "WHERE audio.archive=archives.id AND audioartists.audio=audio.id "
 				 "AND audioartists.artist = artists.id AND audio.md5='" 
 				 + conf->getParam("next_on_showplan") + "'";
 	Result R = T->exec(SQL);
+	T->abort();
 	delete T;
 	string f = R[0]["path"].c_str() + string("/") + (string(R[0]["md5"].c_str())).substr(0,1)
 			   + string("/") + R[0]["md5"].c_str();
-	player3->do_load(new QString(f), 6927,10230667);
+	player3->do_load(new QString(f), atoi(R[0]["start"].c_str()),atoi(R[0]["end"].c_str()));
 	conf->setParam("next_on_showplan","");
 	lblTitle3->setText(R[0]["title"].c_str());
 	lblArtist3->setText(R[0]["artist"].c_str());

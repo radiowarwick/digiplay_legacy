@@ -19,10 +19,8 @@ void archivemanager::load() {
 	delete trackInbox;
 	delete trackTrash;
 
-	/* Get configuration */
+	/* Get configuration and connect to database*/
 	config *Conf = new config("digiplay");
-	
-	/* Connect to database */
 	try {
 		C = new Connection(Conf->getDBConnectString());
 	}
@@ -31,7 +29,9 @@ void archivemanager::load() {
 		cout << " -> " << Conf->getDBConnectString() << endl;
 		return;
 	}
-
+	delete Conf;
+	
+	/* Create a new transaction and load current DB data into memory */
 	try {
 		T = new Transaction(*C,"");
 	}
@@ -41,12 +41,12 @@ void archivemanager::load() {
 	}
 	trackDB = new vector<track>;
 	loadDB(trackDB);
-	
 	T->abort();
 	delete T;
+
+	/* Parse Inbox and Trash info \ XML files */
 	trackInbox = new vector<track>;
 	loadInbox(trackInbox);
-
 	trackTrash = new vector<track>;
 	loadTrash(trackTrash);
 

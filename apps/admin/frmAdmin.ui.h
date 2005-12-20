@@ -84,6 +84,8 @@ void frmAdmin::MusicLoad() {
 	DisplayMusic();
 	lstMusicDB->setEnabled(true);
 	btnMusicAdd->setEnabled(true);
+	btnMusicLoad->setText("Reload audio data...");
+	btnMusicLoad->setEnabled(true);
 	lblStatus->setText("Ready.");
 }
 

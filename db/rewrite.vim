@@ -5,5 +5,10 @@ i
 create database digiplay;
 create user digiplay_user;
 \c digiplay
+begin transaction;
+
+
+€ı5Gi€ı=
+end transaction;
 
 :wq

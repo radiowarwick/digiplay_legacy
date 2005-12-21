@@ -136,117 +136,173 @@ void archivemanager::add(unsigned int index) {
 		cout << "Failed to create transaction!!!" << endl;
 		return;
 	}
+	
 	Result R;
 	int artist_id = -1, album_id = -1, audio_id = -1;
 	bool is_jingle = false;
+	string SQL;
 
-    // We need to check the track isn't already in the database
-    R = T->exec("SELECT id FROM audio WHERE md5='" + t.md5 + "'");
-    if (R.size() == 1) {
-		string id = R[0][0].c_str();
-        T->exec("DELETE FROM audioartists WHERE audio=" + id);
-        T->exec("DELETE FROM audio WHERE id=" + id);
-        cout << "Old entry removed" << endl;
-    }
-
-	// check if we have a jingle
-	if (t.album.size() > 13 
-			&& strPcase(&(t.album)).substr(0,14) ==	"Jingle Package")
-		is_jingle = true;
-	
-    // First lets sort out the artist
-	if (!is_jingle) {
-	    R = T->exec("SELECT id FROM artists WHERE name='" + t.artist + "' "
-					"OR alt_name LIKE '%" + t.artist + "%'");
-	    if (R.size() > 0) artist_id = atoi(R[0][0].c_str());
-	    else {
-	        T->exec("INSERT INTO artists (name) VALUES ('" + t.artist + "')");
-	        R = T->exec("SELECT last_value FROM artists_id_seq");
-	        if (R.size() > 0) artist_id = atoi(R[0][0].c_str());
-	        else {
-	            cout << "Failed to get the new artist!" << endl;
-	            T->abort();
-				return;
-	        }
+	try {
+    	// We need to check the track isn't already in the database
+		SQL = "SELECT id FROM audio WHERE md5='" + t.md5 + "'";
+		R = T->exec(SQL);
+	    if (R.size() == 1) {
+			string id = R[0][0].c_str();
+			SQL = "DELETE FROM audioartists WHERE audio=" + id;
+	        T->exec(SQL);
+			SQL = "DELETE FROM audio WHERE id=" + id;
+	        T->exec(SQL);
+	        cout << "Old entry removed" << endl;
 	    }
-	}
-
-    // Next lets sort out the album ID
-    if (t.album == "") album_id = 0;
-	else if (is_jingle) {
-		R = T->exec("SELECT * FROM jinglepkgs WHERE name='" + t.album + "'");
-		if (R.size() > 0) album_id = atoi(R[0][0].c_str());
-		else {
-			T->exec("INSERT INTO jinglepkgs (name, description, enabled) "
-					"VALUES ('" + t.album + "','" + t.album + "','f')");
-			R = T->exec("SELECT last_value FROM jinglepkgs_id_seq");
+	
+		// check if we have a jingle
+		if (t.album.size() > 13 
+				&& strPcase(&(t.album)).substr(0,14) ==	"Jingle Package")
+			is_jingle = true;
+		
+	    // First lets sort out the artist
+		if (!is_jingle) {
+			SQL = "SELECT id FROM artists WHERE name='" + t.artist + "' "
+					"OR alt_name LIKE '%" + t.artist + "%'";
+		    R = T->exec(SQL);
+		    if (R.size() > 0) artist_id = atoi(R[0][0].c_str());
+		    else {
+				SQL = "INSERT INTO artists (name) VALUES ('" + t.artist + "')";
+		        T->exec(SQL);
+				SQL = "SELECT last_value FROM artists_id_seq";
+		        R = T->exec(SQL);
+		        if (R.size() > 0) artist_id = atoi(R[0][0].c_str());
+		        else {
+		            cout << "Failed to get the new artist!" << endl;
+		            T->abort();
+					return;
+		        }
+		    }
+		}
+	
+	    // Next lets sort out the album ID
+	    if (t.album == "") album_id = 0;
+		else if (is_jingle) {
+			SQL = "SELECT * FROM jinglepkgs WHERE name='" + t.album + "'";
+			R = T->exec(SQL);
 			if (R.size() > 0) album_id = atoi(R[0][0].c_str());
 			else {
-				cout << "Failed to get the jingle package name!" << endl;
+				SQL = "INSERT INTO jinglepkgs (name, description, enabled) "
+						"VALUES ('" + t.album + "','" + t.album + "','f')";
+				T->exec(SQL);
+				SQL = "SELECT last_value FROM jinglepkgs_id_seq";
+				R = T->exec(SQL);
+				if (R.size() > 0) album_id = atoi(R[0][0].c_str());
+				else {
+					cout << "Failed to get the jingle package name!" << endl;
+					T->abort();
+					return;
+				}
+			}
+		}
+	    else {
+			SQL = "SELECT * FROM albums WHERE name='" + t.album + "' "
+					"OR alt_name LIKE '%" + t.album + "%'";
+	        R = T->exec(SQL);
+	        if (R.size() > 0) album_id = atoi(R[0][0].c_str());
+	        else {
+				SQL = "INSERT INTO albums (name, source, reclibid) "
+						"VALUES ('" + t.album + "','" + t.origin
+						+ "','" + t.reclibid + "')";
+				T->exec(SQL);
+				SQL = "SELECT last_value FROM albums_id_seq";
+				R = T->exec(SQL);
+	            if (R.size() > 0) album_id = atoi(R[0][0].c_str());
+	            else {
+	                cout << "Failed to get the new albm!" << endl;
+	                T->abort();
+					return;
+	            }
+	        }
+	    }
+	
+	    // We can now add the audio
+	    if (is_jingle) {
+	        SQL = "INSERT INTO audio (md5, archive, length_smpl, start_smpl, "
+	            "end_smpl, intro_smpl, extro_smpl, type, creator, "
+				"creation_date, import_date, title, sustainer, censor, "
+				"lifespan) "
+	            "VALUES ('" + t.md5 + "'," + itoa(t.md5_archive.id) + "," + itoa(t.length_smpl) + ","
+	            + itoa(t.trim_start_smpl) + "," + itoa(t.trim_end_smpl) + ","
+	            + itoa(t.fade_in_smpl) + "," + itoa(t.fade_out_smpl) + ",1,0,"
+	            "CURRENT_DATE,CURRENT_DATE,'" + t.title + "','f','f',0)";
+			T->exec(SQL);
+			SQL = "SELECT last_value FROM audio_id_seq";
+			R = T->exec(SQL);
+			if (R.size() > 0) {
+				audio_id = atoi(R[0][0].c_str());
+			}
+			else {
+				cout << "Failed to add audio!"<< endl;
 				T->abort();
 				return;
 			}
+			SQL = "SELECT id FROM jinglepkgs WHERE name='" + t.album + "'";
+			R = T->exec(SQL);
+			if (R.size() > 0) {
+				album_id = atoi(R[0][0].c_str());
+			}
+			else {
+				SQL = "INSERT INTO jinglepkgs (name, description, enabled) "
+					"VALUES ('" + t.album + "','" + t.album + "','f')";
+				T->exec(SQL);
+				SQL = "SELECT last_value FROM jinglepkgs_id_seq";
+				R = T->exec(SQL);
+				if (R.size() > 0) album_id = atoi(R[0][0].c_str());
+				else {
+					cout << "Failed to get the new jingle package!" << endl;
+					T->abort();
+					return;
+				}
+			}
+			SQL = "INSERT INTO audiojinglepkgs (audio, jinglepkg, jingletype) "
+				"VALUES (" + itoa(audio_id) + "," + itoa(album_id) + ",0)";
+			T->exec(SQL);
 		}
-	}
-    else {
-        R = T->exec("SELECT * FROM albums WHERE name='" + t.album + "' "
-					"OR alt_name LIKE '%" + t.album + "%'");
-        if (R.size() > 0) album_id = atoi(R[0][0].c_str());
-        else {
-			T->exec("INSERT INTO albums (name, source, reclibid) "
-                    "VALUES ('" + t.album + "','" + t.origin
-                    + "','" + t.reclibid + "')");
-			R = T->exec("SELECT last_value FROM albums_id_seq");
-            if (R.size() > 0) album_id = atoi(R[0][0].c_str());
-            else {
-                cout << "Failed to get the new albm!" << endl;
-                T->abort();
+		else {
+			SQL = ("INSERT INTO audio (md5, archive, length_smpl, start_smpl, "
+				"end_smpl, intro_smpl, extro_smpl, type, creator, creation_date, "
+	            "import_date, title, music_album, music_track, music_released, "
+	            "sustainer, censor, lifespan) "
+	            "VALUES ('" + t.md5 + "'," + itoa(t.md5_archive.id) + ","
+				+ itoa(t.length_smpl) + ","
+	            + itoa(t.trim_start_smpl) + "," + itoa(t.trim_end_smpl) + ","
+	            + itoa(t.fade_in_smpl) + "," + itoa(t.fade_out_smpl) + ",0,0,"
+	            "CURRENT_DATE,CURRENT_DATE,'" + t.title + "',"
+	            + itoa(album_id) + ",0," + itoa(atoi(t.release_date.c_str())) 
+				+ ",'f','f',0)");
+			T->exec(SQL);
+		}
+		SQL = "SELECT last_value FROM audio_id_seq";
+	    R = T->exec(SQL);
+		if (!is_jingle) {
+		    if (R.size() > 0) {
+		        audio_id = atoi(R[0][0].c_str());
+				SQL = "INSERT INTO audioartists (audio, artist) "
+                      "VALUES (" + itoa(audio_id) + "," + itoa(artist_id) + ")";
+		        T->exec(SQL);
+		    }
+		    else {
+		        cout << "Failed to retrieve last audio id!" << endl;
+		        T->abort();
 				return;
-            }
-        }
-    }
-
-    // We can now add the audio
-	string SQL;
-    if (is_jingle)
-        SQL = "INSERT INTO audio (md5, archive, length_smpl, start_smpl, "
-            "end_smpl, intro_smpl, extro_smpl, type, creator, creation_date, "
-            "import_date, title, jingle_package, music_track, music_released, "
-            "sustainer, censor, lifespan, jingle_type) "
-            "VALUES ('" + t.md5 + "',0," + itoa(t.length_smpl) + ","
-            + itoa(t.trim_start_smpl) + "," + itoa(t.trim_end_smpl) + ","
-            + itoa(t.fade_in_smpl) + "," + itoa(t.fade_out_smpl) + ",1,0,"
-            "CURRENT_DATE,CURRENT_DATE,'" + t.title + "',"
-            + itoa(album_id) + ",0," + t.release_date + ",'f','f',0,0)";
-	else
-		SQL = ("INSERT INTO audio (md5, archive, length_smpl, start_smpl, "
-			"end_smpl, intro_smpl, extro_smpl, type, creator, creation_date, "
-            "import_date, title, music_album, music_track, music_released, "
-            "sustainer, censor, lifespan) "
-            "VALUES ('" + t.md5 + "'," + itoa(t.md5_archive.id) + ","
-			+ itoa(t.length_smpl) + ","
-            + itoa(t.trim_start_smpl) + "," + itoa(t.trim_end_smpl) + ","
-            + itoa(t.fade_in_smpl) + "," + itoa(t.fade_out_smpl) + ",0,0,"
-            "CURRENT_DATE,CURRENT_DATE,'" + t.title + "',"
-            + itoa(album_id) + ",0," + itoa(atoi(t.release_date.c_str())) 
-			+ ",'f','f',0)");
-	T->exec(SQL);
-    R = T->exec("SELECT last_value FROM audio_id_seq");
-	if (!is_jingle) {
-	    if (R.size() > 0) {
-	        audio_id = atoi(R[0][0].c_str());
-	        T->exec("INSERT INTO audioartists (audio, artist) "
-	                "VALUES (" + itoa(audio_id) + "," + itoa(artist_id) + ")");
-	    }
-	    else {
-	        cout << "Failed to retrieve last audio id!" << endl;
-	        T->abort();
-			return;
-	    }
+		    }
+		}
+	    T->commit();
+		delete T;
 	}
-    T->commit();
-	delete T;
-
+	catch (...) {
+		cout << "Failed to make database modifications." << endl;
+		cout << "SQL: " << SQL << endl;
+		T->abort();
+		delete T;
+		return;
+	}
 	// Since we successfully added to database, put audio files in archive.
 	string src = t.md5_archive.localPath + "/inbox/" + t.md5 + "*";
 	string dest = t.md5_archive.localPath + "/" + t.md5.substr(0,1) + "/";

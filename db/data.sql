@@ -27,8 +27,16 @@ INSERT INTO albums (id, name)
 	VALUES (0, '(none)');
 
 /* Default Jingle type */
-INSERT INTO jingletypes (id, name)
-	VALUES (0, 'Idents');
+INSERT INTO jingletypes (id, name, description)
+	VALUES (0, 'Generic','Unclassified');
+INSERT INTO jingletypes (id, name, description)
+	VALUES (1, 'Idents','Station Identification');
+INSERT INTO jingletypes (id, name, description)
+	VALUES (2, 'Contact','Contact Information');
+INSERT INTO jingletypes (id, name, description)
+	VALUES (3, 'News','News Ident');
+INSERT INTO jingletypes (id, name, description)
+	VALUES (4, 'Shows','Show Identification');
 
 /* Lifespans */
 INSERT INTO lifespans (id, name, data, description)

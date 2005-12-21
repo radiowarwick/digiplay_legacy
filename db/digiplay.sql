@@ -2,7 +2,7 @@
 
 --    Driver Used : Microsoft Visual Studio - IBM DB2 Universal Database Driver.
 --    Document    : G:\Data\cc\raw\digiplay\Database Design v2 (VISIO 2002).vsd.
---    Time Created: 20 December 2005 12:52.
+--    Time Created: 21 December 2005 01:10.
 --    Operation   : From Visio Generate Wizard.
 --    Connected data source : No connection.
 --    Connected server      : No connection.
@@ -34,11 +34,13 @@ create table "sust_bins" (
 -- "audiojinglepkgs" : Table of audiojinglepkgs
 -- 	"id" : id identifies audiojinglepkgs
 -- 	"audio" : audio is of audiojinglepkgs
--- 	"jinglepkg" : jinglepkg is of audiojinglepkgs  
+-- 	"jinglepkg" : jinglepkg is of audiojinglepkgs
+-- 	"jingletype" : jingletype is of audiojinglepkgs  
 create table "audiojinglepkgs" ( 
 	"id" SERIAL,
 	"audio" INTEGER not null,
-	"jinglepkg" INTEGER not null, constraint "audiojinglepkgs_PK" primary key ("id") ); 
+	"jinglepkg" INTEGER not null,
+	"jingletype" INTEGER not null, constraint "audiojinglepkgs_PK" primary key ("id") ); 
 
 -- Create new table "groupaccess".
 -- "groupaccess" : Table of groupaccess
@@ -212,7 +214,7 @@ create table "usercartsets" (
 create table "jingletypes" ( 
 	"id" SERIAL,
 	"name" VARCHAR not null,
-	"description" CHARACTER(10), constraint "jingletypes_PK" primary key ("id") ); 
+	"description" VARCHAR, constraint "jingletypes_PK" primary key ("id") ); 
 
 -- Create new table "usercues".
 -- "usercues" : Table of usercues
@@ -446,7 +448,6 @@ create table "audiousers" (
 -- 	"music_album" : music_album is of audio
 -- 	"music_track" : music_track is of audio
 -- 	"music_released" : music_released is of audio
--- 	"jingle_type" : jingle_type is of audio
 -- 	"advert_company" : advert_company is of audio
 -- 	"advert_description" : advert_description is of audio
 -- 	"origin" : origin is of audio
@@ -477,7 +478,6 @@ create table "audio" (
 	"music_album" INTEGER,
 	"music_track" SMALLINT,
 	"music_released" SMALLINT,
-	"jingle_type" INTEGER,
 	"advert_company" INTEGER,
 	"advert_description" VARCHAR,
 	"origin" VARCHAR,
@@ -765,6 +765,12 @@ alter table "audiojinglepkgs"
 	 references "jinglepkgs" (
 		"id") on update restrict on delete restrict; 
 
+alter table "audiojinglepkgs"
+	add constraint "jingletypes_FK1" foreign key (
+		"jingletype")
+	 references "jingletypes" (
+		"id") on update restrict on delete restrict; 
+
 -- Add foreign key constraints to table "groupaccess".
 alter table "groupaccess"
 	add constraint "groups_FK4" foreign key (
@@ -1045,12 +1051,6 @@ alter table "audio"
 		"id") on update restrict on delete restrict; 
 
 alter table "audio"
-	add constraint "jingletypes_FK1" foreign key (
-		"jingle_type")
-	 references "jingletypes" (
-		"id") on update restrict on delete restrict; 
-
-alter table "audio"
 	add constraint "lifespans_FK1" foreign key (
 		"lifespan")
 	 references "lifespans" (
@@ -1192,12 +1192,12 @@ order by title;
 create view jingles (title, package, type, active) as
 select audio.title as title,
     jinglepkgs.name as package,
-    jingletypes.name as type,
+    jingletypes.description as type,
     jinglepkgs.enabled as active
 from audio, jinglepkgs, audiojinglepkgs, jingletypes
 where audiojinglepkgs.audio = audio.id
     and audiojinglepkgs.jinglepkg = jinglepkgs.id
-    and audio.jingle_type = jingletypes.id
+    and audiojinglepkgs.jingletype = jingletypes.id
     and audio.type = 1
 order by active desc, package, type, title;
 

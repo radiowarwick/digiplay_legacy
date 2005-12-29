@@ -373,7 +373,7 @@ void archivemanager::loadInbox(vector<track> *tracks) {
 	path = A.localPath + "/inbox";
     dirp = opendir(path.c_str());
     while (dirp) {
-        errno = 0;
+        //errno = 0;
         if ((dp = readdir(dirp)) != NULL) {
             fn = path + "/" + dp->d_name;
 			if (fn.length() > 5 && fn.substr(fn.length() - 5, 5) != ".info") {
@@ -394,10 +394,10 @@ void archivemanager::loadInbox(vector<track> *tracks) {
 			}
         }
         else {
-            if (errno == 0) {
+            //if (errno == 0) {
                 closedir(dirp);
                 break;
-            }
+            //}
             closedir(dirp);
             break;
         }

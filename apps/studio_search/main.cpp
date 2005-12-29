@@ -1,5 +1,6 @@
 #include <qapplication.h>
 #include "frmSearch.h"
+#include "clockThread.h"
 
 int main( int argc, char ** argv )
 {

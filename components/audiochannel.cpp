@@ -65,8 +65,6 @@ void audiochannel::load(string filename, long start_smpl, long end_smpl) {
 	mode_play = false;
 	mode_cache = false;
 
-	if (f_counters) f_counters(0,f_obj);
-
 	// Delete any fades and triggers that might be still around
 	for (unsigned short i = 0; i < fades->size(); i++) {
 		delete fades->at(i);
@@ -85,12 +83,12 @@ void audiochannel::load(string filename, long start_smpl, long end_smpl) {
 	f_handle->seekg(0,ios::end);
 	
 	// Set file position pointers
-	f_length_byte = f_handle->tellg();
     f_start_byte = start_smpl * 4;
     f_end_byte = end_smpl * 4;
+	f_length_byte = f_end_byte - f_start_byte;
     f_pos_byte = f_start_byte;
-
-    // Reset cache
+    
+	// Reset cache
     Cache_Read = Cache_Start;
     Cache_Write = Cache_Start;
     Cache_Free = CACHE_SIZE;
@@ -102,6 +100,7 @@ void audiochannel::load(string filename, long start_smpl, long end_smpl) {
         cout << "Error creating thread" << endl;
         return;
     }
+	if (f_counters) f_counters(0,f_obj);
 }
 
 /** Returns true if the channel has an audio track loaded and is good
@@ -148,7 +147,7 @@ void audiochannel::stop() {
 		if (f_counters) f_counters((f_pos_byte-f_start_byte)/4,f_obj);
 	
 		// Reload track
-		load(f_name,f_start_byte,f_end_byte);
+		load(f_name,f_start_byte/4,f_end_byte/4);
 	}
 }
 
@@ -180,6 +179,7 @@ void audiochannel::addCounter(void (*f_setCounter)(long,void*),void *obj) {
 short audiochannel::getAudio(char* buffer, unsigned long bytes) {
     char *ptr = buffer;
 	short count = 0;
+	long x;
     for (unsigned long i = 0; i < bytes; i++) {
 		if (mode_play && CACHE_SIZE - Cache_Free < 1024) {
 			stop();
@@ -198,9 +198,11 @@ short audiochannel::getAudio(char* buffer, unsigned long bytes) {
         if (Cache_Read > Cache_End)
             Cache_Read = Cache_Start; 
     }
-	if (mode_play && f_counters)
-		if ((f_pos_byte - (f_pos_byte % 64)) % 8192 == 0) 
-			f_counters((f_pos_byte-f_start_byte)/4,f_obj);
+	if (mode_play && f_counters) {
+		x = f_pos_byte - f_start_byte;
+		if ((x - (x % 64)) % 8192 == 0)
+			f_counters(x/4,f_obj);
+	}
 
 	return count;
 }
@@ -279,6 +281,10 @@ float audiochannel::getVolume(unsigned long smpl) {
 	return vol;
 }
 
+unsigned long audiochannel::getLength() {
+	return (f_length_byte)/4;
+}
+	 
 /** Determines if any scheduled triggers should trigger and if so, triggers
  * playback on the channel specified.
  * @param smpl The sample at which triggers should be considered

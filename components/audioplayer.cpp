@@ -103,7 +103,6 @@ void audioplayer::InitialiseHardware(string Device) {
         cout << "   -> WARNING: " << DEVICE
 			<< ": Unable to get block size" << endl;
     }
-	cout << "   -> Hardware Initialisation complete." << endl;
 }
 
 

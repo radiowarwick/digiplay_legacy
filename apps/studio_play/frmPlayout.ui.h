@@ -9,27 +9,6 @@
 ** These will automatically be called by the form's constructor and
 ** destructor.
 *****************************************************************************/
-#include <qapplication.h>
-
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h"
-using namespace pqxx;
-
-#include "playerThread.h"
-#include "triggerThread.h"
-#include "track.h"
-#include "config.h"
-
-QString path;
-QPixmap *pixPlay, *pixPause, *pixStop, *pixSeekback, *pixSeekforward, *pixReset;
-playerThread *player1;
-playerThread *player2;
-playerThread *player3;
-triggerThread *dbTrigger;
-Connection *C;
-config *conf;
-
 void frmPlayout::init() {
 	path = qApp->applicationDirPath();
 	pixPlay = new QPixmap(path + "/images/play.png");
@@ -71,11 +50,14 @@ void frmPlayout::init() {
 	player1 = new playerThread(this, 1);
 	player2 = new playerThread(this, 2);	
 	player3 = new playerThread(this, 3);
+	audiowall = new audiowallthread(this, 4);
 	player1->start();
 	usleep(100000);
 	player2->start();
 	usleep(100000);
 	player3->start();
+	usleep(100000);
+	audiowall->start();
 	usleep(500000);
 	cout << " -> Hardware initialisation complete." << endl;
 	
@@ -84,6 +66,7 @@ void frmPlayout::init() {
 	cout << " -> Created trigger thread" << endl;
 	dbTrigger->start();
 	cout << " -> Trigger active." << endl;
+	init_audiowalls();
 }
 
 void frmPlayout::destroy() {
@@ -94,6 +77,29 @@ void frmPlayout::destroy() {
 void frmPlayout::customEvent(QCustomEvent *event) {
 	//cout << "Event received: " << event->type() << endl;
 	switch (event->type()) {
+	case 20001: {
+			eventData *e_data = (eventData*)event->data();
+			if (e_data->index < 0) break;
+			switch (e_data->t) {
+			case EVENT_TYPE_STOP: {
+					btnsAudioWall->at(e_data->index)->setText("STOPPED");
+					break;
+				}
+			case EVENT_TYPE_PLAY: {
+					break;
+				}
+			case EVENT_TYPE_SMPL: {
+					if (audiowall->get_state() == 1)
+					btnsAudioWall->at(e_data->index)->setText("PLAYING\n" 
+										+ QString::number(e_data->smpl));
+					break;
+				}
+			case EVENT_TYPE_MAX_SMPL: {
+					break;
+				}
+			}
+		break;				
+		}
 	case 20010: {       // Player1 Counter Update
 			QString *s = (QString *) event->data();
 			lblCounter1->setText(*s);
@@ -176,7 +182,7 @@ void frmPlayout::Player1_Load() {
 	if (conf->getParam("next_on_showplan") == "") {
 		return;
 	}
-	Transaction *T = new Transaction(*C,"");
+	pqxx::Transaction *T = new pqxx::Transaction(*C,"");
 	string SQL = "SELECT audio.md5 AS md5, audio.title AS title, artists.name as artist, "
 				 "audio.intro_smpl as start, audio.extro_smpl as end, "
 				 "archives.localpath AS path "
@@ -360,4 +366,83 @@ void frmPlayout::Player3_Time() {
         lblPlayerTime3->setText("REMAIN");
         player3->setTimeMode(TIME_MODE_REMAIN);
     }	
+}
+
+
+void frmPlayout::init_audiowalls() {
+	btnsAudioWall = new vector<QPushButton*>;
+	QPushButton *btnCurrent;
+	// Configure Station Audio Wall
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 3; j++) {
+			btnCurrent = new QPushButton( grpSCart, QString::number(i*3+j));
+			btnCurrent->setGeometry(j*150 + 10, i*70 + 20, 140, 60);
+			btnCurrent->setEnabled(false);
+			btnsAudioWall->push_back(btnCurrent);
+			connect(btnCurrent,SIGNAL(clicked()),this,SLOT(AudioWall_Play()));
+		}
+	}
+	
+	// Configure User Audio Wall
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 3; j++) {
+			btnCurrent = new QPushButton( grpUCart, "");
+			btnCurrent->setGeometry(j*150 + 10, i*70 + 20, 140, 60);
+			btnCurrent->setEnabled(false);
+			btnsAudioWall->push_back(btnCurrent);
+		}
+	}
+			
+	Transaction T(*C,"");
+	Result R = T.exec("SELECT audio.md5 AS md5, audio.start_smpl AS start, "
+					  "audio.end_smpl AS end, cartsaudio.cart AS cart, "
+					  "cartsaudio.text AS text, cartwalls.name AS name, "
+					  "cartwalls.description AS desc, cartsets.name AS cartset, "
+					  "cartsets.description AS cartset_desc, cartsets.userid AS userid, "
+					  "cartsets.directory AS dir, cartproperties.id AS property, "
+					  "cartstyleprops.value AS prop_value, archives.localpath AS path "
+					  "FROM audio, cartsaudio, cartwalls, cartsets, cartstyle, "
+					  "cartstyleprops, cartproperties, archives "
+					  "WHERE cartsaudio.audio = audio.id "
+					  "AND cartsaudio.cartwall = cartwalls.id "
+					  "AND cartwalls.cartset = cartsets.id "
+					  "AND cartsaudio.style = cartstyle.id "
+					  "AND cartstyleprops.style = cartstyle.id "
+					  "AND cartstyleprops.property = cartproperties.id "
+					  "AND audio.archive = archives.id "
+					  "AND userid=0 "
+					  "ORDER BY cartwalls.id, cartsaudio.cart, cartproperties.id;");
+	int i = 0;
+	string path = "", md5 = "";
+	short cart = 0;
+	QColor fg, bg;
+
+	// Process each cart
+	while (i < R.size()) {
+		path = R[i]["path"].c_str();
+		md5 = R[i]["md5"].c_str();
+		path += "/" + md5.substr(0,1) + "/" + md5;
+		cart = atoi(R[i]["cart"].c_str());
+		cout << "Loading cart " << cart << endl;
+		audiowall->do_load(new QString(path),atoi(R[i]["start"].c_str()),atoi(R[i]["end"].c_str()));
+		btnsAudioWall->at(cart)->setText(R[i]["text"].c_str());
+		btnsAudioWall->at(cart)->setEnabled(true);
+		// Process each property for current cart
+		while (i < R.size() && md5 == R[i]["md5"].c_str()) {		
+			if (atoi(R[i]["property"].c_str()) == 0)
+				btnsAudioWall->at(cart)->setPaletteForegroundColor(
+						QColor((QRgb)atoi(R[i]["prop_value"].c_str())));
+			if (atoi(R[i]["property"].c_str()) == 1)
+				btnsAudioWall->at(cart)->setPaletteBackgroundColor(
+						QColor((QRgb)atoi(R[i]["prop_value"].c_str())));
+			i++;
+		}
+	}
+}
+
+
+void frmPlayout::AudioWall_Play()
+{
+	QPushButton *sender = (QPushButton*)QObject::sender();
+	audiowall->do_play(atoi(sender->name()));
 }

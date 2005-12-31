@@ -126,7 +126,7 @@ unsigned long scheduler::getPlaylistLength() {
  * to play
  */
 unsigned int scheduler::getScheduleRemainSize() {
-    string SQL = "SELECT count(*) FROM sust_sched";
+    string SQL = "SELECT count(*) FROM sustschedule";
     return atoi(T->exec(SQL)[0][0].c_str());
 }
 
@@ -134,8 +134,8 @@ unsigned int scheduler::getScheduleRemainSize() {
  * playout schedule
  */
 unsigned long scheduler::getScheduleRemainTime() {
-    string SQL = "SELECT sum(audio.length) FROM sust_sched,audio "
-        "WHERE sust_sched.audio=audio.id";
+    string SQL = "SELECT sum(audio.length) FROM sustschedule,audio "
+        "WHERE sustschedule.audio=audio.id";
     return atoi(T->exec(SQL)[0][0].c_str());
 }
 

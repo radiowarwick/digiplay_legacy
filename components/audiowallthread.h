@@ -1,5 +1,5 @@
-#ifndef CLASS_PLAYERTHREAD
-#define CLASS_PLAYERTHREAD
+#ifndef CLASS_AUDIOWALLTHREAD
+#define CLASS_AUDIOWALLTHREAD
 
 #include <iostream>
 #include <sstream>
@@ -11,6 +11,7 @@ using namespace std;
 
 #include "audioplayer.h"
 #include "audiomixer.h"
+#include "dps.h"
 
 #define STATE_EJECT -1
 #define STATE_STOP 0
@@ -19,38 +20,31 @@ using namespace std;
 #define TIME_MODE_ELAPSED 0
 #define TIME_MODE_REMAIN 1
 
-class playerThread : public QThread {
+class audiowallthread : public QThread {
 public:
-	playerThread(QWidget *o, int id) : receiver(o), stopped(FALSE), player_id(id), state(0), time_mode(0) {;}
+	audiowallthread(QWidget *o, int id) : receiver(o), stopped(FALSE), player_id(id), state(0) {;}
 	void run();
 	void stop();
-	int getState();
-	void setTimeMode(int mode) { time_mode = mode; do_updateCounter(position);}
 	void do_load(QString *md5_hash, long int start, long int end);
-	void do_play();
-	void do_stop();
-	void do_pause();
-	void do_resume();
-	void do_seek(long position);
+	void do_play(short index);
+	void do_stop(short index);
 	void do_updateCounter(int smpl);
+	int get_state();
 	static void callback_counter(long smpl, void *obj);
 	
 private:
 	QWidget *receiver;
 	QMutex stopped_mutex;
 	QMutex state_mutex;
-	QMutex position_mutex;
 	bool stopped;
 	int player_id;
-	string md5;
 	audioplayer *player;
 	audiomixer *mixer;
-	audiochannel *ch;
+	
+	eventData* e_data;	
 	
 	int state;
-	int time_mode;
-	long length;
-	long position;
+	short active_ch;
 };
 
 #endif

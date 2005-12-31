@@ -49,7 +49,7 @@ int main(int argc, char *argv) {
 		cout << "Failed to connect to database" << endl;
 		exit(-1);
 	}
-	SQL_Item = "SELECT archives.localpath AS path, audio.md5 AS md5, audio.title AS title, audio.length_smpl AS length_smpl, sust_sched.id AS id, sust_sched.trim_start_smpl AS start, sust_sched.trim_end_smpl AS end, sust_sched.fade_in AS fade_in, sust_sched.fade_out AS fade_out FROM sust_sched, audio, archives WHERE sust_sched.audio = audio.id AND archives.id = audio.archive ORDER BY sust_sched.id LIMIT 1";
+	SQL_Item = "SELECT archives.localpath AS path, audio.md5 AS md5, audio.title AS title, audio.length_smpl AS length_smpl, sustschedule.id AS id, sustschedule.trim_start_smpl AS start, sustschedule.trim_end_smpl AS end, sustschedule.fade_in AS fade_in, sustschedule.fade_out AS fade_out FROM sustschedule, audio, archives WHERE sustschedule.audio = audio.id AND archives.id = audio.archive ORDER BY sustschedule.id LIMIT 1";
 	cout << "done." << endl << " -> Creating audio mixer..." << flush;
 	
 	// Create and configure audio mixer
@@ -96,7 +96,7 @@ int main(int argc, char *argv) {
 			length_smpl = atoi(R[0]["length_smpl"].c_str());
 			
 			// Remove the entry from schedule once we've tried to load it
-			SQL_Remove = "DELETE FROM sust_sched WHERE id="
+			SQL_Remove = "DELETE FROM sustschedule WHERE id="
 			                        + (string)R[0]["id"].c_str();
 	        T->exec(SQL_Remove);
 			T->commit();

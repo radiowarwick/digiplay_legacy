@@ -34,8 +34,8 @@ STUDIO_PLAY_OBJ=		apps/studio_play/main.o \
 						components/audiomixer.o \
 						components/audiochannel.o \
 						components/playerThread.o \
-						components/triggerThread.o \
-						components/track.o
+						components/audiowallthread.o \
+						components/triggerThread.o
 STUDIO_SEARCH_OBJ=		apps/studio_search/main.o \
 						components/libsearch.o \
 						components/track.o \
@@ -122,6 +122,9 @@ components/audiomixer.o:		components/audiomixer.cpp \
 components/audioplayer.o:		components/audioplayer.cpp \
 								components/audioplayer.h
 	$(COMPILE)
+components/audiowallthread.o:	components/audiowallthread.cpp \
+								components/audiowallthread.h
+	$(QTCOMPILE)
 components/clockThread.o:		components/clockThread.cpp \
 								components/clockThread.h
 	$(QTCOMPILE)

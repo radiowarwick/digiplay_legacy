@@ -33,6 +33,19 @@ struct track {
     unsigned long fade_out_smpl;
 };
 
+enum eventType { 
+	EVENT_TYPE_PLAY, 
+	EVENT_TYPE_STOP, 
+	EVENT_TYPE_SMPL,
+	EVENT_TYPE_MAX_SMPL };
+
+struct eventData {
+	unsigned short id;
+	enum eventType t;
+	long smpl;
+	short index;
+};
+
 #define DPS_DB 0
 #define DPS_INBOX 1
 #define DPS_TRASH 2

@@ -6,8 +6,8 @@
     </property>
     <property name="geometry">
         <rect>
-            <x>3</x>
-            <y>2</y>
+            <x>0</x>
+            <y>0</y>
             <width>1025</width>
             <height>769</height>
         </rect>
@@ -22,8 +22,8 @@
     </property>
     <property name="minimumSize">
         <size>
-            <width>1024</width>
-            <height>768</height>
+            <width>21</width>
+            <height>22</height>
         </size>
     </property>
     <property name="maximumSize">
@@ -112,751 +112,6 @@
             </property>
             <property name="alignment">
                 <set>AlignCenter</set>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnUCart10</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>230</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>213</red>
-                    <green>0</green>
-                    <blue>255</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>News
-Profile</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnUCart11</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>160</x>
-                    <y>230</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>163</red>
-                    <green>0</green>
-                    <blue>195</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>Ents
-Sting + Bed</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnUCart12</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>310</x>
-                    <y>230</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>113</red>
-                    <green>0</green>
-                    <blue>135</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>Insight
-Intro</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnUCart7</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>160</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>213</red>
-                    <green>0</green>
-                    <blue>255</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>News
-Bed</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnUCart8</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>160</x>
-                    <y>160</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteForegroundColor">
-                <color>
-                    <red>255</red>
-                    <green>255</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>195</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>20</pointsize>
-                </font>
-            </property>
-            <property name="text">
-                <string>PLAYING
--00:05.14</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnUCart9</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>310</x>
-                    <y>160</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>113</red>
-                    <green>0</green>
-                    <blue>135</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>Insight
-Long Sting</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnUCart4</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>90</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>213</red>
-                    <green>0</green>
-                    <blue>255</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>Headlines</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnUCart5</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>160</x>
-                    <y>90</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>163</red>
-                    <green>0</green>
-                    <blue>195</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>Sport
-Sting + Bed</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnUCart6</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>310</x>
-                    <y>90</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>113</red>
-                    <green>0</green>
-                    <blue>135</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>Insight
-Short Sting</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnUCart3</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>310</x>
-                    <y>20</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>113</red>
-                    <green>0</green>
-                    <blue>135</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>Insight
-Bed</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnUCart2</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>160</x>
-                    <y>20</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>163</red>
-                    <green>0</green>
-                    <blue>195</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>Sports
-Bed</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnUCart1</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>20</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>213</red>
-                    <green>0</green>
-                    <blue>255</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>Intro</string>
-            </property>
-        </widget>
-    </widget>
-    <widget class="QGroupBox">
-        <property name="name">
-            <cstring>grpSCart</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>560</x>
-                <y>-2</y>
-                <width>460</width>
-                <height>373</height>
-            </rect>
-        </property>
-        <property name="font">
-            <font>
-                <family>Sans Serif</family>
-                <pointsize>16</pointsize>
-                <bold>1</bold>
-            </font>
-        </property>
-        <property name="title">
-            <string>Radio Warwick 1251AM Jingles</string>
-        </property>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnSCart2</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>160</x>
-                    <y>20</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteForegroundColor">
-                <color>
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>18</red>
-                    <green>137</green>
-                    <blue>192</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>Ident
-"RaW, Live!"</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnSCart3</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>310</x>
-                    <y>20</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteForegroundColor">
-                <color>
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>18</red>
-                    <green>137</green>
-                    <blue>192</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>Ident
-"To Coventry 
-and Beyond"</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnSCart1</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>20</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteForegroundColor">
-                <color>
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>18</red>
-                    <green>137</green>
-                    <blue>192</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>Ident
-"This is RaW"</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnSCart4</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>90</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteForegroundColor">
-                <color>
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>179</red>
-                    <green>0</green>
-                    <blue>239</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>News
-5 seconds</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnSCart7</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>160</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteForegroundColor">
-                <color>
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>0</red>
-                    <green>192</green>
-                    <blue>93</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>"Email Us"
-Wet</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnSCart10</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>230</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteForegroundColor">
-                <color>
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>122</red>
-                    <green>192</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>"Email Us"
-Dry</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnSCartPrev</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>300</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Previous</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblSCartPage</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>160</x>
-                    <y>300</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Page 1/1</string>
-            </property>
-            <property name="alignment">
-                <set>AlignCenter</set>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnSCartNext</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>310</x>
-                    <y>300</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Next</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnSCart11</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>160</x>
-                    <y>230</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteForegroundColor">
-                <color>
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>122</red>
-                    <green>192</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>"Text Us Now"
-Dry</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnSCart12</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>310</x>
-                    <y>230</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteForegroundColor">
-                <color>
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>122</red>
-                    <green>192</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>"Phone Us"
-Dry</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnSCart8</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>160</x>
-                    <y>160</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteForegroundColor">
-                <color>
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>0</red>
-                    <green>192</green>
-                    <blue>93</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>"Text Us Now"
-Wet</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnSCart9</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>310</x>
-                    <y>160</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteForegroundColor">
-                <color>
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>0</red>
-                    <green>192</green>
-                    <blue>93</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>"Phone Us"
-Wet</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnSCart5</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>160</x>
-                    <y>90</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteForegroundColor">
-                <color>
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>179</red>
-                    <green>0</green>
-                    <blue>239</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>News
-10 seconds</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnSCart6</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>310</x>
-                    <y>90</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="paletteForegroundColor">
-                <color>
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                </color>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>179</red>
-                    <green>0</green>
-                    <blue>239</blue>
-                </color>
-            </property>
-            <property name="text">
-                <string>News
-20 seconds</string>
             </property>
         </widget>
     </widget>
@@ -1819,6 +1074,80 @@ Wet</string>
             </property>
         </widget>
     </widget>
+    <widget class="QGroupBox">
+        <property name="name">
+            <cstring>grpSCart</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>560</x>
+                <y>-2</y>
+                <width>460</width>
+                <height>373</height>
+            </rect>
+        </property>
+        <property name="font">
+            <font>
+                <family>Sans Serif</family>
+                <pointsize>16</pointsize>
+                <bold>1</bold>
+            </font>
+        </property>
+        <property name="title">
+            <string>Radio Warwick 1251AM Jingles</string>
+        </property>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>btnSCartPrev</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>300</y>
+                    <width>140</width>
+                    <height>60</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Previous</string>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblSCartPage</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>160</x>
+                    <y>300</y>
+                    <width>140</width>
+                    <height>60</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Page 1/1</string>
+            </property>
+            <property name="alignment">
+                <set>AlignCenter</set>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>btnSCartNext</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>310</x>
+                    <y>300</y>
+                    <width>140</width>
+                    <height>60</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Next</string>
+            </property>
+        </widget>
+    </widget>
 </widget>
 <toolbars>
 </toolbars>
@@ -1897,8 +1226,28 @@ Wet</string>
     </connection>
 </connections>
 <includes>
+    <include location="local" impldecl="in declaration">playerThread.h</include>
+    <include location="local" impldecl="in declaration">audiowallthread.h</include>
+    <include location="local" impldecl="in declaration">triggerThread.h</include>
+    <include location="local" impldecl="in declaration">config.h</include>
+    <include location="local" impldecl="in declaration">pqxx/connection.h</include>
+    <include location="local" impldecl="in declaration">pqxx/transaction.h</include>
+    <include location="local" impldecl="in declaration">pqxx/result.h</include>
+    <include location="local" impldecl="in implementation">qapplication.h</include>
     <include location="local" impldecl="in implementation">frmPlayout.ui.h</include>
 </includes>
+<variables>
+    <variable access="private">QPixmap *pixPlay, *pixPause, *pixStop, *pixSeekback, *pixSeekforward, *pixReset;</variable>
+    <variable access="private">QString path;</variable>
+    <variable access="private">playerThread *player3;</variable>
+    <variable access="private">playerThread *player2;</variable>
+    <variable access="private">playerThread *player1;</variable>
+    <variable access="private">audiowallthread *audiowall;</variable>
+    <variable access="private">triggerThread *dbTrigger;</variable>
+    <variable access="private">Connection *C;</variable>
+    <variable access="private">config *conf;</variable>
+    <variable access="private">vector&lt;QPushButton*&gt; *btnsAudioWall;</variable>
+</variables>
 <slots>
     <slot>Player1_Load()</slot>
     <slot>Player1_Play()</slot>
@@ -1912,11 +1261,13 @@ Wet</string>
     <slot>Player1_Time()</slot>
     <slot>Player2_Time()</slot>
     <slot>Player3_Time()</slot>
+    <slot>AudioWall_Play()</slot>
 </slots>
 <functions>
     <function access="private" specifier="non virtual">init()</function>
     <function specifier="non virtual">destroy()</function>
     <function specifier="non virtual">customEvent( QCustomEvent * event )</function>
+    <function access="private" specifier="non virtual">init_audiowalls()</function>
 </functions>
 <pixmapinproject/>
 <layoutdefaults spacing="6" margin="11"/>

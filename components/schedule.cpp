@@ -121,10 +121,9 @@ void schedule::exportToDatabase() {
     for (unsigned short i = 0; i < S->size(); i++) {
         t = S->at(i);
         stringstream SQL;
-        SQL << "INSERT INTO sust_sched (audio,source_type,start_date,start_time,trim_start_smpl,trim_end_smpl,fade_in,fade_out)"
+        SQL << "INSERT INTO sustschedule (audio,start_date,start_time,trim_start_smpl,trim_end_smpl,fade_in,fade_out)"
             << " VALUES ("
-            << t.audio_id << ","			// Audio ID
-            << "0" << ",'"					// Source type
+            << t.audio_id << ",'"			// Audio ID
             << "01-01-2000" << "','"		// Start date
             << "00:00" << "',"				// Start time
             << t.trim_start_smpl << ","		// Start trim

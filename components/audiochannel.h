@@ -89,6 +89,9 @@ class audiochannel {
 
 			/// Gets the current volume setting
 			float getVolume(unsigned long smpl);
+
+			/// Gets the length of the current track to play
+			unsigned long getLength();
 		
 			/// Triggers other channels if appropriate
 			void trigger(unsigned long smpl);

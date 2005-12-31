@@ -2,7 +2,7 @@
 
 --    Driver Used : Microsoft Visual Studio - IBM DB2 Universal Database Driver.
 --    Document    : G:\Data\cc\raw\digiplay\Database Design v2 (VISIO 2002).vsd.
---    Time Created: 21 December 2005 01:10.
+--    Time Created: 29 December 2005 23:26.
 --    Operation   : From Visio Generate Wizard.
 --    Connected data source : No connection.
 --    Connected server      : No connection.
@@ -20,15 +20,37 @@ begin transaction;
 
 
 
--- Create new table "sust_bins".
--- "sust_bins" : Table of sust_bins
--- 	"id" : id identifies sust_bins
--- 	"name" : name is of sust_bins
--- 	"description" : description is of sust_bins  
-create table "sust_bins" ( 
+-- Create new table "cartstyleprops".
+-- "cartstyleprops" : Table of cartstyleprops
+-- 	"id" : id identifies cartstyleprops
+-- 	"style" : style is of cartstyleprops
+-- 	"property" : property is of cartstyleprops
+-- 	"value" : value is of cartstyleprops  
+create table "cartstyleprops" ( 
+	"id" SERIAL,
+	"style" INTEGER not null,
+	"property" INTEGER not null,
+	"value" VARCHAR not null, constraint "cartstyleprops_PK" primary key ("id") ); 
+
+-- Create new table "binsaudio".
+-- "binsaudio" : Table of binsaudio
+-- 	"id" : id identifies binsaudio
+-- 	"audio" : audio is of binsaudio
+-- 	"sustbin" : sustbin is of binsaudio  
+create table "binsaudio" ( 
+	"id" SERIAL,
+	"audio" INTEGER not null,
+	"sustbin" INTEGER not null, constraint "binsaudio_PK" primary key ("id") ); 
+
+-- Create new table "bins".
+-- "bins" : Table of bins
+-- 	"id" : id identifies bins
+-- 	"name" : name is of bins
+-- 	"description" : description is of bins  
+create table "bins" ( 
 	"id" SERIAL,
 	"name" VARCHAR not null,
-	"description" VARCHAR, constraint "sust_bins_PK" primary key ("id") ); 
+	"description" VARCHAR, constraint "bins_PK" primary key ("id") ); 
 
 -- Create new table "audiojinglepkgs".
 -- "audiojinglepkgs" : Table of audiojinglepkgs
@@ -75,14 +97,12 @@ create table "audioartists" (
 -- Create new table "cartstyle".
 -- "cartstyle" : Table of cartstyle
 -- 	"id" : id identifies cartstyle
--- 	"cart" : cart is of cartstyle
--- 	"property" : property is of cartstyle
--- 	"val" : val is of cartstyle  
+-- 	"name" : name is of cartstyle
+-- 	"description" : description is of cartstyle  
 create table "cartstyle" ( 
 	"id" SERIAL,
-	"cart" INTEGER not null,
-	"property" INTEGER not null,
-	"val" VARCHAR not null, constraint "cartstyle_PK" primary key ("id") ); 
+	"name" VARCHAR not null,
+	"description" VARCHAR, constraint "cartstyle_PK" primary key ("id") ); 
 
 -- Create new table "lifespans".
 -- "lifespans" : Table of lifespans
@@ -106,55 +126,51 @@ create table "cartproperties" (
 	"name" VARCHAR not null,
 	"note" VARCHAR, constraint "cartproperties_PK" primary key ("id") ); 
 
--- Create new table "progsched".
--- "progsched" : Table of progsched
--- 	"id" : id identifies progsched
--- 	"programme" : programme partly identifies progsched
--- 	"day_start" : day_start is of progsched
--- 	"time_start" : time_start is of progsched
--- 	"notes" : notes is of progsched  
-create table "progsched" ( 
+-- Create new table "binsschedule".
+-- "binsschedule" : Table of binsschedule
+-- 	"id" : id identifies binsschedule
+-- 	"sustbin" : sustbin is of binsschedule
+-- 	"type" : 0 => Use this bin only this once
+-- 	1 => Use this bin on a daily basis
+-- 	2 => Use this bin on a weekly basis
+-- 	3 => Use this bin on a monthly basis
+-- 	4 => Use this bin on a yearly basis
+-- 	"day_start" : day_start is of binsschedule
+-- 	"hour_start" : hour_start is of binsschedule
+-- 	"length_hours" : length_hours is of binsschedule
+-- 	"start_date" : start_date is of binsschedule
+-- 	"end_date" : end_date is of binsschedule
+-- 	"notes" : notes is of binsschedule  
+create table "binsschedule" ( 
 	"id" SERIAL,
-	"programme" INTEGER not null,
-	"day_start" SMALLINT not null,
-	"time_start" TIME not null,
-	"notes" VARCHAR, constraint "progsched_PK" primary key ("id") ); 
+	"sustbin" INTEGER not null,
+	"type" INTEGER not null,
+	"day_start" INTEGER not null,
+	"hour_start" INTEGER not null,
+	"length_hours" INTEGER not null,
+	"start_date" DATE not null,
+	"end_date" DATE not null,
+	"notes" VARCHAR, constraint "binsschedule_PK" primary key ("id") ); 
 
--- Create new table "progartists".
--- "progartists" : Table of progartists
--- 	"id" : id identifies progartists
--- 	"programme" : programme is of progartists
--- 	"artist" : artist is of progartists  
-create table "progartists" ( 
+-- Create new table "binsartists".
+-- "binsartists" : Table of binsartists
+-- 	"id" : id identifies binsartists
+-- 	"artist" : artist is of binsartists
+-- 	"sustbin" : sustbin is of binsartists  
+create table "binsartists" ( 
 	"id" SERIAL,
-	"programme" INTEGER not null,
-	"artist" INTEGER not null, constraint "progartists_PK" primary key ("id") ); 
+	"artist" INTEGER not null,
+	"sustbin" INTEGER not null, constraint "binsartists_PK" primary key ("id") ); 
 
--- Create new table "progkeywords".
--- "progkeywords" : Table of progkeywords
--- 	"id" : id identifies progkeywords
--- 	"programme" : programme is of progkeywords
--- 	"keyword" : keyword is of progkeywords  
-create table "progkeywords" ( 
+-- Create new table "binskeywords".
+-- "binskeywords" : Table of binskeywords
+-- 	"id" : id identifies binskeywords
+-- 	"keyword" : keyword is of binskeywords
+-- 	"sustbin" : sustbin is of binskeywords  
+create table "binskeywords" ( 
 	"id" SERIAL,
-	"programme" INTEGER not null,
-	"keyword" INTEGER not null, constraint "progkeywords_PK" primary key ("id") ); 
-
--- Create new table "programmes".
--- "programmes" : Table of programmes
--- 	"id" : id identifies programmes
--- 	"name" : name is of programmes
--- 	"description" : description is of programmes
--- 	"date_start" : date_start is of programmes
--- 	"date_end" : date_end is of programmes
--- 	"disable_playlist" : disable_playlist is of programmes  
-create table "programmes" ( 
-	"id" SERIAL,
-	"name" VARCHAR not null,
-	"description" VARCHAR,
-	"date_start" DATE,
-	"date_end" DATE,
-	"disable_playlist" CHARACTER(1) not null, constraint "programmes_PK" primary key ("id") ); 
+	"keyword" INTEGER not null,
+	"sustbin" INTEGER not null, constraint "binskeywords_PK" primary key ("id") ); 
 
 -- Create new table "audiolog".
 -- "audiolog" : Table of audiolog
@@ -180,31 +196,33 @@ create table "usercuetypes" (
 	"name" VARCHAR not null,
 	"description" VARCHAR, constraint "usercuetypes_PK" primary key ("id") ); 
 
--- Create new table "sust_shows".
--- "sust_shows" : Table of sust_shows
--- 	"id" : id identifies sust_shows
--- 	"usershow" : usershow is of sust_shows
--- 	"date_start" : date_start is of sust_shows
--- 	"time_start" : time_start is of sust_shows
--- 	"length" : length is of sust_shows  
-create table "sust_shows" ( 
+-- Create new table "sustshows".
+-- "sustshows" : Table of sustshows
+-- 	"id" : id identifies sustshows
+-- 	"show" : show is of sustshows
+-- 	"date_start" : date_start is of sustshows
+-- 	"time_start" : time_start is of sustshows
+-- 	"length" : length is of sustshows  
+create table "sustshows" ( 
 	"id" SERIAL,
-	"usershow" INTEGER not null,
+	"show" INTEGER not null,
 	"date_start" DATE not null,
 	"time_start" TIME not null,
-	"length" TIME not null, constraint "sust_shows_PK" primary key ("id") ); 
+	"length" TIME not null, constraint "sustshows_PK" primary key ("id") ); 
 
--- Create new table "usercartsets".
--- "usercartsets" : Table of usercartsets
--- 	"id" : id identifies usercartsets
--- 	"name" : name is of usercartsets
--- 	"directory" : directory is of usercartsets
--- 	"description" : description is of usercartsets  
-create table "usercartsets" ( 
+-- Create new table "cartsets".
+-- "cartsets" : Table of cartsets
+-- 	"id" : id identifies cartsets
+-- 	"name" : name is of cartsets
+-- 	"userid" : userid is of cartsets
+-- 	"directory" : directory is of cartsets
+-- 	"description" : description is of cartsets  
+create table "cartsets" ( 
 	"id" SERIAL,
 	"name" VARCHAR not null,
+	"userid" INTEGER not null,
 	"directory" INTEGER not null,
-	"description" VARCHAR, constraint "usercartsets_PK" primary key ("id") ); 
+	"description" VARCHAR, constraint "cartsets_PK" primary key ("id") ); 
 
 -- Create new table "jingletypes".
 -- "jingletypes" : Table of jingletypes
@@ -280,25 +298,21 @@ create table "usershows" (
 	"start_time" TIME,
 	"length" TIME, constraint "usershows_PK" primary key ("id") ); 
 
--- Create new table "stationcartwall".
--- "stationcartwall" : Table of stationcartwall
--- 	"id" : id identifies stationcartwall
--- 	"audio" : audio is of stationcartwall
--- 	"cart" : cart is of stationcartwall  
-create table "stationcartwall" ( 
+-- Create new table "cartsaudio".
+-- "cartsaudio" : Table of cartsaudio
+-- 	"id" : id identifies cartsaudio
+-- 	"audio" : audio is of cartsaudio
+-- 	"style" : style is of cartsaudio
+-- 	"cart" : cart is of cartsaudio
+-- 	"cartwall" : cartwall is of cartsaudio
+-- 	"text" : text is of cartsaudio  
+create table "cartsaudio" ( 
 	"id" SERIAL,
 	"audio" INTEGER not null,
-	"cart" INTEGER not null, constraint "stationcartwall_PK" primary key ("id") ); 
-
--- Create new table "sust_sources".
--- "sust_sources" : Table of sust_sources
--- 	"id" : id identifies sust_sources
--- 	"name" : name is of sust_sources
--- 	"description" : description is of sust_sources  
-create table "sust_sources" ( 
-	"id" SERIAL,
-	"name" VARCHAR not null,
-	"description" VARCHAR not null, constraint "sust_sources_PK" primary key ("id") ); 
+	"style" INTEGER not null,
+	"cart" INTEGER not null,
+	"cartwall" INTEGER not null,
+	"text" VARCHAR not null, constraint "cartsaudio_PK" primary key ("id") ); 
 
 -- Create new table "audiotypes".
 -- "audiotypes" : Table of audiotypes
@@ -310,43 +324,17 @@ create table "audiotypes" (
 	"name" VARCHAR not null,
 	"description" VARCHAR, constraint "audiotypes_PK" primary key ("id") ); 
 
--- Create new table "usercartsaudio".
--- "usercartsaudio" : Table of usercartsaudio
--- 	"id" : id identifies usercartsaudio
--- 	"cart" : cart is of usercartsaudio
--- 	"audio" : audio is of usercartsaudio
--- 	"userid" : userid is of usercartsaudio
--- 	"cart_set" : cart_set is of usercartsaudio
--- 	"text" : text is of usercartsaudio  
-create table "usercartsaudio" ( 
-	"id" SERIAL,
-	"cart" INTEGER not null,
-	"audio" INTEGER not null,
-	"userid" INTEGER not null,
-	"cart_set" INTEGER not null,
-	"text" VARCHAR not null, constraint "usercartsaudio_PK" primary key ("id") ); 
-
 -- Create new table "cartwalls".
 -- "cartwalls" : Table of cartwalls
 -- 	"id" : id identifies cartwalls
 -- 	"name" : name is of cartwalls
+-- 	"cartset" : cartset is of cartwalls
 -- 	"description" : description is of cartwalls  
 create table "cartwalls" ( 
 	"id" SERIAL,
 	"name" VARCHAR not null,
+	"cartset" INTEGER not null,
 	"description" VARCHAR, constraint "cartwalls_PK" primary key ("id") ); 
-
--- Create new table "carts".
--- "carts" : Table of carts
--- 	"id" : id identifies carts
--- 	"wall" : wall is of carts
--- 	"row" : row is of carts
--- 	"col" : col is of carts  
-create table "carts" ( 
-	"id" SERIAL,
-	"wall" INTEGER not null,
-	"row" SMALLINT not null,
-	"col" SMALLINT not null, constraint "carts_PK" primary key ("id") ); 
 
 -- Create new table "artistskeywords".
 -- "artistskeywords" : Table of artistskeywords
@@ -625,7 +613,7 @@ create table "users" (
 create table "taskschedule" ( 
 	"id" SERIAL,
 	"task" INTEGER not null,
-	"day_start" SMALLINT not null,
+	"day_start" INTEGER not null,
 	"time_start" TIME not null, constraint "taskschedule_PK" primary key ("id") ); 
 
 -- Create new table "configuration".
@@ -640,22 +628,20 @@ create table "configuration" (
 	"val" VARCHAR not null,
 	"location" INTEGER not null, constraint "configuration_PK" primary key ("id") ); 
 
--- Create new table "sust_sched".
--- "sust_sched" : Table of sust_sched
--- 	"id" : id identifies sust_sched
--- 	"source_type" : source_type is of sust_sched
--- 	"audio" : audio is of sust_sched
--- 	"extfeed" : extfeed is of sust_sched
--- 	"extfeed_length" : extfeed_length is of sust_sched
--- 	"start_date" : start_date is of sust_sched
--- 	"start_time" : start_time is of sust_sched
--- 	"trim_start_smpl" : trim_start_smpl is of sust_sched
--- 	"trim_end_smpl" : trim_end_smpl is of sust_sched
--- 	"fade_in" : fade_in is of sust_sched
--- 	"fade_out" : fade_out is of sust_sched  
-create table "sust_sched" ( 
+-- Create new table "sustschedule".
+-- "sustschedule" : Table of sustschedule
+-- 	"id" : id identifies sustschedule
+-- 	"audio" : audio is of sustschedule
+-- 	"extfeed" : extfeed is of sustschedule
+-- 	"extfeed_length" : extfeed_length is of sustschedule
+-- 	"start_date" : start_date is of sustschedule
+-- 	"start_time" : start_time is of sustschedule
+-- 	"trim_start_smpl" : trim_start_smpl is of sustschedule
+-- 	"trim_end_smpl" : trim_end_smpl is of sustschedule
+-- 	"fade_in" : fade_in is of sustschedule
+-- 	"fade_out" : fade_out is of sustschedule  
+create table "sustschedule" ( 
 	"id" SERIAL,
-	"source_type" INTEGER not null,
 	"audio" INTEGER,
 	"extfeed" INTEGER,
 	"extfeed_length" INTEGER,
@@ -664,7 +650,7 @@ create table "sust_sched" (
 	"trim_start_smpl" INTEGER not null,
 	"trim_end_smpl" INTEGER not null,
 	"fade_in" INTEGER not null,
-	"fade_out" INTEGER not null, constraint "sust_sched_PK" primary key ("id") ); 
+	"fade_out" INTEGER not null, constraint "sustschedule_PK" primary key ("id") ); 
 
 -- Create new table "advertschedule".
 -- "advertschedule" : Table of advertschedule
@@ -752,9 +738,35 @@ create table "artists" (
 	"name" VARCHAR not null,
 	"alt_name" VARCHAR, constraint "artists_PK" primary key ("id") ); 
 
+-- Add foreign key constraints to table "cartstyleprops".
+alter table "cartstyleprops"
+	add constraint "cartstyle_FK2" foreign key (
+		"style")
+	 references "cartstyle" (
+		"id") on update restrict on delete restrict; 
+
+alter table "cartstyleprops"
+	add constraint "cartproperties_FK1" foreign key (
+		"property")
+	 references "cartproperties" (
+		"id") on update restrict on delete restrict; 
+
+-- Add foreign key constraints to table "binsaudio".
+alter table "binsaudio"
+	add constraint "audio_FK12" foreign key (
+		"audio")
+	 references "audio" (
+		"id") on update restrict on delete restrict; 
+
+alter table "binsaudio"
+	add constraint "bins_FK1" foreign key (
+		"sustbin")
+	 references "bins" (
+		"id") on update restrict on delete restrict; 
+
 -- Add foreign key constraints to table "audiojinglepkgs".
 alter table "audiojinglepkgs"
-	add constraint "audio_FK12" foreign key (
+	add constraint "audio_FK11" foreign key (
 		"audio")
 	 references "audio" (
 		"id") on update restrict on delete restrict; 
@@ -786,7 +798,7 @@ alter table "groupaccess"
 
 -- Add foreign key constraints to table "audiodir".
 alter table "audiodir"
-	add constraint "audio_FK11" foreign key (
+	add constraint "audio_FK10" foreign key (
 		"audio")
 	 references "audio" (
 		"id") on update restrict on delete restrict; 
@@ -799,7 +811,7 @@ alter table "audiodir"
 
 -- Add foreign key constraints to table "audioartists".
 alter table "audioartists"
-	add constraint "audio_FK10" foreign key (
+	add constraint "audio_FK9" foreign key (
 		"audio")
 	 references "audio" (
 		"id") on update restrict on delete restrict; 
@@ -810,47 +822,34 @@ alter table "audioartists"
 	 references "artists" (
 		"id") on update restrict on delete restrict; 
 
--- Add foreign key constraints to table "cartstyle".
-alter table "cartstyle"
-	add constraint "carts_FK3" foreign key (
-		"cart")
-	 references "carts" (
+-- Add foreign key constraints to table "binsschedule".
+alter table "binsschedule"
+	add constraint "bins_FK4" foreign key (
+		"sustbin")
+	 references "bins" (
 		"id") on update restrict on delete restrict; 
 
-alter table "cartstyle"
-	add constraint "cartproperties_FK1" foreign key (
-		"property")
-	 references "cartproperties" (
+-- Add foreign key constraints to table "binsartists".
+alter table "binsartists"
+	add constraint "bins_FK2" foreign key (
+		"sustbin")
+	 references "bins" (
 		"id") on update restrict on delete restrict; 
 
--- Add foreign key constraints to table "progsched".
-alter table "progsched"
-	add constraint "programmes_FK3" foreign key (
-		"programme")
-	 references "programmes" (
-		"id") on update restrict on delete restrict; 
-
--- Add foreign key constraints to table "progartists".
-alter table "progartists"
-	add constraint "programmes_FK2" foreign key (
-		"programme")
-	 references "programmes" (
-		"id") on update restrict on delete restrict; 
-
-alter table "progartists"
+alter table "binsartists"
 	add constraint "artists_FK2" foreign key (
 		"artist")
 	 references "artists" (
 		"id") on update restrict on delete restrict; 
 
--- Add foreign key constraints to table "progkeywords".
-alter table "progkeywords"
-	add constraint "programmes_FK1" foreign key (
-		"programme")
-	 references "programmes" (
+-- Add foreign key constraints to table "binskeywords".
+alter table "binskeywords"
+	add constraint "bins_FK3" foreign key (
+		"id")
+	 references "bins" (
 		"id") on update restrict on delete restrict; 
 
-alter table "progkeywords"
+alter table "binskeywords"
 	add constraint "keywords_FK3" foreign key (
 		"keyword")
 	 references "keywords" (
@@ -858,29 +857,35 @@ alter table "progkeywords"
 
 -- Add foreign key constraints to table "audiolog".
 alter table "audiolog"
-	add constraint "audio_FK9" foreign key (
+	add constraint "audio_FK8" foreign key (
 		"audio")
 	 references "audio" (
 		"id") on update restrict on delete restrict; 
 
 alter table "audiolog"
-	add constraint "users_FK8" foreign key (
+	add constraint "users_FK7" foreign key (
 		"userid")
 	 references "users" (
 		"id") on update restrict on delete restrict; 
 
--- Add foreign key constraints to table "sust_shows".
-alter table "sust_shows"
+-- Add foreign key constraints to table "sustshows".
+alter table "sustshows"
 	add constraint "usershows_FK3" foreign key (
-		"usershow")
+		"show")
 	 references "usershows" (
 		"id") on update restrict on delete restrict; 
 
--- Add foreign key constraints to table "usercartsets".
-alter table "usercartsets"
+-- Add foreign key constraints to table "cartsets".
+alter table "cartsets"
 	add constraint "dir_FK3" foreign key (
 		"directory")
 	 references "dir" (
+		"id") on update restrict on delete restrict; 
+
+alter table "cartsets"
+	add constraint "users_FK10" foreign key (
+		"userid")
+	 references "users" (
 		"id") on update restrict on delete restrict; 
 
 -- Add foreign key constraints to table "usercues".
@@ -911,7 +916,7 @@ alter table "usershowsaudio"
 		"id") on update restrict on delete restrict; 
 
 alter table "usershowsaudio"
-	add constraint "audio_FK8" foreign key (
+	add constraint "audio_FK7" foreign key (
 		"audio")
 	 references "audio" (
 		"id") on update restrict on delete restrict; 
@@ -930,54 +935,35 @@ alter table "usershows"
 		"id") on update restrict on delete restrict; 
 
 alter table "usershows"
-	add constraint "users_FK9" foreign key (
+	add constraint "users_FK8" foreign key (
 		"userid")
 	 references "users" (
 		"id") on update restrict on delete restrict; 
 
--- Add foreign key constraints to table "stationcartwall".
-alter table "stationcartwall"
-	add constraint "audio_FK7" foreign key (
+-- Add foreign key constraints to table "cartsaudio".
+alter table "cartsaudio"
+	add constraint "audio_FK6" foreign key (
 		"audio")
 	 references "audio" (
 		"id") on update restrict on delete restrict; 
 
-alter table "stationcartwall"
-	add constraint "carts_FK2" foreign key (
-		"cart")
-	 references "carts" (
+alter table "cartsaudio"
+	add constraint "cartstyle_FK1" foreign key (
+		"style")
+	 references "cartstyle" (
 		"id") on update restrict on delete restrict; 
 
--- Add foreign key constraints to table "usercartsaudio".
-alter table "usercartsaudio"
-	add constraint "carts_FK1" foreign key (
-		"cart")
-	 references "carts" (
-		"id") on update restrict on delete restrict; 
-
-alter table "usercartsaudio"
-	add constraint "audio_FK1" foreign key (
-		"audio")
-	 references "audio" (
-		"id") on update restrict on delete restrict; 
-
-alter table "usercartsaudio"
-	add constraint "users_FK6" foreign key (
-		"userid")
-	 references "users" (
-		"id") on update restrict on delete restrict; 
-
-alter table "usercartsaudio"
-	add constraint "usercartsets_FK1" foreign key (
-		"cart_set")
-	 references "usercartsets" (
-		"id") on update restrict on delete restrict; 
-
--- Add foreign key constraints to table "carts".
-alter table "carts"
+alter table "cartsaudio"
 	add constraint "cartwalls_FK1" foreign key (
-		"wall")
+		"cartwall")
 	 references "cartwalls" (
+		"id") on update restrict on delete restrict; 
+
+-- Add foreign key constraints to table "cartwalls".
+alter table "cartwalls"
+	add constraint "cartsets_FK1" foreign key (
+		"cartset")
+	 references "cartsets" (
 		"id") on update restrict on delete restrict; 
 
 -- Add foreign key constraints to table "artistskeywords".
@@ -1001,20 +987,20 @@ alter table "audiogroups"
 		"id") on update restrict on delete restrict; 
 
 alter table "audiogroups"
-	add constraint "audio_FK6" foreign key (
+	add constraint "audio_FK5" foreign key (
 		"audio")
 	 references "audio" (
 		"id") on update restrict on delete restrict; 
 
 -- Add foreign key constraints to table "audiousers".
 alter table "audiousers"
-	add constraint "users_FK7" foreign key (
+	add constraint "users_FK6" foreign key (
 		"userid")
 	 references "users" (
 		"id") on update restrict on delete restrict; 
 
 alter table "audiousers"
-	add constraint "audio_FK5" foreign key (
+	add constraint "audio_FK4" foreign key (
 		"audio")
 	 references "audio" (
 		"id") on update restrict on delete restrict; 
@@ -1128,42 +1114,36 @@ alter table "taskschedule"
 	 references "tasks" (
 		"id") on update restrict on delete restrict; 
 
--- Add foreign key constraints to table "sust_sched".
-alter table "sust_sched"
-	add constraint "audio_FK4" foreign key (
+-- Add foreign key constraints to table "sustschedule".
+alter table "sustschedule"
+	add constraint "audio_FK3" foreign key (
 		"audio")
 	 references "audio" (
 		"id") on update restrict on delete restrict; 
 
-alter table "sust_sched"
+alter table "sustschedule"
 	add constraint "extfeeds_FK1" foreign key (
 		"extfeed")
 	 references "extfeeds" (
 		"id") on update restrict on delete restrict; 
 
-alter table "sust_sched"
-	add constraint "sust_sources_FK1" foreign key (
-		"source_type")
-	 references "sust_sources" (
-		"id") on update restrict on delete restrict; 
-
 -- Add foreign key constraints to table "advertschedule".
 alter table "advertschedule"
-	add constraint "audio_FK3" foreign key (
+	add constraint "audio_FK2" foreign key (
 		"advert")
 	 references "audio" (
 		"id") on update restrict on delete restrict; 
 
 -- Add foreign key constraints to table "log".
 alter table "log"
-	add constraint "users_FK10" foreign key (
+	add constraint "users_FK9" foreign key (
 		"userid")
 	 references "users" (
 		"id") on update restrict on delete restrict; 
 
 -- Add foreign key constraints to table "audiokeywords".
 alter table "audiokeywords"
-	add constraint "audio_FK2" foreign key (
+	add constraint "audio_FK1" foreign key (
 		"track")
 	 references "audio" (
 		"id") on update restrict on delete restrict; 

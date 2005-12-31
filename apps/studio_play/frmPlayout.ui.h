@@ -66,7 +66,7 @@ void frmPlayout::init() {
 	cout << " -> Created trigger thread" << endl;
 	dbTrigger->start();
 	cout << " -> Trigger active." << endl;
-	init_audiowalls();
+	AudioWall_Init();
 }
 
 void frmPlayout::destroy() {
@@ -82,16 +82,20 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 			if (e_data->index < 0) break;
 			switch (e_data->t) {
 			case EVENT_TYPE_STOP: {
-					btnsAudioWall->at(e_data->index)->setText("STOPPED");
+					audioClip A = stationWall->at(0)->clip[e_data->index];
+					A.btn->setText(A.text);
+					A.btn->setPaletteForegroundColor(QColor(QRgb(A.fg)));
+					A.btn->setPaletteBackgroundColor(QColor(QRgb(A.bg)));
 					break;
 				}
 			case EVENT_TYPE_PLAY: {
 					break;
 				}
 			case EVENT_TYPE_SMPL: {
-					if (audiowall->get_state() == 1)
-					btnsAudioWall->at(e_data->index)->setText("PLAYING\n" 
-										+ QString::number(e_data->smpl));
+					if (audiowall->get_state() == 1) {
+						audioClip A = stationWall->at(0)->clip[e_data->index];
+						A.btn->setText("PLAYING\n" + getTime(e_data->smpl));
+					}
 					break;
 				}
 			case EVENT_TYPE_MAX_SMPL: {
@@ -369,35 +373,61 @@ void frmPlayout::Player3_Time() {
 }
 
 
-void frmPlayout::init_audiowalls() {
-	btnsAudioWall = new vector<QPushButton*>;
-	QPushButton *btnCurrent;
+void frmPlayout::AudioWall_Init() {
+	QPushButton *btnCurrent;	
+	
 	// Configure Station Audio Wall
+	stationWall = new vector<audioWall*>;
+	audioWall *stn1 = new audioWall;
+	stationWall->push_back(stn1);
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 3; j++) {
 			btnCurrent = new QPushButton( grpSCart, QString::number(i*3+j));
 			btnCurrent->setGeometry(j*150 + 10, i*70 + 20, 140, 60);
 			btnCurrent->setEnabled(false);
-			btnsAudioWall->push_back(btnCurrent);
+			stationWall->at(0)->clip[i*3+j].btn = btnCurrent;
 			connect(btnCurrent,SIGNAL(clicked()),this,SLOT(AudioWall_Play()));
 		}
 	}
 	
 	// Configure User Audio Wall
+	userWall = new vector<audioWall*>;
+	audioWall *usr1 = new audioWall;
+	userWall->push_back(usr1);
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 3; j++) {
-			btnCurrent = new QPushButton( grpUCart, "");
+			btnCurrent = new QPushButton( grpUCart, QString::number(i*3+j));
 			btnCurrent->setGeometry(j*150 + 10, i*70 + 20, 140, 60);
 			btnCurrent->setEnabled(false);
-			btnsAudioWall->push_back(btnCurrent);
+			userWall->at(0)->clip[i*3+j].btn = btnCurrent;
 		}
 	}
-			
+	AudioWall_Load();
+	AudioWall_Display();
+}
+
+
+void frmPlayout::AudioWall_Play() {
+	QPushButton *sender = (QPushButton*)QObject::sender();
+	short x = atoi(sender->name());
+	if (audiowall->get_active_channel() == x)
+		audiowall->do_stop(x);
+	else if (audiowall->get_active_channel() < 0) {
+		audioClip A = stationWall->at(0)->clip[x];
+		A.btn->setPaletteForegroundColor(QColor(QRgb(16776960)));
+		A.btn->setPaletteBackgroundColor(QColor(QRgb(16711680)));
+		audiowall->do_play(x);
+	}
+}
+
+
+void frmPlayout::AudioWall_Load() {
 	Transaction T(*C,"");
 	Result R = T.exec("SELECT audio.md5 AS md5, audio.start_smpl AS start, "
 					  "audio.end_smpl AS end, cartsaudio.cart AS cart, "
 					  "cartsaudio.text AS text, cartwalls.name AS name, "
 					  "cartwalls.description AS desc, cartsets.name AS cartset, "
+					  "cartwalls.page AS page, "
 					  "cartsets.description AS cartset_desc, cartsets.userid AS userid, "
 					  "cartsets.directory AS dir, cartproperties.id AS property, "
 					  "cartstyleprops.value AS prop_value, archives.localpath AS path "
@@ -410,39 +440,75 @@ void frmPlayout::init_audiowalls() {
 					  "AND cartstyleprops.style = cartstyle.id "
 					  "AND cartstyleprops.property = cartproperties.id "
 					  "AND audio.archive = archives.id "
-					  "AND userid=0 "
+					  "AND cartsets.userid=0 "
 					  "ORDER BY cartwalls.id, cartsaudio.cart, cartproperties.id;");
 	int i = 0;
 	string path = "", md5 = "";
-	short cart = 0;
+	short cart = 0, page = 0;
 	QColor fg, bg;
 
 	// Process each cart
+	vector<audioWall*> *currentWall;
 	while (i < R.size()) {
+		if (atoi(R[i]["userid"].c_str()) == 0) currentWall = stationWall;
+		else currentWall = userWall;
 		path = R[i]["path"].c_str();
 		md5 = R[i]["md5"].c_str();
 		path += "/" + md5.substr(0,1) + "/" + md5;
 		cart = atoi(R[i]["cart"].c_str());
-		cout << "Loading cart " << cart << endl;
-		audiowall->do_load(new QString(path),atoi(R[i]["start"].c_str()),atoi(R[i]["end"].c_str()));
-		btnsAudioWall->at(cart)->setText(R[i]["text"].c_str());
-		btnsAudioWall->at(cart)->setEnabled(true);
+		page = atoi(R[i]["page"].c_str());
+		
+		if (cart > 11) cout << "ERROR: More than 12 carts. DB Integrity failed." << endl;
+		currentWall->at(page)->clip[cart].fn = path;
+		currentWall->at(page)->clip[cart].start = atoi(R[i]["start"].c_str());
+		currentWall->at(page)->clip[cart].end = atoi(R[i]["end"].c_str());
+		currentWall->at(page)->clip[cart].text = R[i]["text"].c_str();
+		currentWall->at(page)->name = R[i]["cartset"].c_str();
+		currentWall->at(page)->description = R[i]["cartset_desc"].c_str();
+		
 		// Process each property for current cart
 		while (i < R.size() && md5 == R[i]["md5"].c_str()) {		
 			if (atoi(R[i]["property"].c_str()) == 0)
-				btnsAudioWall->at(cart)->setPaletteForegroundColor(
-						QColor((QRgb)atoi(R[i]["prop_value"].c_str())));
+				currentWall->at(page)->clip[cart].fg = atoi(R[i]["prop_value"].c_str());
 			if (atoi(R[i]["property"].c_str()) == 1)
-				btnsAudioWall->at(cart)->setPaletteBackgroundColor(
-						QColor((QRgb)atoi(R[i]["prop_value"].c_str())));
+				currentWall->at(page)->clip[cart].bg = atoi(R[i]["prop_value"].c_str());
 			i++;
 		}
 	}
 }
 
 
-void frmPlayout::AudioWall_Play()
-{
-	QPushButton *sender = (QPushButton*)QObject::sender();
-	audiowall->do_play(atoi(sender->name()));
+void frmPlayout::AudioWall_Display() {
+	int page = 0;
+	audioWall *currentPage = stationWall->at(page);
+	grpSCart->setTitle(currentPage->description);
+	for (int i = 0; i < 12; i++) {
+		audioClip A = currentPage->clip[i];
+		if (A.fn != "") {
+			A.btn->setText(A.text);
+			A.btn->setPaletteForegroundColor(QColor(QRgb(A.fg)));
+			A.btn->setPaletteBackgroundColor(QColor(QRgb(A.bg)));
+			A.btn->setEnabled(true);
+		}
+		audiowall->do_load(new QString(A.fn),A.start,A.end);
+	}
+}
+
+
+QString frmPlayout::getTime( long smpl ) {
+	QString S;
+	int mil, sec, min;
+	
+	mil = smpl/441;
+    sec = (int)(mil / 100);
+    mil = mil%100;
+    min = (int)(sec / 60);
+    sec = sec%60;
+	if (min < 10) S += "0";
+	S += QString::number(min) + ":";
+	if (sec < 10) S += "0";
+	S += QString::number(sec) + ".";
+    if (mil < 10) S += "0";
+	S += QString::number(mil);
+	return S;
 }

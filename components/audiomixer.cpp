@@ -12,12 +12,14 @@ audiomixer::~audiomixer() {
 	delete buffers;
 }
 
-/** This creates a new audiochannel object.
- * This audiochannel can then be accessed using the channel routine
+/** This creates a new audiochannel object and returns it.
+ * This audiochannel can later be accessed using the channel routine
  */
-void audiomixer::createChannel() {
-	channels->push_back(new audiochannel());
+audiochannel* audiomixer::createChannel() {
+	audiochannel *ch = new audiochannel();
+	channels->push_back(ch);
 	buffers->push_back(new char[BUFFER_SIZE]);
+	return ch;
 }
 
 /** The associated audiochannel object is deleted and memory freed
@@ -47,7 +49,7 @@ short audiomixer::size() {
  */
 audiochannel* audiomixer::channel(unsigned short index) {
     if (index >= channels->size()) { 
-        cout << "Requested mixer channel out of range!" << endl;
+        cout << "Requested mixer channel "<<index<<"out of range!" << endl;
         abort();
     }
 	return channels->at(index);	

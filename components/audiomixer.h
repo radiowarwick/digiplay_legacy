@@ -30,7 +30,7 @@ class audiomixer {
 		~audiomixer();
 		
 		/// Adds a new channel to the audio mixer
-		void createChannel();
+		audiochannel* createChannel();
 		
 		/// Deletes an existing channel from the audio mixer
 		void destroyChannel(unsigned short index);

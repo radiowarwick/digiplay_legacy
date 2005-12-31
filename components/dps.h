@@ -4,6 +4,10 @@
 #include <string>
 using namespace std;
 
+#define DPS_DB 0
+#define DPS_INBOX 1
+#define DPS_TRASH 2
+
 struct archive {
     bool isNull;
     unsigned long id;
@@ -45,9 +49,5 @@ struct eventData {
 	long smpl;
 	short index;
 };
-
-#define DPS_DB 0
-#define DPS_INBOX 1
-#define DPS_TRASH 2
 
 #endif

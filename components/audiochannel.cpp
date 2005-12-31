@@ -281,6 +281,11 @@ float audiochannel::getVolume(unsigned long smpl) {
 	return vol;
 }
 
+/** Returns the number of samples between the start and end points of the
+ * track. The start and end points are set when the track is loaded using the
+ * load() routine.
+ * @returns Number of samples to be played.
+ */
 unsigned long audiochannel::getLength() {
 	return (f_length_byte)/4;
 }
@@ -303,10 +308,8 @@ void audiochannel::trigger(unsigned long smpl) {
  * current file is complete.
  */
 void audiochannel::notify() {
-//	while (Cache_Free < CACHE_SIZE)
 	while (mode_play)
 		usleep(10000);
-//	mode_play = false;
 }
 
 /** Sleeps (blocks execution of the calling thread) until caching of the

@@ -7,6 +7,7 @@ using namespace std;
 #include <qmutex.h>
 #include <qstring.h>
 #include <qthread.h>
+#include <qpushbutton.h>
 #include <qapplication.h>
 
 #include "audioplayer.h"
@@ -20,31 +21,48 @@ using namespace std;
 #define TIME_MODE_ELAPSED 0
 #define TIME_MODE_REMAIN 1
 
+struct audioClip {
+	string fn;
+	QPushButton *btn;
+	string text;
+	long start;
+	long end;
+	int fg;
+	int bg;
+};
+
+struct audioWall {
+	audioClip clip[12];
+	string name;
+	string description;
+};
+
 class audiowallthread : public QThread {
-public:
-	audiowallthread(QWidget *o, int id) : receiver(o), stopped(FALSE), player_id(id), state(0) {;}
-	void run();
-	void stop();
-	void do_load(QString *md5_hash, long int start, long int end);
-	void do_play(short index);
-	void do_stop(short index);
-	void do_updateCounter(int smpl);
-	int get_state();
-	static void callback_counter(long smpl, void *obj);
+	public:
+		audiowallthread(QWidget *o, int id) : receiver(o), stopped(FALSE), player_id(id), state(0) {;}
+		void run();
+		void stop();
+		void do_load(QString *md5_hash, long int start, long int end);
+		void do_play(short index);
+		void do_stop(short index);
+		void do_updateCounter(int smpl);
+		int get_state();
+		short get_active_channel() {return active_ch;}
+		static void callback_counter(long smpl, void *obj);
+		
+	private:
+		QWidget *receiver;
+		QMutex stopped_mutex;
+		QMutex state_mutex;
+		bool stopped;
+		int player_id;
+		audioplayer *player;
+		audiomixer *mixer;
 	
-private:
-	QWidget *receiver;
-	QMutex stopped_mutex;
-	QMutex state_mutex;
-	bool stopped;
-	int player_id;
-	audioplayer *player;
-	audiomixer *mixer;
-	
-	eventData* e_data;	
-	
-	int state;
-	short active_ch;
+		eventData *e_smpl;	
+		eventData *e_stop;	
+		int state;
+		short active_ch;
 };
 
 #endif

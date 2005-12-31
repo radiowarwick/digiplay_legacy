@@ -2,7 +2,7 @@
 
 --    Driver Used : Microsoft Visual Studio - IBM DB2 Universal Database Driver.
 --    Document    : G:\Data\cc\raw\digiplay\Database Design v2 (VISIO 2002).vsd.
---    Time Created: 29 December 2005 23:26.
+--    Time Created: 31 December 2005 12:37.
 --    Operation   : From Visio Generate Wizard.
 --    Connected data source : No connection.
 --    Connected server      : No connection.
@@ -329,11 +329,13 @@ create table "audiotypes" (
 -- 	"id" : id identifies cartwalls
 -- 	"name" : name is of cartwalls
 -- 	"cartset" : cartset is of cartwalls
+-- 	"page" : page is of cartwalls
 -- 	"description" : description is of cartwalls  
 create table "cartwalls" ( 
 	"id" SERIAL,
 	"name" VARCHAR not null,
 	"cartset" INTEGER not null,
+	"page" INTEGER not null,
 	"description" VARCHAR, constraint "cartwalls_PK" primary key ("id") ); 
 
 -- Create new table "artistskeywords".

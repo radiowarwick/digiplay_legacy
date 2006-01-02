@@ -1,6 +1,8 @@
 INSTALLDIR=/usr/local/bin
 DBHOST=192.168.1.1
 DBNAME=digiplay
+DBUSER=digiplay_user
+SUEFILE=./sustainer.md5
 
 # Programs we need
 CC=g++
@@ -98,16 +100,24 @@ docs: init
 	@doxygen doc/digiplay-doxygen > .tmp/doxygen_output.txt 2>&1
 	@echo Documentation generated. Check .tmp/doxygen_output.txt for details.
 install:
-	@echo Installing compiled applicatiopns into $(INSTALLDIR)...
+	@echo Installing compiled applications into $(INSTALLDIR)...
 	@cp -R ./bin/* $(INSTALLDIR)
 uninstall:
 	@echo Uninstalling from $(INSTALLDIR)...
 	@rm -f $(INSTALLDIR)/sueplay $(INSTALLDIR)/suesched
 	@rm -f $(INSTALLDIR)/admin $(INSTALLDIR)/studio_*
-sue_bak:
+suebackup:
 	@echo Backing up sustainer playlist...
-	@psql -h $(DBHOST) -t -c "SELECT md5 FROM audio WHERE sustainer='t'" $(DBNAME) > ~/sust_playlist.bak
-	@echo Saved to ~/sust_playlist.bak
+	@psql -h $(DBHOST) -t -c "SELECT md5 FROM audio WHERE sustainer='t'" -U $(DBUSER) $(DBNAME) | cut -d ' ' -f 2 > $(SUEFILE)
+	@echo Saved to $(SUEFILE)
+suerestore:
+	@echo Restoring sustainer playlist from $(SUEFILE)...
+	@psql -q -h $(DBHOST) -U $(DBUSER) -c "UPDATE audio SET sustainer='f'; `xargs -i -a $(SUEFILE) -n 1 echo UPDATE audio SET sustainer=\'t\' WHERE md5=\'{}\'\;` " $(DBNAME)
+	@echo Sustainer playlist restored.
+playin:
+	@echo Compiling audio playin application...
+	@gcc apps/playin/main.c apps/playin/md5.c -o bin/playin -lncurses -lform
+	@cp apps/cdparanoia bin
 
 # Module targets
 components/archivemanager.o:	components/archivemanager.cpp \

@@ -16,6 +16,30 @@ INSERT INTO dir (id, parent, name, notes)
 INSERT INTO users (id, username, enabled)
 	VALUES (0, 'system','t');
 
+/* User Privilages */
+INSERT INTO privilages (id, name, description)
+	VALUES (1,'sust_stats','Web access to sustainer configuration');
+INSERT INTO privilages (id, name, description)
+	VALUES (3,'admin','Can manage user accounts, create user managers, and assign any access privilages. Is God.');
+INSERT INTO privilages (id, name, description)
+	VALUES (4,'sust_edit','Can edit the playlist for the sustainer service');
+INSERT iNTO privilages (id, name, description)
+	VALUES (5,'music_flag','Can flag a track to be assessed by a member of the music team');
+INSERT INTO privilages (id, name, description)
+	VALUES (6,'music_censor','Can censor a track making it unavailable for playout on air');
+INSERT INTO privilages (id, name, description)
+	VALUES (7,'music_edit_info','Can edit the track information for music');
+INSERT INTO privilages (id, name, description)
+	VALUES (8,'music_manager','Can assign sust_edit, music_flag, music_censor, music_edit_info rights to users');
+INSERT INTO privilages (id, name, description)
+	VALUES (9,'production_manager','Can organise jingles and jingle packages, and enabled them');
+INSERT INTO privilages (id, name, description)
+	VALUES (10,'marketing_manager','Can organise and schedule adverts');
+
+/* Default groups */
+INSERT INTO groups (id, name, description)
+	VALUES (1,'music_team','Members of the music team');
+
 /* No album */
 INSERT INTO albums (id, name)
 	VALUES (0, '(none)');
@@ -126,35 +150,37 @@ INSERT INTO configuration (id, parameter, val, location)
     VALUES (22,'user_cartwall_prev','',1);
 
 INSERT INTO configuration (id, parameter, val, location)
-    VALUES (23,'channel_1','/dev/null',2);
+    VALUES (23,'channel_1','/dev/dsp',2);
 INSERT INTO configuration (id, parameter, val, location)
     VALUES (24,'channel_2','/dev/null',2);
 INSERT INTO configuration (id, parameter, val, location)
     VALUES (25,'channel_3','/dev/null',2);
+INSERT iNTO configuration (id, parameter, val, location)
+	VALUES (26,'channel_4','/dev/null',2);
 INSERT INTO configuration (id, parameter, val, location)
-    VALUES (26,'player1_md5','',2);
+    VALUES (27,'player1_md5','',2);
 INSERT INTO configuration (id, parameter, val, location)
-    VALUES (27,'player2_md5','',2);
+    VALUES (28,'player2_md5','',2);
 INSERT INTO configuration (id, parameter, val, location)
-    VALUES (28,'player3_md5','',2);
+    VALUES (29,'player3_md5','',2);
 INSERT INTO configuration (id, parameter, val, location)
-    VALUES (29,'player1_state','',2);
+    VALUES (30,'player1_state','',2);
 INSERT INTO configuration (id, parameter, val, location)
-    VALUES (30,'player2_state','',2);
+    VALUES (31,'player2_state','',2);
 INSERT INTO configuration (id, parameter, val, location)
-    VALUES (31,'player3_state','',2);
+    VALUES (32,'player3_state','',2);
 INSERT INTO configuration (id, parameter, val, location)
-    VALUES (32,'next_on_showplan','',2);
+    VALUES (33,'next_on_showplan','',2);
 INSERT INTO configuration (id, parameter, val, location)
-    VALUES (33,'station_cartwall','',2);
+    VALUES (34,'station_cartwall','',2);
 INSERT INTO configuration (id, parameter, val, location)
-    VALUES (34,'station_cartwall_next','',2);
+    VALUES (35,'station_cartwall_next','',2);
 INSERT INTO configuration (id, parameter, val, location)
-    VALUES (35,'station_cartwall_prev','',2);
+    VALUES (36,'station_cartwall_prev','',2);
 INSERT INTO configuration (id, parameter, val, location)
-    VALUES (36,'user_cartwall','',2);
+    VALUES (37,'user_cartwall','',2);
 INSERT INTO configuration (id, parameter, val, location)
-    VALUES (37,'user_cartwall_next','',2);
+    VALUES (38,'user_cartwall_next','',2);
 INSERT INTO configuration (id, parameter, val, location)
-    VALUES (38,'user_cartwall_prev','',2);
+    VALUES (39,'user_cartwall_prev','',2);
 END TRANSACTION;

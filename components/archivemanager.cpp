@@ -120,7 +120,13 @@ void archivemanager::add(unsigned int index) {
 	track t = trackInbox->at(index);
 	trackInbox->erase(trackInbox->begin() + index);
 	trimAudio(&t);
-	trackInbox->insert(trackInbox->begin() + index, 1, t);
+	if (t.trim_end_smpl > t.trim_start_smpl) {
+		trackInbox->insert(trackInbox->begin() + index, 1, t);
+	}
+	else {
+		cout << "No non-zero samples, so track ignored." << endl;
+		return;
+	}
 
 	t.title = escape_binary(t.title);
 	t.artist = escape_binary(t.artist);
@@ -299,6 +305,7 @@ void archivemanager::add(unsigned int index) {
 	catch (...) {
 		cout << "Failed to make database modifications." << endl;
 		cout << "SQL: " << SQL << endl;
+		cout << "*** Track has not been added to system ***" << endl;
 		T->abort();
 		delete T;
 		return;
@@ -380,16 +387,15 @@ void archivemanager::loadInbox(vector<track> *tracks) {
 			}
 			if (fn.length() < 37) continue;
 			md5 = fn.substr(path.length() + 1, 32);
-			if (hasAudio(md5)) {
-				t = readInfo(fn);
+			if ((t = readInfo(fn)).isNull) {
+				cout << "archivemananger::loadInbox: No audio file." << endl;
+				cout << " -> " << fn << " ignored. " << endl;
+				continue;
+			}
+			else {
 				t.md5 = md5;
 				cleanInfo(&t);
 				tracks->push_back(t);
-			}
-			else {
-				cout << "systemmananger::loadInbox: No audio file." << endl;
-				cout << fn << endl;
-				continue;
 			}
         }
         else {
@@ -413,6 +419,7 @@ track archivemanager::readInfo(string fn) {
 	ifstream *f_info, *f_raw;
 	
 	/* Attempt to open the info file */
+	t.isNull = false;
 	try {
 		f_info = new ifstream(fn.c_str(), ios::in);
 		if (!f_info->good()) throw 1;
@@ -463,8 +470,6 @@ track archivemanager::readInfo(string fn) {
 	f_raw = new ifstream(fn.substr(0,fn.length() - 5).c_str(), 
 								ios::in|ios::binary|ios::ate);
 	if (!f_raw->good()) {
-		cout << "archivemanager::readInfo: No audio file" << endl;
-		cout << " -> " << fn << endl;
 		return t_null;
 	}
 	t.length_smpl = f_raw->tellg() / 4;
@@ -545,6 +550,10 @@ void archivemanager::trimAudio(track *t) {
     // Clean up
     delete audio_buffer;
     delete file_handle;
+	if (t->trim_end_smpl <= t->trim_start_smpl) {
+		cout << "WARNING: audio file " << t->md5 
+			<< " does not contain any non-zero samples!" << endl;
+	}
 #undef BLOCK_SAMPLES
 }
 

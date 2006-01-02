@@ -33,6 +33,7 @@ This software requires the following packages to be installed:
 	libpqxx-dev
 	libreadline4
 	libreadline4-dev
+	libncurses5-dev
 	libqt3-mt-dev
 	libqt3c102-mt
 	libqt3-headers
@@ -53,11 +54,16 @@ Then do
 	make studio_play	(Studio Playout application)
 	make studio_search	(Studio Search application)
 	make studio			(Compiles both studio applications)
+	make playin			(Audio playin application)
 
 	make docs			(Generates the Doxygen code documentation)
 
 	make all			(Make the lot!)
 
-	make install		(Installs the binaries in the INSTALL directory)
-	make uninstall		(Removes the binaries from their INSTALL directory)
-						INSTALL is specified in the Makefile
+	make install		(Installs the binaries in the INSTALLDIR directory)
+	make uninstall		(Removes the binaries from their INSTALLDIR directory)
+						INSTALLDIR is specified in the Makefile or on 
+						commandline
+	make suebackup		(Backup sustainer playlist to SUE_FILE)
+	make suerestore		(Restore sustainer playlist from SUE_FILE)
+						SUE_FILE is specified in the Makefile or on commandline

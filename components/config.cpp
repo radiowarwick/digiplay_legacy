@@ -101,7 +101,7 @@ void config::requery() {
 	try {	
 	    Result Conf = T->exec("SELECT * FROM configuration WHERE location=" 
 															+ LOCATION);
-	    for (int i = 0; i < Conf.size(); i++) {
+	    for (unsigned int i = 0; i < Conf.size(); i++) {
 	        names->push_back(Conf[i]["parameter"].c_str());
 	        values->push_back(Conf[i]["val"].c_str());
     	}

@@ -442,7 +442,7 @@ void frmPlayout::AudioWall_Load() {
 					  "AND audio.archive = archives.id "
 					  "AND cartsets.userid=0 "
 					  "ORDER BY cartwalls.id, cartsaudio.cart, cartproperties.id;");
-	int i = 0;
+	unsigned int i = 0;
 	string path = "", md5 = "";
 	short cart = 0, page = 0;
 	QColor fg, bg;

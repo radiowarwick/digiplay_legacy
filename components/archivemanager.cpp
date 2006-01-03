@@ -354,7 +354,7 @@ void archivemanager::loadDB(vector<track> *tracks) {
 		"ORDER BY audio.md5";
 	track t;
 	Result R = T->exec(SQL);
-	for (int i = 0; i < R.size(); i++) {
+	for (unsigned int i = 0; i < R.size(); i++) {
 		t.md5 = R[i]["md5"].c_str();
 		t.md5_archive = A;
 		t.title = R[i]["title"].c_str();
@@ -497,6 +497,9 @@ void archivemanager::cleanInfo(track *t) {
     strPcase(&(t->title));
     strTrim(&(t->artist));
     strPcase(&(t->artist));
+	if ((t->artist).length() > 4 && (t->artist).substr(0,4) == "The ") {
+		t->artist = (t->artist).substr(4,(t->artist).length() - 4) + ", The";
+	}
     strTrim(&(t->album));
     strPcase(&(t->album));
 

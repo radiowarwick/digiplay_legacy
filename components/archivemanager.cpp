@@ -118,6 +118,7 @@ void archivemanager::add(unsigned int index) {
 	}
 
 	track t = trackInbox->at(index);
+	cout << "Adding: " << t.md5 << endl;
 	trackInbox->erase(trackInbox->begin() + index);
 	trimAudio(&t);
 	if (t.trim_end_smpl > t.trim_start_smpl) {

@@ -1,5 +1,5 @@
 INSTALLDIR=/usr/local/bin
-DBHOST=192.168.1.1
+DBHOST=127.0.0.1
 DBNAME=digiplay
 DBUSER=digiplay_user
 SUEFILE=./sustainer.md5
@@ -107,14 +107,18 @@ uninstall:
 	@rm -f $(INSTALLDIR)/sueplay $(INSTALLDIR)/suesched
 	@rm -f $(INSTALLDIR)/admin $(INSTALLDIR)/studio_*
 suebackup:
+	@echo Connecting to $(DBHOST) as user $(DBUSER) (specified in Makefile)
+	@echo Specify SUEFILE variable on command line to specify backup file.
 	@echo Backing up sustainer playlist...
 	@psql -h $(DBHOST) -t -c "SELECT md5 FROM audio WHERE sustainer='t'" -U $(DBUSER) $(DBNAME) | cut -d ' ' -f 2 > $(SUEFILE)
 	@echo Saved to $(SUEFILE)
 suerestore:
+	@echo Connecting to $(DBHOST) as user $(DBUSER) (specified in Makefile)
+	@echo Specify SUEFILE variable on command line to specify backup file.
 	@echo Restoring sustainer playlist from $(SUEFILE)...
 	@psql -q -h $(DBHOST) -U $(DBUSER) -c "UPDATE audio SET sustainer='f'; `xargs -i -a $(SUEFILE) -n 1 echo UPDATE audio SET sustainer=\'t\' WHERE md5=\'{}\'\;` " $(DBNAME)
 	@echo Sustainer playlist restored.
-playin:
+playin: init
 	@echo Compiling audio playin application...
 	@gcc apps/playin/main.c apps/playin/md5.c -o bin/playin -lncurses -lform
 	@cp apps/cdparanoia bin

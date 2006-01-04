@@ -21,7 +21,7 @@ libsearch *library_engine = new libsearch();
 triggerThread *dbTrigger;
 config *conf;
 Connection *C;
-//clockThread ck;
+clockThread *ck;
 vector<track*>* SearchResults;
 vector<track*>* Playlist = new vector<track*>;
 QPixmap *sp_audio, *sp_artist, *sp_album;
@@ -46,8 +46,8 @@ void frmSearch::init() {
 	sp_artist = new QPixmap(path + "/images/sp_artist.bmp");
 	sp_album = new QPixmap(path + "/images/sp_album.bmp");
 	last_item = NULL;
-//	 ck = new clockThread(&lblClock);
-//	 ck->run();
+	ck = new clockThread(this);
+	ck->start();
     cout << "Interface initialisation complete." << endl;
 	
 	cout << "Creating trigger on configuration settings..." << endl;
@@ -65,7 +65,17 @@ void frmSearch::destroy() {
 
 void frmSearch::customEvent(QCustomEvent *event) {
     switch (event->type()) {
-    case 30000: {       // Configuration changed trigger
+    case 20000: {       // Clock update
+        QString *s = (QString *) event->data();
+        lblClock->setText(*s);
+        break;
+    }
+    case 20001: {       // Date update
+        QString *s = (QString *) event->data();
+        lblDate->setText(*s);
+        break;
+    }
+	case 30000: {       // Configuration changed trigger
             conf->requery();
             cout << "Configuration data refreshed!" << endl;
 			if (conf->getParam("next_on_showplan") == "" && lstShowPlan->childCount() > 0) {

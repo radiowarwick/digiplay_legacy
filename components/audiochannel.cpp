@@ -64,6 +64,7 @@ void audiochannel::load(string filename, long start_smpl, long end_smpl) {
 	// If we're currently playing, we need to stop and set counter to zero
 	mode_play = false;
 	mode_cache = false;
+	usleep(1000);
 
 	// Delete any fades and triggers that might be still around
 	for (unsigned short i = 0; i < fades->size(); i++) {
@@ -335,6 +336,7 @@ void audiochannel::cache() {
         //If caching has caught up with playback, wait for 100us.
         while (Cache_Free < 1024) {
             usleep(100);
+			if (!mode_cache) return;
         }
         //Check if we've reached the end point of the section to play
         if (f_end_byte - f_handle->tellg() < 256) {

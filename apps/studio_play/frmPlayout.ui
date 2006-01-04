@@ -130,22 +130,6 @@
                 <string>Time Mode</string>
             </property>
         </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnLoadPlaylist3</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>390</x>
-                    <y>60</y>
-                    <width>140</width>
-                    <height>50</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Load</string>
-            </property>
-        </widget>
         <widget class="QSlider">
             <property name="name">
                 <cstring>sldSeek3</cstring>
@@ -351,6 +335,22 @@
             </property>
             <property name="text">
                 <string>Artist:</string>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>btnLoadPlaylist3</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>390</x>
+                    <y>60</y>
+                    <width>140</width>
+                    <height>50</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Load</string>
             </property>
         </widget>
     </widget>
@@ -1256,17 +1256,17 @@
     <include location="local" impldecl="in implementation">frmPlayout.ui.h</include>
 </includes>
 <variables>
-    <variable access="private">vector&lt;audioWall*&gt; *userWall;</variable>
-    <variable access="private">vector&lt;audioWall*&gt; *stationWall;</variable>
-    <variable access="private">QPixmap *pixPlay, *pixPause, *pixStop, *pixSeekback, *pixSeekforward, *pixReset;</variable>
-    <variable access="private">QString path;</variable>
-    <variable access="private">playerThread *player3;</variable>
-    <variable access="private">playerThread *player2;</variable>
-    <variable access="private">playerThread *player1;</variable>
-    <variable access="private">audiowallthread *audiowall;</variable>
-    <variable access="private">triggerThread *dbTrigger;</variable>
-    <variable access="private">Connection *C;</variable>
     <variable access="private">config *conf;</variable>
+    <variable access="private">Connection *C;</variable>
+    <variable access="private">triggerThread *dbTrigger;</variable>
+    <variable access="private">audiowallthread *audiowall;</variable>
+    <variable access="private">playerThread *player1;</variable>
+    <variable access="private">playerThread *player2;</variable>
+    <variable access="private">playerThread *player3;</variable>
+    <variable access="private">QString path;</variable>
+    <variable access="private">QPixmap *pixPlay, *pixPause, *pixStop, *pixSeekback, *pixSeekforward, *pixReset;</variable>
+    <variable access="private">vector&lt;audioWall*&gt; *stationWall;</variable>
+    <variable access="private">vector&lt;audioWall*&gt; *userWall;</variable>
 </variables>
 <slots>
     <slot>Player1_Load()</slot>

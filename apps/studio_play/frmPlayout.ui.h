@@ -313,7 +313,6 @@ void frmPlayout::Player3_Load() {
 }   
 
 void frmPlayout::Player3_Play() {
-
 	switch (player3->getState()) {
 	case STATE_STOP:
 		player3->do_play();

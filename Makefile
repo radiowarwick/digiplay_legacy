@@ -37,6 +37,7 @@ STUDIO_PLAY_OBJ=		apps/studio_play/main.o \
 						components/audiochannel.o \
 						components/playerThread.o \
 						components/audiowallthread.o \
+						components/clockThread.o \
 						components/triggerThread.o
 STUDIO_SEARCH_OBJ=		apps/studio_search/main.o \
 						components/libsearch.o \

@@ -24,6 +24,7 @@ libsearch::~libsearch() {
  */
 vector<track*>* libsearch::query(string search_string) {
  string SQL;
+ search_string = escape_binary(search_string);
  lastQuery_string = search_string;
 
  vector<track*>* Q = new vector<track*>;

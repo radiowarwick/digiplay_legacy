@@ -518,7 +518,7 @@ int main(int argc, char *argv[])
 			/*
 			execl("/usr/bin/perl", "perl", "-e", "open FD, \"/audioplayin/cdparanoia -Q 2>&1 |\"; while(<FD>) { ($track, $length) = m!^\\s*(\\d+)\\.\\s+(\\d+)\\s+\\[\\d+:\\d+\\.\\d+\\]\\s+(\\d+)\\s+\\[\\d+:\\d+\\.\\d+\\]!; next if (!defined($track)); print \"$track,$length\\n\"; }", NULL);
 			*/
-			execl("/audioplayin/cdparanoia", "cdparanoia",
+			execl("/usr/local/bin/cdparanoia", "cdparanoia",
 					"-Q", NULL);
 			_exit(0);
 			
@@ -563,7 +563,7 @@ int main(int argc, char *argv[])
 					tracks[i].uid[4], tracks[i].uid[5], tracks[i].uid[6], tracks[i].uid[7],
 					tracks[i].uid[8], tracks[i].uid[9], tracks[i].uid[10], tracks[i].uid[11],
 					tracks[i].uid[12], tracks[i].uid[13], tracks[i].uid[14], tracks[i].uid[15]);
-				execl("/audioplayin/cdparanoia", "cdparanoia", "-r", "-Y", buf2, buf, NULL);
+				execl("/usr/local/bin/cdparanoia", "cdparanoia", "-r", "-Y", buf2, buf, NULL);
 				//execl("/audioplayin/cdparanoia", "cdparanoia", "-r", buf2, buf, NULL);
 				_exit(-2);
 			}

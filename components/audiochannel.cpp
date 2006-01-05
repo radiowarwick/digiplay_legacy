@@ -36,7 +36,7 @@ audiochannel::audiochannel() {
 	auto_reload = false;
 	f_counters = NULL;
 	f_obj = NULL;
-
+	
 	fades = new vector<fadeSpecification*>;
 	trigs = new vector<triggerSpecification*>;
 }
@@ -64,6 +64,8 @@ void audiochannel::load(string filename, long start_smpl, long end_smpl) {
 	// If we're currently playing, we need to stop and set counter to zero
 	mode_play = false;
 	mode_cache = false;
+
+	// Wait for current caching thread to actually finish and terminate
 	usleep(1000);
 
 	// Delete any fades and triggers that might be still around
@@ -332,6 +334,7 @@ void audiochannel::cache() {
     // Cache track until cached what we want
     int read_bytes = 256;
     mode_cache = true;
+	
     while (read_bytes == 256 && mode_cache) {
         //If caching has caught up with playback, wait for 100us.
         while (Cache_Free < 1024) {

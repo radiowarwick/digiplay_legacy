@@ -42,17 +42,18 @@ void audiowallthread::do_load(QString *md5_hash,long int start,long int end) {
 }
 
 void audiowallthread::do_play(short index) {
+	
+	do_stop(active_ch);
+	
 	state_mutex.lock();
-	if (state == STATE_STOP) {
-		state = STATE_PLAY;
-		active_ch = index;
-		mixer->channel(index)->play();
-	}
-	else cout << "audiowallthread: A channel is still playing!" << endl;
+	state = STATE_PLAY;
+	active_ch = index;
+	mixer->channel(index)->play();
 	state_mutex.unlock();
 }
 
 void audiowallthread::do_stop(short index) {
+	if (index == -1) return;
 	state_mutex.lock();
 	if (state == STATE_PLAY || state == STATE_PAUSE) {
 		state = STATE_STOP;

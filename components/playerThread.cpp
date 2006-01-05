@@ -61,6 +61,7 @@ void playerThread::do_stop() {
 	else {
 		state_mutex.unlock();
 		cout << "playerThread: Can't 'stop' when not 'playing'!" << endl;
+		cout << " -> current state: " << state << endl;
 	}	
 }
 

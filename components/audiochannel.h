@@ -114,6 +114,7 @@ class audiochannel {
 			pthread_t *Thread_Cache;
 			bool mode_play;
 			bool mode_cache;
+			bool is_caching;
 			bool auto_reload;
 
 			string f_name;

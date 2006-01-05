@@ -17,7 +17,7 @@ void frmPlayout::init() {
 	pixSeekback = new QPixmap(path + "/images/fastbackward.png");
 	pixSeekforward = new QPixmap(path + "/images/fastforward.png");
 	pixReset = new QPixmap(path + "/images/reset.png");
-	cout << path << endl;
+	
 	// Set up button images
 	btnPlay1->setPixmap(*pixPlay);
 	btnPlay2->setPixmap(*pixPlay);
@@ -38,7 +38,7 @@ void frmPlayout::init() {
 	btnSCartNext->setPixmap(*pixSeekforward);
 	btnUCartPrev->setPixmap(*pixSeekback);
 	btnUCartNext->setPixmap(*pixSeekforward);
-	
+		
 	cout << "Connecting to database..." << endl;
 	conf = new config("digiplay");
     QCustomEvent *config_refresh = new QCustomEvent(30000);
@@ -67,6 +67,8 @@ void frmPlayout::init() {
 	dbTrigger->start();
 	cout << " -> Trigger active." << endl;
 	AudioWall_Init();
+	
+	delete grpUCart;
 }
 
 void frmPlayout::destroy() {
@@ -75,7 +77,6 @@ void frmPlayout::destroy() {
 
 // START Events ======================================================
 void frmPlayout::customEvent(QCustomEvent *event) {
-	//cout << "Event received: " << event->type() << endl;
 	switch (event->type()) {
 	case 20001: {
 			eventData *e_data = (eventData*)event->data();
@@ -169,8 +170,11 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 				btnLoadPlaylist3->setEnabled(false);
 			}
 			else {
+				if (player1->getState() != STATE_PLAY)
 				btnLoadPlaylist1->setEnabled(true);
+				if (player2->getState() != STATE_PLAY)
 				btnLoadPlaylist2->setEnabled(true);
+				if (player3->getState() != STATE_PLAY)
 				btnLoadPlaylist3->setEnabled(true);
 			}
 			break;
@@ -211,19 +215,21 @@ void frmPlayout::Player1_Load() {
 }   
 
 void frmPlayout::Player1_Play() {
-	cout << "State: " << player1->getState() << endl;
 	switch (player1->getState()) {
 	case STATE_STOP:
 		player1->do_play();
 		btnPlay1->setPixmap(*pixPause);
+		btnLoadPlaylist1->setEnabled(false);
 		break;
 	case STATE_PLAY:
 		player1->do_pause();
 		btnPlay1->setPixmap(*pixPlay);
+		btnLoadPlaylist1->setEnabled(true);
 		break;
 	case STATE_PAUSE:
 		player1->do_resume();
 		btnPlay1->setPixmap(*pixPause);
+		btnLoadPlaylist1->setEnabled(false);
 		break;
 	}
 }
@@ -231,6 +237,7 @@ void frmPlayout::Player1_Play() {
 void frmPlayout::Player1_Stop() {
 	player1->do_stop();
 	btnPlay1->setEnabled(true);
+	btnLoadPlaylist1->setEnabled(true);
 }
 
 void frmPlayout::Player2_Load() {
@@ -267,14 +274,17 @@ void frmPlayout::Player2_Play() {
 	case STATE_STOP:
 		player2->do_play();
 		btnPlay2->setPixmap(*pixPause);
+		btnLoadPlaylist2->setEnabled(false);
 		break;
 	case STATE_PLAY:
 		player2->do_pause();
 		btnPlay2->setPixmap(*pixPlay);
+		btnLoadPlaylist2->setEnabled(true);
 		break;
 	case STATE_PAUSE:
 		player2->do_resume();
 		btnPlay2->setPixmap(*pixPause);
+		btnLoadPlaylist2->setEnabled(false);
 		break;
 	}
 }
@@ -282,6 +292,7 @@ void frmPlayout::Player2_Play() {
 void frmPlayout::Player2_Stop() {
 	player2->do_stop();
 	btnPlay2->setEnabled(true);
+	btnLoadPlaylist2->setEnabled(true);
 }
 
 void frmPlayout::Player3_Load() {
@@ -317,14 +328,17 @@ void frmPlayout::Player3_Play() {
 	case STATE_STOP:
 		player3->do_play();
 		btnPlay3->setPixmap(*pixPause);
+		btnLoadPlaylist3->setEnabled(false);
 		break;
 	case STATE_PLAY:
 		player3->do_pause();
 		btnPlay3->setPixmap(*pixPlay);
+		btnLoadPlaylist3->setEnabled(true);
 		break;
 	case STATE_PAUSE:
 		player3->do_resume();
 		btnPlay3->setPixmap(*pixPause);
+		btnLoadPlaylist3->setEnabled(false);
 		break;
 	}
 }
@@ -332,6 +346,7 @@ void frmPlayout::Player3_Play() {
 void frmPlayout::Player3_Stop() {
 	player3->do_stop();
 	btnPlay3->setEnabled(true);
+	btnLoadPlaylist3->setEnabled(true);
 }
 
 
@@ -411,7 +426,7 @@ void frmPlayout::AudioWall_Play() {
 	short x = atoi(sender->name());
 	if (audiowall->get_active_channel() == x)
 		audiowall->do_stop(x);
-	else if (audiowall->get_active_channel() < 0) {
+	else { //if (audiowall->get_active_channel() < 0) {
 		audioClip A = stationWall->at(0)->clip[x];
 		A.btn->setPaletteForegroundColor(QColor(QRgb(16776960)));
 		A.btn->setPaletteBackgroundColor(QColor(QRgb(16711680)));

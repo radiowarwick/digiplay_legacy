@@ -62,7 +62,7 @@ INSERT INTO lifespans (id, name, data, description)
 
 /* Cart Walls */
 INSERT INTO cartsets (id, name, userid, directory, description)
-	VALUES (0,'RaW 1251AM',0,0,'RaW 1251AM Station Cartset');
+	VALUES (0,'RaW 1251AM',0,0,'RaW 1251AM Station Audio Wall');
 INSERT INTO cartwalls (id, name, cartset, page, description)
 	VALUES (0,'Page 1',0,0,'Main station jingles');
 INSERT INTO cartproperties (id, name)

@@ -400,7 +400,7 @@ void frmPlayout::AudioWall_Init() {
 			btnCurrent->setGeometry(j*150 + 10, i*70 + 20, 140, 60);
 			btnCurrent->setEnabled(false);
 			stationWall->at(0)->clip[i*3+j].btn = btnCurrent;
-			connect(btnCurrent,SIGNAL(clicked()),this,SLOT(AudioWall_Play()));
+			connect(btnCurrent,SIGNAL(pressed()),this,SLOT(AudioWall_Play()));
 		}
 	}
 	

@@ -1172,73 +1172,73 @@
 <connections>
     <connection>
         <sender>btnLoadPlaylist1</sender>
-        <signal>clicked()</signal>
+        <signal>pressed()</signal>
         <receiver>frmPlayout</receiver>
         <slot>Player1_Load()</slot>
     </connection>
     <connection>
         <sender>btnLoadPlaylist2</sender>
-        <signal>clicked()</signal>
+        <signal>pressed()</signal>
         <receiver>frmPlayout</receiver>
         <slot>Player2_Load()</slot>
     </connection>
     <connection>
         <sender>btnLoadPlaylist3</sender>
-        <signal>clicked()</signal>
+        <signal>pressed()</signal>
         <receiver>frmPlayout</receiver>
         <slot>Player3_Load()</slot>
     </connection>
     <connection>
         <sender>btnPlay1</sender>
-        <signal>clicked()</signal>
+        <signal>pressed()</signal>
         <receiver>frmPlayout</receiver>
         <slot>Player1_Play()</slot>
     </connection>
     <connection>
         <sender>btnPlay2</sender>
-        <signal>clicked()</signal>
+        <signal>pressed()</signal>
         <receiver>frmPlayout</receiver>
         <slot>Player2_Play()</slot>
     </connection>
     <connection>
         <sender>btnPlay3</sender>
-        <signal>clicked()</signal>
+        <signal>pressed()</signal>
         <receiver>frmPlayout</receiver>
         <slot>Player3_Play()</slot>
     </connection>
     <connection>
         <sender>btnStop1</sender>
-        <signal>clicked()</signal>
+        <signal>pressed()</signal>
         <receiver>frmPlayout</receiver>
         <slot>Player1_Stop()</slot>
     </connection>
     <connection>
         <sender>btnStop2</sender>
-        <signal>clicked()</signal>
+        <signal>pressed()</signal>
         <receiver>frmPlayout</receiver>
         <slot>Player2_Stop()</slot>
     </connection>
     <connection>
         <sender>btnStop3</sender>
-        <signal>clicked()</signal>
+        <signal>pressed()</signal>
         <receiver>frmPlayout</receiver>
         <slot>Player3_Stop()</slot>
     </connection>
     <connection>
         <sender>btnTimeMode1</sender>
-        <signal>clicked()</signal>
+        <signal>pressed()</signal>
         <receiver>frmPlayout</receiver>
         <slot>Player1_Time()</slot>
     </connection>
     <connection>
         <sender>btnTimeMode2</sender>
-        <signal>clicked()</signal>
+        <signal>pressed()</signal>
         <receiver>frmPlayout</receiver>
         <slot>Player2_Time()</slot>
     </connection>
     <connection>
         <sender>btnTimeMode3</sender>
-        <signal>clicked()</signal>
+        <signal>pressed()</signal>
         <receiver>frmPlayout</receiver>
         <slot>Player3_Time()</slot>
     </connection>

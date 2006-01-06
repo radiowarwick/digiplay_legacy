@@ -122,6 +122,12 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 		}
 	case 20013: {       // Player1 Stop Event
 			btnPlay1->setPixmap(*pixPlay);
+			btnLoadPlaylist1->setEnabled(true);
+			lblCounter1->setPaletteForegroundColor(QColor(QRgb(0)));
+			break;
+		}
+	case 20014: {
+			lblCounter1->setPaletteForegroundColor(QColor(QRgb(16711680)));
 			break;
 		}
 	case 20020: {       // Player2 Counter Update
@@ -141,6 +147,12 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 		}
 	case 20023: {       // Player2 Stop Event
 			btnPlay2->setPixmap(*pixPlay);
+			btnLoadPlaylist2->setEnabled(true);
+			lblCounter2->setPaletteForegroundColor(QColor(QRgb(0)));
+			break;
+		}
+	case 20024: {
+			lblCounter2->setPaletteForegroundColor(QColor(QRgb(16711680)));
 			break;
 		}
 	case 20030: {       // Player3 Counter Update
@@ -160,6 +172,12 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 		}
 	case 20033: {       // Player2 Stop Event
 			btnPlay3->setPixmap(*pixPlay);
+			btnLoadPlaylist3->setEnabled(true);
+			lblCounter3->setPaletteForegroundColor(QColor(QRgb(0)));
+			break;
+		}
+	case 20034: {
+			lblCounter3->setPaletteForegroundColor(QColor(QRgb(16711680)));
 			break;
 		}
 	case 30000: {

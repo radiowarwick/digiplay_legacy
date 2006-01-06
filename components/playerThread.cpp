@@ -112,7 +112,11 @@ void playerThread::do_updateCounter(int smpl) {
 	
 	stringstream S; 
 	int min, sec, mil; 
-	
+
+	if (smpl != 0 && (length - smpl)/44100 < 20) {
+		QCustomEvent *endEvent = new QCustomEvent(20004 + 10*player_id);
+		QApplication::postEvent(receiver, endEvent);
+	}
 	if (time_mode == TIME_MODE_REMAIN) {
 		mil = (int)((length - smpl)/441);
 	}

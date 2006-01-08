@@ -2,6 +2,13 @@
 
 // START General Thread Stop-Start ============================================
 void audiowallthread::run() {
+    EVENT_ID = 20000 + player_id;
+    e_smpl = new eventData;
+    e_stop = new eventData;
+    e_smpl->id = player_id;
+    e_smpl->t = EVENT_TYPE_SMPL;
+    e_stop->t = EVENT_TYPE_STOP;
+
 	stringstream S;
 	S << "channel_" << player_id;
 	mixer = new audiomixer();
@@ -13,12 +20,6 @@ void audiowallthread::run() {
 	active_ch = -1;
 	state_mutex.unlock();
 
-	e_smpl = new eventData;
-	e_stop = new eventData;
-	e_smpl->id = player_id;
-	e_smpl->t = EVENT_TYPE_SMPL;
-	e_stop->t = EVENT_TYPE_STOP;
-	
 	while (!stopped)
 		sleep(1000);
 }
@@ -27,6 +28,10 @@ void audiowallthread::stop() {
 	stopped_mutex.lock();
 	stopped = TRUE;
 	stopped_mutex.unlock();
+	delete e_smpl;
+	delete e_stop;
+	delete player;
+	delete mixer; 
 }
 
 // START Playback control functions ===========================================
@@ -61,7 +66,7 @@ void audiowallthread::do_stop(short index) {
 		state_mutex.unlock();
 		mixer->channel(index)->stop();
 		e_stop->index = index;
-		QCustomEvent *e = new QCustomEvent(QEvent::Type(20001),e_stop);
+		QCustomEvent *e = new QCustomEvent(QEvent::Type(EVENT_ID),e_stop);
 		QApplication::postEvent(receiver, e);
 	}
 	else {
@@ -77,14 +82,14 @@ void audiowallthread::do_updateCounter(int smpl) {
 		e_stop->index = active_ch;
 		state = STATE_STOP;
 		active_ch = -1;	
-		QCustomEvent *e = new QCustomEvent(QEvent::Type(20001),e_stop);
+		QCustomEvent *e = new QCustomEvent(QEvent::Type(EVENT_ID),e_stop);
 		QApplication::postEvent(receiver, e);
 		state_mutex.unlock();
 		return;
 	}
 	e_smpl->smpl = mixer->channel(active_ch)->getLength() - smpl;
 	e_smpl->index = active_ch;
-	QCustomEvent *e = new QCustomEvent(QEvent::Type(20001),e_smpl);
+	QCustomEvent *e = new QCustomEvent(QEvent::Type(EVENT_ID),e_smpl);
 	QApplication::postEvent(receiver, e);
 	state_mutex.unlock();
 }

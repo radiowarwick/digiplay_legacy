@@ -66,7 +66,7 @@ void audiochannel::load(string filename, long start_smpl, long end_smpl) {
 	mode_cache = false;
 
 	// Wait for current caching thread to actually finish and terminate
-	usleep(1000);
+	notify_cache();
 
 	// Delete any fades and triggers that might be still around
 	for (unsigned short i = 0; i < fades->size(); i++) {

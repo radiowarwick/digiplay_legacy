@@ -2,19 +2,34 @@
 
 // START General Thread Stop-Start ============================================
 void playerThread::run() {
+    EVENT_ID = 20000 + player_id;
+    e_smpl = new eventData;
+    e_stop = new eventData;
+    e_max_smpl = new eventData;
+    e_end = new eventData;
+    e_smpl->id = player_id;
+    e_smpl->t = EVENT_TYPE_SMPL;
+    e_stop->id = player_id;
+    e_stop->t = EVENT_TYPE_STOP;
+    e_max_smpl->id = player_id;
+    e_max_smpl->t = EVENT_TYPE_MAX_SMPL;
+    e_end->id = player_id;
+    e_end->t = EVENT_TYPE_END;
+
 	stringstream S;
 	S << "channel_" << player_id;
 	mixer = new audiomixer();
-	mixer->createChannel();
-	ch = mixer->channel(0);
+	ch = mixer->createChannel();
 	ch->setVolume(100);
 	ch->addCounter(playerThread::callback_counter, (void*)this);
 	ch->autoReload(true);
+	length = 0;	
 	player = new audioplayer(S.str());
 	player->attachMixer(mixer);
 	state_mutex.lock();
 	state = STATE_EJECT;
 	state_mutex.unlock();
+
 	while (!stopped)
 		sleep(1000);
 }
@@ -23,6 +38,12 @@ void playerThread::stop() {
 	stopped_mutex.lock();
 	stopped = TRUE;
 	stopped_mutex.unlock();
+	delete e_smpl;
+	delete e_stop;
+	delete e_max_smpl;
+	delete e_end;
+	delete player;
+	delete mixer;
 }
 
 // START Playback control functions ===========================================
@@ -34,9 +55,9 @@ void playerThread::do_load(QString *md5_hash,long int start,long int end) {
 	state_mutex.unlock();
 	length = end - start;
 	do_updateCounter(0);
-	QCustomEvent *sliderEvent = new QCustomEvent(20002 + 10*player_id);
-	sliderEvent->setData(&length);
-	QApplication::postEvent(receiver, sliderEvent);
+	e_max_smpl->smpl = length;
+	QCustomEvent *e = new QCustomEvent(QEvent::Type(EVENT_ID),e_max_smpl);
+	QApplication::postEvent(receiver, e);
 }
 
 void playerThread::do_play() {
@@ -55,8 +76,8 @@ void playerThread::do_stop() {
 		state = STATE_STOP;
 		state_mutex.unlock();
 		ch->stop();
-		QCustomEvent *stopEvent = new QCustomEvent(20003 + 10*player_id);
-		QApplication::postEvent(receiver, stopEvent);
+		QCustomEvent *e = new QCustomEvent(QEvent::Type(EVENT_ID),e_stop);
+		QApplication::postEvent(receiver, e);
 	}
 	else {
 		state_mutex.unlock();
@@ -98,48 +119,31 @@ void playerThread::do_seek(long position) {
 	else cout << "playerThread: Can't seek when not stopped or paused!" << endl;
 }
 
+void playerThread::do_updateCounter() {
+	do_updateCounter(position);
+}
+
 void playerThread::do_updateCounter(int smpl) {
 	position_mutex.lock();
 	position = smpl;
 	position_mutex.unlock();
+	
 	if (smpl == 0) {
-		QCustomEvent *stopEvent = new QCustomEvent(20003 + 10*player_id);
-		QApplication::postEvent(receiver, stopEvent);
+		QCustomEvent *e = new QCustomEvent(QEvent::Type(EVENT_ID),e_stop);
+		QApplication::postEvent(receiver, e);
 		state_mutex.lock();
 		state = STATE_STOP;
 		state_mutex.unlock();
 	}
 	
 	stringstream S; 
-	int min, sec, mil; 
-
 	if (smpl != 0 && (length - smpl)/44100 < 20) {
-		QCustomEvent *endEvent = new QCustomEvent(20004 + 10*player_id);
-		QApplication::postEvent(receiver, endEvent);
+		QCustomEvent *e = new QCustomEvent(QEvent::Type(EVENT_ID),e_end);
+		QApplication::postEvent(receiver, e);
 	}
-	if (time_mode == TIME_MODE_REMAIN) {
-		mil = (int)((length - smpl)/441);
-	}
-	else {
-		mil = (int)(smpl/441);
-	}
-	sec = (int)(mil / 100);
-	mil = mil%100;
-	min = (int)(sec / 60);
-	sec = sec%60;
-	if (min < 10) S << "0";
-	S << min << ":";
-	if (sec < 10) S << "0";
-	S << sec << ".";
-	if (mil < 10) S << "0";
-	S << mil << "";
-	QCustomEvent *counterEvent = new QCustomEvent(20000 + 10*player_id);
-	QCustomEvent *sliderEvent = new QCustomEvent(20001 + 10*player_id);
-	counterEvent->setData(new QString(S.str()));
-	int *s = new int;
-	sliderEvent->setData(&(*s = smpl));
-	QApplication::postEvent(receiver, counterEvent);
-	QApplication::postEvent(receiver, sliderEvent);
+	e_smpl->smpl = position;
+	QCustomEvent *e = new QCustomEvent(QEvent::Type(EVENT_ID),e_smpl);
+	QApplication::postEvent(receiver, e);
 }
 
 int playerThread::getState() {

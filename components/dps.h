@@ -41,7 +41,8 @@ enum eventType {
 	EVENT_TYPE_PLAY, 
 	EVENT_TYPE_STOP, 
 	EVENT_TYPE_SMPL,
-	EVENT_TYPE_MAX_SMPL };
+	EVENT_TYPE_MAX_SMPL,
+	EVENT_TYPE_END};
 
 struct eventData {
 	unsigned short id;

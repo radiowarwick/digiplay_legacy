@@ -66,8 +66,8 @@ void frmPlayout::init() {
 	cout << " -> Created trigger thread" << endl;
 	dbTrigger->start();
 	cout << " -> Trigger active." << endl;
-	AudioWall_Init();
 	
+	AudioWall_Init();
 	delete grpUCart;
 }
 
@@ -78,7 +78,109 @@ void frmPlayout::destroy() {
 // START Events ======================================================
 void frmPlayout::customEvent(QCustomEvent *event) {
 	switch (event->type()) {
-	case 20001: {
+		case 20001:	{
+			eventData *e_data = (eventData*)event->data();
+			switch (e_data->t) {
+				case EVENT_TYPE_STOP: {
+					btnPlay1->setPixmap(*pixPlay);
+					if (conf->getParam("next_on_showplan") != "") {
+			        	btnLoadPlaylist1->setEnabled(true);
+					}
+					lblCounter1->setPaletteForegroundColor(QColor(QRgb(0)));
+		        	break;
+				}
+				case EVENT_TYPE_PLAY: {
+					break;
+				}
+				case EVENT_TYPE_SMPL: {
+					sldSeek1->setValue(e_data->smpl);
+					if (lblPlayerTime1->text() == "REMAIN") {
+						e_data->smpl = player1->getLength() - e_data->smpl;
+					}
+					lblCounter1->setText(getTime(e_data->smpl));
+					break;
+				}
+				case EVENT_TYPE_MAX_SMPL: {
+					sldSeek1->setMaxValue(e_data->smpl);
+					break;
+				}
+				case EVENT_TYPE_END: {
+					lblCounter1->setPaletteForegroundColor(
+											QColor(QRgb(16711680)));
+					break;
+				}
+			}
+			break;
+		}
+		case 20002: {
+            eventData *e_data = (eventData*)event->data();
+            switch (e_data->t) {
+                case EVENT_TYPE_STOP: {
+                    btnPlay2->setPixmap(*pixPlay);
+					if (conf->getParam("next_on_showplan") != "") {
+	                    btnLoadPlaylist2->setEnabled(true);
+					}
+                    lblCounter2->setPaletteForegroundColor(QColor(QRgb(0)));
+                    break;
+                }
+                case EVENT_TYPE_PLAY: {
+                    break;
+                }
+                case EVENT_TYPE_SMPL: {
+					sldSeek2->setValue(e_data->smpl);
+					if (lblPlayerTime2->text() == "REMAIN") {
+						e_data->smpl = player2->getLength() - e_data->smpl;
+					}
+					lblCounter2->setText(getTime(e_data->smpl));
+                    break;
+                }
+                case EVENT_TYPE_MAX_SMPL: {
+					sldSeek2->setMaxValue(e_data->smpl);
+                    break;
+                }
+                case EVENT_TYPE_END: {
+					lblCounter2->setPaletteForegroundColor(
+                                            QColor(QRgb(16711680)));
+                    break;
+                }
+            }
+			break;
+		}
+		case 20003: {
+            eventData *e_data = (eventData*)event->data();
+            switch (e_data->t) {
+                case EVENT_TYPE_STOP: {
+                    btnPlay3->setPixmap(*pixPlay);
+					if (conf->getParam("next_on_showplan") != "") {
+	                    btnLoadPlaylist3->setEnabled(true);
+					}
+                    lblCounter3->setPaletteForegroundColor(QColor(QRgb(0)));
+                    break;
+                }
+                case EVENT_TYPE_PLAY: {
+                    break;
+                }
+                case EVENT_TYPE_SMPL: {
+					sldSeek3->setValue(e_data->smpl);
+					if (lblPlayerTime3->text() == "REMAIN") {
+						e_data->smpl = player3->getLength() - e_data->smpl;
+					}
+					lblCounter3->setText(getTime(e_data->smpl));
+                    break;
+                }
+                case EVENT_TYPE_MAX_SMPL: {
+					sldSeek3->setMaxValue(e_data->smpl);
+                    break;
+                }
+                case EVENT_TYPE_END: {
+					lblCounter3->setPaletteForegroundColor(
+											QColor(QRgb(16711680)));
+                    break;
+                }
+            }
+			break;
+		}							  
+		case 20004: {
 			eventData *e_data = (eventData*)event->data();
 			if (e_data->index < 0) break;
 			switch (e_data->t) {
@@ -102,83 +204,11 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 			case EVENT_TYPE_MAX_SMPL: {
 					break;
 				}
+			case EVENT_TYPE_END: {
+					break;
+				}
 			}
 		break;				
-		}
-	case 20010: {       // Player1 Counter Update
-			QString *s = (QString *) event->data();
-			lblCounter1->setText(*s);
-			break;
-		}
-	case 20011: {       // Player1 Slider Update
-			int *s  = (int *) event->data();
-			sldSeek1->setValue(*s);
-			break;
-		}
-	case 20012: {       // Player1 Slider MaxValue Update
-			int *s = (int *) event->data();
-			sldSeek1->setMaxValue(*s);
-			break;
-		}
-	case 20013: {       // Player1 Stop Event
-			btnPlay1->setPixmap(*pixPlay);
-			btnLoadPlaylist1->setEnabled(true);
-			lblCounter1->setPaletteForegroundColor(QColor(QRgb(0)));
-			break;
-		}
-	case 20014: {
-			lblCounter1->setPaletteForegroundColor(QColor(QRgb(16711680)));
-			break;
-		}
-	case 20020: {       // Player2 Counter Update
-			QString *s = (QString *) event->data();
-			lblCounter2->setText(*s);
-			break;
-		}
-	case 20021: {       // Player2 Slider Update
-			int *s  = (int *) event->data();
-			sldSeek2->setValue(*s);
-			break;
-		}
-	case 20022: {       // Player2 Slider MaxValue Update
-			int *s = (int *) event->data();
-			sldSeek2->setMaxValue(*s);
-			break;
-		}
-	case 20023: {       // Player2 Stop Event
-			btnPlay2->setPixmap(*pixPlay);
-			btnLoadPlaylist2->setEnabled(true);
-			lblCounter2->setPaletteForegroundColor(QColor(QRgb(0)));
-			break;
-		}
-	case 20024: {
-			lblCounter2->setPaletteForegroundColor(QColor(QRgb(16711680)));
-			break;
-		}
-	case 20030: {       // Player3 Counter Update
-			QString *s = (QString *) event->data();
-			lblCounter3->setText(*s);
-			break;
-		}
-	case 20031: {       // Player3 Slider Update
-			int *s  = (int *) event->data();
-			sldSeek3->setValue(*s);
-			break;
-		}
-	case 20032: {       // Player3 Slider MaxValue Update
-			int *s = (int *) event->data();
-			sldSeek3->setMaxValue(*s);
-			break;
-		}
-	case 20033: {       // Player2 Stop Event
-			btnPlay3->setPixmap(*pixPlay);
-			btnLoadPlaylist3->setEnabled(true);
-			lblCounter3->setPaletteForegroundColor(QColor(QRgb(0)));
-			break;
-		}
-	case 20034: {
-			lblCounter3->setPaletteForegroundColor(QColor(QRgb(16711680)));
-			break;
 		}
 	case 30000: {
 			conf->requery();
@@ -242,7 +272,9 @@ void frmPlayout::Player1_Play() {
 	case STATE_PLAY:
 		player1->do_pause();
 		btnPlay1->setPixmap(*pixPlay);
-		btnLoadPlaylist1->setEnabled(true);
+		if (conf->getParam("next_on_showplan") != "") {
+			btnLoadPlaylist1->setEnabled(true);
+		}
 		break;
 	case STATE_PAUSE:
 		player1->do_resume();
@@ -255,7 +287,9 @@ void frmPlayout::Player1_Play() {
 void frmPlayout::Player1_Stop() {
 	player1->do_stop();
 	btnPlay1->setEnabled(true);
-	btnLoadPlaylist1->setEnabled(true);
+	if (conf->getParam("next_on_showplan") != "") {
+		btnLoadPlaylist1->setEnabled(true);
+	}
 }
 
 void frmPlayout::Player2_Load() {
@@ -297,7 +331,9 @@ void frmPlayout::Player2_Play() {
 	case STATE_PLAY:
 		player2->do_pause();
 		btnPlay2->setPixmap(*pixPlay);
-		btnLoadPlaylist2->setEnabled(true);
+		if (conf->getParam("next_on_showplan") != "") {
+			btnLoadPlaylist2->setEnabled(true);
+		}
 		break;
 	case STATE_PAUSE:
 		player2->do_resume();
@@ -310,7 +346,9 @@ void frmPlayout::Player2_Play() {
 void frmPlayout::Player2_Stop() {
 	player2->do_stop();
 	btnPlay2->setEnabled(true);
-	btnLoadPlaylist2->setEnabled(true);
+	if (conf->getParam("next_on_showplan") != "") {
+		btnLoadPlaylist2->setEnabled(true);
+	}
 }
 
 void frmPlayout::Player3_Load() {
@@ -351,7 +389,9 @@ void frmPlayout::Player3_Play() {
 	case STATE_PLAY:
 		player3->do_pause();
 		btnPlay3->setPixmap(*pixPlay);
-		btnLoadPlaylist3->setEnabled(true);
+		if (conf->getParam("next_on_showplan") != "") {
+			btnLoadPlaylist3->setEnabled(true);
+		}
 		break;
 	case STATE_PAUSE:
 		player3->do_resume();
@@ -364,7 +404,9 @@ void frmPlayout::Player3_Play() {
 void frmPlayout::Player3_Stop() {
 	player3->do_stop();
 	btnPlay3->setEnabled(true);
-	btnLoadPlaylist3->setEnabled(true);
+	if (conf->getParam("next_on_showplan") != "") {
+		btnLoadPlaylist3->setEnabled(true);
+	}
 }
 
 
@@ -372,36 +414,33 @@ void frmPlayout::Player3_Stop() {
 void frmPlayout::Player1_Time() {
     if (lblPlayerTime1->text() == "REMAIN") {
         lblPlayerTime1->setText("ELAPSED");
-        player1->setTimeMode(TIME_MODE_ELAPSED);
     }
     else {
         lblPlayerTime1->setText("REMAIN");
-        player1->setTimeMode(TIME_MODE_REMAIN);
     }	
+	player1->do_updateCounter();
 }
 
 
 void frmPlayout::Player2_Time(){
     if (lblPlayerTime2->text() == "REMAIN") {
         lblPlayerTime2->setText("ELAPSED");
-        player2->setTimeMode(TIME_MODE_ELAPSED);
     }
     else {
         lblPlayerTime2->setText("REMAIN");
-        player2->setTimeMode(TIME_MODE_REMAIN);
     }	
+	player2->do_updateCounter();
 }
 
 
 void frmPlayout::Player3_Time() {
     if (lblPlayerTime3->text() == "REMAIN") {
         lblPlayerTime3->setText("ELAPSED");
-        player3->setTimeMode(TIME_MODE_ELAPSED);
     }
     else {
         lblPlayerTime3->setText("REMAIN");
-        player3->setTimeMode(TIME_MODE_REMAIN);
-    }	
+    }
+	player3->do_updateCounter();
 }
 
 

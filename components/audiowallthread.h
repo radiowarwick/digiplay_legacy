@@ -58,7 +58,8 @@ class audiowallthread : public QThread {
 		int player_id;
 		audioplayer *player;
 		audiomixer *mixer;
-	
+
+		int EVENT_ID;
 		eventData *e_smpl;	
 		eventData *e_stop;	
 		int state;

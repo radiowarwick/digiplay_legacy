@@ -41,10 +41,12 @@ STUDIO_PLAY_OBJ=		apps/studio_play/main.o \
 						components/triggerThread.o
 STUDIO_SEARCH_OBJ=		apps/studio_search/main.o \
 						components/libsearch.o \
+						components/trackinfo.o \
 						components/track.o \
 						components/config.o \
 						components/triggerThread.o \
 						components/clockThread.o \
+						components/recordLog.o \
 						apps/studio_search/frmSearch.o \
 						.tmp/moc_frmSearch.o
 ADMIN_OBJ=				apps/admin/main.o \
@@ -151,6 +153,9 @@ components/libsearch.o:			components/libsearch.cpp \
 	$(COMPILE)
 components/playerThread.o:		components/playerThread.cpp \
 								components/playerThread.h
+	$(QTCOMPILE)
+components/recordLog.o:			components/recordLog.cpp \
+								components/recordLog.h
 	$(QTCOMPILE)
 components/sched_bin.o:			components/sched_bin.cpp \
 								components/sched_bin.h

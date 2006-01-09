@@ -2746,10 +2746,10 @@ If you have any suggestions for features you'd like to see in RaW Digiplay, plea
         </widget>
         <widget class="QWidget">
             <property name="name">
-                <cstring>messages</cstring>
+                <cstring>email</cstring>
             </property>
             <attribute name="title">
-                <string>Messages</string>
+                <string>E-mail</string>
             </attribute>
         </widget>
         <widget class="QWidget">
@@ -2779,41 +2779,6 @@ If you have any suggestions for features you'd like to see in RaW Digiplay, plea
                 </property>
                 <property name="text">
                     <string>RecLib ID:</string>
-                </property>
-            </widget>
-            <widget class="QPushButton">
-                <property name="name">
-                    <cstring>pushButton36</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>401</x>
-                        <y>10</y>
-                        <width>100</width>
-                        <height>50</height>
-                    </rect>
-                </property>
-                <property name="font">
-                    <font>
-                        <pointsize>12</pointsize>
-                        <bold>0</bold>
-                    </font>
-                </property>
-                <property name="text">
-                    <string>Log</string>
-                </property>
-            </widget>
-            <widget class="QLineEdit">
-                <property name="name">
-                    <cstring>lineEdit4</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>80</x>
-                        <y>10</y>
-                        <width>90</width>
-                        <height>21</height>
-                    </rect>
                 </property>
             </widget>
             <widget class="QLabel">
@@ -2860,19 +2825,6 @@ If you have any suggestions for features you'd like to see in RaW Digiplay, plea
                     <string>Title:</string>
                 </property>
             </widget>
-            <widget class="QLineEdit">
-                <property name="name">
-                    <cstring>lineEdit3</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>80</x>
-                        <y>40</y>
-                        <width>260</width>
-                        <height>21</height>
-                    </rect>
-                </property>
-            </widget>
             <widget class="QLabel">
                 <property name="name">
                     <cstring>textLabel1_4</cstring>
@@ -2892,19 +2844,6 @@ If you have any suggestions for features you'd like to see in RaW Digiplay, plea
                 </property>
                 <property name="text">
                     <string>Recently Logged</string>
-                </property>
-            </widget>
-            <widget class="QLineEdit">
-                <property name="name">
-                    <cstring>lineEdit2</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>80</x>
-                        <y>70</y>
-                        <width>260</width>
-                        <height>22</height>
-                    </rect>
                 </property>
             </widget>
             <widget class="QListBox">
@@ -2929,6 +2868,67 @@ If you have any suggestions for features you'd like to see in RaW Digiplay, plea
                         <pointsize>12</pointsize>
                         <bold>0</bold>
                     </font>
+                </property>
+            </widget>
+            <widget class="QLineEdit">
+                <property name="name">
+                    <cstring>txtReclibLogBox</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>80</x>
+                        <y>10</y>
+                        <width>90</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+            </widget>
+            <widget class="QLineEdit">
+                <property name="name">
+                    <cstring>txtArtistLogBox</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>80</x>
+                        <y>40</y>
+                        <width>260</width>
+                        <height>21</height>
+                    </rect>
+                </property>
+            </widget>
+            <widget class="QLineEdit">
+                <property name="name">
+                    <cstring>txtTitleLogBox</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>80</x>
+                        <y>70</y>
+                        <width>260</width>
+                        <height>22</height>
+                    </rect>
+                </property>
+            </widget>
+            <widget class="QPushButton">
+                <property name="name">
+                    <cstring>pushButton36</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>401</x>
+                        <y>10</y>
+                        <width>100</width>
+                        <height>50</height>
+                    </rect>
+                </property>
+                <property name="font">
+                    <font>
+                        <pointsize>12</pointsize>
+                        <bold>0</bold>
+                    </font>
+                </property>
+                <property name="text">
+                    <string>Log</string>
                 </property>
             </widget>
         </widget>
@@ -3021,6 +3021,12 @@ If you have any suggestions for features you'd like to see in RaW Digiplay, plea
         <receiver>frmSearch</receiver>
         <slot>Library_Search()</slot>
     </connection>
+    <connection>
+        <sender>pushButton36</sender>
+        <signal>clicked()</signal>
+        <receiver>frmSearch</receiver>
+        <slot>LogRecord()</slot>
+    </connection>
 </connections>
 <includes>
     <include location="local" impldecl="in implementation">frmSearch.ui.h</include>
@@ -3029,10 +3035,12 @@ If you have any suggestions for features you'd like to see in RaW Digiplay, plea
     <slot>customEvent( QCustomEvent * event )</slot>
     <slot>Library_Search()</slot>
     <slot>PlaylistAdd( int row, int col, int button, const QPoint &amp; mousepos )</slot>
+    <slot>LogRecord()</slot>
 </slots>
 <functions>
     <function access="private" specifier="non virtual">init()</function>
     <function access="private" specifier="non virtual">destroy()</function>
+    <function returnType="bool">isDefined( QString * name )</function>
 </functions>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

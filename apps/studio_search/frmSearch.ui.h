@@ -16,10 +16,12 @@
 #include "libsearch.h"
 #include "track.h"
 #include "config.h"
+#include "recordLog.h"
 
 libsearch *library_engine = new libsearch();
 triggerThread *dbTrigger;
 config *conf;
+recordLog *log = new recordLog(1); 
 Connection *C;
 clockThread *ck;
 vector<track*>* SearchResults;
@@ -36,7 +38,7 @@ void frmSearch::init() {
     
 	cout << "Initialising Interface..." << endl;
 	path = qApp->applicationDirPath();
-    tblLibrarySearchResults->setColumnWidth(3,0);
+        tblLibrarySearchResults->setColumnWidth(3,0);
 	lstShowPlan->setColumnWidth(0,80);
 	lstShowPlan->setColumnWidth(1,20);
 	lstShowPlan->setColumnWidth(2,20);
@@ -149,5 +151,35 @@ void frmSearch::PlaylistAdd(int row, int col, int button, const QPoint& mousepos
 	if (Playlist->size() == 1) {
 		conf->setParam("next_on_showplan",new_track->md5());
 	}
+    }
+	
+void frmSearch::LogRecord() {
+    int retval;
+    QString *artst = new QString(txtArtistLogBox->text());
+    QString *ttle = new QString(txtTitleLogBox->text());
+    QString *rclbid = new QString(txtReclibLogBox->text());
+    string *artist  = new string(artst->ascii());
+    string *title = new string(ttle->ascii());
+    string *reclibid = new string (rclbid->ascii());
+    
+    if (isDefined(rclbid)) {
+	retval=log->reclibid(C, 1, reclibid);
+	txtReclibLogBox->setText("");
+	txtArtistLogBox->setText("");
+	txtTitleLogBox->setText("");
+    }
+    else {
+	log->details(C, 1, artist, title);
+	txtReclibLogBox->setText("");
+	txtArtistLogBox->setText("");
+	txtTitleLogBox->setText("");
+    }
 }
 
+bool frmSearch::isDefined(QString *name) {
+//	for (unsigned short i = 0; i < names->size(); i++) {
+//		if (names->at(i) == name)
+//			return true;
+//	}
+	return false;
+}

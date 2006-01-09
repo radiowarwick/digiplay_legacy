@@ -563,13 +563,15 @@ create table "configs" (
 -- Create new table "email".
 -- "email" : Table of email
 -- 	"id" : id identifies email
+--	"new_flag" : new_flag is of email
 -- 	"datetime" : datetime is of email
 -- 	"sender" : sender is of email
 -- 	"subject" : subject is of email
 -- 	"body" : body is of email  
 create table "email" ( 
 	"id" SERIAL,
-	"datetime" TIMESTAMP not null,
+	"new_flag" BOOLEAN not null,
+	"datetime" INTEGER not null,
 	"sender" VARCHAR not null,
 	"subject" VARCHAR,
 	"body" VARCHAR, constraint "email_PK" primary key ("id") ); 
@@ -692,7 +694,7 @@ create table "extfeeds" (
 create table "log" ( 
 	"id" SERIAL,
 	"userid" INTEGER not null,
-	"datetime" TIMESTAMP not null,
+	"datetime" INTEGER not null,
 	"track_title" VARCHAR not null,
 	"track_artist" VARCHAR not null, constraint "log_PK" primary key ("id") ); 
 

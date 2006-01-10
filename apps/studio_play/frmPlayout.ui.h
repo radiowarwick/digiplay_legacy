@@ -38,14 +38,12 @@ void frmPlayout::init() {
 	btnSCartNext->setPixmap(*pixSeekforward);
 	btnUCartPrev->setPixmap(*pixSeekback);
 	btnUCartNext->setPixmap(*pixSeekforward);
-		
-	cout << "Connecting to database..." << endl;
-	conf = new config("digiplay");
-    QCustomEvent *config_refresh = new QCustomEvent(30000);
-    QApplication::postEvent(this, config_refresh);
+
+    cout << "Connecting to database..." << endl;
+    conf = new config("digiplay");
 	C = new Connection(conf->getDBConnectString());
 	cout << " -> Connected." << endl;
-	
+
 	cout << "Initialising Digital Playout Hardware..." << endl;
 	player1 = new playerThread(this, 1);
 	player2 = new playerThread(this, 2);	
@@ -60,13 +58,16 @@ void frmPlayout::init() {
 	audiowall->start();
 	usleep(500000);
 	cout << " -> Hardware initialisation complete." << endl;
-	
+
+	QCustomEvent *config_refresh = new QCustomEvent(30000);
+	QApplication::postEvent(this, config_refresh);
+
 	cout << "Creating trigger on configuration settings..." << endl;
 	dbTrigger = new triggerThread(this, QString(conf->getDBConnectString()), 1, 5);
 	cout << " -> Created trigger thread" << endl;
 	dbTrigger->start();
 	cout << " -> Trigger active." << endl;
-	
+
 	AudioWall_Init();
 	delete grpUCart;
 }

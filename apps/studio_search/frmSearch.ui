@@ -2846,30 +2846,6 @@ If you have any suggestions for features you'd like to see in RaW Digiplay, plea
                     <string>Recently Logged</string>
                 </property>
             </widget>
-            <widget class="QListBox">
-                <item>
-                    <property name="text">
-                        <string>New Item</string>
-                    </property>
-                </item>
-                <property name="name">
-                    <cstring>listBox2</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>10</x>
-                        <y>120</y>
-                        <width>490</width>
-                        <height>500</height>
-                    </rect>
-                </property>
-                <property name="font">
-                    <font>
-                        <pointsize>12</pointsize>
-                        <bold>0</bold>
-                    </font>
-                </property>
-            </widget>
             <widget class="QLineEdit">
                 <property name="name">
                     <cstring>txtReclibLogBox</cstring>
@@ -2929,6 +2905,52 @@ If you have any suggestions for features you'd like to see in RaW Digiplay, plea
                 </property>
                 <property name="text">
                     <string>Log</string>
+                </property>
+            </widget>
+            <widget class="QListView">
+                <column>
+                    <property name="text">
+                        <string>Date/Time</string>
+                    </property>
+                    <property name="clickable">
+                        <bool>true</bool>
+                    </property>
+                    <property name="resizable">
+                        <bool>true</bool>
+                    </property>
+                </column>
+                <column>
+                    <property name="text">
+                        <string>Artist</string>
+                    </property>
+                    <property name="clickable">
+                        <bool>true</bool>
+                    </property>
+                    <property name="resizable">
+                        <bool>true</bool>
+                    </property>
+                </column>
+                <column>
+                    <property name="text">
+                        <string>Title</string>
+                    </property>
+                    <property name="clickable">
+                        <bool>true</bool>
+                    </property>
+                    <property name="resizable">
+                        <bool>true</bool>
+                    </property>
+                </column>
+                <property name="name">
+                    <cstring>lstRecentlyLogged</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>120</y>
+                        <width>491</width>
+                        <height>510</height>
+                    </rect>
                 </property>
             </widget>
         </widget>

@@ -14,6 +14,7 @@ using namespace pqxx;
 #include "stdlib.h"
 #include <qstring.h>
 #include <sstream>
+#include <qlistview.h>
 
 class recordLog {
 	public:
@@ -22,7 +23,8 @@ class recordLog {
 	        int reclibid(Connection *C, int user, string *id);
 		int md5(Connection *C, int user, string *hash);
 		int details(Connection *C, int user, string *artist, string *title);
-		
+		void getRecentlyLogged(Connection *C, QListView *parent);
+
 	private:
 		int location;
 

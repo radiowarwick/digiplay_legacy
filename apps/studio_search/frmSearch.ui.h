@@ -44,6 +44,12 @@ void frmSearch::init() {
 	lstShowPlan->setColumnWidth(2,20);
 	lstShowPlan->setColumnWidth(3,60);
 	lstShowPlan->setSorting(-1,FALSE);
+	lstRecentlyLogged->setColumnWidth(0,147);
+	lstRecentlyLogged->setColumnWidth(1,170);
+	lstRecentlyLogged->setColumnWidth(2,170);
+	lstRecentlyLogged->setSorting(-1,FALSE);
+	txtReclibLogBox->setEnabled(FALSE);
+	log->getRecentlyLogged(C, lstRecentlyLogged);
 	sp_audio = new QPixmap(path + "/images/sp_audio.bmp");
 	sp_artist = new QPixmap(path + "/images/sp_artist.bmp");
 	sp_album = new QPixmap(path + "/images/sp_album.bmp");
@@ -174,6 +180,7 @@ void frmSearch::LogRecord() {
 	txtArtistLogBox->setText("");
 	txtTitleLogBox->setText("");
     }
+    log->getRecentlyLogged(C, lstRecentlyLogged);
 }
 
 bool frmSearch::isDefined(QString *name) {

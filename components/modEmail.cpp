@@ -59,7 +59,7 @@ const char* modEmail::getEmailBody(Connection *C, string id) {
 		SQL << "SELECT * FROM email WHERE id='"
 		    << id
 		    << "' ORDER BY datetime DESC LIMIT 50;";
-	cout << SQL.str();
+//	cout << SQL.str() << endl;
 	try {
 		Result R = T->exec(SQL.str());
 		delete T;
@@ -76,7 +76,7 @@ void modEmail::markRead(Connection *C, string id) {
         stringstream SQL;
                 SQL << "UPDATE email SET new_flag='f' WHERE id='"
                     << id << "';";
-        cout << SQL.str();
+  //      cout << SQL.str() << endl;
         try {
                 T->exec(SQL.str());
 		T->commit();

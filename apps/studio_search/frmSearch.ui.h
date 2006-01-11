@@ -70,6 +70,7 @@ void frmSearch::init() {
 	lstEmail->setColumnWidth(2,183); //Subject
 	lstEmail->setColumnWidth(3,90); //Received
 	lstEmail->setColumnWidth(4,0); //ID
+	getEmail();
 	last_item = NULL;
 	ck = new clockThread(this);
 	ck->start();
@@ -116,23 +117,7 @@ void frmSearch::customEvent(QCustomEvent *event) {
 			break;
         }
 	case 30010: { //Email
-		QListViewItem *new_email;
-		incoming = emailObj->getEmails(C);
-		int number = incoming->size();
-		lstEmail->clear();		
-		cout << number <<endl;
-		for (int i=0; i < number; i++) {
-		    new_email = new QListViewItem(lstEmail, "",
-						incoming->at(i).from,
-						incoming->at(i).subject,
-						incoming->at(i).received,
-					            incoming->at(i).id);
-		    if ( incoming->at(i).flag ==TRUE ) 
-			new_email->setPixmap(0, *email_new);
-		    else
-			new_email->setPixmap(0, *email_old);
-		lstEmail->insertItem(new_email);
-		}
+		getEmail();
 		break;
 	 }
 	default: {
@@ -242,3 +227,22 @@ void frmSearch::displayEmailBody( QListViewItem *current )
    txtEmailBody->setText(emailObj->getEmailBody(C, current->text(4)));
    emailObj->markRead(C, current->text(4));
 }
+
+void frmSearch::getEmail() {
+    		QListViewItem *new_email;
+		incoming = emailObj->getEmails(C);
+		int number = incoming->size();
+		lstEmail->clear();		
+		cout << number <<endl;
+		for (int i=(number-1); i > -1; i--) {
+		    new_email = new QListViewItem(lstEmail, "",
+						incoming->at(i).from,
+						incoming->at(i).subject,
+						incoming->at(i).received,
+					            incoming->at(i).id);
+		    if ( incoming->at(i).flag ==TRUE ) 
+			new_email->setPixmap(0, *email_new);
+		    else
+			new_email->setPixmap(0, *email_old);
+		}
+	    }

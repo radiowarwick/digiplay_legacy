@@ -45,6 +45,7 @@ STUDIO_SEARCH_OBJ=		apps/studio_search/main.o \
 						components/track.o \
 						components/config.o \
 						components/triggerThread.o \
+						components/modEmail.o \
 						components/clockThread.o \
 						components/recordLog.o \
 						apps/studio_search/frmSearch.o \
@@ -156,6 +157,9 @@ components/playerThread.o:		components/playerThread.cpp \
 	$(QTCOMPILE)
 components/recordLog.o:			components/recordLog.cpp \
 								components/recordLog.h
+	$(QTCOMPILE)
+components/modEmail.o:			components/modEmail.cpp \
+								components/modEmail.h
 	$(QTCOMPILE)
 components/sched_bin.o:			components/sched_bin.cpp \
 								components/sched_bin.h

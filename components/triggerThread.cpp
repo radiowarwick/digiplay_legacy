@@ -28,7 +28,7 @@ void triggerThread::run() {
 	QString S;
 	S = "trig_config_loc" + S.setNum(location);
 	Connection *C = new Connection(db_connect.ascii());
-	studioTrigger *T = new studioTrigger(C,S.ascii(),0);
+	studioTrigger *T = new studioTrigger(C,S.ascii(),location);
 	T->initialise(receiver);
 	while (enabled) {
 		usleep(100000);

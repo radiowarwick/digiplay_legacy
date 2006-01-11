@@ -63,7 +63,7 @@ void recordLog::getRecentlyLogged(Connection *C, QListView *parent) {
 		delete T;
 		for (int i = ((int)R.size())-1; i > -1; i--) {
 			dte = localtime(new time_t(atoi(R[i]["datetime"].c_str())));
-			strftime(date, 30, "%Ex %X", dte);
+			strftime(date, 30, "%Ex %H:%M", dte);
 			artist = R[i]["track_artist"].c_str();
 			title = R[i]["track_title"].c_str();
 			parent->insertItem(new QListViewItem(parent, date, artist, title));

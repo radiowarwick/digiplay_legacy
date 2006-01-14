@@ -77,9 +77,9 @@ void frmSearch::init() {
     cout << "Interface initialisation complete." << endl;
 	
 	cout << "Creating trigger on configuration settings..." << endl;
-    dbTrigger = new triggerThread(this, QString(conf->getDBConnectString()), 1, 5); 
+    dbTrigger = new triggerThread(this, QString(conf->getDBConnectString()), 1); 
     dbTrigger->start();
-    emailTrigger = new triggerThread(this, QString(conf->getDBConnectString()), 10, 5); 
+    emailTrigger = new triggerThread(this, QString(conf->getDBConnectString()), 2); 
     emailTrigger->start();
     cout << "Trigger active." << endl;
 
@@ -116,7 +116,7 @@ void frmSearch::customEvent(QCustomEvent *event) {
 			}
 			break;
         }
-	case 30010: { //Email
+	case 30002: { //Email
 		getEmail();
 		break;
 	 }

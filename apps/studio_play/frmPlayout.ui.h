@@ -59,11 +59,11 @@ void frmPlayout::init() {
 	usleep(500000);
 	cout << " -> Hardware initialisation complete." << endl;
 
-	QCustomEvent *config_refresh = new QCustomEvent(30000);
+	QCustomEvent *config_refresh = new QCustomEvent(30001);
 	QApplication::postEvent(this, config_refresh);
 
 	cout << "Creating trigger on configuration settings..." << endl;
-	dbTrigger = new triggerThread(this, QString(conf->getDBConnectString()), 1, 5);
+	dbTrigger = new triggerThread(this, QString(conf->getDBConnectString()), 1);
 	cout << " -> Created trigger thread" << endl;
 	dbTrigger->start();
 	cout << " -> Trigger active." << endl;
@@ -88,6 +88,12 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 			        	btnLoadPlaylist1->setEnabled(true);
 					}
 					lblCounter1->setPaletteForegroundColor(QColor(QRgb(0)));
+					if (lblPlayerTime1->text() == "REMAIN")
+					    lblCounter1->setText(getTime(player1->getLength()));
+					else
+					    lblCounter1->setText(getTime(0));
+					sldSeek1->setValue(0);
+					sldSeek1->setMaxValue(player1->getLength());
 		        	break;
 				}
 				case EVENT_TYPE_PLAY: {
@@ -122,6 +128,12 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 	                    btnLoadPlaylist2->setEnabled(true);
 					}
                     lblCounter2->setPaletteForegroundColor(QColor(QRgb(0)));
+					if (lblPlayerTime2->text() == "REMAIN")
+					    lblCounter2->setText(getTime(player2->getLength()));
+					else
+					    lblCounter2->setText(getTime(0));
+					sldSeek2->setValue(0);
+					sldSeek2->setMaxValue(player2->getLength());
                     break;
                 }
                 case EVENT_TYPE_PLAY: {
@@ -156,6 +168,12 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 	                    btnLoadPlaylist3->setEnabled(true);
 					}
                     lblCounter3->setPaletteForegroundColor(QColor(QRgb(0)));
+					if (lblPlayerTime3->text() == "REMAIN")
+					    lblCounter3->setText(getTime(player3->getLength()));
+					else
+					    lblCounter3->setText(getTime(0));
+					sldSeek3->setValue(0);
+					sldSeek3->setMaxValue(player3->getLength());
                     break;
                 }
                 case EVENT_TYPE_PLAY: {
@@ -211,7 +229,7 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 			}
 		break;				
 		}
-	case 30000: {
+	case 30001: {
 			conf->requery();
 			if (conf->getParam("next_on_showplan") == "") {
 				btnLoadPlaylist1->setEnabled(false);
@@ -258,8 +276,8 @@ void frmPlayout::Player1_Load() {
 	lblArtist1->setText(R[0]["artist"].c_str());
 	btnPlay1->setEnabled(true);
 	btnStop1->setEnabled(true);
-	btnSeekBack1->setEnabled(true);
-	btnSeekForward1->setEnabled(true);
+	//btnSeekBack1->setEnabled(true);
+	//btnSeekForward1->setEnabled(true);
 	sldSeek1->setEnabled(true);
 }   
 
@@ -293,6 +311,11 @@ void frmPlayout::Player1_Stop() {
 	}
 }
 
+
+void frmPlayout::Player1_Seek() {
+	player1->do_seek(sldSeek1->value());
+}
+
 void frmPlayout::Player2_Load() {
 	if (conf->getParam("next_on_showplan") == "") {
 		return;
@@ -316,8 +339,8 @@ void frmPlayout::Player2_Load() {
 	lblArtist2->setText(R[0]["artist"].c_str());
 	btnPlay2->setEnabled(true);
 	btnStop2->setEnabled(true);
-	btnSeekBack2->setEnabled(true);
-	btnSeekForward2->setEnabled(true);
+	//btnSeekBack2->setEnabled(true);
+	//btnSeekForward2->setEnabled(true);
 	sldSeek2->setEnabled(true);
 }   
 
@@ -352,6 +375,11 @@ void frmPlayout::Player2_Stop() {
 	}
 }
 
+
+void frmPlayout::Player2_Seek() {
+	player2->do_seek(sldSeek2->value());
+}
+
 void frmPlayout::Player3_Load() {
 	if (conf->getParam("next_on_showplan") == "") {
 		return;
@@ -375,8 +403,8 @@ void frmPlayout::Player3_Load() {
 	lblArtist3->setText(R[0]["artist"].c_str());
 	btnPlay3->setEnabled(true);
 	btnStop3->setEnabled(true);
-	btnSeekBack3->setEnabled(true);
-	btnSeekForward3->setEnabled(true);
+	//btnSeekBack3->setEnabled(true);
+	//btnSeekForward3->setEnabled(true);
 	sldSeek3->setEnabled(true);
 }   
 
@@ -444,6 +472,9 @@ void frmPlayout::Player3_Time() {
 	player3->do_updateCounter();
 }
 
+void frmPlayout::Player3_Seek() {
+	player3->do_seek(sldSeek3->value());
+}
 
 void frmPlayout::AudioWall_Init() {
 	QPushButton *btnCurrent;	
@@ -456,6 +487,9 @@ void frmPlayout::AudioWall_Init() {
 		for (int j = 0; j < 3; j++) {
 			btnCurrent = new QPushButton( grpSCart, QString::number(i*3+j));
 			btnCurrent->setGeometry(j*150 + 10, i*70 + 20, 140, 60);
+			QFont f = btnCurrent->font();
+			f.setPointSize(14);
+			btnCurrent->setFont(f);
 			btnCurrent->setEnabled(false);
 			stationWall->at(0)->clip[i*3+j].btn = btnCurrent;
 			connect(btnCurrent,SIGNAL(pressed()),this,SLOT(AudioWall_Play()));

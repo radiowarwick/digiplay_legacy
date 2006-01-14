@@ -159,6 +159,7 @@ void audiochannel::stop() {
  * @param position The position in samples to seek to
  */
 void audiochannel::seek(long position) {
+	position = position - (position % 64);
 	f_handle->seekg(position * 4, ios::beg);
 	f_pos_byte = position * 4;
 	Cache_Write = Cache_Read;

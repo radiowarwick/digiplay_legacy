@@ -11,6 +11,7 @@ void playerThread::run() {
     e_smpl->t = EVENT_TYPE_SMPL;
     e_stop->id = player_id;
     e_stop->t = EVENT_TYPE_STOP;
+	e_stop->smpl = 0;
     e_max_smpl->id = player_id;
     e_max_smpl->t = EVENT_TYPE_MAX_SMPL;
     e_end->id = player_id;
@@ -54,7 +55,6 @@ void playerThread::do_load(QString *md5_hash,long int start,long int end) {
 	state = STATE_STOP;
 	state_mutex.unlock();
 	length = end - start;
-	do_updateCounter(0);
 	e_max_smpl->smpl = length;
 	QCustomEvent *e = new QCustomEvent(QEvent::Type(EVENT_ID),e_max_smpl);
 	QApplication::postEvent(receiver, e);
@@ -115,6 +115,7 @@ void playerThread::do_resume() {
 void playerThread::do_seek(long position) {
 	if (state == STATE_PAUSE || state == STATE_STOP) {
 		ch->seek(position);
+		do_updateCounter(position);
 	}
 	else cout << "playerThread: Can't seek when not stopped or paused!" << endl;
 }

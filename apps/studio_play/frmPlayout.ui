@@ -1,6 +1,6 @@
 <!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>frmPlayout</class>
-<widget class="QMainWindow">
+<widget class="QDialog">
     <property name="name">
         <cstring>frmPlayout</cstring>
     </property>
@@ -43,6 +43,818 @@
     </property>
     <widget class="QGroupBox">
         <property name="name">
+            <cstring>grpPlayer1</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>-2</y>
+                <width>540</width>
+                <height>249</height>
+            </rect>
+        </property>
+        <property name="font">
+            <font>
+                <family>Sans Serif</family>
+                <pointsize>16</pointsize>
+                <bold>1</bold>
+            </font>
+        </property>
+        <property name="title">
+            <string>Audio Player 1</string>
+        </property>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblPlayerTime1</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>270</x>
+                    <y>100</y>
+                    <width>110</width>
+                    <height>17</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>14</pointsize>
+                </font>
+            </property>
+            <property name="text">
+                <string>ELAPSED</string>
+            </property>
+            <property name="alignment">
+                <set>AlignCenter</set>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>btnTimeMode1</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>280</x>
+                    <y>60</y>
+                    <width>90</width>
+                    <height>40</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>14</pointsize>
+                    <bold>0</bold>
+                </font>
+            </property>
+            <property name="text">
+                <string>Time Mode</string>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblCounter1</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>60</y>
+                    <width>260</width>
+                    <height>57</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>48</pointsize>
+                </font>
+            </property>
+            <property name="text">
+                <string>00:00.00</string>
+            </property>
+            <property name="alignment">
+                <set>AlignVCenter|AlignLeft</set>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>btnLoadPlaylist1</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>390</x>
+                    <y>60</y>
+                    <width>140</width>
+                    <height>50</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>18</pointsize>
+                </font>
+            </property>
+            <property name="text">
+                <string>Load</string>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>btnStop1</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>159</y>
+                    <width>110</width>
+                    <height>80</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>btnPlay1</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>130</x>
+                    <y>159</y>
+                    <width>110</width>
+                    <height>80</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>btnReset1</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>290</x>
+                    <y>159</y>
+                    <width>80</width>
+                    <height>80</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>btnSeekBack1</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>370</x>
+                    <y>159</y>
+                    <width>80</width>
+                    <height>80</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>btnSeekForward1</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>450</x>
+                    <y>159</y>
+                    <width>80</width>
+                    <height>80</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblArtist1</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>80</x>
+                    <y>40</y>
+                    <width>450</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>14</pointsize>
+                </font>
+            </property>
+            <property name="text">
+                <string>-</string>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblTitle1</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>80</x>
+                    <y>20</y>
+                    <width>450</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>14</pointsize>
+                </font>
+            </property>
+            <property name="text">
+                <string>-</string>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel2</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>40</y>
+                    <width>60</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>14</pointsize>
+                </font>
+            </property>
+            <property name="text">
+                <string>Artist:</string>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel3</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>9</x>
+                    <y>20</y>
+                    <width>60</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>14</pointsize>
+                </font>
+            </property>
+            <property name="mouseTracking">
+                <bool>false</bool>
+            </property>
+            <property name="acceptDrops">
+                <bool>false</bool>
+            </property>
+            <property name="text">
+                <string>Title:</string>
+            </property>
+        </widget>
+        <widget class="QSlider">
+            <property name="name">
+                <cstring>sldSeek1</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>120</y>
+                    <width>520</width>
+                    <height>29</height>
+                </rect>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>4</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+        </widget>
+    </widget>
+    <widget class="QGroupBox">
+        <property name="name">
+            <cstring>grpSCart</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>560</x>
+                <y>-2</y>
+                <width>460</width>
+                <height>373</height>
+            </rect>
+        </property>
+        <property name="font">
+            <font>
+                <family>Sans Serif</family>
+                <pointsize>16</pointsize>
+                <bold>1</bold>
+            </font>
+        </property>
+        <property name="title">
+            <string>Station Audiowall - DO NOT CHANGE!</string>
+        </property>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>btnSCartNext</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>310</x>
+                    <y>300</y>
+                    <width>140</width>
+                    <height>60</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Next</string>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblSCartPage</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>160</x>
+                    <y>300</y>
+                    <width>140</width>
+                    <height>60</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Page 1/1</string>
+            </property>
+            <property name="alignment">
+                <set>AlignCenter</set>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>btnSCartPrev</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>300</y>
+                    <width>140</width>
+                    <height>60</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Previous</string>
+            </property>
+        </widget>
+    </widget>
+    <widget class="QGroupBox">
+        <property name="name">
+            <cstring>grpUCart</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>560</x>
+                <y>373</y>
+                <width>460</width>
+                <height>373</height>
+            </rect>
+        </property>
+        <property name="font">
+            <font>
+                <family>Sans Serif</family>
+                <pointsize>16</pointsize>
+                <bold>1</bold>
+            </font>
+        </property>
+        <property name="title">
+            <string>User Audiowall - DO NOT CHANGE!</string>
+        </property>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>btnUCartNext</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>310</x>
+                    <y>299</y>
+                    <width>140</width>
+                    <height>60</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Next</string>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblUCartPage</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>160</x>
+                    <y>299</y>
+                    <width>140</width>
+                    <height>60</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Page 1/1</string>
+            </property>
+            <property name="alignment">
+                <set>AlignCenter</set>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>btnUCartPrev</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>299</y>
+                    <width>140</width>
+                    <height>60</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Previous</string>
+            </property>
+        </widget>
+    </widget>
+    <widget class="QGroupBox">
+        <property name="name">
+            <cstring>grpPlayer2</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>247</y>
+                <width>540</width>
+                <height>250</height>
+            </rect>
+        </property>
+        <property name="font">
+            <font>
+                <family>Sans Serif</family>
+                <pointsize>16</pointsize>
+                <bold>1</bold>
+            </font>
+        </property>
+        <property name="title">
+            <string>Audio Player 2</string>
+        </property>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblArtist2</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>80</x>
+                    <y>40</y>
+                    <width>450</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>14</pointsize>
+                </font>
+            </property>
+            <property name="text">
+                <string>-</string>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>btnStop2</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>160</y>
+                    <width>110</width>
+                    <height>80</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>btnPlay2</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>130</x>
+                    <y>160</y>
+                    <width>110</width>
+                    <height>80</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>btnReset2</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>290</x>
+                    <y>160</y>
+                    <width>80</width>
+                    <height>80</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>btnSeekBack2</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>370</x>
+                    <y>160</y>
+                    <width>80</width>
+                    <height>80</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>btnSeekForward2</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>450</x>
+                    <y>160</y>
+                    <width>80</width>
+                    <height>80</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string></string>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblCounter2</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>60</y>
+                    <width>260</width>
+                    <height>57</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>48</pointsize>
+                </font>
+            </property>
+            <property name="text">
+                <string>00:00.00</string>
+            </property>
+            <property name="alignment">
+                <set>AlignVCenter|AlignLeft</set>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>btnTimeMode2</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>280</x>
+                    <y>60</y>
+                    <width>90</width>
+                    <height>40</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>14</pointsize>
+                    <bold>0</bold>
+                </font>
+            </property>
+            <property name="text">
+                <string>Time Mode</string>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>btnLoadPlaylist2</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>390</x>
+                    <y>60</y>
+                    <width>140</width>
+                    <height>50</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>18</pointsize>
+                </font>
+            </property>
+            <property name="text">
+                <string>Load</string>
+            </property>
+        </widget>
+        <widget class="QSlider">
+            <property name="name">
+                <cstring>sldSeek2</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>120</y>
+                    <width>520</width>
+                    <height>30</height>
+                </rect>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>4</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblTitle2</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>80</x>
+                    <y>20</y>
+                    <width>450</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>14</pointsize>
+                </font>
+            </property>
+            <property name="text">
+                <string>-</string>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel2_2</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>40</y>
+                    <width>60</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>14</pointsize>
+                </font>
+            </property>
+            <property name="text">
+                <string>Artist:</string>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel3_2</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>20</y>
+                    <width>60</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>14</pointsize>
+                </font>
+            </property>
+            <property name="mouseTracking">
+                <bool>false</bool>
+            </property>
+            <property name="acceptDrops">
+                <bool>false</bool>
+            </property>
+            <property name="text">
+                <string>Title:</string>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblPlayerTime2</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>270</x>
+                    <y>100</y>
+                    <width>110</width>
+                    <height>17</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>14</pointsize>
+                </font>
+            </property>
+            <property name="text">
+                <string>ELAPSED</string>
+            </property>
+            <property name="alignment">
+                <set>AlignCenter</set>
+            </property>
+        </widget>
+    </widget>
+    <widget class="QGroupBox">
+        <property name="name">
             <cstring>grpPlayer3</cstring>
         </property>
         <property name="geometry">
@@ -56,7 +868,7 @@
         <property name="font">
             <font>
                 <family>Sans Serif</family>
-                <pointsize>18</pointsize>
+                <pointsize>16</pointsize>
                 <bold>1</bold>
             </font>
         </property>
@@ -251,25 +1063,6 @@
         </widget>
         <widget class="QLabel">
             <property name="name">
-                <cstring>lblPlayerTime3</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>270</x>
-                    <y>100</y>
-                    <width>110</width>
-                    <height>17</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>ELAPSED</string>
-            </property>
-            <property name="alignment">
-                <set>AlignCenter</set>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
                 <cstring>lblTitle3</cstring>
             </property>
             <property name="geometry">
@@ -353,194 +1146,9 @@
                 <string>Load</string>
             </property>
         </widget>
-    </widget>
-    <widget class="QGroupBox">
-        <property name="name">
-            <cstring>grpPlayer2</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>247</y>
-                <width>540</width>
-                <height>250</height>
-            </rect>
-        </property>
-        <property name="font">
-            <font>
-                <family>Sans Serif</family>
-                <pointsize>16</pointsize>
-                <bold>1</bold>
-            </font>
-        </property>
-        <property name="title">
-            <string>Audio Player 2</string>
-        </property>
         <widget class="QLabel">
             <property name="name">
-                <cstring>lblArtist2</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>80</x>
-                    <y>40</y>
-                    <width>450</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>14</pointsize>
-                </font>
-            </property>
-            <property name="text">
-                <string>-</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnStop2</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>160</y>
-                    <width>110</width>
-                    <height>80</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnPlay2</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>130</x>
-                    <y>160</y>
-                    <width>110</width>
-                    <height>80</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnReset2</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>290</x>
-                    <y>160</y>
-                    <width>80</width>
-                    <height>80</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnSeekBack2</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>370</x>
-                    <y>160</y>
-                    <width>80</width>
-                    <height>80</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnSeekForward2</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>450</x>
-                    <y>160</y>
-                    <width>80</width>
-                    <height>80</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblCounter2</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>60</y>
-                    <width>260</width>
-                    <height>57</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>48</pointsize>
-                </font>
-            </property>
-            <property name="text">
-                <string>00:00.00</string>
-            </property>
-            <property name="alignment">
-                <set>AlignVCenter|AlignLeft</set>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnTimeMode2</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>280</x>
-                    <y>60</y>
-                    <width>90</width>
-                    <height>40</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>14</pointsize>
-                    <bold>0</bold>
-                </font>
-            </property>
-            <property name="text">
-                <string>Time Mode</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblPlayerTime2</cstring>
+                <cstring>lblPlayerTime3</cstring>
             </property>
             <property name="geometry">
                 <rect>
@@ -560,615 +1168,10 @@
             </property>
             <property name="alignment">
                 <set>AlignCenter</set>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnLoadPlaylist2</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>390</x>
-                    <y>60</y>
-                    <width>140</width>
-                    <height>50</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>18</pointsize>
-                </font>
-            </property>
-            <property name="text">
-                <string>Load</string>
-            </property>
-        </widget>
-        <widget class="QSlider">
-            <property name="name">
-                <cstring>sldSeek2</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>120</y>
-                    <width>520</width>
-                    <height>30</height>
-                </rect>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>7</hsizetype>
-                    <vsizetype>4</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblTitle2</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>80</x>
-                    <y>20</y>
-                    <width>450</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>14</pointsize>
-                </font>
-            </property>
-            <property name="text">
-                <string>-</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>textLabel2_2</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>40</y>
-                    <width>60</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>14</pointsize>
-                </font>
-            </property>
-            <property name="text">
-                <string>Artist:</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>textLabel3_2</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>20</y>
-                    <width>60</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>14</pointsize>
-                </font>
-            </property>
-            <property name="mouseTracking">
-                <bool>false</bool>
-            </property>
-            <property name="acceptDrops">
-                <bool>false</bool>
-            </property>
-            <property name="text">
-                <string>Title:</string>
-            </property>
-        </widget>
-    </widget>
-    <widget class="QGroupBox">
-        <property name="name">
-            <cstring>grpPlayer1</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>-2</y>
-                <width>540</width>
-                <height>249</height>
-            </rect>
-        </property>
-        <property name="font">
-            <font>
-                <family>Sans Serif</family>
-                <pointsize>16</pointsize>
-                <bold>1</bold>
-            </font>
-        </property>
-        <property name="title">
-            <string>Audio Player 1</string>
-        </property>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblPlayerTime1</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>270</x>
-                    <y>100</y>
-                    <width>110</width>
-                    <height>17</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>14</pointsize>
-                </font>
-            </property>
-            <property name="text">
-                <string>ELAPSED</string>
-            </property>
-            <property name="alignment">
-                <set>AlignCenter</set>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnTimeMode1</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>280</x>
-                    <y>60</y>
-                    <width>90</width>
-                    <height>40</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>14</pointsize>
-                    <bold>0</bold>
-                </font>
-            </property>
-            <property name="text">
-                <string>Time Mode</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblCounter1</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>60</y>
-                    <width>260</width>
-                    <height>57</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>48</pointsize>
-                </font>
-            </property>
-            <property name="text">
-                <string>00:00.00</string>
-            </property>
-            <property name="alignment">
-                <set>AlignVCenter|AlignLeft</set>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnLoadPlaylist1</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>390</x>
-                    <y>60</y>
-                    <width>140</width>
-                    <height>50</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>18</pointsize>
-                </font>
-            </property>
-            <property name="text">
-                <string>Load</string>
-            </property>
-        </widget>
-        <widget class="QSlider">
-            <property name="name">
-                <cstring>sldSeek1</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>120</y>
-                    <width>520</width>
-                    <height>29</height>
-                </rect>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>7</hsizetype>
-                    <vsizetype>4</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnStop1</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>159</y>
-                    <width>110</width>
-                    <height>80</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnPlay1</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>130</x>
-                    <y>159</y>
-                    <width>110</width>
-                    <height>80</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnReset1</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>290</x>
-                    <y>159</y>
-                    <width>80</width>
-                    <height>80</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnSeekBack1</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>370</x>
-                    <y>159</y>
-                    <width>80</width>
-                    <height>80</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnSeekForward1</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>450</x>
-                    <y>159</y>
-                    <width>80</width>
-                    <height>80</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string></string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblArtist1</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>80</x>
-                    <y>40</y>
-                    <width>450</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>14</pointsize>
-                </font>
-            </property>
-            <property name="text">
-                <string>-</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblTitle1</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>80</x>
-                    <y>20</y>
-                    <width>450</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>14</pointsize>
-                </font>
-            </property>
-            <property name="text">
-                <string>-</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>textLabel2</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>40</y>
-                    <width>60</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>14</pointsize>
-                </font>
-            </property>
-            <property name="text">
-                <string>Artist:</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>textLabel3</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>9</x>
-                    <y>20</y>
-                    <width>60</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>14</pointsize>
-                </font>
-            </property>
-            <property name="mouseTracking">
-                <bool>false</bool>
-            </property>
-            <property name="acceptDrops">
-                <bool>false</bool>
-            </property>
-            <property name="text">
-                <string>Title:</string>
-            </property>
-        </widget>
-    </widget>
-    <widget class="QGroupBox">
-        <property name="name">
-            <cstring>grpSCart</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>560</x>
-                <y>-2</y>
-                <width>460</width>
-                <height>373</height>
-            </rect>
-        </property>
-        <property name="font">
-            <font>
-                <family>Sans Serif</family>
-                <pointsize>16</pointsize>
-                <bold>1</bold>
-            </font>
-        </property>
-        <property name="title">
-            <string>Station Audiowall - DO NOT CHANGE!</string>
-        </property>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnSCartNext</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>310</x>
-                    <y>300</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Next</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblSCartPage</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>160</x>
-                    <y>300</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Page 1/1</string>
-            </property>
-            <property name="alignment">
-                <set>AlignCenter</set>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnSCartPrev</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>300</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Previous</string>
-            </property>
-        </widget>
-    </widget>
-    <widget class="QGroupBox">
-        <property name="name">
-            <cstring>grpUCart</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>560</x>
-                <y>373</y>
-                <width>460</width>
-                <height>373</height>
-            </rect>
-        </property>
-        <property name="font">
-            <font>
-                <family>Sans Serif</family>
-                <pointsize>16</pointsize>
-                <bold>1</bold>
-            </font>
-        </property>
-        <property name="title">
-            <string>User Audiowall - DO NOT CHANGE!</string>
-        </property>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnUCartNext</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>310</x>
-                    <y>299</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Next</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblUCartPage</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>160</x>
-                    <y>299</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Page 1/1</string>
-            </property>
-            <property name="alignment">
-                <set>AlignCenter</set>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnUCartPrev</cstring>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>299</y>
-                    <width>140</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Previous</string>
             </property>
         </widget>
     </widget>
 </widget>
-<toolbars>
-</toolbars>
 <connections>
     <connection>
         <sender>btnLoadPlaylist1</sender>
@@ -1242,6 +1245,12 @@
         <receiver>frmPlayout</receiver>
         <slot>Player3_Time()</slot>
     </connection>
+    <connection>
+        <sender>sldSeek1</sender>
+        <signal>sliderReleased()</signal>
+        <receiver>frmPlayout</receiver>
+        <slot>Player1_Seek()</slot>
+    </connection>
 </connections>
 <includes>
     <include location="local" impldecl="in implementation">qapplication.h</include>
@@ -1272,15 +1281,18 @@
     <slot>Player1_Load()</slot>
     <slot>Player1_Play()</slot>
     <slot>Player1_Stop()</slot>
+    <slot>Player1_Seek()</slot>
     <slot>Player2_Load()</slot>
     <slot>Player2_Play()</slot>
     <slot>Player2_Stop()</slot>
+    <slot>Player2_Seek()</slot>
     <slot>Player3_Load()</slot>
     <slot>Player3_Play()</slot>
     <slot>Player3_Stop()</slot>
     <slot>Player1_Time()</slot>
     <slot>Player2_Time()</slot>
     <slot>Player3_Time()</slot>
+    <slot>Player3_Seek()</slot>
     <slot>AudioWall_Play()</slot>
 </slots>
 <functions>

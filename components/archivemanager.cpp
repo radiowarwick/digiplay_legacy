@@ -213,9 +213,8 @@ void archivemanager::add(unsigned int index) {
 	        R = T->exec(SQL);
 	        if (R.size() > 0) album_id = atoi(R[0][0].c_str());
 	        else {
-				SQL = "INSERT INTO albums (name, source, reclibid) "
-						"VALUES ('" + t.album + "','" + t.origin
-						+ "','" + t.reclibid + "')";
+				SQL = "INSERT INTO albums (name) "
+						"VALUES ('" + t.album + "')";
 				T->exec(SQL);
 				SQL = "SELECT last_value FROM albums_id_seq";
 				R = T->exec(SQL);
@@ -275,14 +274,14 @@ void archivemanager::add(unsigned int index) {
 			SQL = ("INSERT INTO audio (md5, archive, length_smpl, start_smpl, "
 				"end_smpl, intro_smpl, extro_smpl, type, creator, creation_date, "
 	            "import_date, title, music_album, music_track, music_released, "
-	            "sustainer, censor, lifespan) "
+	            "sustainer, censor, lifespan, origin, reclibid) "
 	            "VALUES ('" + t.md5 + "'," + itoa(t.md5_archive.id) + ","
 				+ itoa(t.length_smpl) + ","
 	            + itoa(t.trim_start_smpl) + "," + itoa(t.trim_end_smpl) + ","
 	            + itoa(t.fade_in_smpl) + "," + itoa(t.fade_out_smpl) + ",0,0,"
 	            "CURRENT_DATE,CURRENT_DATE,'" + t.title + "',"
 	            + itoa(album_id) + ",0," + itoa(atoi(t.release_date.c_str())) 
-				+ ",'f','f',0)");
+				+ ",'f','f',0,'" + t.origin + "','" + t.reclibid + "')");
 			T->exec(SQL);
 		}
 		SQL = "SELECT last_value FROM audio_id_seq";
@@ -496,6 +495,7 @@ bool archivemanager::hasAudio(string md5) {
 void archivemanager::cleanInfo(track *t) {
     strTrim(&(t->title));
     strPcase(&(t->title));
+	cout << t->title << endl;
     strTrim(&(t->artist));
     strPcase(&(t->artist));
 	if ((t->artist).length() > 4 && (t->artist).substr(0,4) == "The ") {
@@ -503,8 +503,28 @@ void archivemanager::cleanInfo(track *t) {
 	}
     strTrim(&(t->album));
     strPcase(&(t->album));
-
-    strTrim(&(t->release_date));
+	
+	strTrim(&(t->reclibid));
+	strPcase(&(t->reclibid));
+	if ((t->reclibid).length() > 0 && (t->reclibid).length() < 5) {
+		cout << "Malformed reclibid: " << t->reclibid << endl;
+	}
+	else if ((t->reclibid).length() > 4) {
+		int div = (t->reclibid).find("-",0);
+		string year = (t->reclibid).substr(0,div);
+		string number = (t->reclibid).substr(div+1,(t->reclibid).length() - 1);
+		if (year.substr(0,1) == "C") {
+			year = year.substr(1,year.length() - 1);
+			t->reclibid = "C";
+		}
+		else {
+			t->reclibid = "";
+		}
+		t->reclibid += strNum(atoi(year.c_str()),2);
+		t->reclibid += "-";
+		t->reclibid += strNum(atoi(number.c_str()),4);
+	}
+	strTrim(&(t->release_date));
     strTrim(&(t->origin));
 }
 
@@ -583,38 +603,52 @@ string archivemanager::strTrim(string *Str) {
 string archivemanager::strPcase(string *Str) {
     bool upper = true;
     bool punctuate = false;
-
-    for (unsigned int i = 0; i < Str->length(); i++) {
-        if ((*Str)[i] == '.' || (*Str)[i] == ',' || (*Str)[i] == '?') {
+	if (Str->length() < 1) return *Str;
+    for (unsigned int i = 0; i < Str->length() - 1; i++) {
+		char now = (*Str)[i];
+		char next = (*Str)[i];
+        if ((now == '.' || now == ',' || now == '?') && next == ' ') {
             punctuate = true;
             upper = true;
             continue;
         }
-        if (((*Str)[i] == '(' || (*Str)[i] == '\'' || (*Str)[i] == '\"') 
+        if ((now == '(' || now == '\'' || now == '\"') 
 				&& (i == 0 || (*Str)[i-1] == ' ')) {
             upper = true;
             continue;
         }
-        if ((punctuate) && (*Str)[i] != ' ') {
+        if ((punctuate) && now != ' ') {
             Str->insert(i+1,1,' ');
             punctuate = false;
             continue;
         }
-        if ((*Str)[i] == ' ') {
+        if (now == ' ') {
             upper = true;
             continue;
         }
         if (upper) {
-            if ((*Str)[i] >= 'a' && (*Str)[i] <= 'z')
+            if (now >= 'a' && now <= 'z')
                 (*Str)[i] = (*Str)[i] - 32;
             upper = false;
         }
         else {
-            if ((*Str)[i] >= 'A' && (*Str)[i] <= 'Z')
+            if (now >= 'A' && now <= 'Z')
                 (*Str)[i] = (*Str)[i] + 32;
         }
     }
+	if ((*Str)[Str->length() - 1] >= 'A' && (*Str)[Str->length() - 1] <= 'Z') 
+		(*Str)[Str->length() - 1] = (*Str)[Str->length() - 1] + 32;
     return *Str;
+}
+
+string archivemanager::strNum(long num, unsigned int digits) {
+	string result = itoa(num);
+	for (unsigned int i = 1; i < digits; i++) {
+		if (result.length() < digits) {
+			result = "0" + result;
+		}
+	}
+	return result;
 }
 
 string archivemanager::itoa(long num) {

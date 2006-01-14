@@ -47,6 +47,7 @@ class archivemanager {
 		void trimAudio(track *t);
 		string strTrim(string *Str);
 		string strPcase(string *Str);
+		string strNum(long num, unsigned int digits);
 		string itoa(long num);
 
 		bool initialised;

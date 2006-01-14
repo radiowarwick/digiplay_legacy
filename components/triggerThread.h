@@ -33,7 +33,7 @@ class studioTrigger : public trigger {
 
 class triggerThread : public QThread {
 	public:
-		triggerThread(QWidget *o, QString dbstring, int loc, int count);
+		triggerThread(QWidget *o, QString dbstring, int t_id);
 		void run();
 		void stop();
 
@@ -41,8 +41,7 @@ class triggerThread : public QThread {
 		QWidget *receiver;
 		QString db_connect;
 		bool enabled;
-		int location;
-		int trigger_count;
+		int id;
 };
 
 #endif

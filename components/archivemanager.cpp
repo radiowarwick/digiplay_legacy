@@ -1,5 +1,7 @@
 #include "archivemanager.h"
 
+#include <time.h>
+
 archivemanager::archivemanager(archive new_A) {
 	A = new_A;
 	initialised = false;
@@ -236,7 +238,7 @@ void archivemanager::add(unsigned int index) {
 	            "VALUES ('" + t.md5 + "'," + itoa(t.md5_archive.id) + "," + itoa(t.length_smpl) + ","
 	            + itoa(t.trim_start_smpl) + "," + itoa(t.trim_end_smpl) + ","
 	            + itoa(t.fade_in_smpl) + "," + itoa(t.fade_out_smpl) + ",1,0,"
-	            "CURRENT_DATE,CURRENT_DATE,'" + t.title + "','f','f',0)";
+	            + itoa(current_time()) + "," + itoa(current_time()) + ",'" + t.title + "','f','f',0)";
 			T->exec(SQL);
 			SQL = "SELECT last_value FROM audio_id_seq";
 			R = T->exec(SQL);
@@ -279,8 +281,10 @@ void archivemanager::add(unsigned int index) {
 				+ itoa(t.length_smpl) + ","
 	            + itoa(t.trim_start_smpl) + "," + itoa(t.trim_end_smpl) + ","
 	            + itoa(t.fade_in_smpl) + "," + itoa(t.fade_out_smpl) + ",0,0,"
-	            "CURRENT_DATE,CURRENT_DATE,'" + t.title + "',"
-	            + itoa(album_id) + ",0," + itoa(atoi(t.release_date.c_str())) 
+	            + itoa(current_time()) + "," + itoa(current_time()) + ",'" 
+				+ t.title + "',"
+	            + itoa(album_id) + "," + itoa(t.tracknum) + "," 
+				+ itoa(atoi(t.release_date.c_str())) 
 				+ ",'f','f',0,'" + t.origin + "','" + t.reclibid + "')");
 			T->exec(SQL);
 		}
@@ -308,6 +312,7 @@ void archivemanager::add(unsigned int index) {
 		cout << "*** Track has not been added to system ***" << endl;
 		T->abort();
 		delete T;
+		abort();
 		return;
 	}
 	// Since we successfully added to database, put audio files in archive.
@@ -495,7 +500,6 @@ bool archivemanager::hasAudio(string md5) {
 void archivemanager::cleanInfo(track *t) {
     strTrim(&(t->title));
     strPcase(&(t->title));
-	cout << t->title << endl;
     strTrim(&(t->artist));
     strPcase(&(t->artist));
 	if ((t->artist).length() > 4 && (t->artist).substr(0,4) == "The ") {
@@ -526,6 +530,7 @@ void archivemanager::cleanInfo(track *t) {
 	}
 	strTrim(&(t->release_date));
     strTrim(&(t->origin));
+	strPcase(&(t->origin));
 }
 
 void archivemanager::trimAudio(track *t) {
@@ -655,4 +660,8 @@ string archivemanager::itoa(long num) {
     stringstream S (stringstream::in | stringstream::out);
     S << num;
     return S.str();
-}   
+}
+
+long archivemanager::current_time() {
+	return (long)time(NULL) - 946080000;
+}

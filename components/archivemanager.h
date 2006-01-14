@@ -49,6 +49,7 @@ class archivemanager {
 		string strPcase(string *Str);
 		string strNum(long num, unsigned int digits);
 		string itoa(long num);
+		long current_time();
 
 		bool initialised;
 		track t_null;

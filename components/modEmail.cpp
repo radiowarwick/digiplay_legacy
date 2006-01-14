@@ -28,7 +28,8 @@ vector<email>* modEmail::getEmails(Connection *C) {
 
 //		cout << (int)R.size()-1 << endl;
 		for (int i = (int)R.size()-1; i > -1; i--) {
-			dte = localtime(new time_t(atoi(R[i]["datetime"].c_str())));
+			dte = localtime(new time_t(atoi(R[i]["datetime"].c_str())
+						+ 945080000));
 			strftime(date, 30, "%Ex %H:%M", dte);
 			e.from = R[i]["sender"].c_str();
 			e.subject = R[i]["subject"].c_str();
@@ -68,7 +69,7 @@ const char* modEmail::getEmailBody(Connection *C, string id) {
 	catch (...) {
 		cout << " -> ERROR: Failed to get e-mail body." << endl;
 	}
-
+	return NULL;
 }
 
 void modEmail::markRead(Connection *C, string id) {

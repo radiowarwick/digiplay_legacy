@@ -101,6 +101,15 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 				}
 				case EVENT_TYPE_SMPL: {
 					sldSeek1->setValue(e_data->smpl);
+                    if (e_data->smpl != 0 
+							&& (player1->getLength()-e_data->smpl)/44100 < 20) {
+						lblCounter1->setPaletteForegroundColor(
+											QColor(QRgb(16711680)));
+					}
+					else {
+						lblCounter1->setPaletteForegroundColor(
+											QColor(QRgb(0)));
+					}
 					if (lblPlayerTime1->text() == "REMAIN") {
 						e_data->smpl = player1->getLength() - e_data->smpl;
 					}
@@ -112,8 +121,8 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 					break;
 				}
 				case EVENT_TYPE_END: {
-					lblCounter1->setPaletteForegroundColor(
-											QColor(QRgb(16711680)));
+					//lblCounter1->setPaletteForegroundColor(
+					//						QColor(QRgb(16711680)));
 					break;
 				}
 			}
@@ -141,6 +150,15 @@ void frmPlayout::customEvent(QCustomEvent *event) {
                 }
                 case EVENT_TYPE_SMPL: {
 					sldSeek2->setValue(e_data->smpl);
+                    if (e_data->smpl != 0 
+							&& (player2->getLength()-e_data->smpl)/44100 < 20) {
+                        lblCounter2->setPaletteForegroundColor(
+                                            QColor(QRgb(16711680)));
+                    }
+                    else {
+                        lblCounter2->setPaletteForegroundColor(
+                                            QColor(QRgb(0)));
+                    }
 					if (lblPlayerTime2->text() == "REMAIN") {
 						e_data->smpl = player2->getLength() - e_data->smpl;
 					}
@@ -152,8 +170,8 @@ void frmPlayout::customEvent(QCustomEvent *event) {
                     break;
                 }
                 case EVENT_TYPE_END: {
-					lblCounter2->setPaletteForegroundColor(
-                                            QColor(QRgb(16711680)));
+					//lblCounter2->setPaletteForegroundColor(
+                    //                        QColor(QRgb(16711680)));
                     break;
                 }
             }
@@ -181,6 +199,15 @@ void frmPlayout::customEvent(QCustomEvent *event) {
                 }
                 case EVENT_TYPE_SMPL: {
 					sldSeek3->setValue(e_data->smpl);
+                    if (e_data->smpl != 0 
+							&& (player3->getLength()-e_data->smpl)/44100 < 20) {
+                        lblCounter3->setPaletteForegroundColor(
+                                            QColor(QRgb(16711680)));
+                    }
+                    else {
+                        lblCounter3->setPaletteForegroundColor(
+                                            QColor(QRgb(0)));
+                    }
 					if (lblPlayerTime3->text() == "REMAIN") {
 						e_data->smpl = player3->getLength() - e_data->smpl;
 					}
@@ -192,8 +219,8 @@ void frmPlayout::customEvent(QCustomEvent *event) {
                     break;
                 }
                 case EVENT_TYPE_END: {
-					lblCounter3->setPaletteForegroundColor(
-											QColor(QRgb(16711680)));
+					//lblCounter3->setPaletteForegroundColor(
+					//						QColor(QRgb(16711680)));
                     break;
                 }
             }
@@ -438,7 +465,9 @@ void frmPlayout::Player3_Stop() {
 	}
 }
 
-
+void frmPlayout::Player3_Seek() {
+    player3->do_seek(sldSeek3->value());
+}
 
 void frmPlayout::Player1_Time() {
     if (lblPlayerTime1->text() == "REMAIN") {
@@ -470,10 +499,6 @@ void frmPlayout::Player3_Time() {
         lblPlayerTime3->setText("REMAIN");
     }
 	player3->do_updateCounter();
-}
-
-void frmPlayout::Player3_Seek() {
-	player3->do_seek(sldSeek3->value());
 }
 
 void frmPlayout::AudioWall_Init() {

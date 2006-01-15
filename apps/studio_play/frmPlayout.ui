@@ -1251,6 +1251,18 @@
         <receiver>frmPlayout</receiver>
         <slot>Player1_Seek()</slot>
     </connection>
+    <connection>
+        <sender>sldSeek2</sender>
+        <signal>sliderReleased()</signal>
+        <receiver>frmPlayout</receiver>
+        <slot>Player2_Seek()</slot>
+    </connection>
+    <connection>
+        <sender>sldSeek3</sender>
+        <signal>sliderReleased()</signal>
+        <receiver>frmPlayout</receiver>
+        <slot>Player3_Seek()</slot>
+    </connection>
 </connections>
 <includes>
     <include location="local" impldecl="in implementation">qapplication.h</include>

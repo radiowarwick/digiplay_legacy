@@ -28,8 +28,7 @@ vector<email>* modEmail::getEmails(Connection *C) {
 
 //		cout << (int)R.size()-1 << endl;
 		for (int i = (int)R.size()-1; i > -1; i--) {
-			dte = localtime(new time_t(atoi(R[i]["datetime"].c_str())
-						+ 945080000));
+			dte = localtime(new time_t(atoi(R[i]["datetime"].c_str())));
 			strftime(date, 30, "%Ex %H:%M", dte);
 			e.from = R[i]["sender"].c_str();
 			e.subject = R[i]["subject"].c_str();

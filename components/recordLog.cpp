@@ -33,14 +33,11 @@ int recordLog::details(Connection *C, int user, string *artist, string *title){
 	artist = new string(sqlesc(*artist));
 	title = new string(sqlesc(*title));
 	
-	cout<<artist <<endl<<title<<endl;
-	
 	stringstream SQL;
 		SQL << "INSERT INTO log ";
 		SQL << "(userid, datetime, track_title, track_artist, location) VALUES (";
 		SQL << user << ", " << now << ", '";
 		SQL << *title << "', '" << *artist << "', " << location << ");";
-		cout << SQL.str() << endl;
 	try {
 		T->exec(SQL.str());
 		T->commit();
@@ -61,7 +58,6 @@ void recordLog::getRecentlyLogged(Connection *C, QListView *parent) {
 	
 	stringstream SQL;
 		SQL << "SELECT * FROM log ORDER BY datetime DESC LIMIT 50;";
-//		cout << SQL.str() << endl;
 	parent->clear();
 	try {
 		Result R = T->exec(SQL.str());

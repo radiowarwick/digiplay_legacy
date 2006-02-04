@@ -30,12 +30,17 @@ int recordLog::details(Connection *C, int user, string *artist, string *title){
 	Transaction *T = new Transaction(*C,"");
 	int now = (int)time(NULL);
 	
+	artist = new string(sqlesc(*artist));
+	title = new string(sqlesc(*title));
+	
+	cout<<artist <<endl<<title<<endl;
+	
 	stringstream SQL;
 		SQL << "INSERT INTO log ";
 		SQL << "(userid, datetime, track_title, track_artist, location) VALUES (";
 		SQL << user << ", " << now << ", '";
 		SQL << *title << "', '" << *artist << "', " << location << ");";
-//		cout << SQL.str() << endl;
+		cout << SQL.str() << endl;
 	try {
 		T->exec(SQL.str());
 		T->commit();

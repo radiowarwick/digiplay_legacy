@@ -64,10 +64,10 @@ void audiochannel::load(string filename, long start_smpl, long end_smpl) {
 	// If we're currently playing, we need to stop and set counter to zero
 	mode_play = false;
 	mode_cache = false;
-
+	
 	// Wait for current caching thread to actually finish and terminate
-	notify_cache();
-
+	//notify_cache();
+	usleep(10000);
 	// Delete any fades and triggers that might be still around
 	for (unsigned short i = 0; i < fades->size(); i++) {
 		delete fades->at(i);
@@ -324,7 +324,9 @@ void audiochannel::notify() {
  */
 void audiochannel::notify_cache() {
 	if (!Thread_Cache) cout << "Thread is null" << endl;
+	cout << "thread join" << endl;
 	pthread_join(*Thread_Cache,NULL);
+	cout << "done it" << endl;
 }
 
 void audiochannel::cache() {

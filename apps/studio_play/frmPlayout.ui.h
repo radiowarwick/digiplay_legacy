@@ -232,8 +232,12 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 			if (e_data->index < 0) break;
 			switch (e_data->t) {
 			case EVENT_TYPE_STOP: {
+					cout << "Start STOP event" << endl;
+					cout << " -> index " << e_data->index << endl;
+					cout << " -> syspage " << sys_page << endl;
+					cout << " -> sysactive " << sys_active_page << endl;
 					if (sys_page == sys_active_page) {
-						int clip_id = e_data->index - 12*sys_page;
+						int clip_id = e_data->index % 12;
 						audioClip A = stationAudioSet->at(sys_page)->clip[clip_id];
 						A.btn->setText(A.text);
 						A.btn->setPaletteForegroundColor(QColor(QRgb(A.fg)));
@@ -241,6 +245,7 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 					}
 					sys_active_page = sys_page;
 					lblSCartCounter->setText("");
+					cout << "End STOP event" << endl;
 					break;
 				}
 			case EVENT_TYPE_PLAY: {
@@ -595,7 +600,7 @@ void frmPlayout::AudioWall_Play() {
 		A.btn->setPaletteForegroundColor(QColor(QRgb(16776960)));
 		A.btn->setPaletteBackgroundColor(QColor(QRgb(16711680)));
 		audiowall->do_play(12*sys_page+x);
-		if (audiowall->get_active_channel() < 0) sys_active_page = sys_page;
+		if (audiowall->get_active_channel() > 0) sys_active_page = sys_page;
 	}
 }
 
@@ -682,6 +687,7 @@ void frmPlayout::AudioWall_Display() {
 	}
 	lblSCartPage->setText("Page " + QString::number(sys_page+1) + "/" 
 						  + QString::number(sys_page_count));
+	cout << "Completed Display" << endl;
 }
 
 

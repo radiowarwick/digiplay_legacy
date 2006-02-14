@@ -5,9 +5,11 @@ void audiowallthread::run() {
     EVENT_ID = 20000 + player_id;
     e_smpl = new eventData;
     e_stop = new eventData;
+	e_play = new eventData;
     e_smpl->id = player_id;
     e_smpl->t = EVENT_TYPE_SMPL;
     e_stop->t = EVENT_TYPE_STOP;
+	e_play->t = EVENT_TYPE_PLAY;
 
 	stringstream S;
 	S << "channel_" << player_id;
@@ -30,6 +32,7 @@ void audiowallthread::stop() {
 	stopped_mutex.unlock();
 	delete e_smpl;
 	delete e_stop;
+	delete e_play;
 	delete player;
 	delete mixer; 
 }
@@ -54,6 +57,9 @@ void audiowallthread::do_play(short index) {
 	state = STATE_PLAY;
 	active_ch = index;
 	mixer->channel(index)->play();
+	e_play->index = index;
+	QCustomEvent *e = new QCustomEvent(QEvent::Type(EVENT_ID),e_play);
+	QApplication::postEvent(receiver,e);
 	state_mutex.unlock();
 }
 

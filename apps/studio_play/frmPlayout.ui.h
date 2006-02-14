@@ -69,6 +69,8 @@ void frmPlayout::init() {
 	cout << " -> Trigger active." << endl;
 
 	sys_page = 0;
+	stationAudioSet = NULL;
+	userAudioSet = NULL;
 	AudioWall_Init();
 	delete grpUCart;
 }
@@ -122,8 +124,6 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 					break;
 				}
 				case EVENT_TYPE_END: {
-					//lblCounter1->setPaletteForegroundColor(
-					//						QColor(QRgb(16711680)));
 					break;
 				}
 			}
@@ -171,8 +171,6 @@ void frmPlayout::customEvent(QCustomEvent *event) {
                     break;
                 }
                 case EVENT_TYPE_END: {
-					//lblCounter2->setPaletteForegroundColor(
-                    //                        QColor(QRgb(16711680)));
                     break;
                 }
             }
@@ -220,8 +218,6 @@ void frmPlayout::customEvent(QCustomEvent *event) {
                     break;
                 }
                 case EVENT_TYPE_END: {
-					//lblCounter3->setPaletteForegroundColor(
-					//						QColor(QRgb(16711680)));
                     break;
                 }
             }
@@ -232,10 +228,6 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 			if (e_data->index < 0) break;
 			switch (e_data->t) {
 			case EVENT_TYPE_STOP: {
-					cout << "Start STOP event" << endl;
-					cout << " -> index " << e_data->index << endl;
-					cout << " -> syspage " << sys_page << endl;
-					cout << " -> sysactive " << sys_active_page << endl;
 					if (sys_page == sys_active_page) {
 						int clip_id = e_data->index % 12;
 						audioClip A = stationAudioSet->at(sys_page)->clip[clip_id];
@@ -245,10 +237,15 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 					}
 					sys_active_page = sys_page;
 					lblSCartCounter->setText("");
-					cout << "End STOP event" << endl;
 					break;
 				}
 			case EVENT_TYPE_PLAY: {
+					int clip_id = e_data->index % 12;
+					audioClip A = stationAudioSet->at(sys_page)->clip[clip_id];
+					A.btn->setPaletteForegroundColor(QColor(QRgb(16776960))); //yellow
+					A.btn->setPaletteBackgroundColor(QColor(QRgb(16711680))); //red
+					sys_active_page = sys_page;
+					lblSCartCounter->setText("");
 					break;
 				}
 			case EVENT_TYPE_SMPL: {
@@ -256,8 +253,6 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 						int clip_id = e_data->index - 12*sys_page;
 						audioClip A = stationAudioSet->at(sys_page)->clip[clip_id];
 						A.btn->setText("PLAYING\n" + getTime(e_data->smpl));
-						A.btn->setPaletteForegroundColor(QColor(QRgb(16776960)));
-						A.btn->setPaletteBackgroundColor(QColor(QRgb(16711680)));
 					}
 					lblSCartCounter->setText(getTime(e_data->smpl));
 					break;
@@ -299,7 +294,7 @@ void frmPlayout::Player1_Load() {
 	if (conf->getParam("next_on_showplan") == "") {
 		return;
 	}
-	pqxx::Transaction *T = new pqxx::Transaction(*C,"");
+	Transaction T(*C,"");
 	string SQL = "SELECT audio.md5 AS md5, audio.title AS title, artists.name as artist, "
 				 "audio.intro_smpl as start, audio.extro_smpl as end, "
 				 "archives.localpath AS path "
@@ -307,9 +302,9 @@ void frmPlayout::Player1_Load() {
 				 "WHERE audio.archive=archives.id AND audioartists.audio=audio.id "
 				 "AND audioartists.artist = artists.id AND audio.md5='" 
 				 + conf->getParam("next_on_showplan") + "'";
-	Result R = T->exec(SQL);
-	T->abort();
-	delete T;
+	Result R = T.exec(SQL);
+	T.abort();
+
 	string f = R[0]["path"].c_str() + string("/") + (string(R[0]["md5"].c_str())).substr(0,1)
 			   + string("/") + R[0]["md5"].c_str();
 	player1->do_load(new QString(f), atoi(R[0]["start"].c_str()),atoi(R[0]["end"].c_str()));
@@ -362,7 +357,7 @@ void frmPlayout::Player2_Load() {
 	if (conf->getParam("next_on_showplan") == "") {
 		return;
 	}
-	Transaction *T = new Transaction(*C,"");
+	Transaction T(*C,"");
 	string SQL = "SELECT audio.md5 AS md5, audio.title AS title, artists.name as artist, "
 				 "audio.intro_smpl as start, audio.extro_smpl as end, "
 				 "archives.localpath AS path "
@@ -370,9 +365,9 @@ void frmPlayout::Player2_Load() {
 				 "WHERE audio.archive=archives.id AND audioartists.audio=audio.id "
 				 "AND audioartists.artist = artists.id AND audio.md5='" 
 				 + conf->getParam("next_on_showplan") + "'";
-	Result R = T->exec(SQL);
-	T->abort();
-	delete T;
+	Result R = T.exec(SQL);
+	T.abort();
+	
 	string f = R[0]["path"].c_str() + string("/") + (string(R[0]["md5"].c_str())).substr(0,1)
 			   + string("/") + R[0]["md5"].c_str();
 	player2->do_load(new QString(f), atoi(R[0]["start"].c_str()),atoi(R[0]["end"].c_str()));
@@ -426,7 +421,7 @@ void frmPlayout::Player3_Load() {
 	if (conf->getParam("next_on_showplan") == "") {
 		return;
 	}
-	Transaction *T = new Transaction(*C,"");
+	Transaction T(*C,"");
 	string SQL = "SELECT audio.md5 AS md5, audio.title AS title, artists.name as artist, "
 				 "audio.intro_smpl as start, audio.extro_smpl as end, "
 				 "archives.localpath AS path "
@@ -434,9 +429,9 @@ void frmPlayout::Player3_Load() {
 				 "WHERE audio.archive=archives.id AND audioartists.audio=audio.id "
 				 "AND audioartists.artist = artists.id AND audio.md5='" 
 				 + conf->getParam("next_on_showplan") + "'";
-	Result R = T->exec(SQL);
-	T->abort();
-	delete T;
+	Result R = T.exec(SQL);
+	T.abort();
+
 	string f = R[0]["path"].c_str() + string("/") + (string(R[0]["md5"].c_str())).substr(0,1)
 			   + string("/") + R[0]["md5"].c_str();
 	player3->do_load(new QString(f), atoi(R[0]["start"].c_str()),atoi(R[0]["end"].c_str()));
@@ -518,8 +513,8 @@ void frmPlayout::Player3_Time() {
 
 void frmPlayout::AudioWall_Init() {
 	QPushButton *btnCurrent;
-	Transaction T(*C,"");
 	
+	Transaction T(*C,"");
 	sys_page_count = atoi(T.exec("SELECT max(cartwalls.page) "
 							 "FROM cartwalls,cartsets "
 							 "WHERE cartwalls.cartset = 0")[0][0].c_str()) + 1;
@@ -530,12 +525,16 @@ void frmPlayout::AudioWall_Init() {
 	
 	// Configure Station Audio Wall
 	// Set of all audio walls (pages)
+	if (stationAudioSet) {
+		for (unsigned int i = 0; i < stationAudioSet->size(); i++) 
+			delete stationAudioSet->at(i);
+		delete stationAudioSet;
+	}
 	stationAudioSet = new vector<audioWall*>;
 
 	// Create enough pages on the system audio wall
 	for (int i = 0; i < sys_page_count; i++) {
-		audioWall *newwall = new audioWall;
-		stationAudioSet->push_back(newwall);
+		stationAudioSet->push_back(new audioWall);
 	}
 	
 	// Create the buttons
@@ -554,12 +553,16 @@ void frmPlayout::AudioWall_Init() {
 	}
 	
 	// Configure User Audio Wall
+	if (userAudioSet) {
+		for (unsigned int i = 0; i < userAudioSet->size(); i++) 
+			delete userAudioSet->at(i);
+		delete userAudioSet;
+	}
 	userAudioSet = new vector<audioWall*>;
 	
 	// Create enough pages for user audio wall
 	for (int i = 0; i < usr_page_count; i++) {
-		audioWall *newwall = new audioWall;
-		userAudioSet->push_back(newwall);
+		userAudioSet->push_back(new audioWall);
 	}
 	
 	// Create the buttons
@@ -575,9 +578,9 @@ void frmPlayout::AudioWall_Init() {
 	
 	// Load all the cart information into structures
 	AudioWall_Load();
-	sys_active_page = 0;
 	
 	// Load the audio into channels
+	sys_active_page = 0;
 	for (int page = 0; page < sys_page_count; page++) {
 		for (int i = 0; i < 12; i++) {
 			audioClip A = stationAudioSet->at(page)->clip[i];
@@ -595,12 +598,10 @@ void frmPlayout::AudioWall_Play() {
 	short x = atoi(sender->name());
 	if (audiowall->get_active_channel() == 12*sys_page+x)
 		audiowall->do_stop(12*sys_page+x);
-	else { //if (audiowall->get_active_channel() < 0) {
-		audioClip A = stationAudioSet->at(sys_page)->clip[x];
-		A.btn->setPaletteForegroundColor(QColor(QRgb(16776960)));
-		A.btn->setPaletteBackgroundColor(QColor(QRgb(16711680)));
+	else {
 		audiowall->do_play(12*sys_page+x);
-		if (audiowall->get_active_channel() > 0) sys_active_page = sys_page;
+		//if (audiowall->get_active_channel() > 0) 
+			//sys_active_page = sys_page;		
 	}
 }
 
@@ -627,11 +628,11 @@ void frmPlayout::AudioWall_Load() {
 					  "AND cartsets.userid=0 "
 					  "ORDER BY cartwalls.id, cartsaudio.cart, cartproperties.id;");
 	T.abort();
+	
 	unsigned int i = 0;
 	string path = "", md5 = "";
-	short cart = 0, page = 0;
+	short cart = 0, page = 0, test = 0, p = 0;
 	QColor fg, bg;
-	short test = 0;
 	
 	// Process each cart
 	vector<audioWall*> *currentSet;
@@ -654,19 +655,23 @@ void frmPlayout::AudioWall_Load() {
 		
 		test = 12*page+cart;
 		// Process each property for current cart
-		while (i < R.size() && test==12*atoi(R[i]["page"].c_str())+atoi(R[i]["cart"].c_str())) {
-			if (atoi(R[i]["property"].c_str()) == 0)
+		while (i<R.size() && test==12*atoi(R[i]["page"].c_str())+atoi(R[i]["cart"].c_str())) {
+			p = atoi(R[i]["property"].c_str());
+			switch (p) {
+			case 0:
 				currentSet->at(page)->clip[cart].fg = atoi(R[i]["prop_value"].c_str());
-			if (atoi(R[i]["property"].c_str()) == 1)
+				break;
+			case 1:
 				currentSet->at(page)->clip[cart].bg = atoi(R[i]["prop_value"].c_str());
+				break;
+			}
 			i++;
 		}
 	}
 }
 
-
+// Display's the carts for a page specified by sys_page
 void frmPlayout::AudioWall_Display() {
-	cout << "Displaying page " << sys_page << endl;
 	audioWall *currentPage = stationAudioSet->at(sys_page);
 	grpSCart->setTitle(currentPage->description);
 	for (int i = 0; i < 12; i++) {
@@ -683,11 +688,9 @@ void frmPlayout::AudioWall_Display() {
 			A.btn->setPaletteBackgroundColor(QColor(QRgb(12632256)));
 			A.btn->setEnabled(false);
 		}
-		//audiowall->do_load(new QString(A.fn),A.start,A.end);
 	}
 	lblSCartPage->setText("Page " + QString::number(sys_page+1) + "/" 
 						  + QString::number(sys_page_count));
-	cout << "Completed Display" << endl;
 }
 
 

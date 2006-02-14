@@ -62,6 +62,7 @@ class audiowallthread : public QThread {
 		int EVENT_ID;
 		eventData *e_smpl;	
 		eventData *e_stop;	
+		eventData *e_play;
 		int state;
 		short active_ch;
 };

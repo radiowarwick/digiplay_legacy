@@ -44,7 +44,8 @@ int recordLog::details(Connection *C, int user, string *artist, string *title){
 		delete T;
 	}
 	catch (...) {
-		cout << " -> ERROR: Failed to log record." << endl;
+		cout << "ERROR: Failed to log record." << endl;
+		cout << " -> " << SQL.str() << endl;
 		return 1;
 	}
 	return 0;

@@ -30,7 +30,8 @@ audiochannel::audiochannel() {
 	// false => zero magnitude samples are output in getAudio()
 	// true  => samples from the audio buffer are output
 	mode_play = false;
-
+	is_caching = false;
+	
 	// Initialise default values
 	// By default, channel is used as a "play-once" type so don't auto-reload
 	auto_reload = false;
@@ -323,11 +324,14 @@ void audiochannel::notify() {
  * load.
  */
 void audiochannel::notify_cache() {
+	if (!is_caching) return;
 	if (!Thread_Cache) cout << "Thread is null" << endl;
 	pthread_join(*Thread_Cache,NULL);
 }
 
 void audiochannel::cache() {
+	is_caching = true;
+	
 	// Seek to start byte in file
     f_handle->clear();
     f_handle->seekg(f_start_byte, ios::beg);
@@ -373,6 +377,7 @@ void audiochannel::cache() {
 
     }
     mode_cache = false;
+	is_caching = false;
 }
 
 void *thread_cache(void *ptr) {

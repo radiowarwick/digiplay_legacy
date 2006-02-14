@@ -1308,21 +1308,21 @@
     <include location="local" impldecl="in implementation">frmPlayout.ui.h</include>
 </includes>
 <variables>
-    <variable access="private">int sys_active_page;</variable>
-    <variable access="private">int sys_page;</variable>
-    <variable access="private">vector&lt;audioWall*&gt; *userAudioSet;</variable>
-    <variable access="private">vector&lt;audioWall*&gt; *stationAudioSet;</variable>
-    <variable access="private">QPixmap *pixPlay, *pixPause, *pixStop, *pixSeekback, *pixSeekforward, *pixReset;</variable>
-    <variable access="private">QString path;</variable>
-    <variable access="private">playerThread *player3;</variable>
-    <variable access="private">playerThread *player2;</variable>
-    <variable access="private">playerThread *player1;</variable>
-    <variable access="private">audiowallthread *audiowall;</variable>
-    <variable access="private">triggerThread *dbTrigger;</variable>
-    <variable access="private">Connection *C;</variable>
-    <variable access="private">config *conf;</variable>
-    <variable access="private">int sys_page_count;</variable>
     <variable access="private">int usr_page_count;</variable>
+    <variable access="private">int sys_page_count;</variable>
+    <variable access="private">config *conf;</variable>
+    <variable access="private">Connection *C;</variable>
+    <variable access="private">triggerThread *dbTrigger;</variable>
+    <variable access="private">audiowallthread *audiowall;</variable>
+    <variable access="private">playerThread *player1;</variable>
+    <variable access="private">playerThread *player2;</variable>
+    <variable access="private">playerThread *player3;</variable>
+    <variable access="private">QString path;</variable>
+    <variable access="private">QPixmap *pixPlay, *pixPause, *pixStop, *pixSeekback, *pixSeekforward, *pixReset;</variable>
+    <variable access="private">vector&lt;audioWall*&gt; *stationAudioSet;</variable>
+    <variable access="private">vector&lt;audioWall*&gt; *userAudioSet;</variable>
+    <variable access="private">int sys_page;</variable>
+    <variable access="private">int sys_active_page;</variable>
 </variables>
 <slots>
     <slot>Player1_Load()</slot>

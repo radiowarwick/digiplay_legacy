@@ -615,9 +615,10 @@ void frmPlayout::AudioWall_Load() {
 					  "cartwalls.page AS page, "
 					  "cartsets.description AS cartset_desc, cartsets.userid AS userid, "
 					  "cartsets.directory AS dir, cartproperties.id AS property, "
-					  "cartstyleprops.value AS prop_value, archives.localpath AS path "
+					  "cartstyleprops.value AS prop_value, archives.localpath AS path, "
+					  "configuration.val AS cartset "
 					  "FROM audio, cartsaudio, cartwalls, cartsets, cartstyle, "
-					  "cartstyleprops, cartproperties, archives "
+					  "cartstyleprops, cartproperties, archives, configuration "
 					  "WHERE cartsaudio.audio = audio.id "
 					  "AND cartsaudio.cartwall = cartwalls.id "
 					  "AND cartwalls.cartset = cartsets.id "
@@ -625,7 +626,8 @@ void frmPlayout::AudioWall_Load() {
 					  "AND cartstyleprops.style = cartstyle.id "
 					  "AND cartstyleprops.property = cartproperties.id "
 					  "AND audio.archive = archives.id "
-					  "AND cartsets.userid=0 "
+					  "AND configuration.parameter = 'station_cartset' "
+					  "AND configuration.val = cartsets.id "
 					  "ORDER BY cartwalls.id, cartsaudio.cart, cartproperties.id;");
 	T.abort();
 	

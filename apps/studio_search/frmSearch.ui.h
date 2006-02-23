@@ -18,30 +18,48 @@
 #include "config.h"
 #include "recordLog.h"
 #include "modEmail.h"
+#include "dps.h"
 
-vector<email> *incoming = NULL;
-libsearch *library_engine = new libsearch();
+libsearch *library_engine;
 triggerThread *dbTrigger;
 triggerThread *emailTrigger;
-modEmail *emailObj = new modEmail(); 
+modEmail *emailObj; 
 config *conf;
-recordLog *log = new recordLog(1); 
+recordLog *log; 
 Connection *C;
-//email ne;
 clockThread *ck;
-vector<track*>* SearchResults;
-vector<track*>* Playlist = new vector<track*>;
+vector<_track*> *SearchResults;
+vector<_track*> *Playlist = new vector<_track*>;
 QPixmap *sp_audio, *sp_artist, *sp_album, *email_new, *email_old;
 QIconSet *email_Icons;
 QString path;
 QListViewItem *last_item;
 
 void frmSearch::init() {
+	// Connect to database
 	cout << "Connecting to database..." << endl;
 	conf = new config("digiplay");
 	C = new Connection(conf->getDBConnectString());
 	cout << "Connected." << endl;
 	
+	// Initialise modules
+	cout << "Initialising Modules..." << endl;
+	cout << " -> Library Search...";
+	library_engine = new libsearch();
+	cout << "success." << endl;
+	cout << " -> Logging...";
+	log = new recordLog(C,1);
+	cout << "success." << endl;
+	cout << " -> Email...";
+	emailObj = new modEmail();
+	cout << "success." << endl;
+	cout << " -> Clock...";
+	ck = new clockThread(this);
+	ck->start();
+	cout << "success." << endl;
+	cout << "All modules loaded." << endl;
+	
+	// Initialise interface
 	cout << "Initialising Interface..." << endl;
 	path = qApp->applicationDirPath();
 	tblLibrarySearchResults->setColumnWidth(3,0);
@@ -51,18 +69,21 @@ void frmSearch::init() {
 	lstShowPlan->setColumnWidth(2,0);
 	lstShowPlan->setColumnWidth(3,60);
 	lstShowPlan->setSorting(-1,FALSE);
+	
 	lstRecentlyLogged->setColumnWidth(0,101);
 	lstRecentlyLogged->setColumnWidth(1,193);
 	lstRecentlyLogged->setColumnWidth(2,193);
 	lstRecentlyLogged->setSorting(-1,FALSE);
 	txtReclibLogBox->setEnabled(FALSE);
-	log->getRecentlyLogged(C, lstRecentlyLogged);
+	log->getRecentlyLogged(lstRecentlyLogged);
+	
 	sp_audio = new QPixmap(path + "/images/sp_audio.bmp");
 	sp_artist = new QPixmap(path + "/images/sp_artist.bmp");
 	sp_album = new QPixmap(path + "/images/sp_album.bmp");
 	email_new = new QPixmap(path + "/images/email_new.bmp");
 	email_old = new QPixmap(path + "/images/email_old.bmp");
 	email_Icons = new QIconSet(*email_new, QIconSet::Automatic);
+	
 	lstEmail->setColumnText(0, *email_Icons, "");
 	lstEmail->setColumnWidth(0,22); //New
 	lstEmail->setColumnWidth(1,183); //From
@@ -72,28 +93,30 @@ void frmSearch::init() {
 	lstEmail->setSorting(4, FALSE);
 	getEmail();
 	last_item = NULL;
-	ck = new clockThread(this);
-	ck->start();
-	scripts->setEnabled(false);
-	audiowall->setEnabled(false);
-	schedule->setEnabled(false);
-	playlist->setEnabled(false);
+	
+	tabPageScripts->setEnabled(false);
+	tabPageAudiowall->setEnabled(false);
+	tabPageSchedule->setEnabled(false);
+	tabPagePlaylist->setEnabled(false);
 	btnLogin->setEnabled(false);
 	cout << "Interface initialisation complete." << endl;
-	
-	cout << "Creating trigger on configuration settings..." << endl;
+
+	// Create triggers for configuration and email
+	cout << "Creating database triggers..." << endl;
 	dbTrigger = new triggerThread(this, QString(conf->getDBConnectString()), 1); 
 	dbTrigger->start();
 	emailTrigger = new triggerThread(this, QString(conf->getDBConnectString()), 2); 
 	emailTrigger->start();
-	cout << "Trigger active." << endl;
-	
+	cout << "Trigger active." << endl;	
 }
 
 void frmSearch::destroy() {
 	for (unsigned int i = 0; i < Playlist->size(); i++)
 		delete Playlist->at(i);
 	delete Playlist;
+	delete emailObj;
+	delete log;
+	delete library_engine;
 }
 
 void frmSearch::customEvent(QCustomEvent *event) {
@@ -111,7 +134,8 @@ void frmSearch::customEvent(QCustomEvent *event) {
 	case 30001: {       // Configuration changed trigger
 			conf->requery();
 			cout << "Configuration data refreshed!" << endl;
-			if (conf->getParam("next_on_showplan") == "" && lstShowPlan->childCount() > 0) {
+			if (conf->getParam("next_on_showplan") == "" 
+								&& lstShowPlan->childCount() > 0) {
 				Playlist->erase(Playlist->begin());
 				delete lstShowPlan->firstChild();
 				if (Playlist->size() > 0) {
@@ -173,7 +197,7 @@ void frmSearch::Library_Search() {
 
 void frmSearch::PlaylistAdd(int row, int col, int button, const QPoint& mousepos) {
 	if (mousepos.isNull()) {button = 0; row = 0; col = 0;}
-	track *new_track = new track(*(SearchResults->at(row)));
+	_track *new_track = new _track(*(SearchResults->at(row)));
 	Playlist->push_back(new_track);
 	QListViewItem *track_title = new QListViewItem( lstShowPlan,last_item, new_track->title(), getTime(new_track->length_smpl()), "00:00:00", "");
 	track_title->setPixmap( 0, *sp_audio );
@@ -189,33 +213,16 @@ void frmSearch::PlaylistAdd(int row, int col, int button, const QPoint& mousepos
 }
 
 void frmSearch::LogRecord() {
-	int retval;
-	QString *artst = new QString(txtArtistLogBox->text());
-	QString *ttle = new QString(txtTitleLogBox->text());
-	QString *rclbid = new QString(txtReclibLogBox->text());
-	string *artist  = new string(artst->ascii());
-	string *title = new string(ttle->ascii());
-	string *reclibid = new string (rclbid->ascii());
-	
-	if (isDefined(rclbid)) {
-		retval=log->reclibid(C, 1, reclibid);
-		txtReclibLogBox->setText("");
-		txtArtistLogBox->setText("");
-		txtTitleLogBox->setText("");
-	}
-	else {
-		log->details(C, 1, artist, title);
-		txtReclibLogBox->setText("");
-		txtArtistLogBox->setText("");
-		txtTitleLogBox->setText("");
-	}
-	log->getRecentlyLogged(C, lstRecentlyLogged);
-	delete artst;
-	delete ttle;
-	delete rclbid;
-	delete artist;
-	delete title;
-	delete reclibid;
+	string artist = txtArtistLogBox->text().ascii();
+	string title = txtTitleLogBox->text().ascii();
+	string reclibid = txtReclibLogBox->text().ascii();
+
+	if (log->details(0, artist, title) != 0)
+		cout << "Logging failed" << endl;
+	txtReclibLogBox->setText("");
+	txtArtistLogBox->setText("");
+	txtTitleLogBox->setText("");
+	log->getRecentlyLogged(lstRecentlyLogged);
 }
 
 bool frmSearch::isDefined(QString *name) {
@@ -235,11 +242,13 @@ void frmSearch::displayEmailBody( QListViewItem *current )
 
 void frmSearch::getEmail() {
 	QListViewItem *new_email;
-	delete incoming;
+	vector<email> *incoming = new vector<email>;
 	incoming = emailObj->getEmails(C);
 	int number = incoming->size();
+
 	lstEmail->clear();		
 	cout << number <<endl;
+
 	for (int i=(number-1); i > -1; i--) {
 		new_email = new QListViewItem(lstEmail, "",
 									  incoming->at(i).from,
@@ -251,6 +260,7 @@ void frmSearch::getEmail() {
 		else
 			new_email->setPixmap(0, *email_old);
 	}
+	delete incoming;
 }
 
 

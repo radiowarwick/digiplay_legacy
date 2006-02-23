@@ -19,11 +19,11 @@ using namespace std;
 #include "pqxx/result.h"
 using namespace pqxx;
 
-class track {
+class _track {
 	public:
-		track(Transaction *T, int id);
-		track(const track &t);
-		~track();
+		_track(Transaction *T, int id);
+		_track(const _track &t);
+		~_track();
 		string id();
 		string md5();
 		string title();

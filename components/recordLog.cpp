@@ -1,57 +1,59 @@
 /* Record logging class */
 
 #include "recordLog.h"
-#include "trackinfo.h"
+#include "dps.h"
 #include <time.h>
 
-recordLog::recordLog(int loc) {
+recordLog::recordLog(Connection *newC, int loc) {
 	location = loc;
-
+	C = newC;
 }
 
 recordLog::~recordLog() {
 }
 
-int recordLog::reclibid(Connection *C, int user, string *id) {
-	string artist;
-	string title;
-	sleep(1);
-	return details (C, user, &artist, &title);
+int recordLog::reclibid(int user, string id) {
+	//string artist;
+	//string title;
+	//return details (user, artist, title);
+	return -1;
 }
 
-int recordLog::md5(Connection *C, int user, string *hash){
-	trackinfo *trk = new trackinfo(C, *hash);
-	string *artist = new string (trk->artist());
-	string *title = new string (trk->title());
-	return details (C, user, artist, title);
+int recordLog::md5(int user, string hash){
+	track t = dps_getTrack(C,hash);
+//	trackinfo *trk = new trackinfo(C, *hash);
+//	string *artist = new string (trk->artist());
+//	string *title = new string (trk->title());
+	return details (user, t.artist, t.title);
 }
 
-int recordLog::details(Connection *C, int user, string *artist, string *title){
-	Transaction *T = new Transaction(*C,"");
+int recordLog::details(int user, string artist, string title){
+	// Get current time
 	int now = (int)time(NULL);
 	
-	artist = new string(sqlesc(*artist));
-	title = new string(sqlesc(*title));
+	// Escape the artist and title
+	artist = sqlesc(artist);
+	title = sqlesc(title);
 	
-	stringstream SQL;
-		SQL << "INSERT INTO log ";
-		SQL << "(userid, datetime, track_title, track_artist, location) VALUES (";
-		SQL << user << ", " << now << ", '";
-		SQL << *title << "', '" << *artist << "', " << location << ");";
+	// Try and insert into database
+	string SQL = "INSERT INTO log "
+		"(userid, datetime, track_title, track_artist, location) VALUES ("
+		+ dps_itoa(user) + ", " + dps_itoa(now) + ", '"
+		+ title + "', '" + artist + "', " + dps_itoa(location) + ");";
 	try {
-		T->exec(SQL.str());
-		T->commit();
-		delete T;
+		Transaction T(*C,"");
+		T.exec(SQL);
+		T.commit();
 	}
 	catch (...) {
 		cout << "ERROR: Failed to log record." << endl;
-		cout << " -> " << SQL.str() << endl;
+		cout << " -> " << SQL << endl;
 		return 1;
 	}
 	return 0;
 }
 
-void recordLog::getRecentlyLogged(Connection *C, QListView *parent) {
+void recordLog::getRecentlyLogged(QListView *parent) {
 	Transaction *T = new Transaction(*C,"");
 	QString artist, title, datestr;
 	tm *dte;

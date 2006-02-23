@@ -19,7 +19,7 @@ class libsearch {
     public:
 		libsearch();
 		~libsearch();
-		vector<track*>* query(string search_string);
+		vector<_track*>* query(string search_string);
 		bool searchTitle();
 		bool searchTitle(bool flag);
 		bool searchArtist();
@@ -29,7 +29,7 @@ class libsearch {
 		int searchLimit();
 		int searchLimit(int value);
 		string lastQuery();
-		track* getTrack(int ID);
+		_track* getTrack(int ID);
 
 	private:
 		Connection* C;

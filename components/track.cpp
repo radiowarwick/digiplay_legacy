@@ -1,6 +1,6 @@
 #include "track.h"
 
-track::track(Transaction *T, int id) {
+_track::_track(Transaction *T, int id) {
 	SQL << "SELECT audio.id AS id, "
 		"audio.md5 AS md5, "
 		"artists.name AS artist, " 
@@ -20,47 +20,47 @@ track::track(Transaction *T, int id) {
 	R = T->exec(SQL.str());
 }
 
-track::track(const track &t) {
+_track::_track(const _track &t) {
 	R = *(new Result(t.R));
 }
 
-track::~track() {
+_track::~_track() {
 
 }
 
-string track::id() {
+string _track::id() {
 	return R[0]["id"].c_str();
 }
 
-string track::md5() {
+string _track::md5() {
 	return R[0]["md5"].c_str();
 }
 
-string track::title() {
+string _track::title() {
 	return R[0]["title"].c_str();
 }
 
-string track::artist() {
+string _track::artist() {
 	return R[0]["artist"].c_str();
 }
 
-string track::album() {
+string _track::album() {
 	return R[0]["album"].c_str();
 }
 
-long track::length_smpl() {
+long _track::length_smpl() {
 	return (long)(atoi(R[0]["length"].c_str()));
 }
 
-long track::start_smpl() {
+long _track::start_smpl() {
 	return (long)(atoi(R[0]["start"].c_str()));
 }
 
-long track::end_smpl() {
+long _track::end_smpl() {
 	return (long)(atoi(R[0]["end"].c_str()));
 }
 
-string track::time() {
+string _track::time() {
 	stringstream s;
 	int t = (int)((end_smpl() - start_smpl()) / 44100);
 //	s << (t-t%3600)/3600 << "h ";
@@ -71,10 +71,10 @@ string track::time() {
 	return s.str();
 }
 
-long track::intro_smpl() {
+long _track::intro_smpl() {
 	return (long)(atoi(R[0]["intro"].c_str()));
 }
 
-long track::extro_smpl() {
+long _track::extro_smpl() {
 	return (long)(atoi(R[0]["extro"].c_str()));
 }

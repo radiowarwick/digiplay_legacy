@@ -41,13 +41,13 @@ STUDIO_PLAY_OBJ=		apps/studio_play/main.o \
 						components/triggerThread.o
 STUDIO_SEARCH_OBJ=		apps/studio_search/main.o \
 						components/libsearch.o \
-						components/trackinfo.o \
 						components/track.o \
 						components/config.o \
 						components/triggerThread.o \
 						components/modEmail.o \
 						components/clockThread.o \
 						components/recordLog.o \
+						components/dps.o \
 						apps/studio_search/frmSearch.o \
 						.tmp/moc_frmSearch.o
 ADMIN_OBJ=				apps/admin/main.o \
@@ -149,6 +149,9 @@ components/clockThread.o:		components/clockThread.cpp \
 components/config.o:			components/config.cpp \
 								components/config.h
 	$(COMPILE)
+components/dps.o:				components/dps.cpp \
+								components/dps.h
+	$(COMPILE)
 components/libsearch.o:			components/libsearch.cpp \
 								components/libsearch.h
 	$(COMPILE)
@@ -178,9 +181,6 @@ components/systemmanager.o:		components/systemmanager.cpp \
 	$(COMPILE)
 components/track.o:				components/track.cpp \
 								components/track.h
-	$(COMPILE)
-components/trackinfo.o:			components/trackinfo.cpp \
-								components/trackinfo.h
 	$(COMPILE)
 components/triggerThread.o:		components/triggerThread.cpp \
 								components/triggerThread.h

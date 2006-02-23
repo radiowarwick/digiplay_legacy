@@ -39,9 +39,9 @@ vector<email>* modEmail::getEmails(Connection *C) {
 //			cout << "   *" << (R[i]["new_flag"].c_str()) << "*  " << endl;
 			string flag = R[i]["new_flag"].c_str();
 			if (  !flag.compare("t")   )
-				e.flag = TRUE;
+				e.flag = true;
 			else
-				e.flag = FALSE;
+				e.flag = false;
 
 			retVec->push_back(e);
 		}

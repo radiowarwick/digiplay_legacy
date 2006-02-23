@@ -18,14 +18,21 @@ using namespace pqxx;
 
 class recordLog {
 	public:
-		recordLog(int loc);
+		recordLog(Connection *newC, int loc);
 		~recordLog();
-	        int reclibid(Connection *C, int user, string *id);
-		int md5(Connection *C, int user, string *hash);
-		int details(Connection *C, int user, string *artist, string *title);
-		void getRecentlyLogged(Connection *C, QListView *parent);
+
+		// Logs a record using reclibid
+        int reclibid(int user, string id);
+
+		// Logs a record using md5 hash
+		int md5(int user, string hash);
+
+		// Logs a record by specifying artist and title
+		int details(int user, string artist, string title);
+		void getRecentlyLogged(QListView *parent);
 
 	private:
+		Connection *C;
 		int location;
 
 };

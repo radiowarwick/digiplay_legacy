@@ -1906,7 +1906,7 @@
     </widget>
     <widget class="QTabWidget">
         <property name="name">
-            <cstring>tabWidget2</cstring>
+            <cstring>tabSearch</cstring>
         </property>
         <property name="enabled">
             <bool>true</bool>
@@ -1931,7 +1931,7 @@
         </property>
         <widget class="QWidget">
             <property name="name">
-                <cstring>info</cstring>
+                <cstring>tabPageInfo</cstring>
             </property>
             <attribute name="title">
                 <string>Info</string>
@@ -1987,7 +1987,7 @@ If you have any suggestions for features you'd like to see in RaW Digiplay, plea
         </widget>
         <widget class="QWidget">
             <property name="name">
-                <cstring>playlist</cstring>
+                <cstring>tabPagePlaylist</cstring>
             </property>
             <attribute name="title">
                 <string>Playlist</string>
@@ -1995,7 +1995,7 @@ If you have any suggestions for features you'd like to see in RaW Digiplay, plea
         </widget>
         <widget class="QWidget">
             <property name="name">
-                <cstring>search</cstring>
+                <cstring>tabPageSearch</cstring>
             </property>
             <attribute name="title">
                 <string>Search</string>
@@ -2742,7 +2742,7 @@ If you have any suggestions for features you'd like to see in RaW Digiplay, plea
         </widget>
         <widget class="QWidget">
             <property name="name">
-                <cstring>email</cstring>
+                <cstring>tabPageEmail</cstring>
             </property>
             <attribute name="title">
                 <string>E-mail</string>
@@ -2837,7 +2837,7 @@ If you have any suggestions for features you'd like to see in RaW Digiplay, plea
         </widget>
         <widget class="QWidget">
             <property name="name">
-                <cstring>logging</cstring>
+                <cstring>tabPageLogging</cstring>
             </property>
             <attribute name="title">
                 <string>Logging</string>
@@ -3039,7 +3039,7 @@ If you have any suggestions for features you'd like to see in RaW Digiplay, plea
         </widget>
         <widget class="QWidget">
             <property name="name">
-                <cstring>scripts</cstring>
+                <cstring>tabPageScripts</cstring>
             </property>
             <attribute name="title">
                 <string>Scripts</string>
@@ -3047,7 +3047,7 @@ If you have any suggestions for features you'd like to see in RaW Digiplay, plea
         </widget>
         <widget class="QWidget">
             <property name="name">
-                <cstring>audiowall</cstring>
+                <cstring>tabPageAudiowall</cstring>
             </property>
             <attribute name="title">
                 <string>Audio Wall</string>
@@ -3099,7 +3099,7 @@ If you have any suggestions for features you'd like to see in RaW Digiplay, plea
         </widget>
         <widget class="QWidget">
             <property name="name">
-                <cstring>schedule</cstring>
+                <cstring>tabPageSchedule</cstring>
             </property>
             <attribute name="title">
                 <string>Schedule</string>

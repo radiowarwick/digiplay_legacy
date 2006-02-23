@@ -138,16 +138,16 @@ INSERT INTO configuration (id, parameter, val, location)
     VALUES (16,'next_on_showplan','',1);
 INSERT INTO configuration (id, parameter, val, location)
     VALUES (17,'station_cartwall','',1);
-INSERT INTO configuration (id, parameter, val, location)
+/*INSERT INTO configuration (id, parameter, val, location)
     VALUES (18,'station_cartwall_next','',1);
 INSERT INTO configuration (id, parameter, val, location)
-    VALUES (19,'station_cartwall_prev','',1);
+    VALUES (19,'station_cartwall_prev','',1);*/
 INSERT INTO configuration (id, parameter, val, location)
     VALUES (20,'user_cartwall','',1);
-INSERT INTO configuration (id, parameter, val, location)
+/*INSERT INTO configuration (id, parameter, val, location)
     VALUES (21,'user_cartwall_next','',1);
 INSERT INTO configuration (id, parameter, val, location)
-    VALUES (22,'user_cartwall_prev','',1);
+    VALUES (22,'user_cartwall_prev','',1);*/
 
 INSERT INTO configuration (id, parameter, val, location)
     VALUES (23,'channel_1','/dev/dsp',2);
@@ -173,14 +173,18 @@ INSERT INTO configuration (id, parameter, val, location)
     VALUES (33,'next_on_showplan','',2);
 INSERT INTO configuration (id, parameter, val, location)
     VALUES (34,'station_cartwall','',2);
-INSERT INTO configuration (id, parameter, val, location)
+/*INSERT INTO configuration (id, parameter, val, location)
     VALUES (35,'station_cartwall_next','',2);
 INSERT INTO configuration (id, parameter, val, location)
-    VALUES (36,'station_cartwall_prev','',2);
+    VALUES (36,'station_cartwall_prev','',2);*/
 INSERT INTO configuration (id, parameter, val, location)
     VALUES (37,'user_cartwall','',2);
-INSERT INTO configuration (id, parameter, val, location)
+/*INSERT INTO configuration (id, parameter, val, location)
     VALUES (38,'user_cartwall_next','',2);
 INSERT INTO configuration (id, parameter, val, location)
-    VALUES (39,'user_cartwall_prev','',2);
+    VALUES (39,'user_cartwall_prev','',2);*/
+INSERT INTO configuration (id, parameter, val, location)
+	VALUES (40,'station_cartset','0',1);
+INSERT INTO configuration (id, parameter, val, location)
+	VALUES (41,'station_cartset','0',2);
 END TRANSACTION;

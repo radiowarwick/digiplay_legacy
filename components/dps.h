@@ -4,6 +4,11 @@
 #include <string>
 using namespace std;
 
+#include "pqxx/connection.h"
+#include "pqxx/transaction.h"
+#include "pqxx/result.h"
+using namespace pqxx;
+
 #define DPS_DB 0
 #define DPS_INBOX 1
 #define DPS_TRASH 2
@@ -37,6 +42,15 @@ struct track {
     unsigned long fade_out_smpl;
 };
 
+struct email {
+    string from;
+    string subject;
+    string received;
+    string body;
+    bool flag;
+    string id;
+};
+
 enum eventType { 
 	EVENT_TYPE_PLAY, 
 	EVENT_TYPE_STOP, 
@@ -51,4 +65,6 @@ struct eventData {
 	short index;
 };
 
+track dps_getTrack(Connection *C, string md5);
+string dps_itoa(long num);
 #endif

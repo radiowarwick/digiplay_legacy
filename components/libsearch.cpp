@@ -22,12 +22,12 @@ libsearch::~libsearch() {
  * word 'The' is going to return a whole lot of results.  Might want
  * to return results incrementally as the search progresses.
  */
-vector<track*>* libsearch::query(string search_string) {
+vector<_track*>* libsearch::query(string search_string) {
  string SQL;
  search_string = escape_binary(search_string);
  lastQuery_string = search_string;
 
- vector<track*>* Q = new vector<track*>;
+ vector<_track*>* Q = new vector<_track*>;
  T = new Transaction(*C, "");
  
  SQL = "SELECT audio.id AS id, "
@@ -82,7 +82,7 @@ vector<track*>* libsearch::query(string search_string) {
 
  for (int i = 0; i < (int)R.size(); i++) {
   int id = atoi(R[i]["id"].c_str());
-  track* t = new track(T,id);
+  _track* t = new _track(T,id);
   Q->push_back(t);
  }
 
@@ -134,10 +134,10 @@ string libsearch::lastQuery() {
   return lastQuery_string;
 }
 
-track* libsearch::getTrack(int ID) {
+_track* libsearch::getTrack(int ID) {
 	
   T = new Transaction(*C,"");
-  track* t = new track(T,ID);
+  _track* t = new _track(T,ID);
   T->abort();
   delete T;
   

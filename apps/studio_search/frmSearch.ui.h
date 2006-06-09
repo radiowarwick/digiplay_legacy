@@ -242,7 +242,7 @@ void frmSearch::displayEmailBody( QListViewItem *current )
 
 void frmSearch::getEmail() {
 	QListViewItem *new_email;
-	vector<email> *incoming = new vector<email>;
+	vector<email> *incoming;
 	incoming = emailObj->getEmails(C);
 	int number = incoming->size();
 

@@ -1,6 +1,8 @@
 #include "archivemanager.h"
 
 #include <time.h>
+#include "xmlDocument.h"
+#include "xmlElement.h"
 
 archivemanager::archivemanager(archive new_A) {
 	A = new_A;
@@ -112,6 +114,9 @@ void archivemanager::clean(unsigned short location, unsigned int index) {
 	}
 }
 
+/** Adds a track from the inbox into the database
+ * @param	index	The index of the track in the inbox to add
+ */
 void archivemanager::add(unsigned int index) {
 	if (!initialised) load();
 	if (index > size(DPS_INBOX) - 1) {
@@ -119,10 +124,21 @@ void archivemanager::add(unsigned int index) {
 		return;
 	}
 
+	// get the required track
 	track t = trackInbox->at(index);
+
 	cout << "Adding: " << t.md5 << endl;
 	trackInbox->erase(trackInbox->begin() + index);
-	trimAudio(&t);
+
+	// if we've not already processed the audio file, do so now
+	if (t.trim_end_smpl == 0) {
+		cout << " -> Scanning audio file for trim points." << endl;
+		trimAudio(&t);
+		t.fade_in_smpl = t.trim_start_smpl;
+		t.fade_out_smpl = t.trim_end_smpl;
+	}
+
+	// detect if the audio file is completely blank and cancel if it is
 	if (t.trim_end_smpl > t.trim_start_smpl) {
 		trackInbox->insert(trackInbox->begin() + index, 1, t);
 	}
@@ -131,6 +147,10 @@ void archivemanager::add(unsigned int index) {
 		return;
 	}
 
+	// Keep a copy of the unescaped track to write out to XML later
+	track t_bak = t;
+
+	// escape data before adding to database
 	t.title = escape_binary(t.title);
 	t.artist = escape_binary(t.artist);
 	t.album = escape_binary(t.album);
@@ -138,6 +158,7 @@ void archivemanager::add(unsigned int index) {
 	t.reclibid = escape_binary(t.reclibid);
 	t.release_date = escape_binary(t.release_date);
 
+	// start a new database transaction
 	try {
 		T = new Transaction(*C,"addtrack");
 	}
@@ -166,7 +187,7 @@ void archivemanager::add(unsigned int index) {
 	
 		// check if we have a jingle
 		if (t.album.size() > 13 
-				&& strPcase(&(t.album)).substr(0,14) ==	"Jingle Package")
+				&& dps_strPcase(&(t.album)).substr(0,14) ==	"Jingle Package")
 			is_jingle = true;
 		
 	    // First lets sort out the artist
@@ -235,10 +256,10 @@ void archivemanager::add(unsigned int index) {
 	            "end_smpl, intro_smpl, extro_smpl, type, creator, "
 				"creation_date, import_date, title, sustainer, censor, "
 				"lifespan) "
-	            "VALUES ('" + t.md5 + "'," + itoa(t.md5_archive.id) + "," + itoa(t.length_smpl) + ","
-	            + itoa(t.trim_start_smpl) + "," + itoa(t.trim_end_smpl) + ","
-	            + itoa(t.fade_in_smpl) + "," + itoa(t.fade_out_smpl) + ",1,0,"
-	            + itoa(current_time()) + "," + itoa(current_time()) + ",'" + t.title + "','f','f',0)";
+	            "VALUES ('" + t.md5 + "'," + dps_itoa(t.md5_archive.id) + "," + dps_itoa(t.length_smpl) + ","
+	            + dps_itoa(t.trim_start_smpl) + "," + dps_itoa(t.trim_end_smpl) + ","
+	            + dps_itoa(t.fade_in_smpl) + "," + dps_itoa(t.fade_out_smpl) + ",1,0,"
+	            + dps_itoa(dps_current_time()) + "," + dps_itoa(dps_current_time()) + ",'" + t.title + "','f','f',0)";
 			T->exec(SQL);
 			SQL = "SELECT last_value FROM audio_id_seq";
 			R = T->exec(SQL);
@@ -269,7 +290,7 @@ void archivemanager::add(unsigned int index) {
 				}
 			}
 			SQL = "INSERT INTO audiojinglepkgs (audio, jinglepkg, jingletype) "
-				"VALUES (" + itoa(audio_id) + "," + itoa(album_id) + ",0)";
+				"VALUES (" + dps_itoa(audio_id) + "," + dps_itoa(album_id) + ",0)";
 			T->exec(SQL);
 		}
 		else {
@@ -277,14 +298,14 @@ void archivemanager::add(unsigned int index) {
 				"end_smpl, intro_smpl, extro_smpl, type, creator, creation_date, "
 	            "import_date, title, music_album, music_track, music_released, "
 	            "sustainer, censor, lifespan, origin, reclibid) "
-	            "VALUES ('" + t.md5 + "'," + itoa(t.md5_archive.id) + ","
-				+ itoa(t.length_smpl) + ","
-	            + itoa(t.trim_start_smpl) + "," + itoa(t.trim_end_smpl) + ","
-	            + itoa(t.fade_in_smpl) + "," + itoa(t.fade_out_smpl) + ",0,0,"
-	            + itoa(current_time()) + "," + itoa(current_time()) + ",'" 
+	            "VALUES ('" + t.md5 + "'," + dps_itoa(t.md5_archive.id) + ","
+				+ dps_itoa(t.length_smpl) + ","
+	            + dps_itoa(t.trim_start_smpl) + "," + dps_itoa(t.trim_end_smpl) + ","
+	            + dps_itoa(t.fade_in_smpl) + "," + dps_itoa(t.fade_out_smpl) + ",0,0,"
+	            + dps_itoa(dps_current_time()) + "," + dps_itoa(dps_current_time()) + ",'" 
 				+ t.title + "',"
-	            + itoa(album_id) + "," + itoa(t.tracknum) + "," 
-				+ itoa(atoi(t.release_date.c_str())) 
+	            + dps_itoa(album_id) + "," + dps_itoa(t.tracknum) + "," 
+				+ dps_itoa(atoi(t.release_date.c_str())) 
 				+ ",'f','f',0,'" + t.origin + "','" + t.reclibid + "')");
 			T->exec(SQL);
 		}
@@ -294,7 +315,7 @@ void archivemanager::add(unsigned int index) {
 		    if (R.size() > 0) {
 		        audio_id = atoi(R[0][0].c_str());
 				SQL = "INSERT INTO audioartists (audio, artist) "
-                      "VALUES (" + itoa(audio_id) + "," + itoa(artist_id) + ")";
+                      "VALUES (" + dps_itoa(audio_id) + "," + dps_itoa(artist_id) + ")";
 		        T->exec(SQL);
 		    }
 		    else {
@@ -315,6 +336,7 @@ void archivemanager::add(unsigned int index) {
 		abort();
 		return;
 	}
+
 	// Since we successfully added to database, put audio files in archive.
 	string src = t.md5_archive.localPath + "/inbox/" + t.md5 + "*";
 	string dest = t.md5_archive.localPath + "/" + t.md5.substr(0,1) + "/";
@@ -326,6 +348,9 @@ void archivemanager::add(unsigned int index) {
 		return;
 	}
 
+	// write out xml for this track using the backup (unescaped) data
+	writeXML(t_bak);
+	
 	// Now the track is in the archive, not the inbox...
 	trackDB->push_back(trackInbox->at(index));
 	trackInbox->erase(trackInbox->begin() + index);
@@ -337,6 +362,15 @@ void archivemanager::remove(unsigned int index) {
 
 void archivemanager::recover(unsigned int index) {
 
+}
+
+void archivemanager::backup(unsigned int index) {
+    if (!initialised) load();
+	if (index > size(DPS_DB) - 1) {
+		cout << "archivemanager::backup: index out of range" << endl;
+		return;
+	}
+	writeXML(at(DPS_DB,index));
 }
 
 /*
@@ -379,22 +413,42 @@ void archivemanager::loadDB(vector<track> *tracks) {
 void archivemanager::loadInbox(vector<track> *tracks) {
     DIR *dirp;
     struct dirent *dp;
-    string fn, md5, path;
+    string fn, md5, path, test;
 	track t;
+	ifstream f_test_xml, f_test_info;
 
 	path = A.localPath + "/inbox";
     dirp = opendir(path.c_str());
     while (dirp) {
         if ((dp = readdir(dirp)) != NULL) {
             fn = path + "/" + dp->d_name;
-			if (fn.length() > 5 && fn.substr(fn.length() - 5, 5) != ".info") {
-				continue;
-			}
-			if (fn.length() < 37) continue;
+
+			//we want only tracks that have audio files so use audio filename
+			//as a base for searching for info files
+			if (string(dp->d_name).size() != 32) continue;
 			md5 = fn.substr(path.length() + 1, 32);
-			if ((t = readInfo(fn)).isNull) {
-				cout << "archivemananger::loadInbox: No audio file." << endl;
-				cout << " -> " << fn << " ignored. " << endl;
+
+			test = fn + ".xml";
+			f_test_xml.open(test.c_str());
+			test = fn + ".info";
+			f_test_info.open(test.c_str());
+			if (f_test_xml.good()) {
+				cout << "Reading XML: " << fn.c_str() << ".xml" << endl;
+				t = readXML(fn + ".xml");
+			}
+			else if (f_test_info.good()) {
+				cout << "Reading INFO: " << fn.c_str() << ".info" << endl;
+				t = readInfo(fn + ".info");
+			}
+			else {
+				cout << "FAILED on XML & INFO: " << md5 << endl;
+			}
+			f_test_xml.close();
+			f_test_info.close();
+			
+			if (t.isNull) {
+				cout << "archivemanager::loadInbox: Can't find info!" << endl;
+				cout << " -> ignored this track " << endl;
 				continue;
 			}
 			else {
@@ -415,18 +469,70 @@ void archivemanager::loadTrash(vector<track> *tracks) {
 }
 
 void archivemanager::writeXML(track t) {
+	xmlDocument *D = new xmlDocument();
+	xmlElement *e1, *e2, *e3;
 
+	D->set_header("<?xml version=\"1.0\"?>");
+	D->set_doctype("<!DOCTYPE audio_v1 SYSTEM \"dps.dtd\">");
+	e1 = D->get_root();
+	e1->set_name("audio");
+	e1->add_attribute("md5",t.md5);
+	e1->add_attribute("type","music");
+	e1->add_attribute("creation_date","2006");
+
+	if (t.album != "") {
+		e2 = e1->add_element("album");
+		e2->add_attribute("name",t.album);
+		if (t.origin != "") {
+			e3 = e2->add_element("origin");
+			e3->set_cdata(t.origin);
+		}
+		if (t.release_date != "") {
+			e3 = e2->add_element("released");
+			e3->set_cdata(t.release_date);
+		}
+		if (t.reclibid != "") {
+			e3 = e2->add_element("reclibid");
+			e3->set_cdata(t.reclibid);
+		}
+	}
+	
+	e2 = e1->add_element("segment");
+	e3 = e2->add_element("title");
+	e3->set_cdata(t.title);
+	if (t.artist != "") {
+		e3 = e2->add_element("artist");
+		e3->add_attribute("name",t.artist);
+	}
+	if (t.tracknum != 0) {
+		e3 = e2->add_element("tracknum");
+		e3->set_cdata(dps_itoa(t.tracknum));
+	}
+	e3 = e2->add_element("censor");
+	if (t.censor) e3->set_cdata("Yes");
+	else e3->set_cdata("No");
+	e3 = e2->add_element("smpl");
+	e3->add_attribute("length",dps_itoa(t.length_smpl));
+	e3->add_attribute("trim_start",dps_itoa(t.trim_start_smpl));
+	e3->add_attribute("trim_end",dps_itoa(t.trim_end_smpl));
+	e3->add_attribute("fade_in",dps_itoa(t.fade_in_smpl));
+	e3->add_attribute("fade_out",dps_itoa(t.fade_out_smpl));
+
+	string filename = t.md5_archive.localPath + "/" + t.md5.at(0) 
+							+ "/" + t.md5 + ".xml";
+	D->write_file(filename);
+	delete D;
 }
 
-track archivemanager::readInfo(string fn) {
+track archivemanager::readInfo(string filename) {
 	string buffer;
 	track t;
 	ifstream *f_info, *f_raw;
-	
+
 	/* Attempt to open the info file */
 	t.isNull = false;
 	try {
-		f_info = new ifstream(fn.c_str(), ios::in);
+		f_info = new ifstream(filename.c_str(), ios::in);
 		if (!f_info->good()) throw 1;
 		
 		f_info->seekg(0);
@@ -467,29 +573,69 @@ track archivemanager::readInfo(string fn) {
 	}
     catch (...) {
         cout << "archivemanager::readInfo: Unable to open file." << endl;
-        cout << " -> " << fn << endl;
+        cout << " -> " << filename << endl;
         return t_null;
     }
+	t.censor = false;
 
 	/* Attempt to open audio file */
-	f_raw = new ifstream(fn.substr(0,fn.length() - 5).c_str(), 
+	f_raw = new ifstream(filename.substr(0,filename.length() - 5).c_str(), 
 								ios::in|ios::binary|ios::ate);
 	if (!f_raw->good()) {
 		return t_null;
 	}
 	t.length_smpl = f_raw->tellg() / 4;
 	t.trim_start_smpl = 0;
-	t.trim_end_smpl = t.length_smpl;
+	t.trim_end_smpl = 0;
 	t.fade_in_smpl = 0;
-	t.fade_out_smpl = t.length_smpl;
+	t.fade_out_smpl = 0;
 	f_raw->close();
 	delete f_raw;
 
 	return t;
 }
 
-track archivemanager::readXML(string md5) {
+track archivemanager::readXML(string filename) {
 	track t;
+	xmlElement *root, *e_album, *e_segment, *e_smpl;
+	xmlDocument *D = new xmlDocument(filename);
+	if (!D) {
+		t.isNull = true;
+		return t;
+	}
+	root = D->get_root();
+
+	t.md5 = root->get_attribute("md5").value;
+	t.md5_archive = A;
+	if ((e_album = root->get_element("album"))) {
+	    t.album = e_album->get_attribute("name").value;
+		if (e_album->get_element("origin"))
+		    t.origin = e_album->get_element("origin")->get_cdata();
+		if (e_album->get_element("reclibid"))
+		    t.reclibid = e_album->get_element("reclibid")->get_cdata();
+	}
+
+	if ((e_segment = root->get_element("segment"))) {
+		t.title = e_segment->get_element("title")->get_cdata();
+		if (e_segment->get_element("artist"))
+			t.artist = e_segment->get_element("artist")->get_attribute("name").value;
+		if (e_segment->get_element("tracknum"))
+			t.tracknum = atoi(e_segment->get_element("tracknum")->get_cdata().c_str());
+		if (e_segment->get_element("censor")) {
+			if (e_segment->get_element("censor")->get_cdata() == "Yes")
+				t.censor = true;
+			else
+				t.censor = false;
+		}
+		if ((e_smpl = e_segment->get_element("smpl"))) {
+			t.length_smpl = atoi(e_smpl->get_attribute("length").value.c_str());
+			t.trim_start_smpl = atoi(e_smpl->get_attribute("trim_start").value.c_str());
+			t.trim_end_smpl = atoi(e_smpl->get_attribute("trim_end").value.c_str());
+			t.fade_in_smpl = atoi(e_smpl->get_attribute("fade_in").value.c_str());
+			t.fade_out_smpl = atoi(e_smpl->get_attribute("fade_out").value.c_str());
+		}
+	}
+	t.isNull = false;
 	return t;
 }
 
@@ -498,18 +644,24 @@ bool archivemanager::hasAudio(string md5) {
 }
 
 void archivemanager::cleanInfo(track *t) {
-    strTrim(&(t->title));
-    strPcase(&(t->title));
-    strTrim(&(t->artist));
-    strPcase(&(t->artist));
+    dps_strTrim(&(t->title));
+    dps_strPcase(&(t->title));
+	if ((t->title).length() > 4 && (t->title).substr(0,4) == "The ") {
+		t->title = (t->title).substr(4,(t->title).length() - 4) + ", The";
+	}
+    dps_strTrim(&(t->artist));
+    dps_strPcase(&(t->artist));
 	if ((t->artist).length() > 4 && (t->artist).substr(0,4) == "The ") {
 		t->artist = (t->artist).substr(4,(t->artist).length() - 4) + ", The";
 	}
-    strTrim(&(t->album));
-    strPcase(&(t->album));
+    dps_strTrim(&(t->album));
+    dps_strPcase(&(t->album));
+	if ((t->album).length() > 4 && (t->album).substr(0,4) == "The ") {
+		t->album = (t->album).substr(4,(t->album).length() - 4) + ", The";
+	}
 	
-	strTrim(&(t->reclibid));
-	strPcase(&(t->reclibid));
+	dps_strTrim(&(t->reclibid));
+	dps_strPcase(&(t->reclibid));
 	if ((t->reclibid).length() > 0 && (t->reclibid).length() < 5) {
 		cout << "Malformed reclibid: " << t->reclibid << endl;
 	}
@@ -524,17 +676,20 @@ void archivemanager::cleanInfo(track *t) {
 		else {
 			t->reclibid = "";
 		}
-		t->reclibid += strNum(atoi(year.c_str()),2);
+		t->reclibid += dps_strNum(atoi(year.c_str()),2);
 		t->reclibid += "-";
-		t->reclibid += strNum(atoi(number.c_str()),4);
+		t->reclibid += dps_strNum(atoi(number.c_str()),4);
 	}
-	strTrim(&(t->release_date));
-    strTrim(&(t->origin));
-	strPcase(&(t->origin));
+	dps_strTrim(&(t->release_date));
+    dps_strTrim(&(t->origin));
+	dps_strPcase(&(t->origin));
+	if (t->origin == "Reclibid" || t->origin == "Eclib" || t->origin == "Raclib" || t->origin == "Reclab" || t->origin == "Riclab")
+		t->origin = "Reclib";
 }
 
 void archivemanager::trimAudio(track *t) {
 #define BLOCK_SAMPLES 4096
+#define SAMPLE_TOL 512		// Approx 2% = -42dB
     if (t->md5 == "") return;
     string filename = t->md5_archive.localPath + "/inbox/" + t->md5;
     char *audio_buffer = new char[BLOCK_SAMPLES * 4];
@@ -556,11 +711,11 @@ void archivemanager::trimAudio(track *t) {
         for (int i = 0; i < BLOCK_SAMPLES; i++) {
             left = (short*)(audio_buffer + 4*i);
             right = (short*)(audio_buffer + 4*i + 2);
-            if (abs(*left) < BLOCK_SAMPLES && abs(*right) < BLOCK_SAMPLES ) 
+            if (abs(*left) < SAMPLE_TOL && abs(*right) < SAMPLE_TOL ) 
 				t->trim_start_smpl += 1;
             else break;
         }
-    } while (abs(*left) < BLOCK_SAMPLES && abs(*right) < BLOCK_SAMPLES);
+    } while (abs(*left) < SAMPLE_TOL && abs(*right) < SAMPLE_TOL);
 
     // Scan for end of track
     file_handle->seekg((t->trim_end_smpl - BLOCK_SAMPLES)*4,ios::beg);
@@ -569,12 +724,12 @@ void archivemanager::trimAudio(track *t) {
         for (int i = BLOCK_SAMPLES - 1; i >= 0; i--) {
             left = (short*)(audio_buffer + 4*i);
             right = (short*)(audio_buffer + 4*i + 2);
-            if (abs(*left) < BLOCK_SAMPLES && abs(*right) < BLOCK_SAMPLES) 
+            if (abs(*left) < SAMPLE_TOL && abs(*right) < SAMPLE_TOL) 
 				t->trim_end_smpl -= 1;
             else break;
         }
         file_handle->seekg((t->trim_end_smpl - BLOCK_SAMPLES)*4, ios::beg);
-    } while (abs(*left) < BLOCK_SAMPLES && abs(*right) < BLOCK_SAMPLES);
+    } while (abs(*left) < SAMPLE_TOL && abs(*right) < SAMPLE_TOL);
     
     // Clean up
     delete audio_buffer;
@@ -584,84 +739,6 @@ void archivemanager::trimAudio(track *t) {
 			<< " does not contain any non-zero samples!" << endl;
 	}
 #undef BLOCK_SAMPLES
+#undef SAMPLE_TOL
 }
 
-
-/************************************
- * HELPER ROUTINES
- ************************************/
-string archivemanager::strTrim(string *Str) {
-    int i = Str->length();
-    if (i == 0) return *Str;
-    while (Str->substr(i - 1,1) == " ") {
-        Str->erase(i - 1);
-        i--;
-        if (i == 0) break;
-    }
-    if (i == 0) return *Str;
-    while (Str->substr(0,1) == " ") {
-        Str->erase(0);
-    }
-    return *Str;
-}
-
-string archivemanager::strPcase(string *Str) {
-    bool upper = true;
-    bool punctuate = false;
-	if (Str->length() < 1) return *Str;
-    for (unsigned int i = 0; i < Str->length() - 1; i++) {
-		char now = (*Str)[i];
-		char next = (*Str)[i];
-        if ((now == '.' || now == ',' || now == '?') && next == ' ') {
-            punctuate = true;
-            upper = true;
-            continue;
-        }
-        if ((now == '(' || now == '\'' || now == '\"') 
-				&& (i == 0 || (*Str)[i-1] == ' ')) {
-            upper = true;
-            continue;
-        }
-        if ((punctuate) && now != ' ') {
-            Str->insert(i+1,1,' ');
-            punctuate = false;
-            continue;
-        }
-        if (now == ' ') {
-            upper = true;
-            continue;
-        }
-        if (upper) {
-            if (now >= 'a' && now <= 'z')
-                (*Str)[i] = (*Str)[i] - 32;
-            upper = false;
-        }
-        else {
-            if (now >= 'A' && now <= 'Z')
-                (*Str)[i] = (*Str)[i] + 32;
-        }
-    }
-	if ((*Str)[Str->length() - 1] >= 'A' && (*Str)[Str->length() - 1] <= 'Z') 
-		(*Str)[Str->length() - 1] = (*Str)[Str->length() - 1] + 32;
-    return *Str;
-}
-
-string archivemanager::strNum(long num, unsigned int digits) {
-	string result = itoa(num);
-	for (unsigned int i = 1; i < digits; i++) {
-		if (result.length() < digits) {
-			result = "0" + result;
-		}
-	}
-	return result;
-}
-
-string archivemanager::itoa(long num) {
-    stringstream S (stringstream::in | stringstream::out);
-    S << num;
-    return S.str();
-}
-
-long archivemanager::current_time() {
-	return (long)time(NULL) - 946080000;
-}

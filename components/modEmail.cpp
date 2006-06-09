@@ -23,12 +23,12 @@ vector<email>* modEmail::getEmails(Connection *C) {
 //		cout << SQL.str() << endl;
 	try {
 		Result R = T->exec(SQL.str());
-		delete T;
 		string flag;
 
 //		cout << (int)R.size()-1 << endl;
 		for (int i = (int)R.size()-1; i > -1; i--) {
-			dte = localtime(new time_t(atoi(R[i]["datetime"].c_str())));
+			time_t thetime(atoi(R[i]["datetime"].c_str()));
+			dte = localtime(&thetime);
 			strftime(date, 30, "%Ex %H:%M", dte);
 			e.from = R[i]["sender"].c_str();
 			e.subject = R[i]["subject"].c_str();
@@ -49,6 +49,7 @@ vector<email>* modEmail::getEmails(Connection *C) {
 	catch (...) {
 		cout << " -> ERROR: Failed to get new e-mails." << endl;
 	}
+	delete T;
 	return retVec;
 
 }

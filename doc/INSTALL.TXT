@@ -29,19 +29,20 @@ connect to the database from another machine.
 
 Compilation of Code
 -------------------
-This software requires the following packages to be installed:
+This software requires the following software to be installed. Under debian
+this can be achieved by running apt-get install <package-list> where
+<package-list> is:
 	libpqxx-dev
-	libreadline4
-	libreadline4-dev
+	libreadline5-dev
 	libncurses5-dev
 	libqt3-mt-dev
-	libqt3c102-mt
-	libqt3-headers
+This will implicitly install the actual libraries as well. Other distributions
+and/or package management systems may require manual installation of these
+libraries.
 
 For development of the Digiplay Studio GUI the following packages are required:
 	qt3-designer
 	qt3-dev-tools
-	qt3-doc
 
 To generate code documentation:
 	doxygen

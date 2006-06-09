@@ -12,7 +12,7 @@ UIC=@/usr/share/qt3/bin/uic
 # Compiler and linker flags
 STDFLAGS= -Wall -O3
 QTFLAGS=$(STDFLAGS) -pipe -W -D_REENTRANT  -DQT_NO_DEBUG -DQT_THREAD_SUPPORT -DQT_SHARED
-STD_INCLUDE=-I/usr/include/postgresql -I./components -I./apps
+STD_INCLUDE=-I/usr/include/postgresql -I./components -I./apps -I./src
 QT_INCLUDE=$(STD_INCLUDE) -I/usr/share/qt3/mkspecs/default -Icomponents -I/usr/include/qt3 -Iapps/studio -I.tmp/
 LIBS_STD=-lpq /usr/lib/libpqxx.a -lreadline -lm -lpthread
 LIBS_QT= $(LIBS_STD) -L/usr/share/qt3/lib -L/usr/X11R6/lib -lqt-mt -lXext -lX11
@@ -59,8 +59,18 @@ ADMIN_OBJ=				apps/admin/main.o \
 						.tmp/moc_frmAdminAddMusic.o \
 						components/systemmanager.o \
 						components/archivemanager.o \
-						components/config.o
-						
+						components/config.o \
+						components/xmlDocument.o \
+						components/xmlElement.o \
+						components/dps.o
+XMLTEST_OBJ=			apps/xmltest.o \
+						components/systemmanager.o \
+						components/archivemanager.o \
+						components/config.o \
+						components/xmlDocument.o \
+						components/xmlElement.o \
+						components/dps.o
+
 # Compilation commands
 COMPILE=		@echo Compiling $<; $(CC) $(STDFLAGS) -c $(STD_INCLUDE) -o $@ $<
 QTCOMPILE=		@echo Compiling $<; $(CC) $(QTFLAGS) -c $(QT_INCLUDE) -o $@ $<
@@ -127,6 +137,8 @@ playin: init
 	@gcc apps/playin/main.c apps/playin/md5.c -o bin/playin -lncurses -lform
 	@cp apps/cdparanoia bin
 
+xmltest: init $(XMLTEST_OBJ)
+	@echo Linking $@; $(CC) $(CPPFLAGS) -o bin/$@ $(XMLTEST_OBJ) $(LIBS_STD)
 # Module targets
 components/archivemanager.o:	components/archivemanager.cpp \
 								components/archivemanager.h
@@ -185,9 +197,17 @@ components/track.o:				components/track.cpp \
 components/triggerThread.o:		components/triggerThread.cpp \
 								components/triggerThread.h
 	$(QTCOMPILE)
+components/xmlDocument.o:		components/xmlDocument.cpp \
+								components/xmlDocument.h
+	$(COMPILE)
+components/xmlElement.o:		components/xmlElement.cpp \
+								components/xmlElement.h
+	$(COMPILE)
 apps/sueplay.o:					apps/sueplay.cpp
 	$(COMPILE)
 apps/suesched.o:				apps/suesched.cpp
+	$(COMPILE)
+apps/xmltest.o:					apps/xmltest.cpp
 	$(COMPILE)
 ###### ADMIN APPLICATION
 apps/admin/main.o:          apps/admin/main.cpp \

@@ -35,6 +35,7 @@ struct track {
 	string reclibid;
 	string origin;
 	string release_date;
+	bool censor;
     unsigned long length_smpl;
     unsigned long trim_start_smpl;
     unsigned long trim_end_smpl;
@@ -67,4 +68,8 @@ struct eventData {
 
 track dps_getTrack(Connection *C, string md5);
 string dps_itoa(long num);
+string dps_strTrim(string *Str);
+string dps_strPcase(string *Str);
+string dps_strNum(long num, unsigned int digits);
+long dps_current_time();
 #endif

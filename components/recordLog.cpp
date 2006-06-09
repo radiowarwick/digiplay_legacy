@@ -64,9 +64,9 @@ void recordLog::getRecentlyLogged(QListView *parent) {
 	parent->clear();
 	try {
 		Result R = T->exec(SQL.str());
-		delete T;
 		for (int i = ((int)R.size())-1; i > -1; i--) {
-			dte = localtime(new time_t(atoi(R[i]["datetime"].c_str())));
+			time_t thetime(atoi(R[i]["datetime"].c_str()));
+			dte = localtime(&thetime);
 			strftime(date, 30, "%Ex %H:%M", dte);
 			artist = R[i]["track_artist"].c_str();
 			title = R[i]["track_title"].c_str();
@@ -77,6 +77,7 @@ void recordLog::getRecentlyLogged(QListView *parent) {
 	catch (...) {
 		cout << " -> ERROR: Failed to get recently logged records." << endl;
 	}
+	delete T;
 
 }
 

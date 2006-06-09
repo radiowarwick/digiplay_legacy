@@ -33,23 +33,20 @@ class archivemanager {
 		void add(unsigned int index);
 		void remove(unsigned int index);
 		void recover(unsigned int index);
+		void backup(unsigned int index);
+		
+		void writeXML(track t);
+		track readInfo(string filename);
+		track readXML(string filename);
 
 	private:
 		void loadDB(vector<track> *tracks);
 		void loadInbox(vector<track> *tracks);
 		void loadTrash(vector<track> *tracks);
-		void writeXML(track t);
-		track readInfo(string md5);
-		track readXML(string md5);
 
 		bool hasAudio(string md5);
 		void cleanInfo(track *t);
 		void trimAudio(track *t);
-		string strTrim(string *Str);
-		string strPcase(string *Str);
-		string strNum(long num, unsigned int digits);
-		string itoa(long num);
-		long current_time();
 
 		bool initialised;
 		track t_null;

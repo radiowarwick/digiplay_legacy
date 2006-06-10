@@ -67,6 +67,7 @@ const char* modEmail::getEmailBody(Connection *C, string id) {
 		return R[0]["body"].c_str();
 	}
 	catch (...) {
+		delete T;
 		cout << " -> ERROR: Failed to get e-mail body." << endl;
 	}
 	return NULL;
@@ -81,11 +82,12 @@ void modEmail::markRead(Connection *C, string id) {
         try {
                 T->exec(SQL.str());
 		T->commit();
-                delete T;
         }
         catch (...) {
+				T->abort();
                 cout << " -> ERROR: Failed to set e-mail read." << endl;
         }
+        delete T;
 }	
 
 // ====== PRIVATE =======

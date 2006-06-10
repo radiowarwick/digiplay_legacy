@@ -1,6 +1,6 @@
 Installation and Use
 ====================
-See ./docs/INSTALL.TXT for details
+See ./doc/INSTALL.TXT for details
 
 Project Hierarchy
 =================
@@ -8,12 +8,26 @@ Please follow the structure below when adding components and applications.
 
 digiplay
  |
- |-> Apps (Application software: sustainer, admin application, studio apps)
- |	     Create subdirectories for each QT app as they tend to have a lot
- |	     of baggage!
+ |-> bin (Binary executables)
  |
- |-> Components (Components objects for use in the applications)
+ |-> db (Database schema and related files)
  |
- |-> db (Database schema, and related files)
+ |-> doc (Documentation, usage instructions etc)
  |
- |-> Docs (Documentation and usage instructions etc) 
+ |-> lib (Libraries)
+ |
+ |-> src (Source code common to applications)
+      |
+	  |-> admin (Admin application source code)
+	  |
+	  |-> audio (Audio component soure code)
+	  |
+	  |-> studio_manage (Studio Manage source code)
+	  |
+	  |-> studio_play (Studio Play source code)
+	  |
+	  |-> www (Website source code)
+
+
+At present the apps and components directories also exist, but code will be 
+migrated gradually into the new structure.

@@ -1,0 +1,47 @@
+# Default compiler and linker command
+CC			=	g++
+LD			=	g++
+
+# Set default output location and name
+DEST		=	$(ROOT)/bin
+OUTPUT      =   $(OUT_BASE)
+
+# Generate object list from the modules provided
+# Note: addsuffix might not be portable
+OBJS        =   $(addsuffix .o,$(MODS))
+
+# Define compiler and linker flags depending on whether we're
+# compiling a standard executable or a shared library
+ifeq ($(OUT_LIB),yes)
+	CCFLAGS     =   -fPIC $(INC)
+	DEST		=	$(ROOT)/lib
+    ifeq ($(OUT_STATIC),yes)
+		OUTPUT      =   lib$(OUT_BASE).a
+		LDFLAGS     =   -cq $(DEST)/$(OUTPUT)
+		LIBS		=	
+		LD			=	ar
+    else
+		OUTPUT      =   lib$(OUT_BASE).so
+		LDFLAGS     =   -shared -Wl,-soname,$(OUTPUT).$(VERSION) -o $(DEST)/$(OUTPUT)
+    endif
+else
+	CCFLAGS     =   $(INC)  
+	LDFLAGS     =   
+endif
+
+# Enabled implicit compilation of .cpp code to objects
+# Add dependance on that modules header file
+.SUFFIXES: .o .cpp 
+.cpp.o: $(addsuffix .h,$*) $(HDRS)
+	$(CC) $(CCFLAGS) -c $< -o $@
+
+$(OUTPUT): $(OBJS) 
+	mkdir -p $(DEST)
+	$(LD) $(LDFLAGS) $(OBJS) $(LIBS)
+
+all: $(OUTPUT)
+default: $(OUTPUT)
+
+clean:
+	rm -rf *.o
+

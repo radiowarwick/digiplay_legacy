@@ -2,11 +2,19 @@
 #define NS_AUDIO
 namespace Audio {
 	class Component;
+
 	class Input;
 	class InputRaw;
 	class InputWav;
 	class InputMp3;
 	class InputDsp;
+	
+	class Output;
+	class OutputRaw;
+
+	class Process;
+
+	class Counter;
 }
 
 enum PORT { IN0, IN1, IN2, IN3, IN4, IN5, IN6, IN7, 
@@ -24,6 +32,13 @@ enum MESSAGE {  NONE = 0,
                 PLAY = 1,
                 STOP = 2,
                 PAUSE = 3 };
+#endif
+
+#ifndef ENUM_STATE
+#define ENUM_STATE
+enum STATE {	STATE_STOP = 0,
+				STATE_PLAY = 1,
+				STATE_PAUSE = 2 };
 #endif
 
 #endif

@@ -23,6 +23,8 @@ class Audio::Component : public Thread {
 		
 		void send(PORT outPort, MESSAGE message);
 
+		Audio::Component* connectedDevice(PORT inPort);
+
 	private:
 		void createMapping(PORT localPort, Component *c, 
 							PORT remotePort);

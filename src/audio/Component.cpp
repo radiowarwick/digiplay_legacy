@@ -47,6 +47,15 @@ void Audio::Component::receive(PORT inPort, MESSAGE message) {
 
 }
 
+Audio::Component* Audio::Component::connectedDevice(PORT inPort) {
+	for (int i = 0; i < portMap.size(); i++) {
+		if (portMap.at(i).port == inPort) {
+			return portMap.at(i).component;
+		}
+	}
+	return 0;
+}
+
 void Audio::Component::createMapping(PORT localPort, Component *c,
 										PORT remotePort) {
 	ConnectionMapping CM;

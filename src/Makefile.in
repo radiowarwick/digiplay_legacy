@@ -35,7 +35,7 @@ endif
 .cpp.o: $(addsuffix .h,$*) $(HDRS)
 	$(CC) $(CCFLAGS) -c $< -o $@
 
-$(OUTPUT): $(OBJS) 
+$(OUTPUT): $(OBJS)
 	mkdir -p $(DEST)
 	$(LD) $(LDFLAGS) $(OBJS) $(LIBS)
 

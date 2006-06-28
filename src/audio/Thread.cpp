@@ -8,7 +8,9 @@ int Thread::threadStart() {
 
 void *Thread::threadEntry(void *pthis) {
 	Thread *pt = (Thread*)pthis;
+	pt->t_active = true;
 	pt->threadExecute();
+	pt->t_active = false;
 }
 
 void Thread::threadExecute() {

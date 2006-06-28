@@ -11,11 +11,11 @@ VERSION		=	1
 OUT_LIB		=	yes
 OUT_STATIC	=	no
 
-# .cpp modules from which to create output
-MODS		=	Component Input Thread
+# modules from which to create output
+MODS		=	Thread Component Input InputRaw Output OutputRaw OutputPlayer Process ProcessMixer Counter
 
 # Global header files on which dependance exists
-HDRS		=
+HDRS		=	Audio.h
 
 # Compiler and linker options
 INC			=	

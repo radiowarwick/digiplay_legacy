@@ -4,7 +4,7 @@
 ROOT		=	../..
 
 # Base name for output (executable name, library basename) and version
-OUT_BASE	=	admin
+OUT_BASE	=	sueplay
 VERSION		=	1
 
 # Create a library and whether it should be a static library
@@ -12,11 +12,11 @@ OUT_LIB		=	no
 OUT_STATIC	=	no
 
 # Enable QT support?
-QT_ENABLED 	=	yes
+QT_ENABLED 	=	no
 
 # .cpp modules from which to create output
-MODS		=	frmAdmin frmAdminEditNewInfo frmAdminAddMusic main
-SHARED_MODS	=	systemmanager archivemanager config xmlDocument xmlElement dps
+MODS		=	sueplay
+SHARED_MODS	=	audiochannel audiomixer audioplayer config
 
 # Global header files on which dependance exists
 HDRS		=

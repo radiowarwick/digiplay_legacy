@@ -11,14 +11,17 @@ VERSION		=	1
 OUT_LIB		=	yes
 OUT_STATIC	=	no
 
-# modules from which to create output
-MODS		=	Thread Component Input InputRaw Output OutputRaw OutputPlayer Process ProcessMixer Counter
+# Enable QT support?
+QT_ENABLED 	=	no
+
+# .cpp modules from which to create output
+MODS		=	Thread Component Input InputRaw Output OutputRaw OutputDsp Process  ProcessMixer Counter
+SHARED_MODS	=	
 
 # Global header files on which dependance exists
 HDRS		=	Audio.h
 
 # Compiler and linker options
-INC			=	
 LIBS		=	-lm -lpthread
 
 include $(ROOT)/src/Makefile.in

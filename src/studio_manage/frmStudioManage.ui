@@ -1,8 +1,8 @@
 <!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>frmSearch</class>
+<class>frmStudioManage</class>
 <widget class="QDialog">
     <property name="name">
-        <cstring>frmSearch</cstring>
+        <cstring>frmStudioManage</cstring>
     </property>
     <property name="geometry">
         <rect>
@@ -3111,31 +3111,31 @@ If you have any suggestions for features you'd like to see in RaW Digiplay, plea
     <connection>
         <sender>btnLibrarySearch</sender>
         <signal>clicked()</signal>
-        <receiver>frmSearch</receiver>
+        <receiver>frmStudioManage</receiver>
         <slot>Library_Search()</slot>
     </connection>
     <connection>
         <sender>tblLibrarySearchResults</sender>
         <signal>doubleClicked(int,int,int,const QPoint&amp;)</signal>
-        <receiver>frmSearch</receiver>
+        <receiver>frmStudioManage</receiver>
         <slot>PlaylistAdd(int,int,int,const QPoint&amp;)</slot>
     </connection>
     <connection>
         <sender>txtLibrarySearchText</sender>
         <signal>returnPressed()</signal>
-        <receiver>frmSearch</receiver>
+        <receiver>frmStudioManage</receiver>
         <slot>Library_Search()</slot>
     </connection>
     <connection>
         <sender>pushButton36</sender>
         <signal>clicked()</signal>
-        <receiver>frmSearch</receiver>
+        <receiver>frmStudioManage</receiver>
         <slot>LogRecord()</slot>
     </connection>
     <connection>
         <sender>lstEmail</sender>
         <signal>selectionChanged(QListViewItem*)</signal>
-        <receiver>frmSearch</receiver>
+        <receiver>frmStudioManage</receiver>
         <slot>displayEmailBody(QListViewItem*)</slot>
     </connection>
 </connections>

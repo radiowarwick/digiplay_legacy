@@ -22,12 +22,15 @@ digiplay
 	  |
 	  |-> audio (Audio component soure code)
 	  |
+	  |-> playin (Audio acquisition source code)
+	  |
 	  |-> studio_manage (Studio Manage source code)
 	  |
 	  |-> studio_play (Studio Play source code)
 	  |
+	  |-> sueplay (Sustainer playout source code)
+	  |
+	  |-> suesched (Sustainer scheduler source code)
+	  |
 	  |-> www (Website source code)
 
-
-At present the apps and components directories also exist, but code will be 
-migrated gradually into the new structure.

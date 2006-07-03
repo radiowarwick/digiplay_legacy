@@ -4,7 +4,7 @@
 ROOT		=	../..
 
 # Base name for output (executable name, library basename) and version
-OUT_BASE	=	admin
+OUT_BASE	=	studio_play
 VERSION		=	1
 
 # Create a library and whether it should be a static library
@@ -15,8 +15,9 @@ OUT_STATIC	=	no
 QT_ENABLED 	=	yes
 
 # .cpp modules from which to create output
-MODS		=	frmAdmin frmAdminEditNewInfo frmAdminAddMusic main
-SHARED_MODS	=	systemmanager archivemanager config xmlDocument xmlElement dps
+MODS		=	frmPlayout main
+SHARED_MODS	=	config audioplayer audiomixer audiochannel playerThread \
+				audiowallthread clockThread triggerThread
 
 # Global header files on which dependance exists
 HDRS		=

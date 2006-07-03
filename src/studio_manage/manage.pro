@@ -5,7 +5,7 @@ CONFIG	+= qt warn_on release
 
 SOURCES	+= main.cpp
 
-FORMS	= frmSearch.ui
+FORMS	= frmStudioManage.ui
 
 IMAGES	= images/bin.bmp \
 	images/dir_audio.bmp \

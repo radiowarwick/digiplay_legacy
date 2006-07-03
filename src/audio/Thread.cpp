@@ -11,6 +11,7 @@ void *Thread::threadEntry(void *pthis) {
 	pt->t_active = true;
 	pt->threadExecute();
 	pt->t_active = false;
+	return 0;
 }
 
 void Thread::threadExecute() {
@@ -37,7 +38,7 @@ int Thread::threadReceive() {
 		if (pthread_self() != threadId) {
 			t = -1;
 		}
-		for (int i = 0; i < t_messages.size(); i++) {
+		for (unsigned int i = 0; i < t_messages.size(); i++) {
 			if (t_messages.at(i) * t > 0) {
 				m = t_messages.at(i) * t;
 				t_messages.erase(t_messages.begin() + i);

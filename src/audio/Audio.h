@@ -11,6 +11,7 @@ namespace Audio {
 	
 	class Output;
 	class OutputRaw;
+	class OutputDsp;
 
 	class Process;
 

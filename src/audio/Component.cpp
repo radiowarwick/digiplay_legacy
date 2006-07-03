@@ -7,14 +7,14 @@ Audio::Component::~Component() {
 	// Remove any mappings to this object.
 	// Although the mapping structures will all be dealt with, we have to
 	// tell all other mapped components that this component is being destroyed
-	for (int i = 0; i < portMap.size(); i++)
+	for (unsigned int i = 0; i < portMap.size(); i++)
 		destroyMapping(portMap.at(i).port);
 }
 
 bool Audio::Component::connect(PORT localPort, Component *c, 
 								PORT remotePort) {
-	for (int i = 0; i < portMap.size(); i++) {
-		if (portMap.at(i).port = localPort) {
+	for (unsigned int i = 0; i < portMap.size(); i++) {
+		if (portMap.at(i).port == localPort) {
 			cout << "Port " << localPort << " is already mapped." << endl;
 			return false;
 		}
@@ -24,11 +24,13 @@ bool Audio::Component::connect(PORT localPort, Component *c,
 		return false;
 	}
 	createMapping(localPort, c, remotePort);
+	return true;
 }
 
 bool Audio::Component::connectRequest(PORT localPort, Component *c,
 								PORT remotePort) {
 	createMapping(localPort, c, remotePort);
+	return true;
 }
 
 void Audio::Component::disconnect(PORT localPort) {
@@ -48,7 +50,7 @@ void Audio::Component::receive(PORT inPort, MESSAGE message) {
 }
 
 Audio::Component* Audio::Component::connectedDevice(PORT inPort) {
-	for (int i = 0; i < portMap.size(); i++) {
+	for (unsigned int i = 0; i < portMap.size(); i++) {
 		if (portMap.at(i).port == inPort) {
 			return portMap.at(i).component;
 		}

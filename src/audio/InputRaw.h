@@ -12,7 +12,7 @@ class Audio::InputRaw : public Audio::Input {
 		InputRaw();
 		~InputRaw();
 
-		void getAudio(short *audioData, int samples);
+		void getAudio(short *audioData, unsigned long samples);
 
 		void load(string filename, long start_smpl, long end_smpl);
 		void play();		// play track

@@ -30,7 +30,7 @@ Audio::InputRaw::~InputRaw() {
 
 }
 
-void Audio::InputRaw::getAudio(short *audioData, int samples) {
+void Audio::InputRaw::getAudio(short *audioData, unsigned long samples) {
     char *ptr = (char*)audioData;
     short count = 0;
     long x;
@@ -138,7 +138,7 @@ void Audio::InputRaw::removeCounter(Audio::Counter *counter) {
 }
 
 void Audio::InputRaw::updateCounters(long sample) {
-	for (int i = 0; i < countersList.size(); i++) {
+	for (unsigned int i = 0; i < countersList.size(); i++) {
 		//countersList.at(i)->update(sample);
 	}
 }

@@ -8,7 +8,7 @@ using namespace std;
 
 #ifndef ENUM_MESSAGE
 #define ENUM_MESSAGE
-#pragma message No thread messages defined!
+//#pragma message( No thread messages defined! )
 enum MESSAGE { NONE=0,
 				STOP=1
 			};
@@ -16,7 +16,8 @@ enum MESSAGE { NONE=0,
 
 class Thread {
 	public:
-	
+		virtual ~Thread() = 0;
+
 	protected:
 		int threadStart();
 		virtual void threadExecute() =0;

@@ -35,7 +35,7 @@ QIconSet *email_Icons;
 QString path;
 QListViewItem *last_item;
 
-void frmSearch::init() {
+void frmStudioManage::init() {
 	// Connect to database
 	cout << "Connecting to database..." << endl;
 	conf = new config("digiplay");
@@ -110,7 +110,7 @@ void frmSearch::init() {
 	cout << "Trigger active." << endl;	
 }
 
-void frmSearch::destroy() {
+void frmStudioManage::destroy() {
 	for (unsigned int i = 0; i < Playlist->size(); i++)
 		delete Playlist->at(i);
 	delete Playlist;
@@ -119,7 +119,7 @@ void frmSearch::destroy() {
 	delete library_engine;
 }
 
-void frmSearch::customEvent(QCustomEvent *event) {
+void frmStudioManage::customEvent(QCustomEvent *event) {
 	switch (event->type()) {
 	case 20000: {       // Clock update
 			QString *s = (QString *) event->data();
@@ -156,7 +156,7 @@ void frmSearch::customEvent(QCustomEvent *event) {
 	}
 }
 
-void frmSearch::Library_Search() {
+void frmStudioManage::Library_Search() {
 	cout << "Searching audio library..." << endl;
 	library_engine->searchLimit(50);
 	if (TitleCheckBox->isChecked()) {
@@ -195,7 +195,7 @@ void frmSearch::Library_Search() {
 	tblLibrarySearchResults->setColumnWidth(3,0);
 }
 
-void frmSearch::PlaylistAdd(int row, int col, int button, const QPoint& mousepos) {
+void frmStudioManage::PlaylistAdd(int row, int col, int button, const QPoint& mousepos) {
 	if (mousepos.isNull()) {button = 0; row = 0; col = 0;}
 	_track *new_track = new _track(*(SearchResults->at(row)));
 	Playlist->push_back(new_track);
@@ -212,7 +212,7 @@ void frmSearch::PlaylistAdd(int row, int col, int button, const QPoint& mousepos
 	}
 }
 
-void frmSearch::LogRecord() {
+void frmStudioManage::LogRecord() {
 	string artist = txtArtistLogBox->text().ascii();
 	string title = txtTitleLogBox->text().ascii();
 	string reclibid = txtReclibLogBox->text().ascii();
@@ -225,7 +225,7 @@ void frmSearch::LogRecord() {
 	log->getRecentlyLogged(lstRecentlyLogged);
 }
 
-bool frmSearch::isDefined(QString *name) {
+bool frmStudioManage::isDefined(QString *name) {
 	//	for (unsigned short i = 0; i < names->size(); i++) {
 	//		if (names->at(i) == name)
 	//			return true;
@@ -234,13 +234,13 @@ bool frmSearch::isDefined(QString *name) {
 }
 
 
-void frmSearch::displayEmailBody( QListViewItem *current )
+void frmStudioManage::displayEmailBody( QListViewItem *current )
 {
 	txtEmailBody->setText(emailObj->getEmailBody(C, current->text(4)));
 	emailObj->markRead(C, current->text(4));
 }
 
-void frmSearch::getEmail() {
+void frmStudioManage::getEmail() {
 	QListViewItem *new_email;
 	vector<email> *incoming;
 	incoming = emailObj->getEmails(C);
@@ -265,7 +265,7 @@ void frmSearch::getEmail() {
 
 
 
-QString frmSearch::getTime( long smpl ) {
+QString frmStudioManage::getTime( long smpl ) {
 	QString S;
 	int mil, sec, min;
 	

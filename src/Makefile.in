@@ -1,6 +1,8 @@
-# Default compiler and linker command
+# Default command tools
 CC			=	g++
 LD			=	g++
+MOC			?=	@/usr/share/qt3/bin/moc
+UIC			?=	@/usr/share/qt3/bin/uic
 
 # Set default output location and name
 DEST		=	$(ROOT)/bin
@@ -8,40 +10,62 @@ OUTPUT      =   $(OUT_BASE)
 
 # Generate object list from the modules provided
 # Note: addsuffix might not be portable
-OBJS        =   $(addsuffix .o,$(MODS))
+SHARED_OBJS	=	$(addsuffix .o,$(SHARED_MODS))
+OBJS        =   $(addsuffix .o,$(MODS)) $(addprefix $(ROOT)/src/,$(SHARED_OBJS))
+
 
 # Define compiler and linker flags depending on whether we're
 # compiling a standard executable or a shared library
+CCINC		:=	-I$(ROOT)/src -I$(ROOT)/components -I/usr/include/postgresql
+CCFLAGS		:=	-Wall -O3
+LDFLAGS		:=	-o $(DEST)/$(OUTPUT)
+ifeq ($(QT_ENABLED),yes)
+	CCINC	+=	-I/usr/share/qt3/mkspecs/default -I/usr/include/qt3
+	CCFLAGS	+=	-pipe -W -D_REENTRANT -DQT_NO_DEBUG -DQT_THREAD_SUPPORT -DQT_SHARED
+	LIBS	+=	-L/usr/share/qt3/lib -L/usr/X11R6/lib -lqt-mt -lXext -lX11
+	QT_OBJS	=	$(addprefix moc_,$(patsubst %.ui,%.o,$(wildcard *.ui)))
+	QT_HDRS	=	$(patsubst %.ui,%.h,$(wildcard *.ui)) 
+endif
+
 ifeq ($(OUT_LIB),yes)
-	CCFLAGS     =   -fPIC $(INC)
+	CCFLAGS     :=   -fPIC $(CCFLAGS)
 	DEST		=	$(ROOT)/lib
     ifeq ($(OUT_STATIC),yes)
 		OUTPUT      =   lib$(OUT_BASE).a
-		LDFLAGS     =   -cq $(DEST)/$(OUTPUT)
+		LDFLAGS     :=   -cq $(DEST)/$(OUTPUT)
 		LIBS		=	
 		LD			=	ar
     else
 		OUTPUT      =   lib$(OUT_BASE).so
-		LDFLAGS     =   -shared -Wl,-soname,$(OUTPUT).$(VERSION) -o $(DEST)/$(OUTPUT)
+		LDFLAGS     :=   -shared -Wl,-soname,$(OUTPUT).$(VERSION) -o $(DEST)/$(OUTPUT)
     endif
-else
-	CCFLAGS     =   $(INC)  
-	LDFLAGS     =   
 endif
 
 # Enabled implicit compilation of .cpp code to objects
 # Add dependance on that modules header file
-.SUFFIXES: .o .cpp 
-.cpp.o: $(addsuffix .h,$*) $(HDRS)
-	$(CC) $(CCFLAGS) -c $< -o $@
+.SUFFIXES: .o .cpp .ui .h .c
+.h.o: $(addsuffix .ui.h,$*)
+	@echo "Creating Object files for $*: moc_$@, $@"
+	$(UIC) $(addsuffix .ui,$*) -i $< -o $(addsuffix .cpp,$*)
+	$(MOC) $(addsuffix .h,$*) -o moc_$(addsuffix .cpp,$*)
+	$(CC) $(CCFLAGS) -c $(CCINC) -o moc_$@ moc_$(addsuffix .cpp,$*)
+	$(CC) $(CCFLAGS) -c $(CCINC) -o $@ $(addsuffix .cpp,$*)
 
-$(OUTPUT): $(OBJS)
+.ui.h:
+	@echo "Creating UI header file $@"
+	$(UIC) $< -o $@
+
+.cpp.o: $(addsuffix .h,$(MODS)) $(HDRS)
+	@echo "Creating Object file $@"
+	$(CC) $(CCFLAGS) -c $(CCINC) $< -o $@
+
+$(OUTPUT): $(QT_HDRS) $(OBJS)
 	mkdir -p $(DEST)
-	$(LD) $(LDFLAGS) $(OBJS) $(LIBS)
+	$(LD) $(LDFLAGS) $(OBJS) $(QT_OBJS) $(LIBS)
 
 all: $(OUTPUT)
 default: $(OUTPUT)
 
 clean:
-	rm -rf *.o
-
+	@rm -f *.o
+	@-$(foreach MOD,$(MODS), if [ -e $(MOD).ui ]; then rm -f moc_$(MOD).cpp $(MOD).cpp $(MOD).h; fi;)

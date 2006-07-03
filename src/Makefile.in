@@ -10,8 +10,10 @@ OUTPUT      =   $(OUT_BASE)
 
 # Generate object list from the modules provided
 # Note: addsuffix might not be portable
+# shared objects are those located directly in the src tree
 SHARED_OBJS	=	$(addsuffix .o,$(SHARED_MODS))
-OBJS        =   $(addsuffix .o,$(MODS)) $(addprefix $(ROOT)/src/,$(SHARED_OBJS))
+OBJS        =   $(addsuffix .o,$(MODS)) \
+				$(addprefix $(ROOT)/src/,$(SHARED_OBJS))
 
 
 # Define compiler and linker flags depending on whether we're
@@ -19,17 +21,23 @@ OBJS        =   $(addsuffix .o,$(MODS)) $(addprefix $(ROOT)/src/,$(SHARED_OBJS))
 CCINC		:=	-I$(ROOT)/src -I$(ROOT)/components -I/usr/include/postgresql
 CCFLAGS		:=	-Wall -O3
 LDFLAGS		:=	-o $(DEST)/$(OUTPUT)
+# if QT is enabled, we need to include the necessary compiler and 
+# linker options. We also need to make a few more objects and generate
+# the necessary header files
 ifeq ($(QT_ENABLED),yes)
 	CCINC	+=	-I/usr/share/qt3/mkspecs/default -I/usr/include/qt3
-	CCFLAGS	+=	-pipe -W -D_REENTRANT -DQT_NO_DEBUG -DQT_THREAD_SUPPORT -DQT_SHARED
+	CCFLAGS	+=	-pipe -W -D_REENTRANT -DQT_NO_DEBUG -DQT_THREAD_SUPPORT \
+				-DQT_SHARED
 	LIBS	+=	-L/usr/share/qt3/lib -L/usr/X11R6/lib -lqt-mt -lXext -lX11
 	QT_OBJS	=	$(addprefix moc_,$(patsubst %.ui,%.o,$(wildcard *.ui)))
 	QT_HDRS	=	$(patsubst %.ui,%.h,$(wildcard *.ui)) 
 endif
 
+# if we're making a library, need to add the fPIC compiler option
 ifeq ($(OUT_LIB),yes)
 	CCFLAGS     :=   -fPIC $(CCFLAGS)
 	DEST		=	$(ROOT)/lib
+	#if we're making a static library, use the archiver, otherwise make shared
     ifeq ($(OUT_STATIC),yes)
 		OUTPUT      =   lib$(OUT_BASE).a
 		LDFLAGS     :=   -cq $(DEST)/$(OUTPUT)
@@ -37,13 +45,15 @@ ifeq ($(OUT_LIB),yes)
 		LD			=	ar
     else
 		OUTPUT      =   lib$(OUT_BASE).so
-		LDFLAGS     :=   -shared -Wl,-soname,$(OUTPUT).$(VERSION) -o $(DEST)/$(OUTPUT)
+		LDFLAGS     :=   -shared -Wl,-soname,$(OUTPUT).$(VERSION) \
+						-o $(DEST)/$(OUTPUT)
     endif
 endif
 
 # Enabled implicit compilation of .cpp code to objects
 # Add dependance on that modules header file
 .SUFFIXES: .o .cpp .ui .h .c
+# Commands to compile a QT form
 .h.o: $(addsuffix .ui.h,$*)
 	@echo "Creating Object files for $*: moc_$@, $@"
 	$(UIC) $(addsuffix .ui,$*) -i $< -o $(addsuffix .cpp,$*)
@@ -51,21 +61,28 @@ endif
 	$(CC) $(CCFLAGS) -c $(CCINC) -o moc_$@ moc_$(addsuffix .cpp,$*)
 	$(CC) $(CCFLAGS) -c $(CCINC) -o $@ $(addsuffix .cpp,$*)
 
+# Command to generate a header file for a QT form
 .ui.h:
 	@echo "Creating UI header file $@"
 	$(UIC) $< -o $@
 
+# Command to compile a standard C++ class
 .cpp.o: $(addsuffix .h,$(MODS)) $(HDRS)
 	@echo "Creating Object file $@"
 	$(CC) $(CCFLAGS) -c $(CCINC) $< -o $@
 
+# Create the required output file from the given objects and place in the
+# destination specified
 $(OUTPUT): $(QT_HDRS) $(OBJS)
 	mkdir -p $(DEST)
 	$(LD) $(LDFLAGS) $(OBJS) $(QT_OBJS) $(LIBS)
 
+# standard
 all: $(OUTPUT)
 default: $(OUTPUT)
 
+# clean all object files, and remove the .h and .cpp files for QT forms only
+# i.e. we only remove *.h and *.cpp if there exists a *.ui
 clean:
 	@rm -f *.o
 	@-$(foreach MOD,$(MODS), if [ -e $(MOD).ui ]; then rm -f moc_$(MOD).cpp $(MOD).cpp $(MOD).h; fi;)

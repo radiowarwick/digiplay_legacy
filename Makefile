@@ -1,8 +1,16 @@
-APPS		=	audio admin studio_play studio_manage sueplay suesched playin
+STUDIO		=	audio studio_play studio_manage
+SUE			=	audio sueplay suesched
+ADMIN		=	admin admintools playin
+APPS		= 	$(STUDIO) $(SUE) $(ADMIN)
+
 INSTALLDIR	=	/usr/local/bin
 LIBDIR		=	/usr/local/lib
 
-all: $(APPS) 
+studio: 	$(STUDIO)
+sue:		$(SUE)
+admin:		$(ADMIN)
+
+all: studio sue admin
 
 %:
 	@if [ -d src/$@ ]; then $(MAKE) -C src/$@; fi;

@@ -1,0 +1,27 @@
+#===============================================================
+# RaW Digital Playout Makefile
+# Relative Path to Root of tree
+ROOT		=	../..
+
+# Base name for output (executable name, library basename) and version
+OUT_BASE	=	dpsimport
+VERSION		=	1
+
+# Create a library and whether it should be a static library
+OUT_LIB		=	no
+OUT_STATIC	=	no
+
+# Enable QT support?
+QT_ENABLED 	=	yes
+
+# .cpp modules from which to create output
+MODS		=	dpsimport
+SHARED_MODS	=	systemmanager archivemanager config xmlDocument xmlElement dps
+
+# Global header files on which dependance exists
+HDRS		=
+
+# Compiler and linker options
+LIBS		=	-lpq /usr/lib/libpqxx.a -lreadline -lm -lpthread
+
+include $(ROOT)/src/Makefile.in

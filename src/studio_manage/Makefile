@@ -15,14 +15,14 @@ OUT_STATIC	=	no
 QT_ENABLED 	=	yes
 
 # .cpp modules from which to create output
-MODS		=	frmStudioManage main
+MODS		=	frmStudioManage main TabPanel TabPanelInfo
 SHARED_MODS	=	config libsearch track modEmail recordLog dps\
-				clockThread triggerThread
+				clockThread triggerThread Auth AuthLdap Logger
 
 # Global header files on which dependance exists
 HDRS		=
 
 # Compiler and linker options
-LIBS		=	-lpq /usr/lib/libpqxx.a -lreadline -lm -lpthread
+LIBS		=	-lpq /usr/lib/libpqxx.a -lreadline -lm -lpthread -lldap
 
 include $(ROOT)/src/Makefile.in

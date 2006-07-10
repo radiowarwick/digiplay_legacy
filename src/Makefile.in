@@ -12,9 +12,14 @@ OUTPUT      =   $(OUT_BASE)
 # Note: addsuffix might not be portable
 # shared objects are those located directly in the src tree
 SHARED_OBJS	=	$(addsuffix .o,$(SHARED_MODS))
+SHARED_HDRS =	$(addsuffix .h,$(SHARED_MODS))
+
 OBJS        =   $(addsuffix .o,$(MODS)) \
 				$(addprefix $(ROOT)/src/,$(SHARED_OBJS))
-
+HDRS		:=	$(addsuffix .h,$(MODS)) \
+				$(addprefix $(ROOT)/src/,$(SHARED_HDRS))
+QT_OBJS		=
+QT_HDRS		=
 
 # Define compiler and linker flags depending on whether we're
 # compiling a standard executable or a shared library
@@ -50,31 +55,41 @@ ifeq ($(OUT_LIB),yes)
     endif
 endif
 
-# Enabled implicit compilation of .cpp code to objects
-# Add dependance on that modules header file
-.SUFFIXES: .o .cpp .ui .h .c
-# Commands to compile a QT form
-.h.o: $(addsuffix .ui.h,$*)
-	@echo "Creating Object files for $*: moc_$@, $@"
-	$(UIC) $(addsuffix .ui,$*) -i $< -o $(addsuffix .cpp,$*)
-	$(MOC) $(addsuffix .h,$*) -o moc_$(addsuffix .cpp,$*)
-	$(CC) $(CCFLAGS) -c $(CCINC) -o moc_$@ moc_$(addsuffix .cpp,$*)
-	$(CC) $(CCFLAGS) -c $(CCINC) -o $@ $(addsuffix .cpp,$*)
+# ....for when I get round to making it all work nicely :)
+MAKEDEPEND	=	$(CC) -M $(CCFLAGS) $(CCINC) -o $*.d $<
 
-# Command to generate a header file for a QT form
-.ui.h:
+# lets not use the default make implicit rules because I wouldn't
+# trust them as far as I could throw them :)
+.SUFFIXES:
+
+# uncomment to keep intermediate QT generated files
+#.PRECIOUS: moc_%.cpp %.cpp %.h
+
+# Generate the header file from the QT .ui file
+%.h: %.ui
 	@echo "Creating UI header file $@"
 	$(UIC) $< -o $@
 
+# Create the source code file from the QT files and the header file
+%.cpp: %.h %.ui %.ui.h
+	@echo "Creating Main source file for $*: $@"
+	$(UIC) $*.ui -i $< -o $@
+
+# Create the moc source code file from the header file
+moc_%.cpp: %.h
+	@echo "Creating moc source file for $*: $@"
+	$(MOC) $< -o $@
+
 # Command to compile a standard C++ class
-.cpp.o: $(addsuffix .h,$(MODS)) $(HDRS)
-	@echo "Creating Object file $@"
+# TODO: Add dependance on header files without make using default rule!
+%.o: %.cpp
+	@echo "Creating Object file for $*: $@"
 	$(CC) $(CCFLAGS) -c $(CCINC) $< -o $@
 
 # Create the required output file from the given objects and place in the
 # destination specified
-$(OUTPUT): $(QT_HDRS) $(OBJS)
-	mkdir -p $(DEST)
+$(OUTPUT): $(QT_OBJS) $(OBJS)
+	@if [ ! -d $(DEST) ]; then mkdir $(DEST); fi;
 	$(LD) $(LDFLAGS) $(OBJS) $(QT_OBJS) $(LIBS)
 
 # standard

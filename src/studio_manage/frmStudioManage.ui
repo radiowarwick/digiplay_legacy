@@ -1906,7 +1906,7 @@
     </widget>
     <widget class="QTabWidget">
         <property name="name">
-            <cstring>tabSearch</cstring>
+            <cstring>tabManage</cstring>
         </property>
         <property name="enabled">
             <bool>true</bool>
@@ -1984,14 +1984,6 @@ If the software "Crashes" or "Locks up", please send an email to: &lt;b&gt;digip
 If you have any suggestions for features you'd like to see in RaW Digiplay, please send an email to the same address above.&lt;/p&gt;&lt;p&gt;Thanks,&lt;/p&gt;&lt;P&gt;RaW Digiplay Development Team&lt;/p&gt;</string>
                 </property>
             </widget>
-        </widget>
-        <widget class="QWidget">
-            <property name="name">
-                <cstring>tabPagePlaylist</cstring>
-            </property>
-            <attribute name="title">
-                <string>Playlist</string>
-            </attribute>
         </widget>
         <widget class="QWidget">
             <property name="name">
@@ -3037,74 +3029,6 @@ If you have any suggestions for features you'd like to see in RaW Digiplay, plea
                 </property>
             </widget>
         </widget>
-        <widget class="QWidget">
-            <property name="name">
-                <cstring>tabPageScripts</cstring>
-            </property>
-            <attribute name="title">
-                <string>Scripts</string>
-            </attribute>
-        </widget>
-        <widget class="QWidget">
-            <property name="name">
-                <cstring>tabPageAudiowall</cstring>
-            </property>
-            <attribute name="title">
-                <string>Audio Wall</string>
-            </attribute>
-            <widget class="QLabel">
-                <property name="name">
-                    <cstring>textLabel1</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>20</x>
-                        <y>10</y>
-                        <width>631</width>
-                        <height>21</height>
-                    </rect>
-                </property>
-                <property name="text">
-                    <string>Select User Audio Wall:</string>
-                </property>
-            </widget>
-            <widget class="QListBox">
-                <item>
-                    <property name="text">
-                        <string>Adverts</string>
-                    </property>
-                </item>
-                <item>
-                    <property name="text">
-                        <string>Music Team Jingles</string>
-                    </property>
-                </item>
-                <item>
-                    <property name="text">
-                        <string>Sport Team Jingles</string>
-                    </property>
-                </item>
-                <property name="name">
-                    <cstring>listBox2_2</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>20</x>
-                        <y>40</y>
-                        <width>480</width>
-                        <height>580</height>
-                    </rect>
-                </property>
-            </widget>
-        </widget>
-        <widget class="QWidget">
-            <property name="name">
-                <cstring>tabPageSchedule</cstring>
-            </property>
-            <attribute name="title">
-                <string>Schedule</string>
-            </attribute>
-        </widget>
     </widget>
 </widget>
 <connections>
@@ -3140,7 +3064,7 @@ If you have any suggestions for features you'd like to see in RaW Digiplay, plea
     </connection>
 </connections>
 <includes>
-    <include location="local" impldecl="in implementation">frmSearch.ui.h</include>
+    <include location="local" impldecl="in implementation">frmStudioManage.ui.h</include>
 </includes>
 <slots>
     <slot>customEvent( QCustomEvent * event )</slot>

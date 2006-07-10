@@ -11,6 +11,10 @@
 *****************************************************************************/
 #include <qapplication.h>
 
+#include "Logger.h"
+#include "AuthLdap.h"
+#include "TabPanelInfo.h"
+
 #include "clockThread.h"
 #include "triggerThread.h"
 #include "libsearch.h"
@@ -19,6 +23,9 @@
 #include "recordLog.h"
 #include "modEmail.h"
 #include "dps.h"
+
+AuthLdap *authModule;
+TabPanelInfo *tabPanelInfo;
 
 libsearch *library_engine;
 triggerThread *dbTrigger;
@@ -36,11 +43,19 @@ QString path;
 QListViewItem *last_item;
 
 void frmStudioManage::init() {
+    // Configure logging
+    Logger::setAppName("studio_manage");
+    Logger::setLogLevel(5);
+    Logger::setDisplayLevel(0);
+    
 	// Connect to database
 	cout << "Connecting to database..." << endl;
 	conf = new config("digiplay");
 	C = new Connection(conf->getDBConnectString());
 	cout << "Connected." << endl;
+
+	// Initialise Authentication mechanism
+	authModule = new AuthLdap("localhost",389,"ou=People,dc=radio,dc=warwick,dc=ac,dc=uk");
 	
 	// Initialise modules
 	cout << "Initialising Modules..." << endl;
@@ -94,10 +109,12 @@ void frmStudioManage::init() {
 	getEmail();
 	last_item = NULL;
 	
-	tabPageScripts->setEnabled(false);
-	tabPageAudiowall->setEnabled(false);
-	tabPageSchedule->setEnabled(false);
-	tabPagePlaylist->setEnabled(false);
+	tabPanelInfo = new TabPanelInfo(tabManage,"Info");
+	tabPanelInfo->configure(authModule);
+	//tabPageScripts->setEnabled(false);
+	//tabPageAudiowall->setEnabled(false);
+	//tabPageSchedule->setEnabled(false);
+	//tabPagePlaylist->setEnabled(false);
 	btnLogin->setEnabled(false);
 	cout << "Interface initialisation complete." << endl;
 

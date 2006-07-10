@@ -1,32 +1,32 @@
 #ifndef CLASS_LOGGER_H
 #define CLASS_LOGGER_H
 
-#ifndef APP_NAME
-#error "Logger:: Must define APP_NAME for this application to use Logger!"
-#endif
+//#ifndef APP_NAME
+//#error "Logger:: Must define APP_NAME for this application to use Logger!"
+//#endif
 
 #include <string>
 #include <fstream>
+#include <iostream>
 using namespace std;
 
-class Logger
-{
+enum MESSAGE_TYPE {INFO,WARNING,ERROR,FATAL};
+
+class Logger {
 	public:
-
-		static Logger& log() {
-			static Logger logger("./" APP_NAME ".log");
-			return logger;
-		}
-		void write(string srcObject, string srcMethod, string srcMessage);
-
-		~Logger();
+		static void log(MESSAGE_TYPE type, char* routine, string message,
+														unsigned short level);
+		static void setLogLevel(unsigned short level){logLevel=level;}
+		static void setDisplayLevel(unsigned short level){displayLevel=level;}
+		static void setAppName(string name){appName=name;}
 
 	private:
-		Logger(string filename);
-		Logger(const Logger&);
-		Logger& operator=(const Logger&);
-
-		ofstream* logFile;
+		Logger();
+		~Logger();
+		static ofstream *logFile;
+		static unsigned short logLevel;
+		static unsigned short displayLevel;
+		static string appName;
 };
 
 #endif

@@ -102,10 +102,6 @@ void frmStudioManage::init() {
 	tabPanelEmail = new TabPanelEmail(tabManage,"Email");
 	tabPanelEmail->configure(authModule);
 	tabPanelEmail->getEmail(C);	
-	//tabPageScripts->setEnabled(false);
-	//tabPageAudiowall->setEnabled(false);
-	//tabPageSchedule->setEnabled(false);
-	//tabPagePlaylist->setEnabled(false);
 	btnLogin->setEnabled(false);
 	cout << "Interface initialisation complete." << endl;
 

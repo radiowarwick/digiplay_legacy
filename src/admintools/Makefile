@@ -16,6 +16,7 @@ QT_ENABLED 	=	yes
 
 # .cpp modules from which to create output
 MODS		=	dpsimport
+QT_MODS		=
 SHARED_MODS	=	systemmanager archivemanager config xmlDocument xmlElement dps
 
 # Global header files on which dependance exists

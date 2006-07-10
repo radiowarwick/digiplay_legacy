@@ -11,9 +11,12 @@ using namespace pqxx;
 class QTabWidget;
 class QTextBrowser;
 class QListView;
+class QListViewItem;
+class QIconSet;
 class Auth;
 
 class TabPanelEmail : public TabPanel {
+	Q_OBJECT
 	public:
 		TabPanelEmail(QTabWidget *parent, string text) 
 			: TabPanel(parent,text) {txtEmailBody = NULL;}
@@ -21,10 +24,10 @@ class TabPanelEmail : public TabPanel {
 		void configure(Auth *authModule);
 		void getEmail(Connection *C);
 
-	protected slots:
+	public slots:
 		virtual void getEmailBody(QListViewItem *current);		
+	
 	private:
-
 		void markRead(Connection *C, string id);
 		void draw();
 		void clear();

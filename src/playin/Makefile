@@ -16,6 +16,7 @@ QT_ENABLED 	=	no
 
 # .cpp modules from which to create output
 MODS		=	main md5
+QT_MODS		=
 SHARED_MODS	=
 
 # Global header files on which dependance exists

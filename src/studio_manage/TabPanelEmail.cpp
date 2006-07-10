@@ -72,7 +72,7 @@ void TabPanelEmail::draw() {
         lstEmail->setSorting(4, FALSE);
 	txtEmailBody = new QTextBrowser(getPanel(), "txtEmailBody" );
 	txtEmailBody->setGeometry( QRect( 10, 280, 495, 350 ) );
-	QObject::connect( lstEmail, SIGNAL( selectionChanged(QListViewItem*) ), this->getPanel(), SLOT( TabPanelEmail::getEmailBody(QListViewItem*) ) );
+	QObject::connect( lstEmail, SIGNAL( selectionChanged(QListViewItem*) ), this, SLOT( getEmailBody(QListViewItem*) ) );
 
 }
 

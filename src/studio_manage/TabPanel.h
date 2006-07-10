@@ -4,11 +4,14 @@
 #include <string>
 using namespace std;
 
+#include <qobject.h>
+
 class QWidget;
 class QTabWidget;
 class Auth;
 
-class TabPanel {
+class TabPanel : public QObject {
+	Q_OBJECT
 	public:
 		TabPanel(QTabWidget *parent, string text);
 		virtual ~TabPanel();

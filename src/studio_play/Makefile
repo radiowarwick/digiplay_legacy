@@ -15,7 +15,8 @@ OUT_STATIC	=	no
 QT_ENABLED 	=	yes
 
 # .cpp modules from which to create output
-MODS		=	frmPlayout main
+MODS		=	main
+QT_MODS		=	frmPlayout
 SHARED_MODS	=	config audioplayer audiomixer audiochannel playerThread \
 				audiowallthread clockThread triggerThread
 
@@ -24,5 +25,9 @@ HDRS		=
 
 # Compiler and linker options
 LIBS		=	-lpq /usr/lib/libpqxx.a -lreadline -lm -lpthread
+
+POSTCOMPILE	=	if [ ! -e $(ROOT)/bin/images ]; \
+					then mkdir $(ROOT)/bin/images; fi; \
+					cp -R images/* $(ROOT)/bin/images
 
 include $(ROOT)/src/Makefile.in

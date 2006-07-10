@@ -15,8 +15,10 @@ SHARED_OBJS	=	$(addsuffix .o,$(SHARED_MODS))
 SHARED_HDRS =	$(addsuffix .h,$(SHARED_MODS))
 
 OBJS        =   $(addsuffix .o,$(MODS)) \
+				$(addsuffix .o,$(QT_MODS)) \
 				$(addprefix $(ROOT)/src/,$(SHARED_OBJS))
 HDRS		:=	$(addsuffix .h,$(MODS)) \
+				$(addsuffix .h,$(QT_MODS)) \
 				$(addprefix $(ROOT)/src/,$(SHARED_HDRS))
 QT_OBJS		=
 QT_HDRS		=
@@ -34,8 +36,9 @@ ifeq ($(QT_ENABLED),yes)
 	CCFLAGS	+=	-pipe -W -D_REENTRANT -DQT_NO_DEBUG -DQT_THREAD_SUPPORT \
 				-DQT_SHARED
 	LIBS	+=	-L/usr/share/qt3/lib -L/usr/X11R6/lib -lqt-mt -lXext -lX11
-	QT_OBJS	=	$(addprefix moc_,$(patsubst %.ui,%.o,$(wildcard *.ui)))
-	QT_HDRS	=	$(patsubst %.ui,%.h,$(wildcard *.ui)) 
+	QT_OBJS	=	$(addprefix moc_,$(addsuffix .o,$(QT_MODS)))
+#	QT_OBJS	=	$(addprefix moc_,$(patsubst %.ui,%.o,$(wildcard *.ui)))
+#	QT_HDRS	=	$(patsubst %.ui,%.h,$(wildcard *.ui)) 
 endif
 
 # if we're making a library, need to add the fPIC compiler option
@@ -91,6 +94,7 @@ moc_%.cpp: %.h
 $(OUTPUT): $(QT_OBJS) $(OBJS)
 	@if [ ! -d $(DEST) ]; then mkdir $(DEST); fi;
 	$(LD) $(LDFLAGS) $(OBJS) $(QT_OBJS) $(LIBS)
+	$(POSTCOMPILE)
 
 # standard
 all: $(OUTPUT)
@@ -100,4 +104,5 @@ default: $(OUTPUT)
 # i.e. we only remove *.h and *.cpp if there exists a *.ui
 clean:
 	@rm -f *.o
-	@-$(foreach MOD,$(MODS), if [ -e $(MOD).ui ]; then rm -f moc_$(MOD).cpp $(MOD).cpp $(MOD).h; fi;)
+	@-$(foreach MOD,$(QT_MODS), rm -f moc_$(MOD).cpp)
+	@-$(foreach MOD,$(QT_MODS), if [ -e $(MOD).ui ]; then rm -f $(MOD).cpp $(MOD).h; fi;)

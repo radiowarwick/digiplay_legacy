@@ -15,7 +15,8 @@ OUT_STATIC	=	no
 QT_ENABLED 	=	yes
 
 # .cpp modules from which to create output
-MODS		=	frmAdmin frmAdminEditNewInfo frmAdminAddMusic main
+MODS		=	main
+QT_MODS		=	frmAdmin frmAdminEditNewInfo frmAdminAddMusic
 SHARED_MODS	=	systemmanager archivemanager config xmlDocument xmlElement dps
 
 # Global header files on which dependance exists

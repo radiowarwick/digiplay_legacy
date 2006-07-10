@@ -2734,101 +2734,6 @@ If you have any suggestions for features you'd like to see in RaW Digiplay, plea
         </widget>
         <widget class="QWidget">
             <property name="name">
-                <cstring>tabPageEmail</cstring>
-            </property>
-            <attribute name="title">
-                <string>E-mail</string>
-            </attribute>
-            <widget class="QListView">
-                <column>
-                    <property name="text">
-                        <string></string>
-                    </property>
-                    <property name="clickable">
-                        <bool>true</bool>
-                    </property>
-                    <property name="resizable">
-                        <bool>false</bool>
-                    </property>
-                </column>
-                <column>
-                    <property name="text">
-                        <string>From</string>
-                    </property>
-                    <property name="clickable">
-                        <bool>true</bool>
-                    </property>
-                    <property name="resizable">
-                        <bool>false</bool>
-                    </property>
-                </column>
-                <column>
-                    <property name="text">
-                        <string>Subject</string>
-                    </property>
-                    <property name="clickable">
-                        <bool>true</bool>
-                    </property>
-                    <property name="resizable">
-                        <bool>false</bool>
-                    </property>
-                </column>
-                <column>
-                    <property name="text">
-                        <string>Received</string>
-                    </property>
-                    <property name="clickable">
-                        <bool>true</bool>
-                    </property>
-                    <property name="resizable">
-                        <bool>false</bool>
-                    </property>
-                </column>
-                <column>
-                    <property name="text">
-                        <string>ID</string>
-                    </property>
-                    <property name="clickable">
-                        <bool>true</bool>
-                    </property>
-                    <property name="resizable">
-                        <bool>false</bool>
-                    </property>
-                </column>
-                <property name="name">
-                    <cstring>lstEmail</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>10</x>
-                        <y>10</y>
-                        <width>495</width>
-                        <height>265</height>
-                    </rect>
-                </property>
-                <property name="vScrollBarMode">
-                    <enum>AlwaysOn</enum>
-                </property>
-                <property name="allColumnsShowFocus">
-                    <bool>true</bool>
-                </property>
-            </widget>
-            <widget class="QTextEdit">
-                <property name="name">
-                    <cstring>txtEmailBody</cstring>
-                </property>
-                <property name="geometry">
-                    <rect>
-                        <x>10</x>
-                        <y>280</y>
-                        <width>495</width>
-                        <height>350</height>
-                    </rect>
-                </property>
-            </widget>
-        </widget>
-        <widget class="QWidget">
-            <property name="name">
                 <cstring>tabPageLogging</cstring>
             </property>
             <attribute name="title">
@@ -3056,12 +2961,6 @@ If you have any suggestions for features you'd like to see in RaW Digiplay, plea
         <receiver>frmStudioManage</receiver>
         <slot>LogRecord()</slot>
     </connection>
-    <connection>
-        <sender>lstEmail</sender>
-        <signal>selectionChanged(QListViewItem*)</signal>
-        <receiver>frmStudioManage</receiver>
-        <slot>displayEmailBody(QListViewItem*)</slot>
-    </connection>
 </connections>
 <includes>
     <include location="local" impldecl="in implementation">frmStudioManage.ui.h</include>
@@ -3072,7 +2971,6 @@ If you have any suggestions for features you'd like to see in RaW Digiplay, plea
     <slot>PlaylistAdd( int row, int col, int button, const QPoint &amp; mousepos )</slot>
     <slot>LogRecord()</slot>
     <slot>displayEmailBody( QListViewItem * current )</slot>
-    <slot>getEmail()</slot>
 </slots>
 <functions>
     <function access="private" specifier="non virtual">init()</function>

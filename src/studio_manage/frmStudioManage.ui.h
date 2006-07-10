@@ -14,6 +14,7 @@
 #include "Logger.h"
 #include "AuthLdap.h"
 #include "TabPanelInfo.h"
+#include "TabPanelEmail.h"
 
 #include "clockThread.h"
 #include "triggerThread.h"
@@ -26,19 +27,18 @@
 
 AuthLdap *authModule;
 TabPanelInfo *tabPanelInfo;
+TabPanelEmail *tabPanelEmail;
 
 libsearch *library_engine;
 triggerThread *dbTrigger;
 triggerThread *emailTrigger;
-modEmail *emailObj; 
 config *conf;
 recordLog *log; 
 Connection *C;
 clockThread *ck;
 vector<_track*> *SearchResults;
 vector<_track*> *Playlist = new vector<_track*>;
-QPixmap *sp_audio, *sp_artist, *sp_album, *email_new, *email_old;
-QIconSet *email_Icons;
+QPixmap *sp_audio, *sp_artist, *sp_album;
 QString path;
 QListViewItem *last_item;
 
@@ -66,7 +66,6 @@ void frmStudioManage::init() {
 	log = new recordLog(C,1);
 	cout << "success." << endl;
 	cout << " -> Email...";
-	emailObj = new modEmail();
 	cout << "success." << endl;
 	cout << " -> Clock...";
 	ck = new clockThread(this);
@@ -95,22 +94,14 @@ void frmStudioManage::init() {
 	sp_audio = new QPixmap(path + "/images/sp_audio.bmp");
 	sp_artist = new QPixmap(path + "/images/sp_artist.bmp");
 	sp_album = new QPixmap(path + "/images/sp_album.bmp");
-	email_new = new QPixmap(path + "/images/email_new.bmp");
-	email_old = new QPixmap(path + "/images/email_old.bmp");
-	email_Icons = new QIconSet(*email_new, QIconSet::Automatic);
 	
-	lstEmail->setColumnText(0, *email_Icons, "");
-	lstEmail->setColumnWidth(0,22); //New
-	lstEmail->setColumnWidth(1,183); //From
-	lstEmail->setColumnWidth(2,183); //Subject
-	lstEmail->setColumnWidth(3,90); //Received
-	lstEmail->setColumnWidth(4,0); //ID
-	lstEmail->setSorting(4, FALSE);
-	getEmail();
 	last_item = NULL;
 	
 	tabPanelInfo = new TabPanelInfo(tabManage,"Info");
 	tabPanelInfo->configure(authModule);
+	tabPanelEmail = new TabPanelEmail(tabManage,"Email");
+	tabPanelEmail->configure(authModule);
+	tabPanelEmail->getEmail(C);	
 	//tabPageScripts->setEnabled(false);
 	//tabPageAudiowall->setEnabled(false);
 	//tabPageSchedule->setEnabled(false);
@@ -131,7 +122,6 @@ void frmStudioManage::destroy() {
 	for (unsigned int i = 0; i < Playlist->size(); i++)
 		delete Playlist->at(i);
 	delete Playlist;
-	delete emailObj;
 	delete log;
 	delete library_engine;
 }
@@ -163,7 +153,7 @@ void frmStudioManage::customEvent(QCustomEvent *event) {
 			break;
 		}
 	case 30002: { //Email
-			getEmail();
+			tabPanelEmail->getEmail(C);
 			break;
 		}
 	default: {
@@ -253,34 +243,7 @@ bool frmStudioManage::isDefined(QString *name) {
 
 void frmStudioManage::displayEmailBody( QListViewItem *current )
 {
-	txtEmailBody->setText(emailObj->getEmailBody(C, current->text(4)));
-	emailObj->markRead(C, current->text(4));
 }
-
-void frmStudioManage::getEmail() {
-	QListViewItem *new_email;
-	vector<email> *incoming;
-	incoming = emailObj->getEmails(C);
-	int number = incoming->size();
-
-	lstEmail->clear();		
-	cout << number <<endl;
-
-	for (int i=(number-1); i > -1; i--) {
-		new_email = new QListViewItem(lstEmail, "",
-									  incoming->at(i).from,
-									  incoming->at(i).subject,
-									  incoming->at(i).received,
-									  incoming->at(i).id);
-		if ( incoming->at(i).flag ==TRUE ) 
-			new_email->setPixmap(0, *email_new);
-		else
-			new_email->setPixmap(0, *email_old);
-	}
-	delete incoming;
-}
-
-
 
 QString frmStudioManage::getTime( long smpl ) {
 	QString S;

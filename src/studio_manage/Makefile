@@ -15,7 +15,7 @@ OUT_STATIC	=	no
 QT_ENABLED 	=	yes
 
 # .cpp modules from which to create output
-MODS		=	frmStudioManage main TabPanel TabPanelInfo
+MODS		=	frmStudioManage main TabPanel TabPanelInfo TabPanelEmail
 SHARED_MODS	=	config libsearch track modEmail recordLog dps\
 				clockThread triggerThread Auth AuthLdap Logger
 

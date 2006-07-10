@@ -60,7 +60,7 @@ MAKEDEPEND	=	$(CC) -M $(CCFLAGS) $(CCINC) -o $*.d $<
 
 # lets not use the default make implicit rules because I wouldn't
 # trust them as far as I could throw them :)
-.SUFFIXES:
+.SUFFIXES: .c
 
 # uncomment to keep intermediate QT generated files
 #.PRECIOUS: moc_%.cpp %.cpp %.h

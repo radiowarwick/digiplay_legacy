@@ -65,8 +65,6 @@ void frmStudioManage::init() {
 	cout << " -> Logging...";
 	log = new recordLog(C,1);
 	cout << "success." << endl;
-	cout << " -> Email...";
-	cout << "success." << endl;
 	cout << " -> Clock...";
 	ck = new clockThread(this);
 	ck->start();
@@ -101,17 +99,14 @@ void frmStudioManage::init() {
 	tabPanelInfo->configure(authModule);
 	tabPanelEmail = new TabPanelEmail(tabManage,"Email");
 	tabPanelEmail->configure(authModule);
-	tabPanelEmail->getEmail(C);	
 	btnLogin->setEnabled(false);
 	cout << "Interface initialisation complete." << endl;
 
-	// Create triggers for configuration and email
+	// Create trigger for configuration
 	cout << "Creating database triggers..." << endl;
 	dbTrigger = new triggerThread(this, QString(conf->getDBConnectString()), 1); 
 	dbTrigger->start();
-	emailTrigger = new triggerThread(this, QString(conf->getDBConnectString()), 2); 
-	emailTrigger->start();
-	cout << "Trigger active." << endl;	
+	cout << "Triggers active." << endl;	
 }
 
 void frmStudioManage::destroy() {
@@ -146,10 +141,6 @@ void frmStudioManage::customEvent(QCustomEvent *event) {
 					conf->setParam("next_on_showplan",Playlist->at(0)->md5());
 				}
 			}
-			break;
-		}
-	case 30002: { //Email
-			tabPanelEmail->getEmail(C);
 			break;
 		}
 	default: {

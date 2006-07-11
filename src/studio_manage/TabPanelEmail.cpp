@@ -11,7 +11,6 @@
 #include "Auth.h"
 #include "Logger.h"
 #include "dps.h"
-#include "config.h"
 
 #include "TabPanelEmail.h"
 
@@ -45,6 +44,10 @@ void TabPanelEmail::draw() {
 
 
 */
+	conf = new config("digiplay");
+	C = new Connection(conf->getDBConnectString());
+        emailTrigger = new triggerThread(this->getPanel(), QString(conf->getDBConnectString()), 2);
+        emailTrigger->start();
 	QString path = qApp->applicationDirPath();
         email_new = new QPixmap(path + "/images/email_new.bmp");
         email_old = new QPixmap(path + "/images/email_old.bmp");
@@ -73,10 +76,11 @@ void TabPanelEmail::draw() {
 	txtEmailBody = new QTextBrowser(getPanel(), "txtEmailBody" );
 	txtEmailBody->setGeometry( QRect( 10, 280, 495, 350 ) );
 	QObject::connect( lstEmail, SIGNAL( selectionChanged(QListViewItem*) ), this, SLOT( getEmailBody(QListViewItem*) ) );
+	getEmail();
 
 }
 
-void TabPanelEmail::getEmail(Connection *C){
+void TabPanelEmail::getEmail(){
 
 
         Transaction *T = new Transaction(*C,"");
@@ -119,15 +123,12 @@ void TabPanelEmail::getEmail(Connection *C){
 }
 
 void TabPanelEmail::getEmailBody(QListViewItem *current) {
-	config *conf = new config("digiplay");
-	Connection *C = new Connection(conf->getDBConnectString());
         Transaction *T = new Transaction(*C,"");
 	string id = current->text(4);
         stringstream SQL;
                 SQL << "SELECT * FROM email WHERE id='"
                     << id
                     << "' ORDER BY datetime DESC LIMIT 50;";
-//      cout << SQL.str() << endl;
         try {
                 Result R = T->exec(SQL.str());
                 txtEmailBody->setText(R[0]["body"].c_str());
@@ -136,17 +137,15 @@ void TabPanelEmail::getEmailBody(QListViewItem *current) {
                 cout << " -> ERROR: Failed to get e-mail body." << endl;
         }
         delete T;
-	delete C;
-	delete conf;
+	markRead(id);
 
 }
 
-void TabPanelEmail::markRead(Connection *C, string id) {
+void TabPanelEmail::markRead(string id) {
         Transaction *T = new Transaction(*C,"");
         stringstream SQL;
                 SQL << "UPDATE email SET new_flag='f' WHERE id='"
                     << id << "';";
-  //      cout << SQL.str() << endl;
         try {
                 T->exec(SQL.str());
                 T->commit();
@@ -158,6 +157,19 @@ void TabPanelEmail::markRead(Connection *C, string id) {
         delete T;
 }
 
+
+void TabPanelEmail::customEvent(QCustomEvent *event) {
+        switch (event->type()) {
+        case 30002: { //Some kind of change to the email table
+                        getEmail();
+                        break;
+                }
+        default: {
+                        qWarning("Unknown event type: %d", event->type());
+                        break;
+                }
+        }
+}
 
 
 

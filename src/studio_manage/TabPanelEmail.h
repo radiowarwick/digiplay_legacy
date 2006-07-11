@@ -2,6 +2,8 @@
 #define CLASS_TAB_PANEL_EMAIL
 
 #include "TabPanel.h"
+#include "triggerThread.h"
+#include "config.h"
 
 #include "pqxx/connection.h"
 #include "pqxx/transaction.h"
@@ -22,15 +24,20 @@ class TabPanelEmail : public TabPanel {
 			: TabPanel(parent,text) {txtEmailBody = NULL;}
 		~TabPanelEmail();
 		void configure(Auth *authModule);
-		void getEmail(Connection *C);
+		void customEvent(QCustomEvent *event);
 
 	public slots:
 		virtual void getEmailBody(QListViewItem *current);		
 	
 	private:
-		void markRead(Connection *C, string id);
+		void markRead(string id);
 		void draw();
 		void clear();
+		void getEmail();
+		
+		config *conf;
+		Connection *C;
+		triggerThread *emailTrigger;
 		QListView *lstEmail;
 		QTextBrowser *txtEmailBody;
 		QPixmap *email_new, *email_old;

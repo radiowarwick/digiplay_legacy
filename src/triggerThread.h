@@ -22,23 +22,23 @@ class studioTrigger : public trigger {
     public:
         studioTrigger(Connection *C, string name, int config_id) 
 			: trigger(*C,name), id(config_id) {;}
-		void initialise(QWidget *o);
+		void initialise(QObject *o);
         void operator()(int be_pid);
 		
 	private:
-		QWidget *receiver;
+		QObject *receiver;
 		int id;
 };
 #endif
 
 class triggerThread : public QThread {
 	public:
-		triggerThread(QWidget *o, QString dbstring, int t_id);
+		triggerThread(QObject *o, QString dbstring, int t_id);
 		void run();
 		void stop();
 
 	private:
-		QWidget *receiver;
+		QObject *receiver;
 		QString db_connect;
 		bool enabled;
 		int id;

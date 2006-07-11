@@ -4,7 +4,7 @@
  * Studio trigger derived class
  * This registers a trigger with the database
  */
-void studioTrigger::initialise(QWidget *o) {
+void studioTrigger::initialise(QObject *o) {
 	receiver = o;
 }
 
@@ -15,7 +15,7 @@ void studioTrigger::operator()(int be_pid) {
 }
 // ===========================================
 
-triggerThread::triggerThread(QWidget *o, QString dbstring, int t_id) {
+triggerThread::triggerThread(QObject *o, QString dbstring, int t_id) {
 	receiver = o;
 	db_connect = dbstring;
 	

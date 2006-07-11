@@ -7,13 +7,14 @@
 #include "TabPanel.h"
 
 TabPanel::TabPanel(QTabWidget *parent, string text) {
+	cout << "Running TabPanel constructor" << endl;
 	tabParent = parent;
 	tabText = text;
-	panel = new QWidget(0,"tabPanel");	
+	panel = new QWidget(0,"tabPanel");
 }
 
 TabPanel::~TabPanel() {
-
+	delete panel;
 }
 
 void TabPanel::configure(Auth *authModule) {

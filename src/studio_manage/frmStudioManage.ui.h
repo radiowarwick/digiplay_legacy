@@ -152,7 +152,7 @@ void frmStudioManage::customEvent(QCustomEvent *event) {
 
 void frmStudioManage::Library_Search() {
 	cout << "Searching audio library..." << endl;
-	library_engine->searchLimit(50);
+	library_engine->searchLimit(200);
 	if (TitleCheckBox->isChecked()) {
 		cout << " -> Search Title: true" << endl;
 	}

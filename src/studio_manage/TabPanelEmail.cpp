@@ -108,6 +108,7 @@ void TabPanelEmail::getEmail(){
 	stringstream SQL;
 	QListViewItem *new_email = 0;
 
+	lstEmail->clear();
 	SQL << "SELECT * FROM email ORDER BY datetime DESC LIMIT 50;";
 //	cout << SQL.str() << endl;
 	try {

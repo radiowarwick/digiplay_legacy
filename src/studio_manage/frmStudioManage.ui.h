@@ -16,6 +16,7 @@
 #include "TabPanelInfo.h"
 #include "TabPanelEmail.h"
 #include "TabPanelSearch.h"
+#include "TabPanelPlaylist.h"
 
 #include "clockThread.h"
 #include "triggerThread.h"
@@ -28,6 +29,7 @@ AuthLdap *authModule;
 TabPanelInfo *tabPanelInfo;
 TabPanelEmail *tabPanelEmail;
 TabPanelSearch *tabPanelSearch;
+TabPanelPlaylist *tabPanelPlaylist;
 
 triggerThread *dbTrigger;
 config *conf;
@@ -104,6 +106,11 @@ void frmStudioManage::init() {
 	cout << " -> Email panel...";
 	tabPanelEmail = new TabPanelEmail(tabManage,"Email");
 	tabPanelEmail->configure(authModule);
+	cout << " success." << endl;
+
+	cout << " -> Playlist panel...";
+	tabPanelPlaylist = new TabPanelPlaylist(tabManage,"Playlist");
+	tabPanelPlaylist->configure(authModule);
 	cout << " success." << endl;
 
 	btnLogin->setEnabled(false);

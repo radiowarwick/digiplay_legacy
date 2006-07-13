@@ -16,7 +16,7 @@ QT_ENABLED 	=	yes
 
 # .cpp modules from which to create output
 MODS		=	main
-QT_MODS		=	frmStudioManage TabPanel TabPanelInfo TabPanelEmail TabPanelSearch
+QT_MODS		=	frmStudioManage TabPanel TabPanelInfo TabPanelEmail TabPanelSearch TabPanelPlaylist
 SHARED_MODS	=	config libsearch track modEmail recordLog dps\
 				clockThread triggerThread Auth AuthLdap Logger
 

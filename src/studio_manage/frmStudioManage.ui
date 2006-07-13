@@ -740,35 +740,6 @@
         </widget>
         <widget class="QLabel">
             <property name="name">
-                <cstring>textLabel1_2</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>520</x>
-                    <y>0</y>
-                    <width>500</width>
-                    <height>31</height>
-                </rect>
-            </property>
-            <property name="paletteForegroundColor">
-                <color>
-                    <red>83</red>
-                    <green>4</green>
-                    <blue>85</blue>
-                </color>
-            </property>
-            <property name="font">
-                <font>
-                    <family>Sans Serif</family>
-                    <pointsize>18</pointsize>
-                </font>
-            </property>
-            <property name="text">
-                <string>ON Next:</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
                 <cstring>textLabel3_2</cstring>
             </property>
             <property name="geometry">
@@ -802,6 +773,35 @@
             </property>
             <property name="text">
                 <string>ON Now: RaW 1251 AM</string>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel1_2</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>520</x>
+                    <y>0</y>
+                    <width>500</width>
+                    <height>31</height>
+                </rect>
+            </property>
+            <property name="paletteForegroundColor">
+                <color>
+                    <red>83</red>
+                    <green>4</green>
+                    <blue>85</blue>
+                </color>
+            </property>
+            <property name="font">
+                <font>
+                    <family>Sans Serif</family>
+                    <pointsize>18</pointsize>
+                </font>
+            </property>
+            <property name="text">
+                <string>ON Next:</string>
             </property>
         </widget>
     </widget>

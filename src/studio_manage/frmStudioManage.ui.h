@@ -17,12 +17,12 @@
 #include "TabPanelEmail.h"
 #include "TabPanelSearch.h"
 #include "TabPanelPlaylist.h"
+#include "TabPanelLogging.h"
 
 #include "clockThread.h"
 #include "triggerThread.h"
 #include "track.h"
 #include "config.h"
-#include "recordLog.h"
 #include "dps.h"
 
 AuthLdap *authModule;
@@ -30,10 +30,10 @@ TabPanelInfo *tabPanelInfo;
 TabPanelEmail *tabPanelEmail;
 TabPanelSearch *tabPanelSearch;
 TabPanelPlaylist *tabPanelPlaylist;
+TabPanelLogging *tabPanelLogging;
 
 triggerThread *dbTrigger;
 config *conf;
-recordLog *log; 
 Connection *C;
 clockThread *ck;
 vector<_track*> *SearchResults;
@@ -59,9 +59,6 @@ void frmStudioManage::init() {
 	
 	// Initialise modules
 	cout << "Initialising Modules..." << endl;
-	cout << " -> Logging...";
-	log = new recordLog(C,1);
-	cout << "success." << endl;
 	cout << " -> Clock...";
 	ck = new clockThread(this);
 	ck->start();
@@ -77,13 +74,6 @@ void frmStudioManage::init() {
 	lstShowPlan->setColumnWidth(2,0);
 	lstShowPlan->setColumnWidth(3,60);
 	lstShowPlan->setSorting(-1,FALSE);
-	
-	lstRecentlyLogged->setColumnWidth(0,101);
-	lstRecentlyLogged->setColumnWidth(1,193);
-	lstRecentlyLogged->setColumnWidth(2,193);
-	lstRecentlyLogged->setSorting(-1,FALSE);
-	txtReclibLogBox->setEnabled(FALSE);
-	log->getRecentlyLogged(lstRecentlyLogged);
 	
 	sp_audio = new QPixmap(path + "/images/sp_audio.bmp");
 	sp_artist = new QPixmap(path + "/images/sp_artist.bmp");
@@ -113,6 +103,11 @@ void frmStudioManage::init() {
 	tabPanelPlaylist->configure(authModule);
 	cout << " success." << endl;
 
+	cout << " -> Logging panel...";
+	tabPanelLogging = new TabPanelLogging(tabManage,"Logging");
+	tabPanelLogging->configure(authModule);
+	cout << " success." << endl;
+
 	btnLogin->setEnabled(false);
 	cout << "Interface initialisation complete." << endl;
 
@@ -127,7 +122,6 @@ void frmStudioManage::destroy() {
 	for (unsigned int i = 0; i < Playlist->size(); i++)
 		delete Playlist->at(i);
 	delete Playlist;
-	delete log;
 }
 
 void frmStudioManage::customEvent(QCustomEvent *event) {
@@ -185,18 +179,6 @@ void frmStudioManage::PlaylistAdd(int row, int col, int button, const QPoint& mo
 	}
 }
 */
-void frmStudioManage::LogRecord() {
-	string artist = txtArtistLogBox->text().ascii();
-	string title = txtTitleLogBox->text().ascii();
-	string reclibid = txtReclibLogBox->text().ascii();
-
-	if (log->details(0, artist, title) != 0)
-		cout << "Logging failed" << endl;
-	txtReclibLogBox->setText("");
-	txtArtistLogBox->setText("");
-	txtTitleLogBox->setText("");
-	log->getRecentlyLogged(lstRecentlyLogged);
-}
 
 bool frmStudioManage::isDefined(QString *name) {
 	//	for (unsigned short i = 0; i < names->size(); i++) {
@@ -205,7 +187,6 @@ bool frmStudioManage::isDefined(QString *name) {
 	//	}
 	return false;
 }
-
 
 QString frmStudioManage::getTime( long smpl ) {
 	QString S;

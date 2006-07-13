@@ -15,23 +15,21 @@
 #include "AuthLdap.h"
 #include "TabPanelInfo.h"
 #include "TabPanelEmail.h"
+#include "TabPanelSearch.h"
 
 #include "clockThread.h"
 #include "triggerThread.h"
-#include "libsearch.h"
 #include "track.h"
 #include "config.h"
 #include "recordLog.h"
-#include "modEmail.h"
 #include "dps.h"
 
 AuthLdap *authModule;
 TabPanelInfo *tabPanelInfo;
 TabPanelEmail *tabPanelEmail;
+TabPanelSearch *tabPanelSearch;
 
-libsearch *library_engine;
 triggerThread *dbTrigger;
-triggerThread *emailTrigger;
 config *conf;
 recordLog *log; 
 Connection *C;
@@ -59,9 +57,6 @@ void frmStudioManage::init() {
 	
 	// Initialise modules
 	cout << "Initialising Modules..." << endl;
-	cout << " -> Library Search...";
-	library_engine = new libsearch();
-	cout << "success." << endl;
 	cout << " -> Logging...";
 	log = new recordLog(C,1);
 	cout << "success." << endl;
@@ -74,7 +69,6 @@ void frmStudioManage::init() {
 	// Initialise interface
 	cout << "Initialising Interface..." << endl;
 	path = qApp->applicationDirPath();
-	tblLibrarySearchResults->setColumnWidth(3,0);
 	lstShowPlan->setColumnWidth(0,80);
 	lstShowPlan->setColumnWidth(1,20);
 	//lstShowPlan->setColumnWidth(2,20);
@@ -95,10 +89,23 @@ void frmStudioManage::init() {
 	
 	last_item = NULL;
 	
+	// Load tab panels	
+	cout << "Loading panels" << endl;
+	cout << " -> Info panel...";
 	tabPanelInfo = new TabPanelInfo(tabManage,"Info");
 	tabPanelInfo->configure(authModule);
+	cout << " success." << endl;
+
+	cout << " -> Search panel...";
+	tabPanelSearch = new TabPanelSearch(tabManage,"Library Search");
+	tabPanelSearch->configure(authModule);
+	cout << " success." << endl;
+
+	cout << " -> Email panel...";
 	tabPanelEmail = new TabPanelEmail(tabManage,"Email");
 	tabPanelEmail->configure(authModule);
+	cout << " success." << endl;
+
 	btnLogin->setEnabled(false);
 	cout << "Interface initialisation complete." << endl;
 
@@ -114,7 +121,6 @@ void frmStudioManage::destroy() {
 		delete Playlist->at(i);
 	delete Playlist;
 	delete log;
-	delete library_engine;
 }
 
 void frmStudioManage::customEvent(QCustomEvent *event) {
@@ -150,45 +156,11 @@ void frmStudioManage::customEvent(QCustomEvent *event) {
 	}
 }
 
-void frmStudioManage::Library_Search() {
-	cout << "Searching audio library..." << endl;
-	library_engine->searchLimit(200);
-	if (TitleCheckBox->isChecked()) {
-		cout << " -> Search Title: true" << endl;
-	}
-	if (ArtistCheckBox->isChecked()) {
-		cout << " -> Search Artist: true" << endl;
-	}
-	if (AlbumCheckBox->isChecked()) {
-		cout << " -> Search Album: true" << endl;
-	}
-	library_engine->searchTitle(TitleCheckBox->isChecked());
-	library_engine->searchArtist(ArtistCheckBox->isChecked());
-	library_engine->searchAlbum(AlbumCheckBox->isChecked());
-	if (SearchResults)
-		for (unsigned int i = 0; i < SearchResults->size(); i++)
-			delete SearchResults->at(i);
-	delete SearchResults;
-	SearchResults = library_engine->query(txtLibrarySearchText->text());
-	cout << " -> Criteria: " << library_engine->lastQuery() << endl;
-	cout << " -> Found: " << SearchResults->size() << " matches." << endl;
-	tblLibrarySearchResults->setNumRows(SearchResults->size());
-	for (unsigned int i = 0; i < SearchResults->size(); i++) {
-		tblLibrarySearchResults->setItem(i,0,
-										 new QTableItem( tblLibrarySearchResults, QTableItem::Never, SearchResults->at(i)->title()));
-		tblLibrarySearchResults->setItem(i,1,
-										 new QTableItem( tblLibrarySearchResults, QTableItem::Never, SearchResults->at(i)->artist()));
-		tblLibrarySearchResults->setItem(i,2,
-										 new QTableItem( tblLibrarySearchResults, QTableItem::Never, SearchResults->at(i)->album()));
-		tblLibrarySearchResults->setItem(i,3,
-										 new QTableItem( tblLibrarySearchResults, QTableItem::Never, SearchResults->at(i)->id()));
-	}
-	tblLibrarySearchResults->adjustColumn(0);
-	tblLibrarySearchResults->adjustColumn(1);
-	tblLibrarySearchResults->adjustColumn(2);
-	tblLibrarySearchResults->setColumnWidth(3,0);
-}
-
+/*
+  ####################################
+  This function needs moving into the TabPanelSearch class
+  ####################################
+  
 void frmStudioManage::PlaylistAdd(int row, int col, int button, const QPoint& mousepos) {
 	if (mousepos.isNull()) {button = 0; row = 0; col = 0;}
 	_track *new_track = new _track(*(SearchResults->at(row)));
@@ -205,7 +177,7 @@ void frmStudioManage::PlaylistAdd(int row, int col, int button, const QPoint& mo
 		conf->setParam("next_on_showplan",new_track->md5());
 	}
 }
-
+*/
 void frmStudioManage::LogRecord() {
 	string artist = txtArtistLogBox->text().ascii();
 	string title = txtTitleLogBox->text().ascii();
@@ -227,10 +199,6 @@ bool frmStudioManage::isDefined(QString *name) {
 	return false;
 }
 
-
-void frmStudioManage::displayEmailBody( QListViewItem *current )
-{
-}
 
 QString frmStudioManage::getTime( long smpl ) {
 	QString S;

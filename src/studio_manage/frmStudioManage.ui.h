@@ -18,6 +18,7 @@
 #include "TabPanelSearch.h"
 #include "TabPanelPlaylist.h"
 #include "TabPanelLogging.h"
+#include "TabPanelScript.h"
 
 #include "clockThread.h"
 #include "triggerThread.h"
@@ -31,6 +32,7 @@ TabPanelEmail *tabPanelEmail;
 TabPanelSearch *tabPanelSearch;
 TabPanelPlaylist *tabPanelPlaylist;
 TabPanelLogging *tabPanelLogging;
+TabPanelScript *tabPanelScript;
 
 triggerThread *dbTrigger;
 config *conf;
@@ -93,19 +95,24 @@ void frmStudioManage::init() {
 	tabPanelSearch->configure(authModule);
 	cout << " success." << endl;
 
+	cout << " -> Playlist panel...";
+	tabPanelPlaylist = new TabPanelPlaylist(tabManage, this, "Playlist");
+	tabPanelPlaylist->configure(authModule);
+	cout << " success." << endl;
+	
 	cout << " -> Email panel...";
 	tabPanelEmail = new TabPanelEmail(tabManage,"Email");
 	tabPanelEmail->configure(authModule);
 	cout << " success." << endl;
 
-	cout << " -> Playlist panel...";
-	tabPanelPlaylist = new TabPanelPlaylist(tabManage, this, "Playlist");
-	tabPanelPlaylist->configure(authModule);
-	cout << " success." << endl;
-
 	cout << " -> Logging panel...";
 	tabPanelLogging = new TabPanelLogging(tabManage,"Logging");
 	tabPanelLogging->configure(authModule);
+	cout << " success." << endl;
+
+	cout << " -> Script panel...";
+	tabPanelScript = new TabPanelScript(tabManage,"Script");
+	tabPanelScript->configure(authModule);
 	cout << " success." << endl;
 
 	btnLogin->setEnabled(false);
@@ -198,3 +205,5 @@ QString frmStudioManage::getTime( long smpl ) {
 	S += QString::number(sec);
 	return S;
 }
+
+

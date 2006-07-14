@@ -9,6 +9,8 @@
 #include "triggerThread.h"
 #include "config.h"
 
+#include "frmStudioManage.h"
+
 #include "pqxx/connection.h"
 #include "pqxx/transaction.h"
 #include "pqxx/result.h"
@@ -20,7 +22,8 @@ class Auth;
 class TabPanelPlaylist : public TabPanel {
 	Q_OBJECT
 	public:
-		TabPanelPlaylist(QTabWidget *parent, string text) : TabPanel(parent,text) {
+		TabPanelPlaylist(QTabWidget *parent, frmStudioManage *parent2, string text) : TabPanel(parent,text) {
+			parentForm = parent2;
 			cout << "Running TabPanelPlaylist constructor" << endl;
 			init();
 		}
@@ -30,13 +33,15 @@ class TabPanelPlaylist : public TabPanel {
 
 	public slots:
 //		virtual void getEmailBody(QListViewItem *current);		
-	
+		virtual void playlistAdd(QListViewItem *current);
+
 	private:
 		void init();
 		void draw();
 		void clear();
 		void getPlaylist();		
 		QString getTime( long smpl );
+		frmStudioManage *parentForm;
 		Connection *C;
 		triggerThread *playlistTrigger;
 		QListView *lstPlaylist;

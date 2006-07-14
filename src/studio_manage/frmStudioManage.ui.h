@@ -89,7 +89,7 @@ void frmStudioManage::init() {
 	cout << " success." << endl;
 
 	cout << " -> Search panel...";
-	tabPanelSearch = new TabPanelSearch(tabManage,"Library Search");
+	tabPanelSearch = new TabPanelSearch(tabManage, this, "Library Search");
 	tabPanelSearch->configure(authModule);
 	cout << " success." << endl;
 
@@ -99,7 +99,7 @@ void frmStudioManage::init() {
 	cout << " success." << endl;
 
 	cout << " -> Playlist panel...";
-	tabPanelPlaylist = new TabPanelPlaylist(tabManage,"Playlist");
+	tabPanelPlaylist = new TabPanelPlaylist(tabManage, this, "Playlist");
 	tabPanelPlaylist->configure(authModule);
 	cout << " success." << endl;
 
@@ -157,14 +157,10 @@ void frmStudioManage::customEvent(QCustomEvent *event) {
 	}
 }
 
-/*
-  ####################################
-  This function needs moving into the TabPanelSearch class
-  ####################################
-  
-void frmStudioManage::PlaylistAdd(int row, int col, int button, const QPoint& mousepos) {
-	if (mousepos.isNull()) {button = 0; row = 0; col = 0;}
-	_track *new_track = new _track(*(SearchResults->at(row)));
+void frmStudioManage::playlistAdd(int *id) {
+	Transaction *T = new Transaction(*C, "");
+	_track *new_track = new _track(T, *id );
+	delete T;
 	Playlist->push_back(new_track);
 	QListViewItem *track_title = new QListViewItem( lstShowPlan,last_item, new_track->title(), getTime(new_track->length_smpl()), "00:00:00", "");
 	track_title->setPixmap( 0, *sp_audio );
@@ -178,7 +174,6 @@ void frmStudioManage::PlaylistAdd(int row, int col, int button, const QPoint& mo
 		conf->setParam("next_on_showplan",new_track->md5());
 	}
 }
-*/
 
 bool frmStudioManage::isDefined(QString *name) {
 	//	for (unsigned short i = 0; i < names->size(); i++) {

@@ -69,8 +69,8 @@ void TabPanelPlaylist::draw() {
 	lstPlaylist->setAllColumnsShowFocus( TRUE );
 
 	// connect signals and slots here
-//	QObject::connect( lstEmail, SIGNAL( selectionChanged(QListViewItem*) ),
-//							this, SLOT( getEmailBody(QListViewItem*) ) );
+	QObject::connect( lstPlaylist, SIGNAL( doubleClicked(QListViewItem*) ),
+				this, SLOT( playlistAdd(QListViewItem*) ) );
 }
 
 
@@ -133,6 +133,13 @@ void TabPanelPlaylist::customEvent(QCustomEvent *event) {
 //			qWarning("Unknown event type: %d", event->type());
 			break;
 		}
+	}
+}
+
+void TabPanelPlaylist::playlistAdd(QListViewItem *current) {
+	if (current->text(3)) {
+		int id = atoi(current->text(3).ascii());
+		parentForm->playlistAdd(&id);
 	}
 }
 

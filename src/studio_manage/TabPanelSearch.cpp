@@ -53,6 +53,8 @@ void TabPanelSearch::draw() {
 //			clear();
 //	}
 
+    SearchResults=NULL;
+
     library_engine = new libsearch();
     lblSearch = new QLabel( getPanel(), "lblSearch" );
     lblSearch->setGeometry( QRect( 28, 10, 60, 20 ) );
@@ -136,7 +138,7 @@ void TabPanelSearch::draw() {
 
 
     connect( btnLibrarySearch, SIGNAL( clicked() ), this, SLOT( Library_Search() ) );
-    connect( tblLibrarySearchResults, SIGNAL( doubleClicked(int,int,int,const QPoint&) ), this, SLOT( PlaylistAdd(int,int,int,const QPoint&) ) );
+    connect( tblLibrarySearchResults, SIGNAL( doubleClicked(int,int,int,const QPoint&) ), this, SLOT( playlistAdd(int,int,int,const QPoint&) ) );
     connect( txtLibrarySearchText, SIGNAL( returnPressed() ), this, SLOT( Library_Search() ) );
 
 
@@ -178,7 +180,13 @@ void TabPanelSearch::Library_Search() {
         tblLibrarySearchResults->adjustColumn(0);
         tblLibrarySearchResults->adjustColumn(1);
         tblLibrarySearchResults->adjustColumn(2);
-        tblLibrarySearchResults->setColumnWidth(3,0);
+        tblLibrarySearchResults->setColumnWidth(3,0); 
+}
+
+void TabPanelSearch::playlistAdd(int row, int col, int button, const QPoint& mousepos) {
+        if (mousepos.isNull()) {button = 0; row = 0; col = 0;}
+	int id = atoi(SearchResults->at(row)->id().c_str());
+      	parentForm->playlistAdd(&id);
 }
 
 void TabPanelSearch::clear() {

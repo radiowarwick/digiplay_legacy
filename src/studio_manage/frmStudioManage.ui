@@ -1987,13 +1987,12 @@ If you have any suggestions for features you'd like to see in RaW Digiplay, plea
         </widget>
     </widget>
 </widget>
-<connections>
-</connections>
 <includes>
     <include location="local" impldecl="in implementation">frmStudioManage.ui.h</include>
 </includes>
 <slots>
     <slot>customEvent( QCustomEvent * event )</slot>
+    <slot>playlistAdd( int * id )</slot>
 </slots>
 <functions>
     <function access="private" specifier="non virtual">init()</function>

@@ -8,6 +8,8 @@
 #include <qlineedit.h>
 #include <qtooltip.h>
 
+#include "frmStudioManage.h"
+
 #include "TabPanel.h"
 #include "config.h"
 #include "libsearch.h"
@@ -23,7 +25,8 @@ class Auth;
 class TabPanelSearch : public TabPanel {
 	Q_OBJECT
 	public:
-		TabPanelSearch(QTabWidget *parent, string text) : TabPanel(parent,text)  {
+		TabPanelSearch(QTabWidget *parent, frmStudioManage *parent2, string text) : TabPanel(parent,text)  {
+			parentForm = parent2;
 			cout << "Running TabPanelSearch constructor" << endl;
 			init();
 		}
@@ -32,6 +35,7 @@ class TabPanelSearch : public TabPanel {
 
 	public slots:
 		virtual void Library_Search();
+		virtual void playlistAdd(int, int, int, const QPoint&);
 	
 	private:
 //		TabPanelSearch()
@@ -48,6 +52,7 @@ class TabPanelSearch : public TabPanel {
 		QLineEdit *txtLibrarySearchText;
 		QLabel *Searchlable;
 		QLabel *lblSearch;
+		frmStudioManage *parentForm;
 		QCheckBox *ArtistCheckBox;
 		QCheckBox *AlbumCheckBox;
 		QCheckBox *TitleCheckBox;

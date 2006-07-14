@@ -18,7 +18,7 @@ QT_ENABLED 	=	yes
 MODS		=	main
 QT_MODS		=	frmStudioManage TabPanel TabPanelInfo TabPanelEmail\
 				TabPanelSearch TabPanelPlaylist TabPanelLogging\
-				TabPanelScript
+				TabPanelScript TabPanelCart TabPanelFileBrowser
 SHARED_MODS	=	config libsearch track dps clockThread triggerThread\
 				Auth AuthLdap Logger
 

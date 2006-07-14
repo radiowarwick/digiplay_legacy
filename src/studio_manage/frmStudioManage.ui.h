@@ -19,6 +19,8 @@
 #include "TabPanelPlaylist.h"
 #include "TabPanelLogging.h"
 #include "TabPanelScript.h"
+#include "TabPanelCart.h"
+#include "TabPanelFileBrowser.h"
 
 #include "clockThread.h"
 #include "triggerThread.h"
@@ -30,9 +32,11 @@ AuthLdap *authModule;
 TabPanelInfo *tabPanelInfo;
 TabPanelEmail *tabPanelEmail;
 TabPanelSearch *tabPanelSearch;
+TabPanelFileBrowser *tabPanelFileBrowser;
 TabPanelPlaylist *tabPanelPlaylist;
 TabPanelLogging *tabPanelLogging;
 TabPanelScript *tabPanelScript;
+TabPanelCart *tabPanelCart;
 
 triggerThread *dbTrigger;
 config *conf;
@@ -83,7 +87,8 @@ void frmStudioManage::init() {
 	
 	last_item = NULL;
 	
-	// Load tab panels	
+	// Load tab panels after removing the orginal info tab.	
+	tabManage->removePage(tabManage->currentPage());
 	cout << "Loading panels" << endl;
 	cout << " -> Info panel...";
 	tabPanelInfo = new TabPanelInfo(tabManage,"Info");
@@ -93,6 +98,11 @@ void frmStudioManage::init() {
 	cout << " -> Search panel...";
 	tabPanelSearch = new TabPanelSearch(tabManage, this, "Library Search");
 	tabPanelSearch->configure(authModule);
+	cout << " success." << endl;
+
+	cout << " -> File Browser panel...";
+	tabPanelFileBrowser = new TabPanelFileBrowser(tabManage,"File Browser");
+	tabPanelFileBrowser->configure(authModule);
 	cout << " success." << endl;
 
 	cout << " -> Playlist panel...";
@@ -108,6 +118,11 @@ void frmStudioManage::init() {
 	cout << " -> Logging panel...";
 	tabPanelLogging = new TabPanelLogging(tabManage,"Logging");
 	tabPanelLogging->configure(authModule);
+	cout << " success." << endl;
+
+	cout << " -> Cart panel...";
+	tabPanelCart = new TabPanelCart(tabManage,"Audio Wall Selection");
+	tabPanelCart->configure(authModule);
 	cout << " success." << endl;
 
 	cout << " -> Script panel...";

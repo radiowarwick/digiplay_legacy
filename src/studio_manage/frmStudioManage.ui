@@ -367,39 +367,6 @@
                     <bool>false</bool>
                 </property>
             </column>
-            <column>
-                <property name="text">
-                    <string>Length</string>
-                </property>
-                <property name="clickable">
-                    <bool>false</bool>
-                </property>
-                <property name="resizable">
-                    <bool>false</bool>
-                </property>
-            </column>
-            <column>
-                <property name="text">
-                    <string>Start</string>
-                </property>
-                <property name="clickable">
-                    <bool>false</bool>
-                </property>
-                <property name="resizable">
-                    <bool>false</bool>
-                </property>
-            </column>
-            <column>
-                <property name="text">
-                    <string>Comment</string>
-                </property>
-                <property name="clickable">
-                    <bool>false</bool>
-                </property>
-                <property name="resizable">
-                    <bool>false</bool>
-                </property>
-            </column>
             <property name="name">
                 <cstring>lstShowPlan</cstring>
             </property>
@@ -434,7 +401,7 @@
                 <bool>true</bool>
             </property>
             <property name="resizeMode">
-                <enum>AllColumns</enum>
+                <enum>NoColumn</enum>
             </property>
         </widget>
     </widget>

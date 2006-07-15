@@ -21,6 +21,7 @@
 #include "TabPanelScript.h"
 #include "TabPanelCart.h"
 #include "TabPanelFileBrowser.h"
+#include "ShowPlanItem.h"
 
 #include "clockThread.h"
 #include "triggerThread.h"
@@ -74,19 +75,41 @@ void frmStudioManage::init() {
 	// Initialise interface
 	cout << "Initialising Interface..." << endl;
 	path = qApp->applicationDirPath();
-	lstShowPlan->setColumnWidth(0,80);
+
+	sp_audio = new QPixmap(path + "/images/sp_audio.bmp");
+	sp_artist = new QPixmap(path + "/images/sp_artist.bmp");
+	sp_album = new QPixmap(path + "/images/sp_album.bmp");
+		
+	lstShowPlan->setColumnWidth(0,lstShowPlan->width() - 5);
+	lstShowPlan->setSorting(-1);
+	QColor audioItem(128,255,128);
+	QColor scriptItem(255,128,128);
+	QColor linkItem(128,128,255);
+	ShowPlanItem *myAudioItem = new ShowPlanItem( lstShowPlan, NULL,
+		"Walking in the Sun","Travis","2:58","14:03.00");
+	myAudioItem->setBackColor(audioItem);
+	myAudioItem->setPixmap(0,*sp_audio);
+	ShowPlanItem *myLinkItem = new ShowPlanItem( lstShowPlan, myAudioItem,
+		"Talk about your mum","Dave & Pete","1:02","14:05.58");
+	myLinkItem->setBackColor(linkItem);
+	myLinkItem->setPixmap(0,*sp_artist);
+	ShowPlanItem *myAudioItem2 = new ShowPlanItem( lstShowPlan, myLinkItem,
+		"Come back around","Feeder","3:33","14:07:00");
+	myAudioItem2->setBackColor(audioItem);
+	myAudioItem2->setPixmap(0,*sp_audio);
+	ShowPlanItem *myScriptItem = new ShowPlanItem( lstShowPlan, myAudioItem2,
+		"My First Radio Play","Me","15:00","14:10:33");
+	myScriptItem->setBackColor(scriptItem);
+	
+	last_item = myScriptItem;
+/*	lstShowPlan->setColumnWidth(0,80);
 	lstShowPlan->setColumnWidth(1,20);
 	//lstShowPlan->setColumnWidth(2,20);
 	lstShowPlan->setColumnWidth(2,0);
 	lstShowPlan->setColumnWidth(3,60);
 	lstShowPlan->setSorting(-1,FALSE);
-	
-	sp_audio = new QPixmap(path + "/images/sp_audio.bmp");
-	sp_artist = new QPixmap(path + "/images/sp_artist.bmp");
-	sp_album = new QPixmap(path + "/images/sp_album.bmp");
-	
-	last_item = NULL;
-	
+	*/
+
 	// Load tab panels after removing the orginal info tab.	
 	tabManage->removePage(tabManage->currentPage());
 	cout << "Loading panels" << endl;

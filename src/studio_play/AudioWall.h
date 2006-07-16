@@ -4,28 +4,30 @@
 #include <vector>
 using namespace std;
 
-#include <qobject.h>
+#include <qwidget.h>
 
-class QWidget;
 class QGroupBox;
 class QPushButton;
 class QLabel;
 
+class AudioWallManager;
+
 class AudioWall : public QWidget {
-	QOBJECT
+	Q_OBJECT
 	public:
-		AudioWall(QWidget *parent, const char* name) : QWidget(parent,name) {
-			cout << "AudioWall Constructor" << endl;
-			init();
-		}
-		void play(int index);
+		AudioWall(QWidget *parent, const char* name);
+		void resizeEvent (QResizeEvent *e);
+		void setManager(AudioWallManager *manager);
 
 	public slots:
+		void play(int index);
+
+	private slots:
 		void play();
 	
 	private:
-		void init();
-		void draw();
+		void drawCreate();
+		void drawResize();
 		void clean();
 
 		QGroupBox *grpFrame;

@@ -119,14 +119,14 @@ void ShowPlanItem::paintCell(QPainter *p, const QColorGroup &cg, int column,
 	}
 	
 	int r = lv->itemMargin();
-	p->setBrush(*backColor);
-	p->drawRect(0,0,lv->columnWidth(0),height());
-	if (isSelected()) {
+//	p->setBrush(*backColor);
+//	p->drawRect(0,0,lv->columnWidth(0),height());
+//	if (isSelected()) {
 
-	}
-	else {
+//	}
+//	else {
 
-	}
+//	}
 
 	const QPixmap *px = pixmap( 0 );
 	QRect recPix;

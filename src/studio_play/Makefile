@@ -15,8 +15,8 @@ OUT_STATIC	=	no
 QT_ENABLED 	=	yes
 
 # .cpp modules from which to create output
-MODS		=	main
-QT_MODS		=	frmPlayout
+MODS		=	main AudioWallManager
+QT_MODS		=	frmPlayout AudioWall
 SHARED_MODS	=	config audioplayer audiomixer audiochannel playerThread \
 				audiowallthread clockThread triggerThread
 

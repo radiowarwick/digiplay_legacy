@@ -1,15 +1,22 @@
+#include <iostream>
+using namespace std;
+
 #include <qwidget.h>
 #include <qgroupbox.h>
 #include <qpushbutton.h>
 #include <qlabel.h>
 
+#include "AudioWallManager.h"
+
 #include "AudioWall.h"
 
-void AudioWall::init() {
+AudioWall::AudioWall(QWidget *parent, const char* name)
+		: QWidget(parent,name) {
 	grpFrame = 0;
 	btnPageNext = 0;
 	btnPagePrev = 0;
 	lblPageNum = 0;
+	drawCreate();
 }
 
 void AudioWall::play(int index) {
@@ -20,48 +27,63 @@ void AudioWall::play() {
 
 }
 
-void AudioWall::draw() {
-	clean();
+void AudioWall::resizeEvent (QResizeEvent *e) {
+	drawResize();
+}
 
-	// What's our size?
-	int w = this->width() - 20;
-	int h = this->height() - 20;
+void AudioWall::setManager (AudioWallManager *manager) {
+
+}
+
+void AudioWall::drawCreate() {
+	clean();
 
 	// Create frame, and page next, previous buttons and page num label
 	grpFrame = new QGroupBox( this, "grpFrame" );
-	grpFrame->setGeometry( QRect( 10, 10, w, h ));
-
+	
 	btnPageNext = new QPushButton( grpFrame, "btnPageNext" );
 	btnPageNext->setEnabled( false );
-	btnPageNext->setGeometry( QRect( 40, 40, 140, 60 ) );
-
+	
 	btnPagePrev = new QPushButton( grpFrame, "btnPagePrev" );
 	btnPagePrev->setEnabled( false );
-	btnPagePrev->setGeometry( QRect( 100, 40, 140, 60 ) );
-
+	
 	lblPageNum = new QLabel( grpFrame, "lblPageNum" );
 	lblPageNum->setEnabled( false );
-	lblPageNum->setGeometry( QRect( 160, 40, 140, 60 ) );
-	lblPageNum->setAlignment( int( QLabel::AlignCenter ) );
-
+	
 	// Create the audio buttons and keep a handle to them in a vector
-	for (unsigned int i = 0; i < 12; i++) {
-		btnAudio->push_back(new QPushButton( grpFrame,
-							"btnAudio" + QString::number(i) ));
+	for (unsigned int i = 0; i < 4; i++) {
+		for (unsigned int j = 0; j < 3; j++) {
+			btnAudio.push_back(new QPushButton( grpFrame,
+							"btnAudio" + QString::number(3*i+j) ));
+			btnAudio[3*i+j]->setEnabled(false);
+			connect( btnAudio[3*i+j], SIGNAL(pressed()),
+						this, SLOT(play()) );
+		}
 	}
+}
+
+void AudioWall::drawResize() {
+	// What's our size?
+	int border = 10;
+	int wFrame = this->width() - 2*border;
+	int hFrame = this->height() - 2*border;
+	if (wFrame <= 0 || hFrame <= 0) return;
+	int wCell = int((wFrame - 2*border) / 3);
+	int hCell = int((hFrame - 3*border) / 5);
+
+	grpFrame->setGeometry( QRect( border, 2*border, wFrame, hFrame ));
+	btnPagePrev->setGeometry( QRect( border, 2*border + 4*hCell, wCell, hCell ));
+	lblPageNum->setGeometry( QRect( border + wCell, 2*border + 4*hCell, wCell, hCell ) );
+	lblPageNum->setAlignment( int( QLabel::AlignCenter ) );
+	btnPageNext->setGeometry( QRect( border + 2*wCell, 2*border + 4*hCell, wCell, hCell ) );
 
 	// Set properties for the buttons and connect them up
-	w = int(w / 3);
-	h = int(h / 3);
 	QFont f = btnAudio[0]->font();
 	f.setPointSize(14);
-	for (unsigned int i = 0; i < 3; i++) {
-		for (unsigned int j = 0; j < 4; j++) {
-			btnAudio[i*3+j]->setGeometry(j*w+10, i*h+20, 140, 60);
+	for (unsigned int i = 0; i < 4; i++) {
+		for (unsigned int j = 0; j < 3; j++) {
+			btnAudio[3*i+j]->setGeometry(j*wCell+border, i*hCell+2*border, wCell, hCell);
 			btnAudio[i*3+j]->setFont(f);
-			btnAudio[i*3+j]->setEnabled(false);
-			connect( btnAudio[i*3+j], SIGNAL(pressed()),
-						this, SLOT(play()) );
 		}
 	}
 }

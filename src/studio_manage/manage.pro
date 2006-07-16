@@ -5,7 +5,8 @@ CONFIG	+= qt warn_on release
 
 SOURCES	+= main.cpp
 
-FORMS	= frmStudioManage.ui
+FORMS	= frmStudioManage.ui \
+	/root/dlgLogin.ui
 
 IMAGES	= images/bin.bmp \
 	images/dir_audio.bmp \

@@ -92,7 +92,7 @@ void frmStudioManage::init() {
 	btnMoveDown->setPixmap(QPixmap(path + "/images/movedown32.png"));
 	btnMoveTop->setPixmap(QPixmap(path + "/images/movetop32.png"));
 	btnMoveBottom->setPixmap(QPixmap(path + "/images/movebottom32.png"));
-	btnDelete->setPixmap(QPixmap(path + "/images/delete32.png"));
+	btnDelete->setPixmap(QPixmap(path + "/images/delete48.png"));
 	btnClear->setPixmap(QPixmap(path + "/images/clear32.png"));
 	
 	cout << "success." << endl;
@@ -122,7 +122,7 @@ void frmStudioManage::init() {
 	
 	last_item = myScriptItem;
 
-	// Load tab panels after removing the orginal info tab.	
+	// Load tab panels after removing the template tab.	
 	tabManage->removePage(tabManage->currentPage());
 	cout << "Loading panels" << endl;
 	cout << " -> Info panel...";
@@ -256,11 +256,6 @@ QString frmStudioManage::getTime( long smpl ) {
 	return S;
 }
 
-void frmStudioManage::btnClearClicked()
-{
-//THIS MUST POP UP A CONFIRMATION DIALOGUE!
-}
-
 void frmStudioManage::btnLoginClicked()
 {
     if ( !authModule->isAuthenticated() ) {
@@ -281,7 +276,9 @@ void frmStudioManage::btnLoginClicked()
 		catch (int e) {
 		    if ( e==AUTH_INVALID_CREDENTIALS ) {
 			cout << "failed: Incorrect username or password." << endl;
-			QMessageBox::warning(this, "Incorrect username or password", "Incorrect username or password", 0, QMessageBox::NoButton, QMessageBox::NoButton);
+			QMessageBox *warning = new QMessageBox("Incorrect username or password", "Incorrect username or password", QMessageBox::Warning, 0, QMessageBox::NoButton, QMessageBox::NoButton, this, "warning", true);
+			warning->setIconPixmap(QPixmap(path + "/images/warning48.png"));
+			warning->exec();
 		    }
 		    else {
 			cout << "failed: Error code " << e << endl;
@@ -298,4 +295,40 @@ void frmStudioManage::btnLoginClicked()
 	authModule->closeSession();
 	btnLogin->setText("Log In");
     }
+}
+
+
+void frmStudioManage::btnMoveTopClicked()
+{
+
+}
+
+
+void frmStudioManage::btnMoveUpClicked()
+{
+    //fsr this line doesn't appear to do anything (and not just cos its comented out :)
+    //lstShowPlan->selectedItem()->moveItem(lstShowPlan->selectedItem()->itemAbove());
+}
+
+
+void frmStudioManage::btnDeleteClicked()
+{
+    lstShowPlan->takeItem(lstShowPlan->selectedItem());
+}
+
+void frmStudioManage::btnClearClicked()
+{
+//THIS MUST POP UP A CONFIRMATION DIALOGUE!
+    lstShowPlan->clear();
+    conf->setParam("next_on_showplan","");
+}
+
+void frmStudioManage::btnMoveDownClicked()
+{
+    lstShowPlan->selectedItem()->moveItem(lstShowPlan->selectedItem()->itemBelow());
+}
+
+void frmStudioManage::btnMoveBottomClicked()
+{
+    lstShowPlan->selectedItem()->moveItem(lstShowPlan->lastItem());
 }

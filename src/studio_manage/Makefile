@@ -19,7 +19,7 @@ MODS		=	main
 QT_MODS		=	frmStudioManage TabPanel TabPanelInfo TabPanelEmail\
 				TabPanelSearch TabPanelPlaylist TabPanelLogging\
 				TabPanelScript TabPanelCart TabPanelFileBrowser\
-				ShowPlanItem
+				ShowPlanItem dlgLogin
 SHARED_MODS	=	config libsearch track dps clockThread triggerThread\
 				Auth AuthLdap Logger
 

@@ -10,6 +10,7 @@
 ** destructor.
 *****************************************************************************/
 #include <qapplication.h>
+#include <qmessagebox.h>
 
 #include "Logger.h"
 #include "AuthLdap.h"
@@ -22,6 +23,7 @@
 #include "TabPanelCart.h"
 #include "TabPanelFileBrowser.h"
 #include "ShowPlanItem.h"
+#include "dlgLogin.h"
 
 #include "clockThread.h"
 #include "triggerThread.h"
@@ -76,13 +78,26 @@ void frmStudioManage::init() {
 	cout << "Initialising Interface..." << endl;
 	path = qApp->applicationDirPath();
 
-	sp_audio = new QPixmap(path + "/images/title.png");
-	sp_artist = new QPixmap(path + "/images/sp_artist.bmp");
-	sp_album = new QPixmap(path + "/images/sp_album.bmp");
-		
+	//Load Images
+	cout << " -> Loading Images... ";
 	QPixmap pixAudio(path + "/images/audiofile32.png");
 	QPixmap pixScript(path + "/images/script32.png");
 	QPixmap pixLink(path + "/images/artist32.png");
+
+	sp_audio = new QPixmap(path + "/images/title.png");
+	sp_artist = new QPixmap(path + "/images/sp_artist.bmp");
+	sp_album = new QPixmap(path + "/images/sp_album.bmp");
+	
+	btnMoveUp->setPixmap(QPixmap(path + "/images/moveup32.png"));
+	btnMoveDown->setPixmap(QPixmap(path + "/images/movedown32.png"));
+	btnMoveTop->setPixmap(QPixmap(path + "/images/movetop32.png"));
+	btnMoveBottom->setPixmap(QPixmap(path + "/images/movebottom32.png"));
+	btnDelete->setPixmap(QPixmap(path + "/images/delete32.png"));
+	btnClear->setPixmap(QPixmap(path + "/images/clear32.png"));
+	
+	cout << "success." << endl;
+	
+	
 	lstShowPlan->setColumnWidth(0,lstShowPlan->width() - 5);
 	lstShowPlan->setSorting(-1);
 	QColor audioItem(128,255,128);
@@ -106,13 +121,6 @@ void frmStudioManage::init() {
 	myScriptItem->setPixmap(0,pixScript);
 	
 	last_item = myScriptItem;
-/*	lstShowPlan->setColumnWidth(0,80);
-	lstShowPlan->setColumnWidth(1,20);
-	//lstShowPlan->setColumnWidth(2,20);
-	lstShowPlan->setColumnWidth(2,0);
-	lstShowPlan->setColumnWidth(3,60);
-	lstShowPlan->setSorting(-1,FALSE);
-	*/
 
 	// Load tab panels after removing the orginal info tab.	
 	tabManage->removePage(tabManage->currentPage());
@@ -157,7 +165,7 @@ void frmStudioManage::init() {
 	tabPanelScript->configure(authModule);
 	cout << " success." << endl;
 
-	btnLogin->setEnabled(false);
+	btnLogin->setEnabled(true);
 	cout << "Interface initialisation complete." << endl;
 
 	// Create trigger for configuration
@@ -248,4 +256,46 @@ QString frmStudioManage::getTime( long smpl ) {
 	return S;
 }
 
+void frmStudioManage::btnClearClicked()
+{
+//THIS MUST POP UP A CONFIRMATION DIALOGUE!
+}
 
+void frmStudioManage::btnLoginClicked()
+{
+    if ( !authModule->isAuthenticated() ) {
+	dlgLogin *dlg = new dlgLogin(this, "");
+	QString username;
+	QString password;
+	if ( dlg->exec() == QDialog::Accepted ){
+	    username = dlg->getUsername();
+	    password = dlg->getPassword();
+	    cout << " -> Trying login... ";
+	    try {
+		    authModule->authSession(username, password);
+		    if ( authModule->isAuthenticated() ) {
+			cout << "success." << endl;
+			btnLogin->setText("Log Out");
+		    }
+		}
+		catch (int e) {
+		    if ( e==AUTH_INVALID_CREDENTIALS ) {
+			cout << "failed: Incorrect username or password." << endl;
+			QMessageBox::warning(this, "Incorrect username or password", "Incorrect username or password", 0, QMessageBox::NoButton, QMessageBox::NoButton);
+		    }
+		    else {
+			cout << "failed: Error code " << e << endl;
+		    }
+		}
+		catch (...) {
+		    cout << "failed: reason unknown." << endl;
+		}
+	}
+	delete dlg;
+    }
+    else {
+	//This is the logout function.  Should maybe add a dialog asking if they're sure.
+	authModule->closeSession();
+	btnLogin->setText("Log In");
+    }
+}

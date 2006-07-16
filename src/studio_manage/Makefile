@@ -16,7 +16,6 @@ QT_ENABLED 	=	yes
 
 # .cpp modules from which to create output
 MODS		=	main
-QT_OBJS		=	dlgLogin
 QT_MODS		=	frmStudioManage TabPanel TabPanelInfo TabPanelEmail\
 				TabPanelSearch TabPanelPlaylist TabPanelLogging\
 				TabPanelScript TabPanelCart TabPanelFileBrowser\

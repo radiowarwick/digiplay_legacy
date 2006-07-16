@@ -25,11 +25,7 @@ class Auth;
 class TabPanelSearch : public TabPanel {
 	Q_OBJECT
 	public:
-		TabPanelSearch(QTabWidget *parent, frmStudioManage *parent2, string text) : TabPanel(parent,text)  {
-			parentForm = parent2;
-			cout << "Running TabPanelSearch constructor" << endl;
-			init();
-		}
+		TabPanelSearch(QTabWidget *parent, frmStudioManage *parent2, string text);
 		~TabPanelSearch();
 		void configure(Auth *authModule);
 
@@ -38,9 +34,6 @@ class TabPanelSearch : public TabPanel {
 		virtual void playlistAdd(int, int, int, const QPoint&);
 	
 	private:
-//		TabPanelSearch()
-//			: TabPanel(0,"") {cout << "GOAT" << endl;}
-		void init();
 		void draw();
 		void clear();
 		

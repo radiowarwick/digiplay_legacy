@@ -14,8 +14,8 @@
 
 #include "TabPanelScript.h"
 
-// Use init to make the constructor a bit less cumbersome in the header file
-void TabPanelScript::init() {
+TabPanelScript::TabPanelScript(QTabWidget *parent, string text)
+		: TabPanel(parent,text) {
 	config *conf = new config("digiplay");
 	C = new Connection(conf->getDBConnectString());
 	delete conf;

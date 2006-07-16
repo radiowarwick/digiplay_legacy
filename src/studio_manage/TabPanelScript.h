@@ -21,15 +21,11 @@ class Auth;
 class TabPanelScript : public TabPanel {
 	Q_OBJECT
 	public:
-		TabPanelScript(QTabWidget *parent, string text) : TabPanel(parent,text) {
-			cout << "Running TabPanelScript constructor" << endl;
-			init();
-		}
+		TabPanelScript(QTabWidget *parent, string text);
 		~TabPanelScript();
 		void configure(Auth *authModule);
 
 	private:
-		void init();
 		void draw();
 		void clear();
 		

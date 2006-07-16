@@ -20,11 +20,7 @@ class Auth;
 class TabPanelEmail : public TabPanel {
 	Q_OBJECT
 	public:
-		TabPanelEmail(QTabWidget *parent, string text) : TabPanel(parent,text),
-				lstEmail(0),txtEmailBody(0) {
-			cout << "Running TabPanelEmail constructor" << endl;
-			init();
-		}
+		TabPanelEmail(QTabWidget *parent, string text);
 		~TabPanelEmail();
 		void configure(Auth *authModule);
 		void customEvent(QCustomEvent *event);
@@ -33,9 +29,6 @@ class TabPanelEmail : public TabPanel {
 		virtual void getEmailBody(QListViewItem *current);		
 	
 	private:
-//		TabPanelEmail()
-//			: TabPanel(0,"") {cout << "GOAT" << endl;}
-		void init();
 		void markRead(string id);
 		void draw();
 		void clear();

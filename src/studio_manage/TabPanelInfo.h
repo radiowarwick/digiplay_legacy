@@ -9,8 +9,7 @@ class Auth;
 
 class TabPanelInfo : public TabPanel {
 	public:
-		TabPanelInfo(QTabWidget *parent, string text) 
-			: TabPanel(parent,text) {txtInfoPanel = NULL;}
+		TabPanelInfo(QTabWidget *parent, string text); 
 		~TabPanelInfo();
 		void configure(Auth *authModule);
 

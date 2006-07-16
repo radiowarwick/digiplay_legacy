@@ -22,21 +22,15 @@ class Auth;
 class TabPanelPlaylist : public TabPanel {
 	Q_OBJECT
 	public:
-		TabPanelPlaylist(QTabWidget *parent, frmStudioManage *parent2, string text) : TabPanel(parent,text) {
-			parentForm = parent2;
-			cout << "Running TabPanelPlaylist constructor" << endl;
-			init();
-		}
+		TabPanelPlaylist(QTabWidget *parent, frmStudioManage *parent2, string text);
 		~TabPanelPlaylist();
 		void configure(Auth *authModule);
 		void customEvent(QCustomEvent *event);
 
 	public slots:
-//		virtual void getEmailBody(QListViewItem *current);		
 		virtual void playlistAdd(QListViewItem *current);
 
 	private:
-		void init();
 		void draw();
 		void clear();
 		void getPlaylist();		

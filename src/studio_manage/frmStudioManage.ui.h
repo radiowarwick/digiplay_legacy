@@ -76,10 +76,13 @@ void frmStudioManage::init() {
 	cout << "Initialising Interface..." << endl;
 	path = qApp->applicationDirPath();
 
-	sp_audio = new QPixmap(path + "/images/sp_audio.bmp");
+	sp_audio = new QPixmap(path + "/images/title.png");
 	sp_artist = new QPixmap(path + "/images/sp_artist.bmp");
 	sp_album = new QPixmap(path + "/images/sp_album.bmp");
 		
+	QPixmap pixAudio(path + "/images/audiofile32.png");
+	QPixmap pixScript(path + "/images/script32.png");
+	QPixmap pixLink(path + "/images/artist32.png");
 	lstShowPlan->setColumnWidth(0,lstShowPlan->width() - 5);
 	lstShowPlan->setSorting(-1);
 	QColor audioItem(128,255,128);
@@ -88,18 +91,19 @@ void frmStudioManage::init() {
 	ShowPlanItem *myAudioItem = new ShowPlanItem( lstShowPlan, NULL,
 		"Walking in the Sun","Travis","2:58","14:03.00");
 	myAudioItem->setBackColor(audioItem);
-	myAudioItem->setPixmap(0,*sp_audio);
+	myAudioItem->setPixmap(0,pixAudio);
 	ShowPlanItem *myLinkItem = new ShowPlanItem( lstShowPlan, myAudioItem,
 		"Talk about your mum","Dave & Pete","1:02","14:05.58");
 	myLinkItem->setBackColor(linkItem);
-	myLinkItem->setPixmap(0,*sp_artist);
+	myLinkItem->setPixmap(0,pixLink);
 	ShowPlanItem *myAudioItem2 = new ShowPlanItem( lstShowPlan, myLinkItem,
 		"Come back around","Feeder","3:33","14:07:00");
 	myAudioItem2->setBackColor(audioItem);
-	myAudioItem2->setPixmap(0,*sp_audio);
+	myAudioItem2->setPixmap(0,pixAudio);
 	ShowPlanItem *myScriptItem = new ShowPlanItem( lstShowPlan, myAudioItem2,
 		"My First Radio Play","Me","15:00","14:10:33");
 	myScriptItem->setBackColor(scriptItem);
+	myScriptItem->setPixmap(0,pixScript);
 	
 	last_item = myScriptItem;
 /*	lstShowPlan->setColumnWidth(0,80);

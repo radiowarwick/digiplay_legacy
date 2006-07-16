@@ -19,15 +19,11 @@ class Auth;
 class TabPanelFileBrowser : public TabPanel {
 	Q_OBJECT
 	public:
-		TabPanelFileBrowser(QTabWidget *parent, string text) : TabPanel(parent,text) {
-			cout << "Running TabPanelFileBrowser constructor" << endl;
-			init();
-		}
+		TabPanelFileBrowser(QTabWidget *parent, string text);
 		~TabPanelFileBrowser();
 		void configure(Auth *authModule);
 
 	private:
-		void init();
 		void draw();
 		void clear();
 		

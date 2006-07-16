@@ -13,8 +13,10 @@
 
 #include "TabPanelPlaylist.h"
 
-// Use init to make the constructor a bit less cumbersome in the header file
-void TabPanelPlaylist::init() {
+TabPanelPlaylist::TabPanelPlaylist(QTabWidget *parent, frmStudioManage *parent2, string text)
+		: TabPanel(parent,text) {
+	parentForm = parent2;
+	
 	config *conf = new config("digiplay");
 	C = new Connection(conf->getDBConnectString());
 	delete conf;

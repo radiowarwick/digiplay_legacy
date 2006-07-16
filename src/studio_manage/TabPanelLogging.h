@@ -20,10 +20,7 @@ class Auth;
 class TabPanelLogging : public TabPanel {
 	Q_OBJECT
 	public:
-		TabPanelLogging(QTabWidget *parent, string text) : TabPanel(parent,text) {
-			cout << "Running TabPanelLogging constructor" << endl;
-			init();
-		}
+		TabPanelLogging(QTabWidget *parent, string text);
 		~TabPanelLogging();
 		void configure(Auth *authModule);
 		int md5(string hash);
@@ -32,7 +29,6 @@ class TabPanelLogging : public TabPanel {
 		virtual void buttonPressed();		
 	
 	private:
-		void init();
 		void draw();
 		void clear();
 		int reclibID(string id);

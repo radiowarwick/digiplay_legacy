@@ -6,6 +6,11 @@
 
 #include "TabPanelInfo.h"
 
+TabPanelInfo::TabPanelInfo(QTabWidget *parent, string text)
+		: TabPanel(parent,text) {
+	txtInfoPanel = 0;
+}
+
 TabPanelInfo::~TabPanelInfo() {
 
 }

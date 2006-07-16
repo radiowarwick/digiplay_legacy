@@ -19,15 +19,11 @@ class Auth;
 class TabPanelCart : public TabPanel {
 	Q_OBJECT
 	public:
-		TabPanelCart(QTabWidget *parent, string text) : TabPanel(parent,text) {
-			cout << "Running TabPanelCart constructor" << endl;
-			init();
-		}
+		TabPanelCart(QTabWidget *parent, string text);
 		~TabPanelCart();
 		void configure(Auth *authModule);
 
 	private:
-		void init();
 		void draw();
 		void clear();
 		

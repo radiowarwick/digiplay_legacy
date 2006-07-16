@@ -172,7 +172,7 @@ void ShowPlanItem::paintCell(QPainter *p, const QColorGroup &cg, int column,
 	p->fillRect(0,0,width, height(), *backColor);
 
 	if (px) {
-		p->drawRect(recPix);
+//		p->drawRect(recPix);
 		p->drawPixmap(recPix,*px);
 	}
 

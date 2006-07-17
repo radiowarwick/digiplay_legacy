@@ -83,6 +83,8 @@ void frmStudioManage::init() {
 	QPixmap pixAudio(path + "/images/audiofile32.png");
 	QPixmap pixScript(path + "/images/script32.png");
 	QPixmap pixLink(path + "/images/artist32.png");
+	pixFade->setPixmap(QPixmap(path + "/images/fade.png"));
+	pixLogo->setPixmap(QPixmap(path + "/images/rawdigiplay.png"));
 
 	sp_audio = new QPixmap(path + "/images/title.png");
 	sp_artist = new QPixmap(path + "/images/sp_artist.bmp");
@@ -300,35 +302,53 @@ void frmStudioManage::btnLoginClicked()
 
 void frmStudioManage::btnMoveTopClicked()
 {
-
+    if ( lstShowPlan->selectedItem() ){
+	QListViewItem *temp;
+	temp = lstShowPlan->selectedItem();
+	lstShowPlan->takeItem(temp);
+	lstShowPlan->insertItem(temp);
+    }
 }
 
 
 void frmStudioManage::btnMoveUpClicked()
 {
-    //fsr this line doesn't appear to do anything (and not just cos its comented out :)
-    //lstShowPlan->selectedItem()->moveItem(lstShowPlan->selectedItem()->itemAbove());
+    if ( lstShowPlan->selectedItem() ) {
+	if (lstShowPlan->selectedItem() == lstShowPlan->firstChild()->itemBelow() ) {
+	    QListViewItem *temp;
+	    temp = lstShowPlan->selectedItem();
+	    lstShowPlan->takeItem(temp);
+	    lstShowPlan->insertItem(temp);
+	}
+	else {
+	    lstShowPlan->selectedItem()->moveItem(lstShowPlan->selectedItem()->itemAbove()->itemAbove());
+	}
+    }
 }
 
 
 void frmStudioManage::btnDeleteClicked()
 {
-    lstShowPlan->takeItem(lstShowPlan->selectedItem());
+    if ( lstShowPlan->selectedItem() )
+	lstShowPlan->takeItem(lstShowPlan->selectedItem());
 }
 
 void frmStudioManage::btnClearClicked()
 {
-//THIS MUST POP UP A CONFIRMATION DIALOGUE!
+    //THIS MUST POP UP A CONFIRMATION DIALOGUE!
     lstShowPlan->clear();
     conf->setParam("next_on_showplan","");
 }
 
 void frmStudioManage::btnMoveDownClicked()
 {
-    lstShowPlan->selectedItem()->moveItem(lstShowPlan->selectedItem()->itemBelow());
+    if ( lstShowPlan->selectedItem() ) {
+	lstShowPlan->selectedItem()->moveItem(lstShowPlan->selectedItem()->itemBelow());    }
 }
 
 void frmStudioManage::btnMoveBottomClicked()
 {
-    lstShowPlan->selectedItem()->moveItem(lstShowPlan->lastItem());
+    if ( lstShowPlan->selectedItem() ) {
+	lstShowPlan->selectedItem()->moveItem(lstShowPlan->lastItem());
+    }
 }

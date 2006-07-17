@@ -24,10 +24,6 @@ TabPanelPlaylist::TabPanelPlaylist(QTabWidget *parent, frmStudioManage *parent2,
 	playlistTrigger = new triggerThread(this, 
 		QString(conf->getDBConnectString()), 2);
 	playlistTrigger->start();
-	QString path = qApp->applicationDirPath();
-	pixAList = new QPixmap(path + "/images/a_list.bmp");
-	pixBList = new QPixmap(path + "/images/b_list.bmp");
-
 }
 
 // clean up stuff
@@ -81,6 +77,10 @@ void TabPanelPlaylist::getPlaylist(){
 	stringstream SQL;
 	track t;
 	QListViewItem *new_playlist = NULL;
+	QString path = qApp->applicationDirPath();
+	QPixmap pixExpand(path+"/images/expand16.png");
+	QPixmap pixContract(path+"/images/contract16.png");
+	QPixmap pixTrack(path+"/images/audiofile16.png");
 
 	lstPlaylist->clear();
 
@@ -100,7 +100,7 @@ void TabPanelPlaylist::getPlaylist(){
 		string playlist = Playlists[j]["playlist"].c_str();
 		string playlist_name = playlist + " List";
 		new_playlist = new QListViewItem(lstPlaylist, playlist_name);
-
+		new_playlist->setPixmap (0, pixContract);
 		SQL << "SELECT playlist.audio, audio.md5 FROM playlist, audio  WHERE playlist = '" << Playlists[j]["playlist"].c_str() << "' AND audio.id = playlist.audio;";
 		Result R;
 		try {
@@ -117,7 +117,9 @@ void TabPanelPlaylist::getPlaylist(){
 			t = dps_getTrack(C, R[i]["md5"].c_str());
 			QListViewItem *new_track = new QListViewItem(new_playlist,
        	             		 t.title, t.artist, getTime(t.length_smpl),  R[i]["audio"].c_str());
+			new_track->setPixmap(0,pixTrack);
 		}
+		new_playlist->setOpen(true);
 
 	}
 

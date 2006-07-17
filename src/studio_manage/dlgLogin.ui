@@ -8,9 +8,16 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>517</width>
-            <height>238</height>
+            <width>300</width>
+            <height>212</height>
         </rect>
+    </property>
+    <property name="paletteBackgroundColor">
+        <color>
+            <red>255</red>
+            <green>255</green>
+            <blue>255</blue>
+        </color>
     </property>
     <property name="caption">
         <string>RaW // Digiplay // Login</string>
@@ -24,23 +31,91 @@
         </property>
         <property name="geometry">
             <rect>
-                <x>40</x>
-                <y>10</y>
-                <width>431</width>
-                <height>61</height>
+                <x>18</x>
+                <y>40</y>
+                <width>113</width>
+                <height>43</height>
             </rect>
+        </property>
+        <property name="paletteForegroundColor">
+            <color>
+                <red>1</red>
+                <green>73</green>
+                <blue>88</blue>
+            </color>
         </property>
         <property name="font">
             <font>
                 <family>Sans Serif</family>
                 <pointsize>36</pointsize>
+                <bold>1</bold>
             </font>
         </property>
         <property name="text">
-            <string>Digiplay Login</string>
+            <string>Login</string>
         </property>
         <property name="alignment">
             <set>AlignCenter</set>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>lblLoginUsername</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>20</x>
+                <y>90</y>
+                <width>70</width>
+                <height>21</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>Username:</string>
+        </property>
+        <property name="alignment">
+            <set>AlignVCenter|AlignLeft</set>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>lblLoginPassword</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>20</x>
+                <y>130</y>
+                <width>70</width>
+                <height>21</height>
+            </rect>
+        </property>
+        <property name="lineWidth">
+            <number>1</number>
+        </property>
+        <property name="text">
+            <string>Password:</string>
+        </property>
+        <property name="alignment">
+            <set>AlignVCenter|AlignLeft</set>
+        </property>
+    </widget>
+    <widget class="QLineEdit">
+        <property name="name">
+            <cstring>txtLoginPassword</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>100</x>
+                <y>130</y>
+                <width>170</width>
+                <height>21</height>
+            </rect>
+        </property>
+        <property name="margin">
+            <number>0</number>
+        </property>
+        <property name="echoMode">
+            <enum>Password</enum>
         </property>
     </widget>
     <widget class="QLayoutWidget">
@@ -50,8 +125,8 @@
         <property name="geometry">
             <rect>
                 <x>20</x>
-                <y>190</y>
-                <width>476</width>
+                <y>170</y>
+                <width>250</width>
                 <height>33</height>
             </rect>
         </property>
@@ -117,62 +192,21 @@
     </widget>
     <widget class="QLabel">
         <property name="name">
-            <cstring>lblLoginUsername</cstring>
+            <cstring>pixLogin</cstring>
         </property>
         <property name="geometry">
             <rect>
-                <x>20</x>
-                <y>100</y>
-                <width>70</width>
-                <height>21</height>
+                <x>0</x>
+                <y>0</y>
+                <width>300</width>
+                <height>29</height>
             </rect>
         </property>
-        <property name="text">
-            <string>Username:</string>
+        <property name="pixmap">
+            <pixmap></pixmap>
         </property>
-        <property name="alignment">
-            <set>AlignVCenter|AlignLeft</set>
-        </property>
-    </widget>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>lblLoginPassword</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>20</x>
-                <y>140</y>
-                <width>70</width>
-                <height>21</height>
-            </rect>
-        </property>
-        <property name="lineWidth">
-            <number>1</number>
-        </property>
-        <property name="text">
-            <string>Password:</string>
-        </property>
-        <property name="alignment">
-            <set>AlignVCenter|AlignLeft</set>
-        </property>
-    </widget>
-    <widget class="QLineEdit">
-        <property name="name">
-            <cstring>txtLoginPassword</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>100</x>
-                <y>140</y>
-                <width>391</width>
-                <height>21</height>
-            </rect>
-        </property>
-        <property name="margin">
-            <number>0</number>
-        </property>
-        <property name="echoMode">
-            <enum>Password</enum>
+        <property name="scaledContents">
+            <bool>true</bool>
         </property>
     </widget>
     <widget class="QLineEdit">
@@ -182,8 +216,8 @@
         <property name="geometry">
             <rect>
                 <x>100</x>
-                <y>100</y>
-                <width>390</width>
+                <y>90</y>
+                <width>170</width>
                 <height>21</height>
             </rect>
         </property>

@@ -10,9 +10,13 @@
 ** destructor.
 *****************************************************************************/
 
-void dlgLogin::init() {
-}
+#include <qapplication.h>
 
+void dlgLogin::init() {
+    
+    QString path = qApp->applicationDirPath();
+    pixLogin->setPixmap(QPixmap(path + "/images/loginlogo.png"));
+}
 
 QString dlgLogin::getUsername() {
     return txtLoginUsername->text();
@@ -21,3 +25,4 @@ QString dlgLogin::getUsername() {
 QString dlgLogin::getPassword() {
     return txtLoginPassword->text();
 }
+

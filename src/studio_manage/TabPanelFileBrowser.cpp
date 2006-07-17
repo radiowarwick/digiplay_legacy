@@ -54,6 +54,11 @@ void TabPanelFileBrowser::draw() {
     lstFileBrowser->header()->setLabel( 0, tr( "Item" ) );
     lstFileBrowser->header()->setLabel( 1, tr( "id" ) );
     lstFileBrowser->clear();
+
+
+
+
+/*
     QListViewItem * item_2 = new QListViewItem( lstFileBrowser, 0 );
     item_2->setOpen( TRUE );
     QListViewItem * item_3 = new QListViewItem( item_2, 0 );
@@ -78,9 +83,10 @@ void TabPanelFileBrowser::draw() {
     item->setText( 1, tr( "3" ) );
     item_4->setText( 0, tr( "Folder2" ) );
     item_2->setText( 0, tr( "Users" ) );
-
     item = new QListViewItem( lstFileBrowser, item_2 );
     item->setText( 0, tr( "Departments" ) );
+*/
+
 
 
 }

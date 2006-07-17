@@ -43,6 +43,11 @@ void AuthLdap::authSession(string username, string password) {
 	char* routine = "AuthLdap::authenticate";
 	Logger::log(INFO,routine,"Authenticating user " + username,2);
 	
+	if (username == "") {
+		Logger::log(ERROR,routine," -> No username supplied",1);
+		throw AUTH_INVALID_CREDENTIALS;
+	}
+
 	string dn = "uid=" + username + "," + _baseDn;
 	Logger::log(INFO,routine," -> bind DN is '" + dn + "'",3);
 

@@ -23,6 +23,7 @@ void dlgWarn::setWarning(QString msg) {
 }
 
 void dlgWarn::setTitle(QString msg) {
+    setCaption(msg);
     lblTitle->setText(msg);
 }
 

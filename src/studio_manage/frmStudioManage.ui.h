@@ -24,6 +24,7 @@
 #include "TabPanelFileBrowser.h"
 #include "ShowPlanItem.h"
 #include "dlgLogin.h"
+#include "dlgWarn.h"
 
 #include "clockThread.h"
 #include "triggerThread.h"
@@ -267,6 +268,7 @@ void frmStudioManage::btnLoginClicked()
 	if ( dlg->exec() == QDialog::Accepted ){
 	    username = dlg->getUsername();
 	    password = dlg->getPassword();
+	    
 	    cout << " -> Trying login... ";
 	    try {
 		    authModule->authSession(username, password);
@@ -278,9 +280,12 @@ void frmStudioManage::btnLoginClicked()
 		catch (int e) {
 		    if ( e==AUTH_INVALID_CREDENTIALS ) {
 			cout << "failed: Incorrect username or password." << endl;
-			QMessageBox *warning = new QMessageBox("Incorrect username or password", "Incorrect username or password", QMessageBox::Warning, 0, QMessageBox::NoButton, QMessageBox::NoButton, this, "warning", true);
-			warning->setIconPixmap(QPixmap(path + "/images/warning48.png"));
+			dlgWarn *warning = new dlgWarn(this, "");
+			warning->setTitle("Error");
+			warning->setWarning("Incorrect username or password.");
+			warning->setQuestion(false);
 			warning->exec();
+			delete warning;
 		    }
 		    else {
 			cout << "failed: Error code " << e << endl;
@@ -293,9 +298,14 @@ void frmStudioManage::btnLoginClicked()
 	delete dlg;
     }
     else {
-	//This is the logout function.  Should maybe add a dialog asking if they're sure.
-	authModule->closeSession();
-	btnLogin->setText("Log In");
+	dlgWarn *dlg = new dlgWarn(this, "");
+	dlg->setTitle("Logout");
+	dlg->setWarning("Are you sure you wish to logout?");
+	if ( dlg->exec() == QDialog::Accepted ){
+	    authModule->closeSession();
+	    btnLogin->setText("Log In");
+	}
+	delete dlg;
     }
 }
 
@@ -335,9 +345,16 @@ void frmStudioManage::btnDeleteClicked()
 
 void frmStudioManage::btnClearClicked()
 {
-    //THIS MUST POP UP A CONFIRMATION DIALOGUE!
-    lstShowPlan->clear();
-    conf->setParam("next_on_showplan","");
+    dlgWarn *dlg = new dlgWarn(this, "");
+    dlg->setTitle("Clear All");
+    dlg->setWarning("Are you sure you wish to clear the show plan?");
+    if ( dlg->exec() == QDialog::Accepted ){
+	authModule->closeSession();
+	btnLogin->setText("Log In");
+	lstShowPlan->clear();
+	conf->setParam("next_on_showplan","");
+    }
+    delete dlg;
 }
 
 void frmStudioManage::btnMoveDownClicked()

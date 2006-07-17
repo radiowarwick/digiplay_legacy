@@ -16,6 +16,7 @@ void dlgLogin::init() {
     
     QString path = qApp->applicationDirPath();
     pixLogin->setPixmap(QPixmap(path + "/images/loginlogo.png"));
+    txtLoginUsername->setFocus();
 }
 
 QString dlgLogin::getUsername() {

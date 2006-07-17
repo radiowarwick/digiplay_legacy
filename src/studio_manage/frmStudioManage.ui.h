@@ -289,10 +289,22 @@ void frmStudioManage::btnLoginClicked()
 		    }
 		    else {
 			cout << "failed: Error code " << e << endl;
+			dlgWarn *warning = new dlgWarn(this, "");
+			warning->setTitle("Error");
+			warning->setWarning("Problem connecting to the server.  Please check your settings.");
+			warning->setQuestion(false);
+			warning->exec();
+			delete warning;
 		    }
 		}
 		catch (...) {
 		    cout << "failed: reason unknown." << endl;
+		    dlgWarn *warning = new dlgWarn(this, "");
+		    warning->setTitle("Error");
+		    warning->setWarning("An unknown error occurred.");
+		    warning->setQuestion(false);
+		    warning->exec();
+		    delete warning;
 		}
 	}
 	delete dlg;

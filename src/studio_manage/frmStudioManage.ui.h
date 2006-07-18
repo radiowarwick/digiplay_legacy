@@ -128,42 +128,42 @@ void frmStudioManage::init() {
 	// Load tab panels after removing the template tab.	
 	tabManage->removePage(tabManage->currentPage());
 	cout << "Loading panels" << endl;
-	cout << " -> Info panel...";
+	cout << " -> Info panel..." << flush;
 	tabPanelInfo = new TabPanelInfo(tabManage,"Info");
 	tabPanelInfo->configure(authModule);
 	cout << " success." << endl;
 
-	cout << " -> Search panel...";
+	cout << " -> Search panel..." << flush;
 	tabPanelSearch = new TabPanelSearch(tabManage, this, "Library Search");
 	tabPanelSearch->configure(authModule);
 	cout << " success." << endl;
 
-	cout << " -> File Browser panel...";
+	cout << " -> File Browser panel..." << flush;
 	tabPanelFileBrowser = new TabPanelFileBrowser(tabManage,"File Browser");
 	tabPanelFileBrowser->configure(authModule);
 	cout << " success." << endl;
 
-	cout << " -> Playlist panel...";
+	cout << " -> Playlist panel..." << flush;
 	tabPanelPlaylist = new TabPanelPlaylist(tabManage, this, "Playlist");
 	tabPanelPlaylist->configure(authModule);
 	cout << " success." << endl;
 	
-	cout << " -> Email panel...";
+	cout << " -> Email panel..." << flush;
 	tabPanelEmail = new TabPanelEmail(tabManage,"Email");
 	tabPanelEmail->configure(authModule);
 	cout << " success." << endl;
 
-	cout << " -> Logging panel...";
+	cout << " -> Logging panel..." << flush;
 	tabPanelLogging = new TabPanelLogging(tabManage,"Logging");
 	tabPanelLogging->configure(authModule);
 	cout << " success." << endl;
 
-	cout << " -> Cart panel...";
+	cout << " -> Cart panel..." << flush;
 	tabPanelCart = new TabPanelCart(tabManage,"Audio Wall Selection");
 	tabPanelCart->configure(authModule);
 	cout << " success." << endl;
 
-	cout << " -> Script panel...";
+	cout << " -> Script panel..." << flush;
 	tabPanelScript = new TabPanelScript(tabManage,"Script");
 	tabPanelScript->configure(authModule);
 	cout << " success." << endl;

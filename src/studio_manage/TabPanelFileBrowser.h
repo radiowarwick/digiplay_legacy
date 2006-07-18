@@ -4,6 +4,8 @@
 #include "TabPanel.h"
 #include "triggerThread.h"
 #include "config.h"
+#include "FileBrowserItem.h"
+#include "FileBrowser.h"
 
 #include <qlistview.h>
 
@@ -26,10 +28,11 @@ class TabPanelFileBrowser : public TabPanel {
 	private:
 		void draw();
 		void clear();
-		
+		void getFiles();
+		void addChildren(FileBrowserItem *parent, int id);
+
 		Connection *C;
-		QListView *lstFileBrowser;
-		QListViewItem *item, *item_2, *item_3, *item_4;
+		FileBrowser *lstFileBrowser;
 };
 
 #endif

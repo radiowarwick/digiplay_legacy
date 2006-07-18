@@ -4,9 +4,10 @@
 #include "TabPanel.h"
 #include "triggerThread.h"
 #include "config.h"
+#include "FileBrowser.h"
+#include "FileBrowserItem.h"
 
 #include <qlistview.h>
-
 
 #include "pqxx/connection.h"
 #include "pqxx/transaction.h"
@@ -28,8 +29,7 @@ class TabPanelCart : public TabPanel {
 		void clear();
 		
 		Connection *C;
-		QListView *lstCarts;
-		QListViewItem *item, *item_2, *item_3, *item_4;
+		FileBrowser *lstCarts;
 };
 
 #endif

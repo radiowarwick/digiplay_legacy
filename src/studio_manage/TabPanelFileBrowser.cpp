@@ -2,6 +2,7 @@
 #include <qheader.h>
 #include <qapplication.h>
 #include <qobject.h>
+#include <string.h>
 
 #include "Auth.h"
 #include "Logger.h"
@@ -47,55 +48,13 @@ void TabPanelFileBrowser::draw() {
 */
 	// do all form drawing here, create widgets, set properties
 
-    lstFileBrowser = new QListView( getPanel(), "lstFileBrowser" );
+    lstFileBrowser = new FileBrowser( getPanel(), "lstFileBrowser", 255 );
     lstFileBrowser->addColumn( tr( "Folder" ) );
-    lstFileBrowser->addColumn( tr( "id" ) );
     lstFileBrowser->setGeometry( QRect( 10, 10, 491, 620 ) );
     lstFileBrowser->header()->setLabel( 0, tr( "Item" ) );
-    lstFileBrowser->header()->setLabel( 1, tr( "id" ) );
-    lstFileBrowser->clear();
-
-
-
-
-/*
-    QListViewItem * item_2 = new QListViewItem( lstFileBrowser, 0 );
-    item_2->setOpen( TRUE );
-    QListViewItem * item_3 = new QListViewItem( item_2, 0 );
-    item_3->setOpen( TRUE );
-    QListViewItem * item = new QListViewItem( item_3, 0 );
-    item->setText( 0, tr( "File3" ) );
-    item->setText( 1, tr( "25" ) );
-    item_3->setOpen( TRUE );
-    item = new QListViewItem( item_3, item );
-    item->setText( 0, tr( "File2" ) );
-    item->setText( 1, tr( "76" ) );
-    item_3->setOpen( TRUE );
-    item = new QListViewItem( item_3, item );
-    item->setText( 0, tr( "File32" ) );
-    item->setText( 1, tr( "234" ) );
-    item_3->setText( 0, tr( "Folder 1" ) );
-    item_2->setOpen( TRUE );
-    QListViewItem * item_4 = new QListViewItem( item_2, item_3 );
-    item_4->setOpen( TRUE );
-    item = new QListViewItem( item_4, item_3 );
-    item->setText( 0, tr( "File5" ) );
-    item->setText( 1, tr( "3" ) );
-    item_4->setText( 0, tr( "Folder2" ) );
-    item_2->setText( 0, tr( "Users" ) );
-    item = new QListViewItem( lstFileBrowser, item_2 );
-    item->setText( 0, tr( "Departments" ) );
-*/
-
-
-
+    lstFileBrowser->getFiles();
 }
 
 void TabPanelFileBrowser::clear() {
 	delete lstFileBrowser;
-	delete item;
-	delete item_2;
-	delete item_3;
-	delete item_4;
-
 }

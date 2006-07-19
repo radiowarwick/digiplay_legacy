@@ -9,6 +9,10 @@
 ** These will automatically be called by the form's constructor and
 ** destructor.
 *****************************************************************************/
+
+#include "AudioWall.h"
+#include "AudioWallManager.h"
+
 void frmPlayout::init() {
 	path = qApp->applicationDirPath();
 	pixPlay = new QPixmap(path + "/images/play.png");
@@ -34,10 +38,8 @@ void frmPlayout::init() {
 	btnReset1->setPixmap(*pixReset);
 	btnReset2->setPixmap(*pixReset);
 	btnReset3->setPixmap(*pixReset);
-	btnSCartPrev->setPixmap(*pixSeekback);
-	btnSCartNext->setPixmap(*pixSeekforward);
-	btnUCartPrev->setPixmap(*pixSeekback);
-	btnUCartNext->setPixmap(*pixSeekforward);
+	//btnSCartPrev->setPixmap(*pixSeekback);
+	//btnSCartNext->setPixmap(*pixSeekforward);
 
     cout << "Connecting to database..." << endl;
     conf = new config("digiplay");
@@ -68,11 +70,21 @@ void frmPlayout::init() {
 	dbTrigger->start();
 	cout << " -> Trigger active." << endl;
 
+	AudioWall *stnAudioWall = new AudioWall(this,"stnAudioWall",4,3);
+	stnAudioWall->setGeometry(560,0,460,373);
+	AudioWallManager *stnAudioWallMan = new AudioWallManager(stnAudioWall,C);
+	stnAudioWallMan->load(0);
+
+	AudioWall *usrAudioWall = new AudioWall(this,"usrAudioWall",4,3);
+	usrAudioWall->setGeometry(560,373,460,373);
+	AudioWallManager *usrAudioWallMan = new AudioWallManager(usrAudioWall,C);
+	usrAudioWallMan->load(0);
+
 	sys_page = 0;
 	stationAudioSet = NULL;
 	userAudioSet = NULL;
-	AudioWall_Init();
-	delete grpUCart;
+//	AudioWall_Init();
+//	delete grpUCart;
 }
 
 void frmPlayout::destroy() {
@@ -223,7 +235,7 @@ void frmPlayout::customEvent(QCustomEvent *event) {
             }
 			break;
 		}							  
-		case 20004: {
+/*		case 20004: {
 			eventData *e_data = (eventData*)event->data();
 			if (e_data->index < 0) break;
 			switch (e_data->t) {
@@ -236,7 +248,7 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 						A.btn->setPaletteBackgroundColor(QColor(QRgb(A.bg)));
 					}
 					sys_active_page = sys_page;
-					lblSCartCounter->setText("");
+					//lblSCartCounter->setText("");
 					break;
 				}
 			case EVENT_TYPE_PLAY: {
@@ -265,7 +277,7 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 				}
 			}
 		break;				
-		}
+		}*/
 	case 30001: {
 			conf->requery();
 			if (conf->getParam("next_on_showplan") == "") {
@@ -522,7 +534,7 @@ void frmPlayout::AudioWall_Init() {
 							 "FROM cartwalls,cartsets "
 							 "WHERE cartwalls.cartset = 1")[0][0].c_str()) + 1;
 	T.abort();
-	
+/*	
 	// Configure Station Audio Wall
 	// Set of all audio walls (pages)
 	if (stationAudioSet) {
@@ -575,7 +587,7 @@ void frmPlayout::AudioWall_Init() {
 				userAudioSet->at(page)->clip[i*3+j].btn = btnCurrent;
 		}
 	}
-	
+*/
 	// Load all the cart information into structures
 	AudioWall_Load();
 	
@@ -674,7 +686,7 @@ void frmPlayout::AudioWall_Load() {
 
 // Display's the carts for a page specified by sys_page
 void frmPlayout::AudioWall_Display() {
-	audioWall *currentPage = stationAudioSet->at(sys_page);
+/*	audioWall *currentPage = stationAudioSet->at(sys_page);
 	grpSCart->setTitle(currentPage->description);
 	for (int i = 0; i < 12; i++) {
 		audioClip A = currentPage->clip[i];
@@ -693,7 +705,7 @@ void frmPlayout::AudioWall_Display() {
 	}
 	lblSCartPage->setText("Page " + QString::number(sys_page+1) + "/" 
 						  + QString::number(sys_page_count));
-}
+*/}
 
 
 QString frmPlayout::getTime( long smpl ) {

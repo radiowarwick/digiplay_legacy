@@ -14,27 +14,20 @@ using namespace pqxx;
 #include <qfont.h>
 #include <qcolor.h>
 
-#define AUDIOWALL_INDEX_OUT_OF_BOUNDS 12000
-
-struct AudioWallItem {
-	QString text;
-	QFont font;
-	QColor color;
-};
+#include "AudioWall.h"
 
 class AudioWallManager : public QObject {
 	Q_OBJECT
 	public:
-		AudioWallManager( Connection *C );
+		AudioWallManager( AudioWall *A, Connection *C );
 		~AudioWallManager();
-		AudioWallItem& operator[] (unsigned int index);
-		AudioWallItem& at(unsigned int index);
-		void setUser( QString username );
-		void changeWall( unsigned int index );
+		void load(unsigned int cartset);
 
 	private:
+		AudioWall *_A;
+		Connection *_C;
 		QString _username;
-		vector<AudioWallItem> _items;
+		vector<AudioWallPage> _pages;
 };
 
 #endif

@@ -18,7 +18,7 @@ QT_ENABLED 	=	yes
 MODS		=	main
 QT_MODS		=	frmPlayout AudioWall AudioWallManager
 SHARED_MODS	=	config audioplayer audiomixer audiochannel playerThread \
-				audiowallthread clockThread triggerThread
+				audiowallthread clockThread triggerThread Logger dps
 
 # Global header files on which dependance exists
 HDRS		=

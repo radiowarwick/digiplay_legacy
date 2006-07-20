@@ -20,7 +20,6 @@
 #include "TabPanelPlaylist.h"
 #include "TabPanelLogging.h"
 #include "TabPanelScript.h"
-#include "TabPanelCart.h"
 #include "TabPanelFileBrowser.h"
 #include "ShowPlanItem.h"
 #include "dlgLogin.h"
@@ -40,7 +39,6 @@ TabPanelFileBrowser *tabPanelFileBrowser;
 TabPanelPlaylist *tabPanelPlaylist;
 TabPanelLogging *tabPanelLogging;
 TabPanelScript *tabPanelScript;
-TabPanelCart *tabPanelCart;
 
 triggerThread *dbTrigger;
 config *conf;
@@ -156,11 +154,6 @@ void frmStudioManage::init() {
 	cout << " -> Logging panel..." << flush;
 	tabPanelLogging = new TabPanelLogging(tabManage,"Logging");
 	tabPanelLogging->configure(authModule);
-	cout << " success." << endl;
-
-	cout << " -> Cart panel..." << flush;
-	tabPanelCart = new TabPanelCart(tabManage,"Audio Wall Selection");
-	tabPanelCart->configure(authModule);
 	cout << " success." << endl;
 
 	cout << " -> Script panel..." << flush;
@@ -352,7 +345,7 @@ void frmStudioManage::btnMoveUpClicked()
 void frmStudioManage::btnDeleteClicked()
 {
     if ( lstShowPlan->selectedItem() )
-	lstShowPlan->takeItem(lstShowPlan->selectedItem());
+	delete lstShowPlan->selectedItem();
 }
 
 void frmStudioManage::btnClearClicked()

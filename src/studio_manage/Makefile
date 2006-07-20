@@ -19,7 +19,7 @@ MODS		=	main
 QT_OBJS		=	dlgLogin dlgWarn
 QT_MODS		=	frmStudioManage TabPanel TabPanelInfo TabPanelEmail\
 				TabPanelSearch TabPanelPlaylist TabPanelLogging\
-				TabPanelScript TabPanelCart TabPanelFileBrowser\
+				TabPanelScript TabPanelFileBrowser\
 				ShowPlanItem dlgLogin dlgWarn FileBrowserItem\
 				FileBrowser
 SHARED_MODS	=	config libsearch track dps clockThread triggerThread\

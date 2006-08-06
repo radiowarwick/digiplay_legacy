@@ -1,6 +1,7 @@
 #include "archivemanager.h"
 
 #include <time.h>
+#include "Logger.h"
 #include "xmlDocument.h"
 #include "xmlElement.h"
 
@@ -127,7 +128,6 @@ void archivemanager::add(unsigned int index) {
 	// get the required track
 	track t = trackInbox->at(index);
 
-	cout << "Adding: " << t.md5 << endl;
 	trackInbox->erase(trackInbox->begin() + index);
 
 	// if we've not already processed the audio file, do so now
@@ -411,6 +411,7 @@ void archivemanager::loadDB(vector<track> *tracks) {
 }
 
 void archivemanager::loadInbox(vector<track> *tracks) {
+	char* routine = "archivemanager::loadInbox";
     DIR *dirp;
     struct dirent *dp;
     string fn, md5, path, test;
@@ -433,11 +434,15 @@ void archivemanager::loadInbox(vector<track> *tracks) {
 			test = fn + ".info";
 			f_test_info.open(test.c_str());
 			if (f_test_xml.good()) {
-				cout << "Reading XML: " << fn.c_str() << ".xml" << endl;
+				stringstream S;
+				S << "Reading XML " << fn.c_str() << ".xml";
+				Logger::log(INFO,routine,S.str(),5);
 				t = readXML(fn + ".xml");
 			}
 			else if (f_test_info.good()) {
-				cout << "Reading INFO: " << fn.c_str() << ".info" << endl;
+				stringstream S;
+				S << "Reading INFO " << fn.c_str() << ".info";
+				Logger::log(INFO,routine,S.str(),5);
 				t = readInfo(fn + ".info");
 			}
 			else {

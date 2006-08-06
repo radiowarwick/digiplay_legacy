@@ -11,10 +11,22 @@ INSERT INTO audiotypes (id, name, description)
 /* Root directory */
 INSERT INTO dir (id, parent, name, notes)
 	VALUES (0, -1,'Digiplay','Root node of virtual directory structure');
+INSERT INTO dir (id, parent, name, notes)
+	VALUES (1, 0,'Music','Music Library');
+INSERT INTO dir (id, parent, name, notes)
+	VALUES (2, 0,'Jingles','Station and show idents');
+INSERT INTO dir (id, parent, name, notes)
+	VALUES (3, 0,'Adverts','Station sponsorship messages and adverts');
+INSERT INTO dir (id, parent, name, notes)
+	VALUES (4, 0,'Departments','Departmental files');
+INSERT INTO dir (id, parent, name, notes)
+	VALUES (5, 0,'Users','User areas');
 
 /* Default users */
 INSERT INTO users (id, username, enabled)
 	VALUES (0, 'system','t');
+INSERT INTO users (id, username, enabled)
+	VALUES (-1, 'guest','t');
 
 /* User Privilages */
 INSERT INTO privilages (id, name, description)
@@ -61,10 +73,15 @@ INSERT INTO lifespans (id, name, data, description)
 	VALUES (0,'Permenant','-1','Permenant audio file - i.e. music library');
 
 /* Cart Walls */
-INSERT INTO cartsets (id, name, userid, directory, description)
-	VALUES (0,'RaW 1251AM',0,0,'RaW 1251AM Station Audio Wall');
+/*INSERT INTO cartsets (id, name, description)
+	VALUES (0,'RaW 1251AM','RaW 1251AM Station Audio Wall');
+INSERT INTO cartsetsusers (id, cartsetid, userid, permissions)
+	VALUES (0,0,0,'rw');
+INSERT INTO cartsetsdir (id, cartsetid, dir, linktype)
+	VALUES (0,0,0,0);
 INSERT INTO cartwalls (id, name, cartset, page, description)
 	VALUES (0,'Page 1',0,0,'Main station jingles');
+	*/
 INSERT INTO cartproperties (id, name)
 	VALUES (0,'ForeColourRGB');
 INSERT INTO cartproperties (id, name)

@@ -104,24 +104,36 @@ void frmStudioManage::init() {
 	QColor audioItem(128,255,128);
 	QColor scriptItem(255,128,128);
 	QColor linkItem(128,128,255);
+	QColor jingleItem(128,255,255);
 	ShowPlanItem *myAudioItem = new ShowPlanItem( lstShowPlan, NULL,
 		"Walking in the Sun","Travis","2:58","14:03.00");
 	myAudioItem->setBackColor(audioItem);
 	myAudioItem->setPixmap(0,pixAudio);
 	ShowPlanItem *myLinkItem = new ShowPlanItem( lstShowPlan, myAudioItem,
-		"Talk about your mum","Dave & Pete","1:02","14:05.58");
+		"Discuss what's on at NEC","Dave & Pete","1:02","14:05.58");
 	myLinkItem->setBackColor(linkItem);
 	myLinkItem->setPixmap(0,pixLink);
 	ShowPlanItem *myAudioItem2 = new ShowPlanItem( lstShowPlan, myLinkItem,
-		"Come back around","Feeder","3:33","14:07:00");
+		"Time is Running Out","Muse","3:33","14:07:00");
 	myAudioItem2->setBackColor(audioItem);
 	myAudioItem2->setPixmap(0,pixAudio);
 	ShowPlanItem *myScriptItem = new ShowPlanItem( lstShowPlan, myAudioItem2,
-		"My First Radio Play","Me","15:00","14:10:33");
+		"Radio Play: The Life of a Student","","15:00","14:10:33");
 	myScriptItem->setBackColor(scriptItem);
 	myScriptItem->setPixmap(0,pixScript);
-	
-	last_item = myScriptItem;
+	ShowPlanItem *myAudioItem3 = new ShowPlanItem( lstShowPlan, myScriptItem,
+		"Killer Queen","Queen","3:02","14:25:33");
+	myAudioItem3->setBackColor(audioItem);
+	myAudioItem3->setPixmap(0,pixAudio);
+	ShowPlanItem *myAudioItem4 = new ShowPlanItem( lstShowPlan, myAudioItem3,
+		"Clocks","Coldplay","4:11","14:28:35");
+	myAudioItem4->setBackColor(audioItem);
+	myAudioItem4->setPixmap(0,pixAudio);
+	ShowPlanItem *myJingle = new ShowPlanItem( lstShowPlan, myAudioItem4,
+		"This is RaW", "1251AM Jingle Package","0:06","14:32:46");
+	myJingle->setBackColor(jingleItem);
+	myJingle->setPixmap(0,pixAudio);
+	last_item = myJingle;
 
 	// Load tab panels after removing the template tab.	
 	tabManage->removePage(tabManage->currentPage());

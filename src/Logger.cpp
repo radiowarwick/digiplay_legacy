@@ -13,7 +13,8 @@ void Logger::log(MESSAGE_TYPE type, char* routine, string message,
 												unsigned short level) {
 	if (logLevel >= level) {
 		if (!logFile) {
-			string filename = "./" + appName + ".log";
+			system("mkdir -p /var/log/dps");
+			string filename = "/var/log/dps/" + appName + ".log";
 			logFile = new ofstream(filename.c_str(), ios::app);
 		}
 	    time_t current_time;

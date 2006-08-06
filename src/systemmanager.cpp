@@ -4,7 +4,6 @@ systemmanager::systemmanager() {
 	config *Conf = new config("digiplay");
 	try {
 		C = new Connection(Conf->getDBConnectString());
-		cout << "Created database connection." << endl;
 	}
 	catch (...) {
 		cout << "Failed to connect to database" << endl;

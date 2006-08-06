@@ -4,7 +4,7 @@
 ROOT		=	../..
 
 # Base name for output (executable name, library basename) and version
-OUT_BASE	=	admin
+OUT_BASE	=	dpsexport
 VERSION		=	1
 
 # Create a library and whether it should be a static library
@@ -15,8 +15,8 @@ OUT_STATIC	=	no
 QT_ENABLED 	=	yes
 
 # .cpp modules from which to create output
-MODS		=	main
-QT_MODS		=	frmAdmin frmAdminEditNewInfo frmAdminAddMusic
+MODS		=	dpsexport
+QT_MODS		=
 SHARED_MODS	=	systemmanager archivemanager config xmlDocument xmlElement \
 				dps Logger
 

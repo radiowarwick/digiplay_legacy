@@ -1,8 +1,11 @@
-#include "xmlElement.h"
-
 #include <iostream>
 #include <string>
+#include <sstream>
 using namespace std;
+
+#include "Logger.h"
+
+#include "xmlElement.h"
 
 /** Constructor: Createse a new XML Element node
  */
@@ -87,11 +90,14 @@ xmlAttribute xmlElement::add_attribute(xmlAttribute attr) {
  * 			structure if index out of range
  */
 xmlAttribute xmlElement::get_attribute(unsigned int index) {
+	char* routine = "xmlElement::get_attribute";
 	if (index >= 0 && index < attributes->size()) {
 		return attributes->at(index);
 	}
 	else {
-		cout << "Attribute " << index << " out of range in " << name << endl;
+		stringstream S;
+		S << "Attribute " << index << " out of range in " << name;
+		Logger::log(ERROR,routine,S.str(),1);
 		xmlAttribute A;
 		return A;
 	}
@@ -103,30 +109,39 @@ xmlAttribute xmlElement::get_attribute(unsigned int index) {
  * 			structure if attribute does not exist
  */
 xmlAttribute xmlElement::get_attribute(string name) {
+	char* routine = "xmlElement::get_attribute";
 	for (unsigned int i = 0; i < attributes->size(); i++)
 		if (attributes->at(i).name == name)
 			return attributes->at(i);
-	cout << "Attribute " << name << " does not exist in " << this->name << endl;
+	stringstream S;
+	S << "Attribute " << name << " does not exist in " << this->name;
+	Logger::log(ERROR,routine,S.str(),5);
 	xmlAttribute A;
 	return A;
 }
 
 void xmlElement::remove_attribute(unsigned int index) {
+	char* routine = "xmlElement::remove_attribute";
 	if (index >= 0 && index < attributes->size()) {
 		attributes->erase(attributes->begin() + index);
 	}
 	else {
-		cout << "Attribute " << index << " out of range in " << name << endl;
+		stringstream S;
+		S << "Attribute " << index << " out of range in " << name;
+		Logger::log(ERROR,routine,S.str(),5);
 	}
 }
 
 void xmlElement::remove_attribute(string name) {
+	char* routine = "xmlElement::remove_attribute";
 	for (unsigned int i = 0; i < attributes->size(); i++)
 		if (attributes->at(i).name == name) {
 			attributes->erase(attributes->begin() + i);
 			return;
 		}
-	cout << "Attribute " << name << " does not exist in " << this->name << endl;
+	stringstream S;
+	S << "Attribute " << name << " does not exist in " << this->name;
+	Logger::log(ERROR,routine,S.str(),5);
 }
 
 unsigned int xmlElement::count_attributes() {
@@ -144,34 +159,47 @@ xmlElement *xmlElement::add_element(xmlElement *elem) {
 }
 
 xmlElement *xmlElement::get_element(unsigned int index) {
+	char* routine = "xmlElement::get_element";
 	if (index >= 0 && index < elements->size())
 		return elements->at(index);
-	cout << "Element " << index << " out of range in " << name << endl;
+	stringstream S;
+	S << "Element " << index << " out of range in " << name;
+	Logger::log(ERROR,routine,S.str(),5);
 	return NULL;
 }
 
 xmlElement *xmlElement::get_element(string name) {
+	char* routine = "xmlElement::get_element";
 	for (unsigned int i = 0; i < elements->size(); i++)
 		if (elements->at(i)->name == name)
 			return elements->at(i);
-	cout << "Element " << name << " does not exist in " << this->name << endl;
+	stringstream S;
+	S << "Element " << name << " does not exist in " << this->name;
+	Logger::log(ERROR,routine,S.str(),5);
 	return NULL;
 }
 
 void xmlElement::remove_element(unsigned int index) {
+	char* routine = "xmlElement::remove_element";
 	if (index >= 0 && index < elements->size())
 		elements->erase(elements->begin() + index);
-	else
-		cout << "Element " << index << " out of range in " << name << endl;
+	else {
+		stringstream S;
+		S << "Element " << index << " out of range in " << name;
+		Logger::log(ERROR,routine,S.str(),5);
+	}
 }
 
 void xmlElement::remove_element(string name) {
+	char* routine = "xmlElement::remove_element";
 	for (unsigned int i = 0; i < elements->size(); i++)
 		if (elements->at(i)->name == name) {
 			elements->erase(elements->begin() + i);
 			return;
 		}
-	cout << "Element " << name << " does not exist in " << this->name << endl;
+	stringstream S;
+	S << "Element " << name << " does not exist in " << this->name;
+	Logger::log(ERROR,routine,S.str(),5);
 }
 
 unsigned int xmlElement::count_elements() {

@@ -12,6 +12,13 @@ file is included called digiplay.conf. This should be copied to /etc and named
 Database Configuration
 ----------------------
 1. Install postgresql database server and configure pg_hba.conf.
+2. From the digiplay root directory:
+     cd db
+	 ./install
+
+Previous Database Configuration (bit crap and no longer applicable!)
+-------------------------------
+1. Install postgresql database server and configure pg_hba.conf.
 	you need to allow access (using psql for instance) from wherever you
 	will run the digiplay software.
 2. From digiplay root directory do as root:
@@ -36,6 +43,7 @@ this can be achieved by running apt-get install <package-list> where
 	libreadline5-dev
 	libncurses5-dev
 	libqt3-mt-dev
+	libcdparanoia0 (for playin application)
 This will implicitly install the actual libraries as well. Other distributions
 and/or package management systems may require manual installation of these
 libraries.
@@ -48,19 +56,15 @@ To generate code documentation:
 	doxygen
 	
 Then do
-	make sueplay		(Sustainer Service Playout Engine)
-	make suesched		(Sustainer Service Scheduling Engine)
-	make sue			(Compile both sueplay and suesched)
-	make admin			(Digital Playout Admin Software)
-	make studio_play	(Studio Playout application)
-	make studio_search	(Studio Search application)
-	make studio			(Compiles both studio applications)
+	make sue			(Sustainer service)
+	make backend		(System management application and tools)
+	make tools			(Management tools only)
+	make studio			(Studio applications)
 	make playin			(Audio playin application)
-
-	make docs			(Generates the Doxygen code documentation)
 
 	make all			(Make the lot!)
 
+This stuff isn't tested with the new Make system:
 	make install		(Installs the binaries in the INSTALLDIR directory)
 	make uninstall		(Removes the binaries from their INSTALLDIR directory)
 						INSTALLDIR is specified in the Makefile or on 

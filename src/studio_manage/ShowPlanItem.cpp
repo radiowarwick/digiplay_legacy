@@ -148,11 +148,11 @@ void ShowPlanItem::paintCell(QPainter *p, const QColorGroup &cg, int column,
 					lblTitle->height() + r, 
 					lv->columnWidth(0) - 2*r - 2*ITEM_INDENT - wTime - wPix, 
 					lblArtist->height());
-	QRect recLength(lv->columnWidth(0) - wLength - r, 
+	QRect recLength(lv->columnWidth(0) - 15 - wLength - r, 
 					r, 
 					wLength,
 					lblLength->height());
-	QRect recTime(	lv->columnWidth(0) - wTime - r,
+	QRect recTime(	lv->columnWidth(0) - 15 - wTime - r,
 					lblLength->height() + r,
 					wTime, 
 					lblTime->height());

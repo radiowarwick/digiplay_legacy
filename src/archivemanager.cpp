@@ -119,6 +119,7 @@ void archivemanager::clean(unsigned short location, unsigned int index) {
  * @param	index	The index of the track in the inbox to add
  */
 void archivemanager::add(unsigned int index) {
+	char* routine = "archivemanager::add";
 	if (!initialised) load();
 	if (index > size(DPS_INBOX) - 1) {
 		cout << "archivemanager::add: index out of range" << endl;
@@ -132,7 +133,7 @@ void archivemanager::add(unsigned int index) {
 
 	// if we've not already processed the audio file, do so now
 	if (t.trim_end_smpl == 0) {
-		cout << " -> Scanning audio file for trim points." << endl;
+		Logger::log(INFO,routine,"Scanning audio file for trim points.",2);
 		trimAudio(&t);
 		t.fade_in_smpl = t.trim_start_smpl;
 		t.fade_out_smpl = t.trim_end_smpl;
@@ -143,7 +144,7 @@ void archivemanager::add(unsigned int index) {
 		trackInbox->insert(trackInbox->begin() + index, 1, t);
 	}
 	else {
-		cout << "No non-zero samples, so track ignored." << endl;
+		Logger::log(WARNING,routine,"No non-zero samples, so track ignored.",1);
 		return;
 	}
 
@@ -447,6 +448,7 @@ void archivemanager::loadInbox(vector<track> *tracks) {
 			}
 			else {
 				cout << "FAILED on XML & INFO: " << md5 << endl;
+				t.isNull = true;
 			}
 			f_test_xml.close();
 			f_test_info.close();

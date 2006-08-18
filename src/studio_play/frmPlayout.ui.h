@@ -10,6 +10,7 @@
 ** destructor.
 *****************************************************************************/
 
+#include "../remoteStartThread.h"
 #include "AudioWall.h"
 #include "AudioWallManager.h"
 
@@ -51,6 +52,7 @@ void frmPlayout::init() {
 	player2 = new playerThread(this, 2);	
 	player3 = new playerThread(this, 3);
 	audiowall = new audiowallthread(this, 4);
+	remoteStartThread *remotes = new remoteStartThread(this);
 	player1->start();
 	usleep(100000);
 	player2->start();
@@ -58,6 +60,8 @@ void frmPlayout::init() {
 	player3->start();
 	usleep(100000);
 	audiowall->start();
+	usleep(100000);
+	remotes->start();
 	usleep(500000);
 	cout << " -> Hardware initialisation complete." << endl;
 
@@ -295,6 +299,28 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 			}
 			break;
 		}
+	case 40000: {
+	switch (player1->getState()) {
+	case STATE_STOP:
+		player1->do_play();
+		btnPlay1->setPixmap(*pixPause);
+		btnLoadPlaylist1->setEnabled(false);
+		break;
+	case STATE_PAUSE:
+		player1->do_resume();
+		btnPlay1->setPixmap(*pixPause);
+		btnLoadPlaylist1->setEnabled(false);
+		break;
+	}
+}
+	case 40001: {
+		player1->do_pause();
+		btnPlay1->setPixmap(*pixPlay);
+		if (conf->getParam("next_on_showplan") != "") {
+			btnLoadPlaylist1->setEnabled(true);
+		}
+		break;
+	}
 	default: {
 			qWarning("Unknown event type: %d", event->type());
 			break;

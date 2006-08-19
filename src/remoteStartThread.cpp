@@ -17,7 +17,7 @@ void remoteStartThread::run() {
 	mutex.unlock();
 	while(!stopped) {
 		if (ioperm(ADDRESS,2,1)) {
-//			cout << "Couldn't open port at 0x378" << endl;
+			cout << "Couldn't open port at 0x378" << endl;
 		}
 		else {
 			status = inb(ADDRESS+1);
@@ -27,14 +27,30 @@ void remoteStartThread::run() {
 					remote = new QCustomEvent(40000);
 					QApplication::postEvent(receiver, remote);
 				}
-				else if ((status & 0x80) == 0x80) {
+				else {
 					remote = new QCustomEvent(40001);
+					QApplication::postEvent(receiver, remote);
+				}
+				if ((status & 0x40) == 0x40) {
+					remote = new QCustomEvent(40002);
+					QApplication::postEvent(receiver, remote);
+				}
+				else {
+					remote = new QCustomEvent(40003);
+					QApplication::postEvent(receiver, remote);
+				}
+				if ((status & 0x20) == 0x20) {
+					remote = new QCustomEvent(40004);
+					QApplication::postEvent(receiver, remote);
+				}
+				else {
+					remote = new QCustomEvent(40005);
 					QApplication::postEvent(receiver, remote);
 				}
 				old_status = status;
 			}
 		}
-		usleep(10000);
+		usleep(100000);
 	}
 }
 

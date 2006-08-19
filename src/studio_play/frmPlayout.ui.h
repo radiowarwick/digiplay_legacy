@@ -300,24 +300,83 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 			break;
 		}
 	case 40000: {
-	switch (player1->getState()) {
-	case STATE_STOP:
-		player1->do_play();
-		btnPlay1->setPixmap(*pixPause);
-		btnLoadPlaylist1->setEnabled(false);
-		break;
-	case STATE_PAUSE:
-		player1->do_resume();
-		btnPlay1->setPixmap(*pixPause);
-		btnLoadPlaylist1->setEnabled(false);
+		switch (player1->getState()) {
+			case STATE_STOP: {
+				player1->do_play();
+				btnPlay1->setPixmap(*pixPause);
+				btnLoadPlaylist1->setEnabled(false);
+				break;
+			}
+			case STATE_PAUSE: {
+				player1->do_resume();
+				btnPlay1->setPixmap(*pixPause);
+				btnLoadPlaylist1->setEnabled(false);
+				break;
+			}
+		}
 		break;
 	}
-}
 	case 40001: {
-		player1->do_pause();
-		btnPlay1->setPixmap(*pixPlay);
-		if (conf->getParam("next_on_showplan") != "") {
-			btnLoadPlaylist1->setEnabled(true);
+		if (player1->getState() == STATE_PLAY) {
+			player1->do_pause();
+			btnPlay1->setPixmap(*pixPlay);
+			if (conf->getParam("next_on_showplan") != "") {
+				btnLoadPlaylist1->setEnabled(true);
+			}
+		}
+		break;
+	}
+	case 40002: {
+		switch (player2->getState()) {
+			case STATE_STOP: {
+				player2->do_play();
+				btnPlay2->setPixmap(*pixPause);
+				btnLoadPlaylist2->setEnabled(false);
+				break;
+			}
+			case STATE_PAUSE: {
+				player2->do_resume();
+				btnPlay2->setPixmap(*pixPause);
+				btnLoadPlaylist2->setEnabled(false);
+				break;
+			}
+		}
+		break;
+	}
+	case 40003: {
+		if (player2->getState() == STATE_PLAY) {
+			player2->do_pause();
+			btnPlay2->setPixmap(*pixPlay);
+			if (conf->getParam("next_on_showplan") != "") {
+				btnLoadPlaylist2->setEnabled(true);
+			}
+		}
+		break;
+	}
+	case 40004: {
+		switch (player3->getState()) {
+			case STATE_STOP: {
+				player3->do_play();
+				btnPlay3->setPixmap(*pixPause);
+				btnLoadPlaylist3->setEnabled(false);
+				break;
+			}
+			case STATE_PAUSE: {
+				player3->do_resume();
+				btnPlay3->setPixmap(*pixPause);
+				btnLoadPlaylist3->setEnabled(false);
+				break;
+			}
+		}
+		break;
+	}
+	case 40005: {
+		if (player3->getState() == STATE_PLAY) {
+			player3->do_pause();
+			btnPlay3->setPixmap(*pixPlay);
+			if (conf->getParam("next_on_showplan") != "") {
+				btnLoadPlaylist3->setEnabled(true);
+			}
 		}
 		break;
 	}

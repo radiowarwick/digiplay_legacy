@@ -10,7 +10,7 @@
 ** destructor.
 *****************************************************************************/
 
-#include "../remoteStartThread.h"
+#include "remoteStartThread.h"
 #include "AudioWall.h"
 #include "AudioWallManager.h"
 

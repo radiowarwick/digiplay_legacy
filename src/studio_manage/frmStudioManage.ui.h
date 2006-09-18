@@ -22,6 +22,8 @@
 #include "TabPanelScript.h"
 #include "TabPanelFileBrowser.h"
 #include "ShowPlanItem.h"
+#include "ShowPlanAudio.h"
+#include "ShowPlanScript.h"
 #include "dlgLogin.h"
 #include "dlgWarn.h"
 
@@ -44,8 +46,8 @@ triggerThread *dbTrigger;
 config *conf;
 Connection *C;
 clockThread *ck;
-vector<_track*> *SearchResults;
-vector<_track*> *Playlist = new vector<_track*>;
+vector<track> *SearchResults;
+//vector<track> *Playlist = new vector<_track*>;
 QPixmap *sp_audio, *sp_artist, *sp_album;
 QString path;
 QListViewItem *last_item;
@@ -79,15 +81,15 @@ void frmStudioManage::init() {
 
 	//Load Images
 	cout << " -> Loading Images... ";
-	QPixmap pixAudio(path + "/images/audiofile32.png");
-	QPixmap pixScript(path + "/images/script32.png");
-	QPixmap pixLink(path + "/images/artist32.png");
+//	QPixmap pixAudio(path + "/images/audiofile32.png");
+//	QPixmap pixScript(path + "/images/script32.png");
+//	QPixmap pixLink(path + "/images/artist32.png");
 	pixFade->setPixmap(QPixmap(path + "/images/fade.png"));
 	pixLogo->setPixmap(QPixmap(path + "/images/rawdigiplay.png"));
 
-	sp_audio = new QPixmap(path + "/images/title.png");
-	sp_artist = new QPixmap(path + "/images/sp_artist.bmp");
-	sp_album = new QPixmap(path + "/images/sp_album.bmp");
+//	sp_audio = new QPixmap(path + "/images/title.png");
+//	sp_artist = new QPixmap(path + "/images/sp_artist.bmp");
+//	sp_album = new QPixmap(path + "/images/sp_album.bmp");
 	
 	btnMoveUp->setPixmap(QPixmap(path + "/images/moveup32.png"));
 	btnMoveDown->setPixmap(QPixmap(path + "/images/movedown32.png"));
@@ -101,39 +103,6 @@ void frmStudioManage::init() {
 	
 	lstShowPlan->setColumnWidth(0,lstShowPlan->width() - 5);
 	lstShowPlan->setSorting(-1);
-	QColor audioItem(128,255,128);
-	QColor scriptItem(255,128,128);
-	QColor linkItem(128,128,255);
-	QColor jingleItem(128,255,255);
-	ShowPlanItem *myAudioItem = new ShowPlanItem( lstShowPlan, NULL,
-		"Walking in the Sun","Travis","2:58","14:03.00");
-	myAudioItem->setBackColor(audioItem);
-	myAudioItem->setPixmap(0,pixAudio);
-	ShowPlanItem *myLinkItem = new ShowPlanItem( lstShowPlan, myAudioItem,
-		"Discuss what's on at NEC","Dave & Pete","1:02","14:05.58");
-	myLinkItem->setBackColor(linkItem);
-	myLinkItem->setPixmap(0,pixLink);
-	ShowPlanItem *myAudioItem2 = new ShowPlanItem( lstShowPlan, myLinkItem,
-		"Time is Running Out","Muse","3:33","14:07:00");
-	myAudioItem2->setBackColor(audioItem);
-	myAudioItem2->setPixmap(0,pixAudio);
-	ShowPlanItem *myScriptItem = new ShowPlanItem( lstShowPlan, myAudioItem2,
-		"Radio Play: The Life of a Student","","15:00","14:10:33");
-	myScriptItem->setBackColor(scriptItem);
-	myScriptItem->setPixmap(0,pixScript);
-	ShowPlanItem *myAudioItem3 = new ShowPlanItem( lstShowPlan, myScriptItem,
-		"Killer Queen","Queen","3:02","14:25:33");
-	myAudioItem3->setBackColor(audioItem);
-	myAudioItem3->setPixmap(0,pixAudio);
-	ShowPlanItem *myAudioItem4 = new ShowPlanItem( lstShowPlan, myAudioItem3,
-		"Clocks","Coldplay","4:11","14:28:35");
-	myAudioItem4->setBackColor(audioItem);
-	myAudioItem4->setPixmap(0,pixAudio);
-	ShowPlanItem *myJingle = new ShowPlanItem( lstShowPlan, myAudioItem4,
-		"This is RaW", "1251AM Jingle Package","0:06","14:32:46");
-	myJingle->setBackColor(jingleItem);
-	myJingle->setPixmap(0,pixAudio);
-	last_item = myJingle;
 
 	// Load tab panels after removing the template tab.	
 	tabManage->removePage(tabManage->currentPage());
@@ -184,9 +153,9 @@ void frmStudioManage::init() {
 }
 
 void frmStudioManage::destroy() {
-	for (unsigned int i = 0; i < Playlist->size(); i++)
-		delete Playlist->at(i);
-	delete Playlist;
+//	for (unsigned int i = 0; i < Playlist->size(); i++)
+//		delete Playlist->at(i);
+//	delete Playlist;
 }
 
 void frmStudioManage::customEvent(QCustomEvent *event) {
@@ -203,15 +172,10 @@ void frmStudioManage::customEvent(QCustomEvent *event) {
 		}
 	case 30001: {       // Configuration changed trigger
 			conf->requery();
-			cout << "Configuration data refreshed!" << endl;
 			if (conf->getParam("next_on_showplan") == "" 
 								&& lstShowPlan->childCount() > 0) {
-				Playlist->erase(Playlist->begin());
 				delete lstShowPlan->firstChild();
-				if (Playlist->size() > 0) {
-					cout << "Notifying next track" << endl;
-					conf->setParam("next_on_showplan",Playlist->at(0)->md5());
-				}
+				updateNextTrack();
 			}
 			break;
 		}
@@ -222,29 +186,14 @@ void frmStudioManage::customEvent(QCustomEvent *event) {
 	}
 }
 
-void frmStudioManage::playlistAdd(int *id) {
-	Transaction *T = new Transaction(*C, "");
-	_track *new_track = new _track(T, *id );
-	delete T;
-	Playlist->push_back(new_track);
-	QListViewItem *track_title = new QListViewItem( lstShowPlan,last_item, new_track->title(), getTime(new_track->length_smpl()), "00:00:00", "");
-	track_title->setPixmap( 0, *sp_audio );
-	QListViewItem *track_artist = new QListViewItem( track_title, "Artist: " + new_track->artist());
-	track_artist->setPixmap(0, *sp_artist );
-	QListViewItem *track_album = new QListViewItem( track_title, "Album: " + new_track->album());
-	track_album->setPixmap(0, *sp_album );
-	track_title->setOpen(false);
-	last_item = track_title;
-	if (Playlist->size() == 1) {
-		conf->setParam("next_on_showplan",new_track->md5());
-	}
+void frmStudioManage::playlistAdd(QString md5) {
+	track t = dps_getTrack(C,md5);
+	ShowPlanAudio *audio_item = new ShowPlanAudio( lstShowPlan, last_item, t); 
+	last_item = audio_item;
+	updateNextTrack();
 }
 
 bool frmStudioManage::isDefined(QString *name) {
-	//	for (unsigned short i = 0; i < names->size(); i++) {
-	//		if (names->at(i) == name)
-	//			return true;
-	//	}
 	return false;
 }
 
@@ -267,122 +216,137 @@ QString frmStudioManage::getTime( long smpl ) {
 void frmStudioManage::btnLoginClicked()
 {
     if ( !authModule->isAuthenticated() ) {
-	dlgLogin *dlg = new dlgLogin(this, "");
-	QString username;
-	QString password;
-	if ( dlg->exec() == QDialog::Accepted ){
-	    username = dlg->getUsername();
-	    password = dlg->getPassword();
-	    
-	    cout << " -> Trying login... ";
-	    try {
-		    authModule->authSession(username, password);
-		    if ( authModule->isAuthenticated() ) {
-			cout << "success." << endl;
-			btnLogin->setText("Log Out");
-		    }
+		dlgLogin *dlg = new dlgLogin(this, "");
+		QString username;
+		QString password;
+		if ( dlg->exec() == QDialog::Accepted ){
+		    username = dlg->getUsername();
+		    password = dlg->getPassword();
+		    
+		    cout << " -> Trying login... ";
+		    try {
+			    authModule->authSession(username, password);
+			    if ( authModule->isAuthenticated() ) {
+				cout << "success." << endl;
+				btnLogin->setText("Log Out");
+			    }
+			}
+			catch (int e) {
+			    if ( e==AUTH_INVALID_CREDENTIALS ) {
+					cout << "failed: Incorrect username or password." << endl;
+					dlgWarn *warning = new dlgWarn(this, "");
+					warning->setTitle("Error");
+					warning->setWarning("Incorrect username or password.");
+					warning->setQuestion(false);
+					warning->exec();
+					delete warning;
+			    }
+			    else {
+					cout << "failed: Error code " << e << endl;
+					dlgWarn *warning = new dlgWarn(this, "");
+					warning->setTitle("Error");
+					warning->setWarning("Problem connecting to the server. Please check your settings.");
+				warning->setQuestion(false);
+				warning->exec();
+				delete warning;
+			    }
+			}
+			catch (...) {
+			    cout << "failed: reason unknown." << endl;
+			    dlgWarn *warning = new dlgWarn(this, "");
+			    warning->setTitle("Error");
+			    warning->setWarning("An unknown error occurred.");
+			    warning->setQuestion(false);
+			    warning->exec();
+			    delete warning;
+			}
 		}
-		catch (int e) {
-		    if ( e==AUTH_INVALID_CREDENTIALS ) {
-			cout << "failed: Incorrect username or password." << endl;
-			dlgWarn *warning = new dlgWarn(this, "");
-			warning->setTitle("Error");
-			warning->setWarning("Incorrect username or password.");
-			warning->setQuestion(false);
-			warning->exec();
-			delete warning;
-		    }
-		    else {
-			cout << "failed: Error code " << e << endl;
-			dlgWarn *warning = new dlgWarn(this, "");
-			warning->setTitle("Error");
-			warning->setWarning("Problem connecting to the server.  Please check your settings.");
-			warning->setQuestion(false);
-			warning->exec();
-			delete warning;
-		    }
-		}
-		catch (...) {
-		    cout << "failed: reason unknown." << endl;
-		    dlgWarn *warning = new dlgWarn(this, "");
-		    warning->setTitle("Error");
-		    warning->setWarning("An unknown error occurred.");
-		    warning->setQuestion(false);
-		    warning->exec();
-		    delete warning;
-		}
-	}
-	delete dlg;
+		delete dlg;
     }
     else {
-	dlgWarn *dlg = new dlgWarn(this, "");
-	dlg->setTitle("Logout");
-	dlg->setWarning("Are you sure you wish to logout?");
-	if ( dlg->exec() == QDialog::Accepted ){
-	    authModule->closeSession();
-	    btnLogin->setText("Log In");
+		dlgWarn *dlg = new dlgWarn(this, "");
+		dlg->setTitle("Logout");
+		dlg->setWarning("Are you sure you wish to logout?");
+		if ( dlg->exec() == QDialog::Accepted ){
+		    authModule->closeSession();
+		    btnLogin->setText("Log In");
+		}
+		delete dlg;
 	}
-	delete dlg;
-    }
 }
 
 
-void frmStudioManage::btnMoveTopClicked()
-{
-    if ( lstShowPlan->selectedItem() ){
-	QListViewItem *temp;
-	temp = lstShowPlan->selectedItem();
-	lstShowPlan->takeItem(temp);
-	lstShowPlan->insertItem(temp);
-    }
-}
-
-
-void frmStudioManage::btnMoveUpClicked()
-{
+void frmStudioManage::btnMoveTopClicked() {
     if ( lstShowPlan->selectedItem() ) {
-	if (lstShowPlan->selectedItem() == lstShowPlan->firstChild()->itemBelow() ) {
-	    QListViewItem *temp;
-	    temp = lstShowPlan->selectedItem();
-	    lstShowPlan->takeItem(temp);
-	    lstShowPlan->insertItem(temp);
-	}
-	else {
-	    lstShowPlan->selectedItem()->moveItem(lstShowPlan->selectedItem()->itemAbove()->itemAbove());
-	}
+		QListViewItem *temp;
+		temp = lstShowPlan->selectedItem();
+		lstShowPlan->takeItem(temp);
+		lstShowPlan->insertItem(temp);
+		updateNextTrack();
     }
 }
 
 
-void frmStudioManage::btnDeleteClicked()
-{
-    if ( lstShowPlan->selectedItem() )
-	delete lstShowPlan->selectedItem();
+void frmStudioManage::btnMoveUpClicked() {
+    if ( lstShowPlan->selectedItem() ) {
+		if (lstShowPlan->selectedItem() 
+					== lstShowPlan->firstChild()->itemBelow() ) {
+		    QListViewItem *temp;
+		    temp = lstShowPlan->selectedItem();
+		    lstShowPlan->takeItem(temp);
+		    lstShowPlan->insertItem(temp);
+		}
+		else {
+		    lstShowPlan->selectedItem()->moveItem(
+					lstShowPlan->selectedItem()->itemAbove()->itemAbove());
+		}
+    }
 }
 
-void frmStudioManage::btnClearClicked()
-{
+
+void frmStudioManage::btnDeleteClicked() {
+    if ( lstShowPlan->selectedItem() )
+		delete lstShowPlan->selectedItem();
+}
+
+void frmStudioManage::btnClearClicked() {
     dlgWarn *dlg = new dlgWarn(this, "");
     dlg->setTitle("Clear All");
     dlg->setWarning("Are you sure you wish to clear the show plan?");
     if ( dlg->exec() == QDialog::Accepted ){
-	authModule->closeSession();
-	btnLogin->setText("Log In");
-	lstShowPlan->clear();
-	conf->setParam("next_on_showplan","");
+		authModule->closeSession();
+		btnLogin->setText("Log In");
+		lstShowPlan->clear();
+		updateNextTrack();
     }
     delete dlg;
 }
 
-void frmStudioManage::btnMoveDownClicked()
-{
+void frmStudioManage::btnMoveDownClicked() {
     if ( lstShowPlan->selectedItem() ) {
-	lstShowPlan->selectedItem()->moveItem(lstShowPlan->selectedItem()->itemBelow());    }
+		lstShowPlan->selectedItem()->moveItem(
+				lstShowPlan->selectedItem()->itemBelow());
+	}
 }
 
-void frmStudioManage::btnMoveBottomClicked()
-{
+void frmStudioManage::btnMoveBottomClicked() {
     if ( lstShowPlan->selectedItem() ) {
-	lstShowPlan->selectedItem()->moveItem(lstShowPlan->lastItem());
+		lstShowPlan->selectedItem()->moveItem(lstShowPlan->lastItem());
     }
+}
+
+
+void frmStudioManage::updateNextTrack() {
+	if (lstShowPlan->childCount() > 0) {
+		ShowPlanItem *item = (ShowPlanItem*)lstShowPlan->firstChild();
+		do
+			if (item->getType() == 0) {
+				ShowPlanAudio *audio = (ShowPlanAudio*)item;
+				track t = audio->getTrack();
+				conf->setParam("next_on_showplan",t.md5);
+				return;
+			}
+		while ((item = (ShowPlanItem*)item->nextSibling()) != 0);
+	}
+	conf->setParam("next_on_showplan","");
 }

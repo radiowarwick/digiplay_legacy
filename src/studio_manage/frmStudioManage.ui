@@ -1019,12 +1019,12 @@
 </includes>
 <slots>
     <slot>customEvent( QCustomEvent * event )</slot>
-    <slot>playlistAdd( int * id )</slot>
-    <slot>btnClearClicked()</slot>
+    <slot>playlistAdd( QString md5 )</slot>
     <slot>btnLoginClicked()</slot>
     <slot>btnMoveTopClicked()</slot>
     <slot>btnMoveUpClicked()</slot>
     <slot>btnDeleteClicked()</slot>
+    <slot>btnClearClicked()</slot>
     <slot>btnMoveDownClicked()</slot>
     <slot>btnMoveBottomClicked()</slot>
 </slots>
@@ -1033,6 +1033,7 @@
     <function access="private" specifier="non virtual">destroy()</function>
     <function returnType="bool">isDefined( QString * name )</function>
     <function access="private" specifier="non virtual" returnType="QString">getTime( long smpl )</function>
+    <function access="private">updateNextTrack()</function>
 </functions>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

@@ -12,14 +12,15 @@ using namespace std;
 #include "pqxx/result.h"
 using namespace pqxx;
 
-#include "track.h"
+//#include "track.h"
+#include "dps.h"
 #include "config.h"
 
 class libsearch {
     public:
 		libsearch();
 		~libsearch();
-		vector<_track*>* query(string search_string);
+		vector<track>* query(string search_string);
 		bool searchTitle();
 		bool searchTitle(bool flag);
 		bool searchArtist();
@@ -29,7 +30,6 @@ class libsearch {
 		int searchLimit();
 		int searchLimit(int value);
 		string lastQuery();
-		_track* getTrack(int ID);
 
 	private:
 		Connection* C;

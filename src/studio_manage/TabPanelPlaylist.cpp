@@ -142,8 +142,8 @@ void TabPanelPlaylist::customEvent(QCustomEvent *event) {
 
 void TabPanelPlaylist::playlistAdd(QListViewItem *current) {
 	if (current->text(3)) {
-		int id = atoi(current->text(3).ascii());
-		parentForm->playlistAdd(&id);
+//		int id = atoi(current->text(3).ascii());
+//		parentForm->playlistAdd(&id);
 	}
 }
 

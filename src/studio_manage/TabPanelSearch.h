@@ -38,7 +38,7 @@ class TabPanelSearch : public TabPanel {
 		void clear();
 		
 		Connection *C;
-		vector<_track*> *SearchResults;
+		vector<track> *SearchResults;
 		libsearch *library_engine;
 		QPushButton *btnLibrarySearch;
 		QTable *tblLibrarySearchResults;

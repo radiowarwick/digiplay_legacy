@@ -146,37 +146,37 @@ void TabPanelSearch::draw() {
 }
 
 void TabPanelSearch::Library_Search() {
-        cout << "Searching audio library..." << endl;
+//        cout << "Searching audio library..." << endl;
         library_engine->searchLimit(200);
-        if (TitleCheckBox->isChecked()) {
-                cout << " -> Search Title: true" << endl;
-        }
-        if (ArtistCheckBox->isChecked()) {
-                cout << " -> Search Artist: true" << endl;
-        }
-        if (AlbumCheckBox->isChecked()) {
-                cout << " -> Search Album: true" << endl;
-        }
+//        if (TitleCheckBox->isChecked()) {
+//                cout << " -> Search Title: true" << endl;
+//        }
+//        if (ArtistCheckBox->isChecked()) {
+//                cout << " -> Search Artist: true" << endl;
+//        }
+//        if (AlbumCheckBox->isChecked()) {
+//                cout << " -> Search Album: true" << endl;
+//        }
         library_engine->searchTitle(TitleCheckBox->isChecked());
         library_engine->searchArtist(ArtistCheckBox->isChecked());
         library_engine->searchAlbum(AlbumCheckBox->isChecked());
-        if (SearchResults)
-                for (unsigned int i = 0; i < SearchResults->size(); i++)
-                        delete SearchResults->at(i);
+//        if (SearchResults)
+  //              for (unsigned int i = 0; i < SearchResults->size(); i++)
+    //                    delete SearchResults->at(i);
         delete SearchResults;
         SearchResults = library_engine->query(txtLibrarySearchText->text());
-        cout << " -> Criteria: " << library_engine->lastQuery() << endl;
-        cout << " -> Found: " << SearchResults->size() << " matches." << endl;
+//        cout << " -> Criteria: " << library_engine->lastQuery() << endl;
+//        cout << " -> Found: " << SearchResults->size() << " matches." << endl;
         tblLibrarySearchResults->setNumRows(SearchResults->size());
         for (unsigned int i = 0; i < SearchResults->size(); i++) {
                 tblLibrarySearchResults->setItem(i,0,
-                   new QTableItem( tblLibrarySearchResults, QTableItem::Never, SearchResults->at(i)->title()));
+                   new QTableItem( tblLibrarySearchResults, QTableItem::Never, SearchResults->at(i).title));
                 tblLibrarySearchResults->setItem(i,1,
-                   new QTableItem( tblLibrarySearchResults, QTableItem::Never, SearchResults->at(i)->artist()));
+                   new QTableItem( tblLibrarySearchResults, QTableItem::Never, SearchResults->at(i).artist));
                 tblLibrarySearchResults->setItem(i,2,
-                   new QTableItem( tblLibrarySearchResults, QTableItem::Never, SearchResults->at(i)->album()));
+                   new QTableItem( tblLibrarySearchResults, QTableItem::Never, SearchResults->at(i).album));
                 tblLibrarySearchResults->setItem(i,3,
-                   new QTableItem( tblLibrarySearchResults, QTableItem::Never, SearchResults->at(i)->id()));
+                   new QTableItem( tblLibrarySearchResults, QTableItem::Never, SearchResults->at(i).md5));
         }
         tblLibrarySearchResults->adjustColumn(0);
         tblLibrarySearchResults->adjustColumn(1);
@@ -186,8 +186,7 @@ void TabPanelSearch::Library_Search() {
 
 void TabPanelSearch::playlistAdd(int row, int col, int button, const QPoint& mousepos) {
         if (mousepos.isNull()) {button = 0; row = 0; col = 0;}
-	int id = atoi(SearchResults->at(row)->id().c_str());
-      	parentForm->playlistAdd(&id);
+      	parentForm->playlistAdd(SearchResults->at(row).md5);
 }
 
 void TabPanelSearch::clear() {

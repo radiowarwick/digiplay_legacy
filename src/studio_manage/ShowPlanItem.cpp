@@ -2,7 +2,6 @@
 using namespace std;
 
 #include <qstring.h>
-#include <qstring.h>
 #include <qsimplerichtext.h>
 #include <qpainter.h>
 #include <qpixmap.h>
@@ -25,30 +24,20 @@ ShowPlanItem::ShowPlanItem( QListViewItem *parent, QListViewItem *after )
 	init();
 }
 
-ShowPlanItem::ShowPlanItem( QListView *parent, QListViewItem *after,
-		QString txtTitle, QString txtArtist, QString txtLength, 
-		QString txtTime ) 
-		: QListViewItem(parent, after, txtTitle, txtArtist, txtLength, txtTime) {
-	rootElement = false;
-	setText(0,txtTitle);
-	setText(1,txtArtist);
-	setText(2,txtLength);
-	setText(3,txtTime);
-	init();
-}
-
 void ShowPlanItem::init() {
 	active = false;
 	selected = false;
+	_state = SHOWPLAN_STATE_UNLOADED;
+
 	selectPen = new QPen( black );
-	selectPen->setWidth(5);
+	selectPen->setWidth(0);
 	unselectPen = new QPen( black );
 	selectPen->setWidth(1);
-	backColor = new QBrush( red );
+	
 	titleFont.setBold(true);
 	titleFont.setPointSize(16);
-	artistFont.setItalic(true);
-	artistFont.setPointSize(14);
+	subtitleFont.setItalic(true);
+	subtitleFont.setPointSize(14);
 	lengthFont.setBold(true);
 	lengthFont.setPointSize(16);
 	timeFont.setPointSize(14);
@@ -58,12 +47,12 @@ void ShowPlanItem::setup() {
 	QListViewItem::setup();
 
 	QString txtTitle = text(0);
-	QString txtArtist = text(1);
+	QString txtSubtitle = text(1);
 	QString txtLength = text(2);
 	QString txtTime = text(3);
 	if (txtTitle.isEmpty() ){
 		if (lblTitle) delete lblTitle;
-		if (lblArtist) delete lblArtist;
+		if (lblSubtitle) delete lblSubtitle;
 		if (lblLength) delete lblLength;
 		if (lblTime) delete lblTime;
 		return;
@@ -75,8 +64,20 @@ void ShowPlanItem::setup() {
 	int w = lv->columnWidth(0);
 	int r = lv->itemMargin();
 	int stepSize = lv->treeStepSize();
-	
-	const QPixmap *px = pixmap(0);
+
+	QPixmap *px;
+	switch (_state) {
+		case SHOWPLAN_STATE_UNLOADED:
+			px = pixUnloaded;
+			break;
+		case SHOWPLAN_STATE_LOADED:
+			px = pixLoaded;
+			break;
+		case SHOWPLAN_STATE_FINISHED:
+			px = pixFinished;
+			break;
+	}
+
 	int wPix = 0;
 	int hPix = 0;
 	if (px) {
@@ -86,8 +87,8 @@ void ShowPlanItem::setup() {
 		
 	lblTitle = new QSimpleRichText( txtTitle, titleFont );
 	lblTitle->setWidth(w - r - depth()*stepSize - TIME_WIDTH - wPix);
-	lblArtist = new QSimpleRichText( txtArtist, artistFont );
-	lblArtist->setWidth(w - r - depth()*stepSize - ITEM_INDENT - TIME_WIDTH 
+	lblSubtitle = new QSimpleRichText( txtSubtitle, subtitleFont );
+	lblSubtitle->setWidth(w - r - depth()*stepSize - ITEM_INDENT - TIME_WIDTH 
 							- wPix);
 	lblLength = new QSimpleRichText( txtLength, lengthFont );
 	lblLength->setWidth( TIME_WIDTH );
@@ -97,7 +98,7 @@ void ShowPlanItem::setup() {
 	lblTime->setWidth( QMIN(TIME_WIDTH, lblTime->widthUsed()));
 	
 	_widthUsed = lv->width();
-	int h = QMAX( QMAX( lblTitle->height() + lblArtist->height(),
+	int h = QMAX( QMAX( lblTitle->height() + lblSubtitle->height(),
 				lblLength->height() + lblTime->height() ),
 			hPix ) + 2*r;
 	if (h % 2 > 0) h++;
@@ -118,36 +119,47 @@ void ShowPlanItem::paintCell(QPainter *p, const QColorGroup &cg, int column,
 		setup();
 	}
 	
-	int r = lv->itemMargin();
-//	p->setBrush(*backColor);
-//	p->drawRect(0,0,lv->columnWidth(0),height());
-//	if (isSelected()) {
-
-//	}
-//	else {
-
-//	}
-
-	const QPixmap *px = pixmap( 0 );
+	QPixmap *px;
+	QBrush *backBrush;
 	QRect recPix;
 	int wPix = 0;
 	int hPix = 0;
+	int wLength = lblLength->width();
+	int wTime = lblTime->width();
+	int r = lv->itemMargin();
+	
+	switch (_state) {
+		case SHOWPLAN_STATE_UNLOADED:
+			px = pixUnloaded;
+			backBrush = backBrushUnloaded;
+			break;
+		case SHOWPLAN_STATE_LOADED:
+			px = pixLoaded;
+			backBrush = backBrushLoaded;
+			break;
+		case SHOWPLAN_STATE_FINISHED:
+			px = pixFinished;
+			backBrush = backBrushFinished;
+			break;
+		default:
+			backBrush = backBrushUnloaded;
+			break;
+	}
+
 	if (px) {
 		wPix = px->width();
 		hPix = px->height();
 		recPix = QRect(r, (height() - hPix)/2, wPix, hPix);
 	}
-
-	int wLength = lblLength->width();
-	int wTime = lblTime->width();
+	
 	QRect recTitle(	r + ITEM_INDENT + wPix, 
 					r, 
 					lv->columnWidth(0) - 2*r - wLength - ITEM_INDENT - wPix, 
 					lblTitle->height());
-	QRect recArtist(r + 2*ITEM_INDENT + wPix, 
+	QRect recSubtitle(r + 2*ITEM_INDENT + wPix, 
 					lblTitle->height() + r, 
 					lv->columnWidth(0) - 2*r - 2*ITEM_INDENT - wTime - wPix, 
-					lblArtist->height());
+					lblSubtitle->height());
 	QRect recLength(lv->columnWidth(0) - 15 - wLength - r, 
 					r, 
 					wLength,
@@ -158,21 +170,20 @@ void ShowPlanItem::paintCell(QPainter *p, const QColorGroup &cg, int column,
 					lblTime->height());
 
 	lblTitle->draw(p, recTitle.left(), recTitle.top(), recTitle, 
-						cg, backColor);
-	lblArtist->draw(p, recArtist.left(), recArtist.top(), recArtist, 
-						cg, backColor);
+						cg, backBrush);
+	lblSubtitle->draw(p, recSubtitle.left(), recSubtitle.top(), recSubtitle, 
+						cg, backBrush);
 	lblLength->draw(p, recLength.left(), recLength.top(), recLength, 
-						cg, backColor);
+						cg, backBrush);
 	lblTime->draw(p, recTime.left(), recTime.top(), recTime, 
-						cg, backColor);
+						cg, backBrush);
 
 	QRegion clip(0,0,width, height());
-	clip = clip - recTitle - recArtist - recLength - recTime;
+	clip = clip - recTitle - recSubtitle - recLength - recTime;
 	p->setClipRegion(clip, QPainter::CoordPainter);
-	p->fillRect(0,0,width, height(), *backColor);
+	p->fillRect(0,0,width, height(), *backBrush);
 
 	if (px) {
-//		p->drawRect(recPix);
 		p->drawPixmap(recPix,*px);
 	}
 

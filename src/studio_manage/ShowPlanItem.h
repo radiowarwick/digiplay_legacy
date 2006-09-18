@@ -3,6 +3,8 @@
 
 #include <qlistview.h>
 
+#include "dps.h"
+
 class QPainter;
 class QColorGroup;
 class QString;
@@ -12,35 +14,30 @@ class ShowPlanItem : public QListViewItem {
 	public:
 		ShowPlanItem( QListView *parent, QListViewItem *after );
 		ShowPlanItem( QListViewItem *parent, QListViewItem *after );
-		ShowPlanItem( QListView *parent, QListViewItem *after, 
-				QString txtTitle, QString txtArtist, QString txtLength, 
-				QString txtTime );
+		virtual int getType() = 0;
 		virtual void setup();
 		int widthUsed() {return _widthUsed;}
-		void setBackColor( QColor &c ) {*backColor = c;}
+		void setState(enum showPlanState state) {_state = state; setup();}
 
 	protected:
+		virtual void init();
 		virtual void paintCell(QPainter *p, const QColorGroup &cg, int column,
 				int width, int align);
-//		virtual QString expandTemplate(int column = 0) {return QString::null;}
-
-	private:
-		void init();
-
 		bool selected;
 		bool active;
 		int _widthUsed;
 		bool rootElement;
+		enum showPlanState _state;
+
 		QSimpleRichText *lblTitle;
-		QSimpleRichText *lblArtist;
+		QSimpleRichText *lblSubtitle;
 		QSimpleRichText *lblLength;
 		QSimpleRichText *lblTime;
 
-		QFont titleFont;
-		QFont artistFont;
-		QFont lengthFont;
-		QFont timeFont;
-		QBrush *backColor;
+		QFont titleFont, subtitleFont, lengthFont, timeFont;
+		QBrush *backBrushUnloaded, *backBrushLoaded, *backBrushFinished;
+		QPixmap *pixUnloaded, *pixLoaded, *pixFinished;
+
 		QPen *selectPen;
 		QPen *unselectPen;
 };

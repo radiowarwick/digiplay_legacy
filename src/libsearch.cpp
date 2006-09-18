@@ -22,15 +22,16 @@ libsearch::~libsearch() {
  * word 'The' is going to return a whole lot of results.  Might want
  * to return results incrementally as the search progresses.
  */
-vector<_track*>* libsearch::query(string search_string) {
+
+vector<track>* libsearch::query(string search_string) {
  string SQL;
  search_string = escape_binary(search_string);
  lastQuery_string = search_string;
 
- vector<_track*>* Q = new vector<_track*>;
+ vector<track>* Q = new vector<track>;
  T = new Transaction(*C, "");
  
- SQL = "SELECT audio.id AS id, "
+ SQL = "SELECT audio.md5 AS md5, "
   "artists.name AS artist, "
   "audio.title, "
   "albums.name AS album "
@@ -77,17 +78,17 @@ vector<_track*>* libsearch::query(string search_string) {
   S << searchLimit_value;
   SQL += " LIMIT " + S.str();
  }
-
+ 
  Result R = T->exec(SQL);
-
- for (int i = 0; i < (int)R.size(); i++) {
-  int id = atoi(R[i]["id"].c_str());
-  _track* t = new _track(T,id);
-  Q->push_back(t);
- }
-
  T->abort();
  delete T;
+
+ for (int i = 0; i < (int)R.size(); i++) {
+	 track t = dps_getTrack(C,R[i]["md5"].c_str());
+//  int id = atoi(R[i]["id"].c_str());
+//  _track* t = new _track(T,id);
+  Q->push_back(t);
+ }
  return Q;
 }
 
@@ -134,7 +135,7 @@ string libsearch::lastQuery() {
   return lastQuery_string;
 }
 
-_track* libsearch::getTrack(int ID) {
+/*_track* libsearch::getTrack(int ID) {
 	
   T = new Transaction(*C,"");
   _track* t = new _track(T,ID);
@@ -142,4 +143,4 @@ _track* libsearch::getTrack(int ID) {
   delete T;
   
   return t;
-}
+}*/

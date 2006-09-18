@@ -128,6 +128,29 @@ string dps_strNum(long num, unsigned int digits) {
     return result;
 }
 
+string dps_prettyTime(long samples) {
+	string result = "";
+	int hours = (int)(samples / 158760000);
+	if (hours > 0) {
+		result += dps_itoa(hours) + "h ";
+	}
+	samples -= hours*158760000;
+	int mins = (int)(samples / 2646000);
+	if (mins > 0) {
+		if (mins < 10) {
+			result += "0";
+		}
+		result += dps_itoa(mins) + "m ";
+	}
+	samples -= mins*2656000;
+	int secs = (int)(samples / 44100);
+	if (secs < 10) {
+		result += "0";
+	}
+	result += dps_itoa(secs) + "s";
+	return result;
+}
+
 long dps_current_time() {
 	    return (long)time(NULL) - 946080000;
 }

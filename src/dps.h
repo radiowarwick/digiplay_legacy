@@ -43,6 +43,32 @@ struct track {
     unsigned long fade_out_smpl;
 };
 
+struct jingle {
+	bool isNull;
+	string md5;
+	archive md5_archive;
+	string title;
+	string package;
+	unsigned long length_smpl;
+	unsigned long trim_start_smpl;
+	unsigned long trim_end_smpl;
+	unsigned long fade_in_smpl;
+	unsigned long fade_out_smpl;
+};
+
+struct advert {
+	bool isNull;
+};
+
+struct script {
+	bool isNull;
+	string title;
+	string owner;
+	string summary;
+	string content;
+	unsigned long length_smpl;
+};
+
 struct email {
     string from;
     string subject;
@@ -66,10 +92,16 @@ struct eventData {
 	short index;
 };
 
+enum showPlanState {
+	SHOWPLAN_STATE_UNLOADED,
+	SHOWPLAN_STATE_LOADED,
+	SHOWPLAN_STATE_FINISHED};
+
 track dps_getTrack(Connection *C, string md5);
 string dps_itoa(long num);
 string dps_strTrim(string *Str);
 string dps_strPcase(string *Str);
 string dps_strNum(long num, unsigned int digits);
+string dps_prettyTime(long samples);
 long dps_current_time();
 #endif

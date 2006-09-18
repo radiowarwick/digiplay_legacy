@@ -11,6 +11,7 @@ int main() {
 	cout << "Digital Playout System FLAC Encoder" << endl;
 	cout << "Copyright (c) 2005-2006 Radio Warwick" << endl;
 	char* routine = "FLACcompress::main";
+	char* filename = "/mnt/audio/73f06f6f6e5799134b625d1b676215d8";
 	File *E = new File();
 	int samples=0;
 	int blocksize=4608;
@@ -46,7 +47,7 @@ int main() {
 		Logger::log(INFO,routine,dps_itoa(A->size(DPS_DB)) + " tracks in archive",1);
 	}
 */
-	E->set_filename("/mnt/audio/73f06f6f6e5799134b625d1b676215d8.FLAC");
+	E->set_filename(strcat(filename, ".FLAC"));
 	E->set_channels(2);
 	E->set_bits_per_sample(16);
 	E->set_sample_rate(44100);
@@ -60,8 +61,8 @@ int main() {
 	E->set_verify(1);
 	E->init();
 
-	if (stat("/mnt/audio/73f06f6f6e5799134b625d1b676215d8", &results) == 0) {	
-		inFile.open("/mnt/audio/73f06f6f6e5799134b625d1b676215d8", ios::in | ios::binary);
+	if (stat(filename, &results) == 0) {	
+		inFile.open(filename, ios::in | ios::binary);
 		while ( results.st_size - read > 0 ) {
 			if ( results.st_size-read >= blocksize*2) {
 				inFile.read(inBuffer, blocksize*2);
@@ -78,7 +79,7 @@ int main() {
 			}
 			E->process_interleaved(buffer, samples);
 		}
-		stat("/mnt/audio/73f06f6f6e5799134b625d1b676215d8.FLAC", &results);
+		stat(strcat(filename, ".FLAC"), &results);
 		cout << "Read: " << read << endl;
 		cout << "Written: " << results.st_size << endl;
 	}

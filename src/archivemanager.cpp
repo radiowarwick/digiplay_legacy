@@ -391,7 +391,8 @@ void archivemanager::loadDB(vector<track> *tracks) {
 			"AND audioartists.artist = artists.id "
 			"AND audio.archive = archives.id "
 			"AND audio.music_album = albums.id "
-		"ORDER BY audio.md5";
+			"AND archives.id = " + dps_itoa(A.id) +
+		" ORDER BY audio.md5";
 	track t;
 	Result R = T->exec(SQL);
 	for (unsigned int i = 0; i < R.size(); i++) {

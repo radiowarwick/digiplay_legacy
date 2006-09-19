@@ -256,11 +256,11 @@ void archivemanager::add(unsigned int index) {
 	        SQL = "INSERT INTO audio (md5, archive, length_smpl, start_smpl, "
 	            "end_smpl, intro_smpl, extro_smpl, type, creator, "
 				"creation_date, import_date, title, sustainer, censor, "
-				"lifespan) "
+				"lifespan, music_album) "
 	            "VALUES ('" + t.md5 + "'," + dps_itoa(t.md5_archive.id) + "," + dps_itoa(t.length_smpl) + ","
 	            + dps_itoa(t.trim_start_smpl) + "," + dps_itoa(t.trim_end_smpl) + ","
 	            + dps_itoa(t.fade_in_smpl) + "," + dps_itoa(t.fade_out_smpl) + ",1,0,"
-	            + dps_itoa(dps_current_time()) + "," + dps_itoa(dps_current_time()) + ",'" + t.title + "','f','f',0)";
+	            + dps_itoa(dps_current_time()) + "," + dps_itoa(dps_current_time()) + ",'" + t.title + "','f','f',0,0)";
 			T->exec(SQL);
 			SQL = "SELECT last_value FROM audio_id_seq";
 			R = T->exec(SQL);

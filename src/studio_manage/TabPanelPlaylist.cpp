@@ -65,6 +65,8 @@ void TabPanelPlaylist::draw() {
 	lstPlaylist->setGeometry( QRect( 20, 20, 480, 610 ) );
 	lstPlaylist->setVScrollBarMode( QListView::AlwaysOn );
 	lstPlaylist->setAllColumnsShowFocus( TRUE );
+	lstPlaylist->setColumnWidthMode(3, QListView::Manual);
+	lstPlaylist->setColumnWidth(3, 0);
 
 	// connect signals and slots here
 	QObject::connect( lstPlaylist, SIGNAL( doubleClicked(QListViewItem*) ),
@@ -94,14 +96,14 @@ void TabPanelPlaylist::getPlaylist(){
 	Result Playlists = T->exec(SQL.str());
 	T->abort();
 	delete T;
- 	
+
 	for (int j = 0; j < (int)Playlists.size(); j++) {
 
 		string playlist = Playlists[j]["playlist"].c_str();
 		string playlist_name = playlist + " List";
 		new_playlist = new QListViewItem(lstPlaylist, playlist_name);
-		new_playlist->setPixmap (0, pixContract);
-		SQL << "SELECT playlist.audio, audio.md5 FROM playlist, audio  WHERE playlist = '" << Playlists[j]["playlist"].c_str() << "' AND audio.id = playlist.audio;";
+		new_playlist->setPixmap (0, pixExpand);
+		SQL << "SELECT  audio.md5 FROM playlist, audio  WHERE playlist = '" << Playlists[j]["playlist"].c_str() << "' AND audio.id = playlist.audio;";
 		Result R;
 		try {
 			Transaction *T = new Transaction(*C,"");
@@ -112,16 +114,24 @@ void TabPanelPlaylist::getPlaylist(){
 		catch (...) {
 			cout << " -> ERROR: Failed to get " << playlist_name << "." << endl;
 		}
-	
+
 		for (int i = (int)R.size()-1; i > -1; i--) {
 			t = dps_getTrack(C, R[i]["md5"].c_str());
 			QListViewItem *new_track = new QListViewItem(new_playlist,
-       	             		 t.title, t.artist, getTime(t.length_smpl),  R[i]["audio"].c_str());
+       	             		 t.title, t.artist, getTime(t.length_smpl),  R[i]["md5"].c_str());
 			new_track->setPixmap(0,pixTrack);
 		}
 		new_playlist->setOpen(true);
 
 	}
+	lstPlaylist->setColumnWidthMode(0, QListView::Manual);
+	lstPlaylist->setColumnWidthMode(1, QListView::Manual);
+	lstPlaylist->setColumnWidthMode(2, QListView::Manual);
+	lstPlaylist->setColumnWidthMode(3, QListView::Manual);
+	lstPlaylist->setColumnWidth(0, 205);
+	lstPlaylist->setColumnWidth(1, 205);
+	lstPlaylist->setColumnWidth(2, 50);
+	lstPlaylist->setColumnWidth(3, 0);
 
 }
 
@@ -142,8 +152,8 @@ void TabPanelPlaylist::customEvent(QCustomEvent *event) {
 
 void TabPanelPlaylist::playlistAdd(QListViewItem *current) {
 	if (current->text(3)) {
-//		int id = atoi(current->text(3).ascii());
-//		parentForm->playlistAdd(&id);
+		string md5 = current->text(3).ascii();
+		parentForm->playlistAdd(md5);
 	}
 }
 

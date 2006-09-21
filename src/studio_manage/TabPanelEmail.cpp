@@ -18,6 +18,7 @@ TabPanelEmail::TabPanelEmail(QTabWidget *parent, string text)
 		: TabPanel(parent,text) {
 	lstEmail = 0;
 	txtEmailBody = 0;
+	updateDisabled=0;
 
 	config *conf = new config("digiplay");
 	C = new Connection(conf->getDBConnectString());
@@ -96,6 +97,8 @@ void TabPanelEmail::draw() {
 	lstEmail->setSorting(4, FALSE);
 	txtEmailBody = new QTextBrowser(getPanel(), "txtEmailBody" );
 	txtEmailBody->setGeometry( QRect( 10, 280, 495, 350 ) );
+	fntBody = txtEmailBody->currentFont();
+	pointSize= txtEmailBody->pointSize();
 
 	// connect signals and slots here
 	QObject::connect( lstEmail, SIGNAL( selectionChanged(QListViewItem*) ),
@@ -130,17 +133,27 @@ void TabPanelEmail::getEmail(){
 				R[i]["id"].c_str());
 //			cout << "   *" << (R[i]["new_flag"].c_str()) << "*  " << endl;
 			string flag = R[i]["new_flag"].c_str();
+//			new_email->setMultiLinesEnabled(TRUE);
 			if (  !flag.compare("t")   )
 				new_email->setPixmap(0, *pixEmailNew);
 			else
 				new_email->setPixmap(0, *pixEmailOld);
 		}
 	}
+
 	catch (...) {
 		cout << " -> ERROR: Failed to get new e-mails." << endl;
 	}
 	T->abort();
 	delete T;
+	lstEmail->setColumnWidthMode(1, QListView::Manual);	
+	lstEmail->setColumnWidthMode(2, QListView::Manual);	
+	lstEmail->setColumnWidthMode(3, QListView::Manual);	
+	lstEmail->setColumnWidthMode(4, QListView::Manual);	
+	lstEmail->setColumnWidth(1, 180);	
+	lstEmail->setColumnWidth(2, 180);	
+	lstEmail->setColumnWidth(3, 93);	
+	lstEmail->setColumnWidth(4, 0);	
 }
 
 void TabPanelEmail::getEmailBody(QListViewItem *current) {
@@ -152,6 +165,8 @@ void TabPanelEmail::getEmailBody(QListViewItem *current) {
 		<< "' ORDER BY datetime DESC LIMIT 50;";
 	try {
 		Result R = T->exec(SQL.str());
+		txtEmailBody->setCurrentFont(fntBody);
+		txtEmailBody->setPointSize(pointSize);
 		txtEmailBody->setText(R[0]["body"].c_str());
 	}
 	catch (...) {
@@ -159,11 +174,13 @@ void TabPanelEmail::getEmailBody(QListViewItem *current) {
 	}
 	delete T;
 	markRead(id);
+	current->setPixmap(0, *pixEmailOld);
 }
 
 void TabPanelEmail::markRead(string id) {
 	Transaction *T = new Transaction(*C,"");
 	stringstream SQL;
+	updateDisabled=TRUE;
 	SQL << "UPDATE email SET new_flag='f' WHERE id='"
 		<< id << "';";
 	try {
@@ -181,7 +198,10 @@ void TabPanelEmail::customEvent(QCustomEvent *event) {
 	char *routine = "TabPanelEmail::customEvent";
 	switch (event->type()) {
 		case 30002: { //Some kind of change to the email table
-			getEmail();
+			if (!updateDisabled)
+				getEmail();
+			else
+				updateDisabled=FALSE;
 			break;
 		}
 		default: {

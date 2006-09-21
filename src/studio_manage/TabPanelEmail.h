@@ -35,11 +35,14 @@ class TabPanelEmail : public TabPanel {
 		void getEmail();
 		
 		Connection *C;
+		bool updateDisabled;
 		triggerThread *emailTrigger;
 		QListView *lstEmail;
 		QTextBrowser *txtEmailBody;
 		QPixmap *pixEmailNew, *pixEmailOld;
 		QIconSet *icsEmailIcons;
+		QFont fntBody;
+		int pointSize;
 };
 
 #endif

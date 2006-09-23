@@ -6,11 +6,19 @@ using namespace std;
 
 #include <qwidget.h>
 
+#include "audiowallthread.h"
+
 #define AUDIOWALL_BUTTON_OUT_OF_RANGE 12000
 
 class QGroupBox;
 class QPushButton;
 class QLabel;
+
+enum AUDIO_STATE {
+	AUDIO_STATE_STOPPED,
+	AUDIO_STATE_PLAYING,
+	AUDIO_STATE_PAUSED
+};
 
 struct AudioWallItem {
 	QString text;
@@ -20,6 +28,8 @@ struct AudioWallItem {
 	QString file;
 	unsigned long start;
 	unsigned long end;
+	enum AUDIO_STATE state;
+	long pos;
 };
 
 struct AudioWallPage {
@@ -41,9 +51,10 @@ class AudioWall : public QWidget {
 		bool isMultipage();
 		unsigned short getSize() {return _rows*_cols;}
 		bool isPlaying(unsigned int index);
+		void customEvent(QCustomEvent *event);
 
 	public slots:
-		void play(int index);
+		void play(unsigned int index);
 
 	private slots:
 		void play();
@@ -60,12 +71,15 @@ class AudioWall : public QWidget {
 		unsigned int _rows;
 		unsigned int _cols;
 		unsigned int _currentPage;
+		unsigned int _activePage;
 		vector<AudioWallPage> _pages;
+		audiowallthread *_audioWall;
 		
 		QGroupBox *grpFrame;
 		QPushButton *btnPageNext;
 		QPushButton *btnPagePrev;
 		QLabel *lblPageNum;
+		QLabel *lblCounter;
 		vector<QPushButton*> btnAudio;
 };
 

@@ -25,18 +25,26 @@ AudioWall::AudioWall(QWidget *parent, const char* name, int rows, int cols)
 	_currentPage = 0;
 	_pages.resize(1);
 	_pages[0].items.resize(_rows*_cols);
+	_audioWall = new audiowallthread(this, 4);
 }
 
 AudioWall::~AudioWall() {
 	clean();
 }
 
-void AudioWall::play(int index) {
-
+void AudioWall::play(unsigned int index) {
+	unsigned int pageSize = _rows*_cols;
+	if (_audioWall->get_active_channel() == pageSize*_currentPage+index)
+		_audioWall->do_stop(pageSize*_currentPage+index); 
+	else
+		_audioWall->do_play(pageSize*_currentPage+index);
 }
 
 void AudioWall::play() {
-
+	QPushButton *sender = (QPushButton*)QObject::sender();
+	string name = sender->name();
+	short x = atoi(name.substr(8,name.size() - 8).c_str());
+	play(x);
 }
 
 void AudioWall::nextPage() {
@@ -114,6 +122,9 @@ void AudioWall::drawCreate() {
 
 	lblPageNum = new QLabel( grpFrame, "lblPageNum" );
 	lblPageNum->setEnabled( false );
+
+	lblCounter = new QLabel( grpFrame, "lblCounter" );
+	lblCounter->setEnabled( false );
 	
 	// Create the audio buttons and keep a handle to them in a vector
 	for (unsigned int i = 0; i < 4; i++) {
@@ -138,8 +149,10 @@ void AudioWall::drawResize() {
 
 	grpFrame->setGeometry( QRect( 0, 0, wFrame, hFrame ));
 	btnPagePrev->setGeometry( QRect( border, 2*border + _rows*hCell, wCell, hCell ));
-	lblPageNum->setGeometry( QRect( border + wCell, 2*border + _rows*hCell, wCell, hCell ) );
+	lblPageNum->setGeometry( QRect( border + wCell, 2*border + _rows*hCell + hCell/2, wCell, hCell / 2 ) );
 	lblPageNum->setAlignment( int( QLabel::AlignCenter ) );
+	lblCounter->setGeometry( QRect( border + wCell, 2*border + _rows*hCell,wCell, hCell / 2 ) );
+	lblCounter->setAlignment( int( QLabel::AlignCenter ) );
 	btnPageNext->setGeometry( QRect( border + 2*wCell, 2*border + _rows*hCell, wCell, hCell ) );
 
 	// Set properties for the buttons and connect them up
@@ -156,10 +169,24 @@ void AudioWall::drawResize() {
 void AudioWall::configureButton(unsigned int index) {
 	if (_pages[_currentPage].items[index].text != "") {
 		AudioWallItem item = _pages[_currentPage].items[index];
-		btnAudio[index]->setText(item.text);
-		btnAudio[index]->setPaletteForegroundColor(item.fgColor);
-		btnAudio[index]->setPaletteBackgroundColor(item.bgColor);
-		btnAudio[index]->setEnabled(true);
+		switch (item.state) {
+			case AUDIO_STATE_STOPPED:	
+				btnAudio[index]->setText(item.text);
+				btnAudio[index]->setPaletteForegroundColor(item.fgColor);
+				btnAudio[index]->setPaletteBackgroundColor(item.bgColor);
+				btnAudio[index]->setEnabled(true);
+				_audioWall->do_load(new QString(item.file),item.start,item.end);
+				break;
+			case AUDIO_STATE_PLAYING:
+				btnAudio[index]->setText("PLAYING\n" + dps_prettyTime(item.pos));
+                btnAudio[index]
+					->setPaletteForegroundColor(QColor(QRgb(16776960)));
+				btnAudio[index]
+					->setPaletteBackgroundColor(QColor(QRgb(16711680)));
+				break;
+			case AUDIO_STATE_PAUSED:
+				break;
+		}
 	}
 	else {
 		btnAudio[index]->setText("");
@@ -196,4 +223,52 @@ void AudioWall::clean() {
 		btnAudio.erase(btnAudio.begin());
 	}
 	delete grpFrame;
+}
+
+void AudioWall::customEvent(QCustomEvent *event) {
+	switch (event->type()) {
+		case 20004: {
+	    	eventData *e_data = (eventData*)event->data();
+            if (e_data->index < 0) break;
+			unsigned int index = e_data->index;
+			unsigned int clip_id = index % 12;
+			unsigned int page_id = (unsigned int)((index - clip_id) / 12);
+			AudioWallItem item = _pages[page_id].items[clip_id];
+
+            switch (e_data->t) {
+				case EVENT_TYPE_STOP: 
+					item.state = AUDIO_STATE_STOPPED;
+					item.pos = 0;
+					if (page_id == _currentPage) {
+						configureButton(index);
+					}
+					_currentPage = page_id;
+                    break;
+				case EVENT_TYPE_PLAY:
+					item.state = AUDIO_STATE_PLAYING;	
+					configureButton(e_data->index);
+					_activePage = page_id;
+					lblCounter->setText("");
+					break;
+				case EVENT_TYPE_SMPL:
+					if (page_id == _currentPage 
+							&& _audioWall->get_state() == 1) {
+						item.pos = e_data->smpl;
+						configureButton(index);
+                    }
+                    lblCounter->setText(dps_prettyTime(item.pos));
+                    break;
+	            case EVENT_TYPE_MAX_SMPL:
+		            break;
+	            case EVENT_TYPE_END:
+                    break;
+				default:
+					break;
+			}
+    	    break;
+		}
+		default:
+			cout << "FIsh" << endl;
+			break;
+	}
 }

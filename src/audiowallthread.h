@@ -47,7 +47,7 @@ class audiowallthread : public QThread {
 		void do_stop(short index);
 		void do_updateCounter(int smpl);
 		int get_state();
-		short get_active_channel() {return active_ch;}
+		unsigned short get_active_channel() {return active_ch;}
 		static void callback_counter(long smpl, void *obj);
 		
 	private:
@@ -64,7 +64,7 @@ class audiowallthread : public QThread {
 		eventData *e_stop;	
 		eventData *e_play;
 		int state;
-		short active_ch;
+		unsigned short active_ch;
 };
 
 #endif

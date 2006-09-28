@@ -43,8 +43,8 @@ class audiowallthread : public QThread {
 		void run();
 		void stop();
 		void do_load(QString *md5_hash, long int start, long int end);
-		void do_play(short index);
-		void do_stop(short index);
+		void do_play(unsigned short index);
+		void do_stop(unsigned short index);
 		void do_updateCounter(int smpl);
 		int get_state();
 		unsigned short get_active_channel() {return active_ch;}

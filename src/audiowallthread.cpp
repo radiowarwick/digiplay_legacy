@@ -10,7 +10,6 @@ void audiowallthread::run() {
     e_smpl->t = EVENT_TYPE_SMPL;
     e_stop->t = EVENT_TYPE_STOP;
 	e_play->t = EVENT_TYPE_PLAY;
-
 	stringstream S;
 	S << "channel_" << player_id;
 	mixer = new audiomixer();
@@ -19,7 +18,7 @@ void audiowallthread::run() {
 	
 	state_mutex.lock();
 	state = STATE_STOP;
-	active_ch = -1;
+	active_ch = 0;
 	state_mutex.unlock();
 
 	while (!stopped)
@@ -41,6 +40,7 @@ void audiowallthread::stop() {
 void audiowallthread::do_load(QString *md5_hash,long int start,long int end) {
 	string md5 = md5_hash->ascii();
 	audiochannel *ch = mixer->createChannel();
+	if (ch) cout << "YES!" << endl;
 	ch->setVolume(100);
 	ch->addCounter(audiowallthread::callback_counter, (void*)this);
 	ch->autoReload(true);
@@ -49,8 +49,7 @@ void audiowallthread::do_load(QString *md5_hash,long int start,long int end) {
 	do_updateCounter(0);
 }
 
-void audiowallthread::do_play(short index) {
-	
+void audiowallthread::do_play(unsigned short index) {
 	do_stop(active_ch);
 	
 	state_mutex.lock();
@@ -63,8 +62,9 @@ void audiowallthread::do_play(short index) {
 	state_mutex.unlock();
 }
 
-void audiowallthread::do_stop(short index) {
-	if (index == -1) return;
+void audiowallthread::do_stop(unsigned short index) {
+
+//	if (index == -1) return;
 	state_mutex.lock();
 	if (state == STATE_PLAY || state == STATE_PAUSE) {
 		state = STATE_STOP;

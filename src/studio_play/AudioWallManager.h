@@ -27,7 +27,7 @@ class AudioWallManager : public QObject {
 		AudioWall *_A;
 		Connection *_C;
 		QString _username;
-		vector<AudioWallPage> _pages;
+		vector<AudioWallPage*> _pages;
 };
 
 #endif

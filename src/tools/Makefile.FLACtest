@@ -4,7 +4,7 @@
 ROOT		=	../..
 
 # Base name for output (executable name, library basename) and version
-OUT_BASE	=	FLACcompress
+OUT_BASE	=	FLACtest
 VERSION		=	1
 
 # Create a library and whether it should be a static library
@@ -15,14 +15,14 @@ OUT_STATIC	=	no
 QT_ENABLED 	=	yes
 
 # .cpp modules from which to create output
-MODS		=	FLACcompress
+MODS		=	FLACtest
 QT_MODS		=
-SHARED_MODS	=	Logger
+SHARED_MODS	=	Logger FLACdecompress
 
 # Global header files on which dependance exists
 HDRS		=
 
 # Compiler and linker options
-LIBS		=	-lpq /usr/lib/libpqxx.a -lreadline -lm -lpthread -lFLAC++
+LIBS		=	-lreadline -lm -lFLAC++
 
 include $(ROOT)/src/Makefile.in

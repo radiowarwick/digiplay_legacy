@@ -51,18 +51,18 @@ void frmPlayout::init() {
 	player1 = new playerThread(this, 1);
 	player2 = new playerThread(this, 2);	
 	player3 = new playerThread(this, 3);
-	audiowall = new audiowallthread(this, 4);
-	remoteStartThread *remotes = new remoteStartThread(this);
+//	audiowall = new audiowallthread(this, 4);
+//	remoteStartThread *remotes = new remoteStartThread(this);
 	player1->start();
 	usleep(100000);
 	player2->start();
 	usleep(100000);
 	player3->start();
 	usleep(100000);
-	audiowall->start();
-	usleep(100000);
-	remotes->start();
-	usleep(500000);
+//	audiowall->start();
+//	usleep(100000);
+//	remotes->start();
+//	usleep(500000);
 	cout << " -> Hardware initialisation complete." << endl;
 
 	QCustomEvent *config_refresh = new QCustomEvent(30001);
@@ -74,21 +74,21 @@ void frmPlayout::init() {
 	dbTrigger->start();
 	cout << " -> Trigger active." << endl;
 
-	AudioWall *stnAudioWall = new AudioWall(this,"stnAudioWall",4,3);
+	AudioWall *stnAudioWall = new AudioWall(this,"stnAudioWall",4,3,4);
 	stnAudioWall->setGeometry(560,0,460,373);
 	AudioWallManager *stnAudioWallMan = new AudioWallManager(stnAudioWall,C);
 	stnAudioWallMan->load(0);
-
-	AudioWall *usrAudioWall = new AudioWall(this,"usrAudioWall",4,3);
-	usrAudioWall->setGeometry(560,373,460,373);
-	AudioWallManager *usrAudioWallMan = new AudioWallManager(usrAudioWall,C);
-	usrAudioWallMan->load(0);
+//	AudioWall *usrAudioWall = new AudioWall(this,"usrAudioWall",4,3);
+//	usrAudioWall->setGeometry(560,373,460,373);
+//	AudioWallManager *usrAudioWallMan = new AudioWallManager(usrAudioWall,C);
+//	usrAudioWallMan->load(0);
 
 	sys_page = 0;
 	stationAudioSet = NULL;
 	userAudioSet = NULL;
 //	AudioWall_Init();
 //	delete grpUCart;
+	cout << "Finished init" << endl;
 }
 
 void frmPlayout::destroy() {

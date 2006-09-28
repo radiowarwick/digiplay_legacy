@@ -68,6 +68,9 @@ MAKEDEPEND	=	$(CC) -M $(CCFLAGS) $(CCINC) -o $*.d $<
 # uncomment to keep intermediate QT generated files
 .PRECIOUS: moc_%.cpp %.cpp %.h
 
+# make sure we don't try and compile moduels for the following commands
+.PHONY: clean
+
 # Generate the header file from the QT .ui file
 %.h: %.ui
 	@echo "Creating UI header file $@"

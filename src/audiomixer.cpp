@@ -48,8 +48,9 @@ short audiomixer::size() {
  * @returns Pointer to audiochannel object
  */
 audiochannel* audiomixer::channel(unsigned short index) {
+	cout << "index is: " << index << " channels: " << channels->size() << endl;
     if (index >= channels->size()) { 
-        cout << "Requested mixer channel "<<index<<"out of range!" << endl;
+        cout << "Requested mixer channel "<<index<<" out of range!" << endl;
         abort();
     }
 	return channels->at(index);	

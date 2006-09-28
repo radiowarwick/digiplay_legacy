@@ -86,10 +86,11 @@ enum eventType {
 	EVENT_TYPE_END};
 
 struct eventData {
-	unsigned short id;
+	unsigned short id; //shouldnt be needed now
 	enum eventType t;
 	long smpl;
-	short index;
+	unsigned short page;
+	unsigned short index;
 };
 
 enum showPlanState {

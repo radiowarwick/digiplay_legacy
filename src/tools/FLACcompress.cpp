@@ -1,7 +1,8 @@
 #include "Logger.h"
-#include <FLAC++/encoder.h>
-#include <sys/stat.h>
-#include <fstream.h>
+#include "FLAC++/encoder.h"
+#include "sys/stat.h"
+#include <fstream>
+using namespace std;
 
 using namespace FLAC::Encoder;
 

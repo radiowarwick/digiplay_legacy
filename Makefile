@@ -30,7 +30,7 @@ clean:
 
 install:
 	@echo "Installing compiled applications in $(INSTALLDIR)"
-	@cp bin/* $(INSTALLDIR)
+	@cp -r bin/* $(INSTALLDIR)
 	@echo "Installing libraries in $(LIBDIR)"
 	@echo "Note: You may need to add $(LIBDIR) to your library search path"
 	@cp lib/* $(LIBDIR)

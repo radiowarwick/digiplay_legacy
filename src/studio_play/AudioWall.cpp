@@ -367,7 +367,12 @@ void AudioWall::callbackCounter(long smpl, void *obj) {
 	if (item->text == "") return;
 	if (item->state == AUDIO_STATE_STOPPED) return;
 	item->pos = smpl;
-	
+	if (smpl == 0) {
+		cout << "Down to zero sample" << endl;
+		item->state = AUDIO_STATE_STOPPED;
+		item->parent->configureButton(item->index);
+		return;
+	}
 	QCustomEvent *e = new QCustomEvent(QEvent::Type(20000),obj);
 	QApplication::postEvent(item->parent,e);
 //	cout << " -> CALLBACK POSTED!" << endl;

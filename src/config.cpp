@@ -67,6 +67,7 @@ string config::getDBConnectString() {
 }
 
 string config::getParam(string name) {
+	if (name == "location") return LOCATION;
     for (unsigned short i = 0; i < names->size(); i++) {
         if (names->at(i) == name)
             return values->at(i);
@@ -77,7 +78,8 @@ string config::getParam(string name) {
 void config::setParam(string name, string value) {
 	if (isDefined(name)) {
 		string SQL = "UPDATE configuration SET val='" 
-			+ value + "' WHERE parameter='" + name + "'";
+			+ value + "' WHERE parameter='" + name + "' "
+			"AND location=" + LOCATION ;
 		try {
 			T->exec(SQL);
 			T->commit();

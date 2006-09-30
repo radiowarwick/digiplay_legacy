@@ -30,6 +30,8 @@ AudioWall::AudioWall(QWidget *parent, const char* name, unsigned short rows, uns
 	_audioPlayer = new audioplayer("channel_" + dps_itoa(playerId));
 	_audioMixer = new audiomixer();
 	_audioPlayer->attachMixer(_audioMixer);
+//	_AMaster = 0;
+	_siblingWalls.push_back(this);
 }
 
 AudioWall::AudioWall(QWidget *parent, const char* name, unsigned short rows,
@@ -48,6 +50,10 @@ AudioWall::AudioWall(QWidget *parent, const char* name, unsigned short rows,
 	_activeIndex = 0;
 
 	_audioMixer = A->_audioMixer;
+//	_AMaster = A;
+	_siblingWalls.push_back(this);
+	_siblingWalls.push_back(A);
+	A->_siblingWalls.push_back(this);
 }
 
 AudioWall::~AudioWall() {
@@ -70,12 +76,23 @@ void AudioWall::play(unsigned short page, unsigned short index) {
 	}
 	else {
 		cout << _activePage << ", " << _activeIndex << endl;
-		AudioWallItem *activeItem = _pages[_activePage]->items[_activeIndex];
-		if (activeItem->state == AUDIO_STATE_PLAYING) {
-			cout << "FIRST WE STOP EXISTING CHANNEL";
-			cout << _activePage << ", " << _activeIndex << endl;
-			play(_activePage,_activeIndex);
+//		AudioWallItem *activeItem = _pages[_activePage]->items[_activeIndex];
+//		if (activeItem->state == AUDIO_STATE_PLAYING) {
+//			cout << "FIRST WE STOP EXISTING CHANNEL";
+//			cout << _activePage << ", " << _activeIndex << endl;
+//			play(_activePage,_activeIndex);
+//		}
+//		if (_siblingWalls.size() > 0) {
+		for (unsigned int i = 0; i < _siblingWalls.size(); i++) {
+			_siblingWalls[i]->stop();
 		}
+				
+//		if (_AMaster) {
+//			AudioWallItem *activeItem = _AMaster->getActiveItem();
+//			if (activeItem) {
+//				_AMaster->play(_AMaster->_activePage,_AMaster->_activeIndex);
+//			}
+//		}
 		item->state = AUDIO_STATE_PLAYING;
 		_activePage = page;
 		_activeIndex = index;
@@ -96,6 +113,16 @@ void AudioWall::play() {
 	play(_currentPage,x);
 }
 
+void AudioWall::stop() {
+	AudioWallItem *activeItem = _pages[_activePage]->items[_activeIndex];
+	if (activeItem->state == AUDIO_STATE_PLAYING) {
+//		cout << "FIRST WE STOP EXISTING CHANNEL";
+//		cout << _activePage << ", " << _activeIndex << endl;
+		play(_activePage,_activeIndex);
+	}
+	lblCounter->setText("");
+}
+
 void AudioWall::nextPage() {
 	if (_currentPage <= _pages.size()) {
 		_currentPage++;
@@ -114,6 +141,16 @@ void AudioWall::prevPage() {
 		}
 	}
 	configurePageNav();
+}
+
+AudioWallItem* AudioWall::getActiveItem() {
+	AudioWallItem *activeItem = _pages[_activePage]->items[_activeIndex];
+	if (activeItem->state == AUDIO_STATE_PLAYING) {
+		return activeItem;
+	}
+	else {
+		return 0;
+	}
 }
 
 void AudioWall::resizeEvent (QResizeEvent *e) {
@@ -258,7 +295,7 @@ void AudioWall::drawResize() {
 }
 
 void AudioWall::configureButton(unsigned short index) {
-	cout << "AudioWall::configureButton " << index << endl;
+//	cout << "AudioWall::configureButton " << index << endl;
 	AudioWallItem *item = _pages[_currentPage]->items[index];
 	if (item->text != "") {
 		switch (item->state) {
@@ -271,7 +308,7 @@ void AudioWall::configureButton(unsigned short index) {
 				break;
 			case AUDIO_STATE_PLAYING:
 				btnAudio[index]->setText("PLAYING\n" 
-											+ dps_prettyTime(item->pos));
+						+ dps_prettyTime(item->end - item->pos));
                 btnAudio[index]
 					->setPaletteForegroundColor(QColor(QRgb(16776960)));
 				btnAudio[index]
@@ -337,11 +374,11 @@ void AudioWall::callbackCounter(long smpl, void *obj) {
 }
 
 void AudioWall::customEvent(QCustomEvent *event) {
-	_mutEvent.lock();
-	cout << "AudioWall::customEvent" << endl;
+//	_mutEvent.lock();
+//	cout << "AudioWall::customEvent" << endl;
 	if (!event) {
 		cout << "NULL EVENT!" << endl;
-		_mutEvent.unlock();
+		//_mutEvent.unlock();
 		return;
 	}
 	switch (event->type()) {
@@ -350,7 +387,7 @@ void AudioWall::customEvent(QCustomEvent *event) {
 			AudioWallItem *item = (AudioWallItem*)(event->data());
 			if (!item) {
 				cout << "NULL EVENT DATA!" << endl;
-				_mutEvent.unlock();
+				//_mutEvent.unlock();
 				return;
 			}
 
@@ -360,11 +397,11 @@ void AudioWall::customEvent(QCustomEvent *event) {
 			// we update the appropriate button depending on the state
             switch (item->state) {
 				case AUDIO_STATE_PLAYING:
-					cout << "CUSTOM EVENT PLAYING" << endl;
+//					cout << "CUSTOM EVENT PLAYING" << endl;
 					if (page_id == _currentPage) {
 						configureButton(index);
 					}
-					lblCounter->setText(dps_prettyTime(item->pos));
+					lblCounter->setText(dps_prettyTime(item->end - item->pos));
 					break;
 				default:
 					break;
@@ -374,10 +411,10 @@ void AudioWall::customEvent(QCustomEvent *event) {
 		default:
 			break;
 	}
-	cout << "END AudioWall::customEvent" << endl;
-	_mutEvent.unlock();
+//	cout << "END AudioWall::customEvent" << endl;
+//	_mutEvent.unlock();
 }
-
+/*
 void AudioWall::run() {
 	_mutRunning.lock();
 	_running = true;
@@ -393,3 +430,4 @@ void AudioWall::stop() {
 	_running = false;
 	_mutRunning.unlock();
 }
+*/

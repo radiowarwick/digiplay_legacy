@@ -74,18 +74,20 @@ void frmPlayout::init() {
 	dbTrigger->start();
 	cout << " -> Trigger active." << endl;
 
+	usleep(100000);
 	AudioWall *stnAudioWall = new AudioWall(this,"stnAudioWall",4,3,4);
 	stnAudioWall->setGeometry(560,0,460,373);
 	AudioWallManager *stnAudioWallMan = new AudioWallManager(stnAudioWall,C);
-	stnAudioWallMan->load(0);
-//	AudioWall *usrAudioWall = new AudioWall(this,"usrAudioWall",4,3);
-//	usrAudioWall->setGeometry(560,373,460,373);
-//	AudioWallManager *usrAudioWallMan = new AudioWallManager(usrAudioWall,C);
-//	usrAudioWallMan->load(0);
+	stnAudioWallMan->load(atoi(conf->getParam("station_cartwall").c_str()));
+	usleep(100000);
+	AudioWall *usrAudioWall = new AudioWall(this,"usrAudioWall",4,3,stnAudioWall);
+	usrAudioWall->setGeometry(560,373,460,373);
+	AudioWallManager *usrAudioWallMan = new AudioWallManager(usrAudioWall,C);
+	usrAudioWallMan->load(atoi(conf->getParam("user_cartwall").c_str()));
 
-	sys_page = 0;
-	stationAudioSet = NULL;
-	userAudioSet = NULL;
+//	sys_page = 0;
+//	stationAudioSet = NULL;
+//	userAudioSet = NULL;
 //	AudioWall_Init();
 //	delete grpUCart;
 	cout << "Finished init" << endl;

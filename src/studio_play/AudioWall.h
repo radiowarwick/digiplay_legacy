@@ -5,7 +5,7 @@
 using namespace std;
 
 #include <qwidget.h>
-#include <qthread.h>
+//#include <qthread.h>
 
 //#include "audiowallthread.h"
 #include "audiochannel.h"
@@ -52,7 +52,7 @@ struct AudioWallPage {
 	unsigned short index;
 };
 
-class AudioWall : public QWidget, QThread {
+class AudioWall : public QWidget {
 	Q_OBJECT
 
 	public:
@@ -69,15 +69,17 @@ class AudioWall : public QWidget, QThread {
 		bool isMultipage();
 		unsigned short getSize() {return _rows*_cols;}
 		bool isPlaying(unsigned short index);
+		AudioWallItem* getActiveItem();
 		static void callbackCounter(long smpl, void *obj);
 		void customEvent(QCustomEvent *event);
 
-		void run();
-		void stop();
+//		void run();
+//		void stop();
 
 	public slots:
 		void play(unsigned short page, unsigned short index);
 		void play(unsigned short index);
+		void stop();
 
 	private slots:
 		void play();
@@ -94,6 +96,8 @@ class AudioWall : public QWidget, QThread {
 
 		audioplayer *_audioPlayer;
 		audiomixer *_audioMixer;
+//		AudioWall *_AMaster;
+		vector<AudioWall*> _siblingWalls;
 
 		unsigned short _rows;
 		unsigned short _cols;
@@ -111,8 +115,8 @@ class AudioWall : public QWidget, QThread {
 		vector<QPushButton*> btnAudio;
 
 		bool _running;
-		QMutex _mutRunning;
-		QMutex _mutEvent;
+//		QMutex _mutRunning;
+//		QMutex _mutEvent;
 		vector<eventData*> events;
 };
 

@@ -147,7 +147,13 @@ string dps_prettyTime(long samples) {
 	if (secs < 10) {
 		result += "0";
 	}
-	result += dps_itoa(secs) + "s";
+	result += dps_itoa(secs) + ".";
+	samples -= secs*44100;
+	int ms = (int)(samples / 441);
+	if (ms < 10) {
+		result += "0";
+	}
+	result += dps_itoa(ms) + "s";
 	return result;
 }
 

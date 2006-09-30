@@ -70,6 +70,7 @@ void AudioWallManager::load(unsigned int cartset) {
 	string title = "";
 	unsigned long start = 0;
 	unsigned long end = 0;
+	unsigned long length = 0;
 	QColor fgColor;
 	QColor bgColor;
 	short item = 0;

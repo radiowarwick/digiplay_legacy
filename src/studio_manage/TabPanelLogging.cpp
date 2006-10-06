@@ -42,10 +42,6 @@ TabPanelLogging::~TabPanelLogging() {
 void TabPanelLogging::configure(Auth *authModule) {
 	hide();
 		
-	//bodge due to lack of location
-	location = 3;
-	//end of bodge........filthy!!
-
 	if (authModule->getUser() != "") {
 
 		string SQL = "SELECT id FROM users WHERE username = '" + authModule->getUser() + "' LIMIT 1;";

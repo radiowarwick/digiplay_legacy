@@ -76,23 +76,10 @@ void AudioWall::play(unsigned short page, unsigned short index) {
 	}
 	else {
 		cout << _activePage << ", " << _activeIndex << endl;
-//		AudioWallItem *activeItem = _pages[_activePage]->items[_activeIndex];
-//		if (activeItem->state == AUDIO_STATE_PLAYING) {
-//			cout << "FIRST WE STOP EXISTING CHANNEL";
-//			cout << _activePage << ", " << _activeIndex << endl;
-//			play(_activePage,_activeIndex);
-//		}
-//		if (_siblingWalls.size() > 0) {
 		for (unsigned int i = 0; i < _siblingWalls.size(); i++) {
 			_siblingWalls[i]->stop();
 		}
 				
-//		if (_AMaster) {
-//			AudioWallItem *activeItem = _AMaster->getActiveItem();
-//			if (activeItem) {
-//				_AMaster->play(_AMaster->_activePage,_AMaster->_activeIndex);
-//			}
-//		}
 		item->state = AUDIO_STATE_PLAYING;
 		_activePage = page;
 		_activeIndex = index;
@@ -295,7 +282,6 @@ void AudioWall::drawResize() {
 }
 
 void AudioWall::configureButton(unsigned short index) {
-//	cout << "AudioWall::configureButton " << index << endl;
 	AudioWallItem *item = _pages[_currentPage]->items[index];
 	if (item->text != "") {
 		switch (item->state) {
@@ -313,6 +299,7 @@ void AudioWall::configureButton(unsigned short index) {
 					->setPaletteForegroundColor(QColor(QRgb(16776960)));
 				btnAudio[index]
 					->setPaletteBackgroundColor(QColor(QRgb(16711680)));
+				btnAudio[index]->setEnabled(true);
 				break;
 			case AUDIO_STATE_PAUSED:
 				break;
@@ -358,11 +345,8 @@ void AudioWall::clean() {
 }
 
 void AudioWall::callbackCounter(long smpl, void *obj) {
-//	cout << "AudioWall::callbackCounter" << endl;
 	if (!obj) return;
 	AudioWallItem *item = (AudioWallItem*)obj;
-//	cout << "callback index: " << item->index << endl;
-//	cout << "callback page index: " << item->page->index << endl;
 
 	if (item->text == "") return;
 	if (item->state == AUDIO_STATE_STOPPED) return;
@@ -370,29 +354,24 @@ void AudioWall::callbackCounter(long smpl, void *obj) {
 	if (smpl == 0) {
 		cout << "Down to zero sample" << endl;
 		item->state = AUDIO_STATE_STOPPED;
+		item->parent->lblCounter->setText("");
 		item->parent->configureButton(item->index);
 		return;
 	}
 	QCustomEvent *e = new QCustomEvent(QEvent::Type(20000),obj);
 	QApplication::postEvent(item->parent,e);
-//	cout << " -> CALLBACK POSTED!" << endl;
 }
 
 void AudioWall::customEvent(QCustomEvent *event) {
-//	_mutEvent.lock();
-//	cout << "AudioWall::customEvent" << endl;
 	if (!event) {
 		cout << "NULL EVENT!" << endl;
-		//_mutEvent.unlock();
 		return;
 	}
 	switch (event->type()) {
 		case 20000: {
-			//_mutData.lock();
 			AudioWallItem *item = (AudioWallItem*)(event->data());
 			if (!item) {
 				cout << "NULL EVENT DATA!" << endl;
-				//_mutEvent.unlock();
 				return;
 			}
 
@@ -402,7 +381,6 @@ void AudioWall::customEvent(QCustomEvent *event) {
 			// we update the appropriate button depending on the state
             switch (item->state) {
 				case AUDIO_STATE_PLAYING:
-//					cout << "CUSTOM EVENT PLAYING" << endl;
 					if (page_id == _currentPage) {
 						configureButton(index);
 					}

@@ -16,6 +16,7 @@ AudioWallManager::~AudioWallManager() {
 
 void AudioWallManager::load(unsigned int cartset) {
 	cout << "Running load" << endl;
+	_cartset = cartset;
 	for (unsigned int i = 0; i < _pages.size(); i++) {
 		for (unsigned int j = 0; j < _A->getSize(); j++) {
 			delete _pages[i]->items[j];

@@ -22,12 +22,14 @@ class AudioWallManager : public QObject {
 		AudioWallManager( AudioWall *A, Connection *C );
 		~AudioWallManager();
 		void load(unsigned int cartset);
+		int getCartset() {return _cartset;}
 
 	private:
 		AudioWall *_A;
 		Connection *_C;
 		QString _username;
 		vector<AudioWallPage*> _pages;
+		int _cartset;
 };
 
 #endif

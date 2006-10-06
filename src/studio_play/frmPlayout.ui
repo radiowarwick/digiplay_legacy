@@ -1101,7 +1101,8 @@
 <includes>
     <include location="local" impldecl="in implementation">qapplication.h</include>
     <include location="local" impldecl="in declaration">playerThread.h</include>
-    <include location="local" impldecl="in declaration">audiowallthread.h</include>
+    <include location="local" impldecl="in declaration">AudioWall.h</include>
+    <include location="local" impldecl="in declaration">AudioWallManager.h</include>
     <include location="local" impldecl="in declaration">triggerThread.h</include>
     <include location="local" impldecl="in declaration">config.h</include>
     <include location="local" impldecl="in declaration">pqxx/connection.h</include>
@@ -1111,21 +1112,16 @@
     <include location="local" impldecl="in implementation">frmPlayout.ui.h</include>
 </includes>
 <variables>
-    <variable access="private">int usr_page_count;</variable>
-    <variable access="private">int sys_page_count;</variable>
     <variable access="private">config *conf;</variable>
     <variable access="private">Connection *C;</variable>
     <variable access="private">triggerThread *dbTrigger;</variable>
-    <variable access="private">audiowallthread *audiowall;</variable>
+	<variable access="private">AudioWallManager *stnAudioWallMan;</variable>
+	<variable access="private">AudioWallManager *usrAudioWallMan;</variable>
     <variable access="private">playerThread *player1;</variable>
     <variable access="private">playerThread *player2;</variable>
     <variable access="private">playerThread *player3;</variable>
     <variable access="private">QString path;</variable>
     <variable access="private">QPixmap *pixPlay, *pixPause, *pixStop, *pixSeekback, *pixSeekforward, *pixReset;</variable>
-    <variable access="private">vector&lt;audioWall*&gt; *stationAudioSet;</variable>
-    <variable access="private">vector&lt;audioWall*&gt; *userAudioSet;</variable>
-    <variable access="private">int sys_page;</variable>
-    <variable access="private">int sys_active_page;</variable>
 </variables>
 <slots>
     <slot>Player1_Load()</slot>
@@ -1143,17 +1139,11 @@
     <slot>Player1_Time()</slot>
     <slot>Player2_Time()</slot>
     <slot>Player3_Time()</slot>
-    <slot>AudioWall_Play()</slot>
-    <slot>AudioWallPageNext()</slot>
-    <slot>AudioWallPagePrev()</slot>
 </slots>
 <functions>
     <function access="private" specifier="non virtual">init()</function>
     <function specifier="non virtual">destroy()</function>
     <function specifier="non virtual">customEvent( QCustomEvent * event )</function>
-    <function access="private" specifier="non virtual">AudioWall_Init()</function>
-    <function specifier="non virtual">AudioWall_Load()</function>
-    <function>AudioWall_Display()</function>
     <function access="private" specifier="non virtual" returnType="QString">getTime( long smpl )</function>
 </functions>
 <pixmapinproject/>

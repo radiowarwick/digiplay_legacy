@@ -67,6 +67,7 @@ void TabPanelPlaylist::draw() {
 	lstPlaylist->setAllColumnsShowFocus( TRUE );
 	lstPlaylist->setColumnWidthMode(3, QListView::Manual);
 	lstPlaylist->setColumnWidth(3, 0);
+	lstPlaylist->header()->setMovingEnabled( FALSE );
 
 	// connect signals and slots here
 	QObject::connect( lstPlaylist, SIGNAL( doubleClicked(QListViewItem*) ),
@@ -87,9 +88,17 @@ void TabPanelPlaylist::getPlaylist(){
 	lstPlaylist->clear();
 
 	lstPlaylist->addColumn( tr( "Title" ) );
+	lstPlaylist->header()->setResizeEnabled( FALSE,
+			lstPlaylist->header()->count() -1);
 	lstPlaylist->addColumn( tr( "Artist" ) );
+	lstPlaylist->header()->setResizeEnabled( FALSE,
+			lstPlaylist->header()->count() -1);
 	lstPlaylist->addColumn( tr( "Length" ) );
+	lstPlaylist->header()->setResizeEnabled( FALSE,
+			lstPlaylist->header()->count() -1);
 	lstPlaylist->addColumn( tr( "ID" ) );
+	lstPlaylist->header()->setResizeEnabled( FALSE,
+			lstPlaylist->header()->count() -1);
 
 	SQL << "SELECT DISTINCT ON (playlist)  playlist FROM playlist ORDER BY playlist;";
 

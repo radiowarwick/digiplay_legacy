@@ -94,6 +94,7 @@ void TabPanelEmail::draw() {
 	lstEmail->setColumnWidth(2,183); //Subject
 	lstEmail->setColumnWidth(3,90); //Received
 	lstEmail->setColumnWidth(4,0); //ID
+	lstEmail->header()->setMovingEnabled( FALSE );
 	lstEmail->setSorting(-1, FALSE);
 
 	txtEmailBody = new QTextBrowser(getPanel(), "txtEmailBody" );

@@ -52,6 +52,7 @@ void TabPanelFileBrowser::draw() {
     lstFileBrowser->addColumn( tr( "Folder" ) );
     lstFileBrowser->setGeometry( QRect( 10, 10, 491, 620 ) );
     lstFileBrowser->header()->setLabel( 0, tr( "Item" ) );
+	lstFileBrowser->header()->setMovingEnabled( FALSE );
     lstFileBrowser->getFiles();
 }
 

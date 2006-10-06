@@ -126,9 +126,20 @@ void TabPanelLogging::draw() {
 
     lstRecentlyLogged = new QListView( getPanel(), "lstRecentlyLogged" );
     lstRecentlyLogged->addColumn( tr( "Date/Time" ) );
+	lstRecentlyLogged->header()->setResizeEnabled( FALSE,
+			lstRecentlyLogged->header()->count() -1 );
     lstRecentlyLogged->addColumn( tr( "Artist" ) );
+	lstRecentlyLogged->header()->setResizeEnabled( FALSE,
+			lstRecentlyLogged->header()->count() -1 );
     lstRecentlyLogged->addColumn( tr( "Title" ) );
+	lstRecentlyLogged->header()->setResizeEnabled( FALSE,
+			lstRecentlyLogged->header()->count() -1 );
     lstRecentlyLogged->setGeometry( QRect( 10, 120, 491, 510 ) );
+	lstRecentlyLogged->setVScrollBarMode( QListView::AlwaysOn );
+	lstRecentlyLogged->setColumnWidth(0,90);
+	lstRecentlyLogged->setColumnWidth(1,194);
+	lstRecentlyLogged->setColumnWidth(2,194);
+	lstRecentlyLogged->header()->setMovingEnabled( FALSE );
 	lstRecentlyLogged->setSorting(-1, FALSE);
 
     lblReclibID->setText( tr( "Reclib ID:" ) );

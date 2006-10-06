@@ -129,6 +129,7 @@ void TabPanelLogging::draw() {
     lstRecentlyLogged->addColumn( tr( "Artist" ) );
     lstRecentlyLogged->addColumn( tr( "Title" ) );
     lstRecentlyLogged->setGeometry( QRect( 10, 120, 491, 510 ) );
+	lstRecentlyLogged->setSorting(-1, FALSE);
 
     lblReclibID->setText( tr( "Reclib ID:" ) );
     lblArtist->setText( tr( "Artist:" ) );

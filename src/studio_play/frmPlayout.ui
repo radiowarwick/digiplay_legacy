@@ -1115,6 +1115,8 @@
     <variable access="private">config *conf;</variable>
     <variable access="private">Connection *C;</variable>
     <variable access="private">triggerThread *dbTrigger;</variable>
+	<variable access="private">AudioWall *stnAudioWall;</variable>
+	<variable access="private">AudioWall *usrAudioWall;</variable>
 	<variable access="private">AudioWallManager *stnAudioWallMan;</variable>
 	<variable access="private">AudioWallManager *usrAudioWallMan;</variable>
     <variable access="private">playerThread *player1;</variable>

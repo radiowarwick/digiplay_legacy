@@ -60,9 +60,8 @@ void TabPanelLogging::configure(Auth *authModule) {
 	else {
 		userid=location;
 	}
-	//cout << "Location: " << location << endl;
 
-	if (authModule->isPermitted("TabInfo")) {
+	if (authModule->isPermitted("TabLogging")) {
 		draw();
 		getRecentlyLogged();
 		show();

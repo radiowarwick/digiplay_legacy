@@ -65,7 +65,7 @@ void frmStudioManage::init() {
 	cout << "Connected." << endl;
 
 	// Initialise Authentication mechanism
-	authModule = new AuthLdap("localhost",389,"ou=People,dc=radio,dc=warwick,dc=ac,dc=uk");
+	authModule = new AuthLdap("ldapserver",389,"ou=People,dc=radio,dc=warwick,dc=ac,dc=uk");
 	
 	// Initialise modules
 	cout << "Initialising Modules..." << endl;
@@ -81,16 +81,9 @@ void frmStudioManage::init() {
 
 	//Load Images
 	cout << " -> Loading Images... ";
-//	QPixmap pixAudio(path + "/images/audiofile32.png");
-//	QPixmap pixScript(path + "/images/script32.png");
-//	QPixmap pixLink(path + "/images/artist32.png");
 	pixFade->setPixmap(QPixmap(path + "/images/fade.png"));
 	pixLogo->setPixmap(QPixmap(path + "/images/rawdigiplay.png"));
 
-//	sp_audio = new QPixmap(path + "/images/title.png");
-//	sp_artist = new QPixmap(path + "/images/sp_artist.bmp");
-//	sp_album = new QPixmap(path + "/images/sp_album.bmp");
-	
 	btnMoveUp->setPixmap(QPixmap(path + "/images/moveup32.png"));
 	btnMoveDown->setPixmap(QPixmap(path + "/images/movedown32.png"));
 	btnMoveTop->setPixmap(QPixmap(path + "/images/movetop32.png"));
@@ -273,6 +266,13 @@ void frmStudioManage::btnLoginClicked()
 		}
 		delete dlg;
 	}
+	tabPanelInfo->configure(authModule);
+	tabPanelSearch->configure(authModule);
+	tabPanelPlaylist->configure(authModule);
+	tabPanelEmail->configure(authModule);
+	tabPanelLogging->configure(authModule);
+	tabPanelScript->configure(authModule);
+	tabPanelFileBrowser->configure(authModule);
 }
 
 

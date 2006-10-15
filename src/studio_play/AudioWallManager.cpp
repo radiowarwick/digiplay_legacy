@@ -15,7 +15,7 @@ AudioWallManager::~AudioWallManager() {
 }
 
 void AudioWallManager::load(unsigned int cartset) {
-	cout << "Running load" << endl;
+	cout << "A" << endl;
 	_cartset = cartset;
 	for (unsigned int i = 0; i < _pages.size(); i++) {
 		for (unsigned int j = 0; j < _A->getSize(); j++) {
@@ -23,7 +23,9 @@ void AudioWallManager::load(unsigned int cartset) {
 		}
 		delete _pages[i];
 	}
+	_pages.resize(0);
 
+	cout << "B" << endl;
 	Transaction T(*_C,"");
 	short pagecount = atoi(T.exec("SELECT max(cartwalls.page) "
                              "FROM cartwalls,cartsets "
@@ -34,21 +36,19 @@ void AudioWallManager::load(unsigned int cartset) {
 			_pages[i]->items.push_back(new AudioWallItem);
 		}
 	}
-//	_pages.resize(pagecount);
-//	for (unsigned int i = 0; i < _pages.size(); i++) {
-//		_pages[i]->items.resize(_A->getSize());
-//	}
-	
+	cout << "C" << endl;
 	Result R = T.exec("SELECT audio.md5 AS md5, audio.start_smpl AS start, "
            "audio.end_smpl AS end, cartsaudio.cart AS cart, "
            "cartsaudio.text AS text, cartwalls.name AS name, "
            "cartwalls.description AS desc, cartsets.name AS cartset, "
            "cartwalls.page AS page, "
-           "cartsets.description AS cartset_desc, cartsetsusers.userid AS userid, "
+           "cartsets.description AS cartset_desc, "
+		   "cartsetsusers.userid AS userid, "
            "cartsetsdir.dir AS dir, cartproperties.id AS property, "
            "cartstyleprops.value AS prop_value, archives.localpath AS path, "
            "configuration.val AS cartset "
-           "FROM audio, cartsaudio, cartwalls, cartsets, cartsetsdir, cartsetsusers, cartstyle, "
+           "FROM audio, cartsaudio, cartwalls, cartsets, "
+		   "cartsetsdir, cartsetsusers, cartstyle, "
            "cartstyleprops, cartproperties, archives, configuration "
            "WHERE cartsaudio.audio = audio.id "
            "AND cartsaudio.cartwall = cartwalls.id "
@@ -60,8 +60,6 @@ void AudioWallManager::load(unsigned int cartset) {
 		   "AND cartsetsusers.cartsetid = cartsets.id "
 		   "AND cartsetsdir.cartsetid = cartsets.id "
 		   "AND cartsets.id = " + dps_itoa(cartset)
-//           "AND configuration.parameter = 'station_cartset' "
-  //         "AND configuration.val = cartsets.id "
            + "ORDER BY cartwalls.id, cartsaudio.cart, cartproperties.id;");
 	T.abort();
 
@@ -81,7 +79,6 @@ void AudioWallManager::load(unsigned int cartset) {
 
 	unsigned int i = 0;
 	while (i < R.size()) {
-		cout << "fish" << endl;
 		change = false;
 		file = R[i]["path"].c_str();
 		md5 = R[i]["md5"].c_str();
@@ -91,7 +88,7 @@ void AudioWallManager::load(unsigned int cartset) {
 		text = R[i]["text"].c_str();
 		start = atoi(R[i]["start"].c_str());
 		end = atoi(R[i]["end"].c_str());
-
+		title = R[i]["desc"].c_str();
 		if (_pages[page]->items[item]->file != file) change = true;
 		_pages[page]->items[item]->file = file;
 		if (_pages[page]->items[item]->start != start) change = true;
@@ -101,11 +98,11 @@ void AudioWallManager::load(unsigned int cartset) {
 		if (_pages[page]->items[item]->text != text) change = true;
 		_pages[page]->items[item]->text = text;
 		if (_pages[page]->title != title) {
-			_pages[page]->title = R[i]["cartset"].c_str();
+			_pages[page]->title = title;
 			_A->setCaption(page,title);
 		}
 		//_pages[page].description = R[i]["desc"].c_str();
-
+	cout << "D" << endl;
 		while (i < R.size() && atoi(R[i]["page"].c_str()) == page
 							&& atoi(R[i]["cart"].c_str()) == item) {
 			p = atoi(R[i]["property"].c_str());
@@ -125,14 +122,17 @@ void AudioWallManager::load(unsigned int cartset) {
 			}
 			i++;
 		}
+		cout << "E" << endl;
 		if (change) {
-			cout << "Setting button " << page << "/" << item << endl; 
 			_pages[page]->items[item]->state = AUDIO_STATE_STOPPED;
 			_pages[page]->items[item]->pos = 0;
 			_pages[page]->items[item]->index = item;
-			_A->setButton(page,item,*(_pages[page]->items[item]));
+
 		}
-	}	
-	cout << "Finished AudioWallManager LOAD" << endl;
+		cout << "F" << endl;
+	}
+	for (int page = 0; page < _pages.size(); page++)
+		for (int item = 0; item < _A->getSize(); item++)
+			_A->setButton(page,item,*(_pages[page]->items[item]));
 }
 

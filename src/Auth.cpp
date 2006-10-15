@@ -4,6 +4,9 @@ using namespace std;
 #include "Auth.h"
 
 Auth::Auth() {
+	addPrivilage("TabInfo");
+	addPrivilage("TabSearch");
+	addPrivilage("TabLogging");
 
 }
 
@@ -12,10 +15,6 @@ Auth::~Auth() {
 }
 
 bool Auth::isPermitted(string privilage) {
-	// bodge to avoid needing to authenticate while testing!! --cc
-	return true;
-	// -- end bodge
-
 	for (unsigned int i = 0; i < _privilages.size(); i++) {
 		if (_privilages.at(i) == privilage) {
 			return true;
@@ -35,12 +34,25 @@ string Auth::getUser() {
 }
 
 void Auth::authSession(string username, string password) {
+	_privilages.clear();
+	_userInfo.clear();
 	addUserInfo("username",username);
+	// bodge --cc
+	addPrivilage("TabInfo");
+	addPrivilage("TabSearch");
+	addPrivilage("TabPlaylist");
+	addPrivilage("TabFileBrowser");
+	addPrivilage("TabEmail");
+	addPrivilage("TabLogging");
+	addPrivilage("TabScripts");
 }
 
 void Auth::closeSession() {
 	_privilages.clear();
 	_userInfo.clear();
+	addPrivilage("TabInfo");
+	addPrivilage("TabSearch");
+	addPrivilage("TabLogging");
 }
 
 void Auth::addPrivilage(string privilage) {

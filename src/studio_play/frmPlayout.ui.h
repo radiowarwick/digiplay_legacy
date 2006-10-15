@@ -233,6 +233,7 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 		}							  
 	case 30001: {
 			conf->requery();
+			cout << "Configuration updated" << endl;
 			if (conf->getParam("next_on_showplan") == "") {
 				btnLoadPlaylist1->setEnabled(false);
 				btnLoadPlaylist2->setEnabled(false);
@@ -240,6 +241,7 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 			}
 			if (atoi(conf->getParam("station_cartset").c_str()) 
 					!= stnAudioWallMan->getCartset()) {
+				cout << "Load on cartset" << endl;
 				stnAudioWallMan->load(atoi(conf->getParam("station_cartset").c_str()));
 			}
 			if (atoi(conf->getParam("user_cartset").c_str())

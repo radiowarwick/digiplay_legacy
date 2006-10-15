@@ -35,7 +35,7 @@ TabPanelSearch::~TabPanelSearch() {
 // usually due to a change in authentication status (login, logoff)
 void TabPanelSearch::configure(Auth *authModule) {
 	hide();
-	if (authModule->isPermitted("TabInfo")) {
+	if (authModule->isPermitted("TabSearch")) {
 		draw();
 		show();
 	}

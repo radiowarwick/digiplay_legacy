@@ -29,7 +29,7 @@ TabPanelFileBrowser::~TabPanelFileBrowser() {
 // usually due to a change in authentication status (login, logoff)
 void TabPanelFileBrowser::configure(Auth *authModule) {
 	hide();
-	if (authModule->isPermitted("TabInfo")) {
+	if (authModule->isPermitted("TabFileBrowser")) {
 		draw();
 		show();
 	}

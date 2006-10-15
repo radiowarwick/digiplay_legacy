@@ -41,7 +41,7 @@ TabPanelPlaylist::~TabPanelPlaylist() {
 // usually due to a change in authentication status (login, logoff)
 void TabPanelPlaylist::configure(Auth *authModule) {
 	hide();
-	if (authModule->isPermitted("TabInfo")) {
+	if (authModule->isPermitted("TabPlaylist")) {
 		draw();
 		getPlaylist();
 		show();

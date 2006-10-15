@@ -29,11 +29,15 @@ clean:
 	@-$(foreach APP,$(APPS), if [ -d src/$(APP) ]; then $(MAKE) -C src/$(APP) clean; fi;)
 
 install:
-	@echo "Installing compiled applications in $(INSTALLDIR)"
-	@cp -r bin/* $(INSTALLDIR)
-	@echo "Installing libraries in $(LIBDIR)"
-	@echo "Note: You may need to add $(LIBDIR) to your library search path"
-	@cp lib/* $(LIBDIR)
+	@if [ -d bin ]; then \
+		echo "Installing compiled applications in $(INSTALLDIR)"; \
+		cp -rf bin/* $(INSTALLDIR); \
+	fi
+	@if [ -d lib ]; then \
+		echo "Installing libraries in $(LIBDIR)"; \
+		echo "Note: You may need to add $(LIBDIR) to your library search path"; \
+		cp -rf lib/* $(LIBDIR); \
+	fi
 	@echo "Setting up logging directory $(LOGDIR)"
 	@mkdir -p $(LOGDIR)
 	@chmod 666 $(LOGDIR)

@@ -50,7 +50,6 @@ vector<track> *SearchResults;
 //vector<track> *Playlist = new vector<_track*>;
 QPixmap *sp_audio, *sp_artist, *sp_album;
 QString path;
-QListViewItem *last_item;
 
 void frmStudioManage::init() {
     // Configure logging
@@ -181,8 +180,8 @@ void frmStudioManage::customEvent(QCustomEvent *event) {
 
 void frmStudioManage::playlistAdd(QString md5) {
 	track t = dps_getTrack(C,md5);
-	ShowPlanAudio *audio_item = new ShowPlanAudio( lstShowPlan, last_item, t); 
-	last_item = audio_item;
+	ShowPlanAudio *audio_item = new ShowPlanAudio( lstShowPlan, 
+		lstShowPlan->lastItem(), t); 
 	updateNextTrack();
 }
 
@@ -288,18 +287,17 @@ void frmStudioManage::btnMoveTopClicked() {
 
 
 void frmStudioManage::btnMoveUpClicked() {
-    if ( lstShowPlan->selectedItem() ) {
-		if (lstShowPlan->selectedItem() 
-					== lstShowPlan->firstChild()->itemBelow() ) {
-		    QListViewItem *temp;
-		    temp = lstShowPlan->selectedItem();
-		    lstShowPlan->takeItem(temp);
-		    lstShowPlan->insertItem(temp);
+	QListViewItem *x = lstShowPlan->selectedItem();
+    if ( x ) {
+		if (x == lstShowPlan->firstChild()->itemBelow() ) {
+		    lstShowPlan->takeItem(x);
+		    lstShowPlan->insertItem(x);
+		    lstShowPlan->firstChild()->setSelected(true);
 		}
-		else {
-		    lstShowPlan->selectedItem()->moveItem(
-					lstShowPlan->selectedItem()->itemAbove()->itemAbove());
+    		else if (x != lstShowPlan->firstChild()) {
+			x->moveItem(x->itemAbove()->itemAbove());
 		}
+		updateNextTrack();
     }
 }
 
@@ -307,6 +305,7 @@ void frmStudioManage::btnMoveUpClicked() {
 void frmStudioManage::btnDeleteClicked() {
     if ( lstShowPlan->selectedItem() )
 		delete lstShowPlan->selectedItem();
+	updateNextTrack();
 }
 
 void frmStudioManage::btnClearClicked() {
@@ -314,8 +313,6 @@ void frmStudioManage::btnClearClicked() {
     dlg->setTitle("Clear All");
     dlg->setWarning("Are you sure you wish to clear the show plan?");
     if ( dlg->exec() == QDialog::Accepted ){
-		authModule->closeSession();
-		btnLogin->setText("Log In");
 		lstShowPlan->clear();
 		updateNextTrack();
     }
@@ -326,12 +323,14 @@ void frmStudioManage::btnMoveDownClicked() {
     if ( lstShowPlan->selectedItem() ) {
 		lstShowPlan->selectedItem()->moveItem(
 				lstShowPlan->selectedItem()->itemBelow());
+		updateNextTrack();
 	}
 }
 
 void frmStudioManage::btnMoveBottomClicked() {
     if ( lstShowPlan->selectedItem() ) {
 		lstShowPlan->selectedItem()->moveItem(lstShowPlan->lastItem());
+		updateNextTrack();
     }
 }
 

@@ -33,7 +33,7 @@ TabPanelScript::~TabPanelScript() {
 // usually due to a change in authentication status (login, logoff)
 void TabPanelScript::configure(Auth *authModule) {
 	hide();
-	if (authModule->isPermitted("TabInfo")) {
+	if (authModule->isPermitted("TabScript")) {
 		draw();
 		show();
 	}

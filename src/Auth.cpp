@@ -44,7 +44,7 @@ void Auth::authSession(string username, string password) {
 	addPrivilage("TabFileBrowser");
 	addPrivilage("TabEmail");
 	addPrivilage("TabLogging");
-	addPrivilage("TabScripts");
+//	addPrivilage("TabScripts");
 }
 
 void Auth::closeSession() {

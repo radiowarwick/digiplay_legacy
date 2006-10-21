@@ -59,7 +59,7 @@ AudioWall::~AudioWall() {
 }
 
 void AudioWall::play(unsigned short page, unsigned short index) {
-	cout << "AudioWall::play(short,short)" << endl;
+//	cout << "AudioWall::play(short,short)" << endl;
 	AudioWallItem *item = _pages[page]->items[index];
 	if (item->state == AUDIO_STATE_PLAYING) {
 		item->ch->stop();
@@ -69,7 +69,6 @@ void AudioWall::play(unsigned short page, unsigned short index) {
 		}
 	}
 	else {
-		cout << _activePage << ", " << _activeIndex << endl;
 		for (unsigned int i = 0; i < _siblingWalls.size(); i++) {
 			_siblingWalls[i]->stop();
 		}
@@ -86,7 +85,7 @@ void AudioWall::play(unsigned short index) {
 }
 
 void AudioWall::play() {
-	cout << "AudioWall::play" << endl;
+//	cout << "AudioWall::play" << endl;
 	QPushButton *sender = (QPushButton*)QObject::sender();
 	string name = sender->name();
 	short x = atoi(name.substr(8,name.size() - 8).c_str());
@@ -137,7 +136,7 @@ void AudioWall::resizeEvent (QResizeEvent *e) {
 
 void AudioWall::setButton(unsigned short page, unsigned short index,
 							AudioWallItem newItem) {
-	cout << "AudioWall::setButton" << endl;
+//	cout << "AudioWall::setButton" << endl;
 	char *routine = "AudioWall::setButton";
 	if (index > _pageSize) {
 		Logger::log(ERROR,routine,"Button index out of range",1);
@@ -151,21 +150,20 @@ void AudioWall::setButton(unsigned short page, unsigned short index,
 			AudioWallItem *item;
 			for (unsigned short j = 0; j < _pageSize; j++) {
 				item = new AudioWallItem;
+				p->items.push_back(item);
 				item->ch = NULL;
 				item->index = j;
 				item->text = "";
 				item->state = AUDIO_STATE_STOPPED;
 				item->pos = 0;
 				item->page = p;
-                if (!(item->ch)) {
-                    item->ch = _audioMixer->createChannel();
-                    item->ch->setVolume(100);
-                    item->ch->addCounter(AudioWall::callbackCounter,
+                item->ch = _audioMixer->createChannel();
+				usleep(1000);
+                item->ch->setVolume(100);
+                item->ch->addCounter(AudioWall::callbackCounter,
                                      (void*)(item));
-                    item->ch->autoReload(true);
-                }
+                item->ch->autoReload(true);
 				item->parent = this;
-				p->items.push_back(item);
 			}
 		}
 	}
@@ -188,7 +186,7 @@ void AudioWall::setButton(unsigned short page, unsigned short index,
 }
 
 void AudioWall::setCaption(unsigned short page, QString text) {
-	cout << "AudioWall::setCaption" << endl;
+//	cout << "AudioWall::setCaption" << endl;
 	if (page >= _pages.size()) return;
 	_pages[page]->title = text;
 	if (page == _currentPage) {
@@ -197,7 +195,7 @@ void AudioWall::setCaption(unsigned short page, QString text) {
 }
 
 void AudioWall::drawCreate() {
-	cout << "AudioWall::drawCreate" << endl;
+//	cout << "AudioWall::drawCreate" << endl;
 	clean();
 	string path = qApp->applicationDirPath();
 
@@ -239,7 +237,7 @@ void AudioWall::drawCreate() {
 }
 
 void AudioWall::drawResize() {
-	cout << "AudioWall::drawResize" << endl;
+//	cout << "AudioWall::drawResize" << endl;
 	// What's our size?
 	int border = 10;
 	int wFrame = this->width();
@@ -268,7 +266,9 @@ void AudioWall::drawResize() {
 }
 
 void AudioWall::configureButton(unsigned short index) {
+//	cout << "Configure" << endl;
 	AudioWallItem *item = _pages[_currentPage]->items[index];
+//	cout << "Got item" << endl;
 	if (item->text != "") {
 		switch (item->state) {
 			case AUDIO_STATE_STOPPED:
@@ -299,7 +299,7 @@ void AudioWall::configureButton(unsigned short index) {
 }
 
 void AudioWall::configurePageNav() {
-	cout << "AudioWall::ConfigurePageNav" << endl;
+//	cout << "AudioWall::ConfigurePageNav" << endl;
 	if (_currentPage == _pages.size() - 1) {
 		btnPageNext->setEnabled(false);
 	}
@@ -319,7 +319,7 @@ void AudioWall::configurePageNav() {
 }
 
 void AudioWall::clean() {
-	cout << "AudioWall::clean" << endl;
+//	cout << "AudioWall::clean" << endl;
 	delete btnPageNext;
 	delete btnPagePrev;
 	delete lblPageNum;

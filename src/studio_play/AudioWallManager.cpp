@@ -15,7 +15,6 @@ AudioWallManager::~AudioWallManager() {
 }
 
 void AudioWallManager::load(unsigned int cartset) {
-	cout << "A" << endl;
 	_cartset = cartset;
 	for (unsigned int i = 0; i < _pages.size(); i++) {
 		for (unsigned int j = 0; j < _A->getSize(); j++) {
@@ -24,8 +23,7 @@ void AudioWallManager::load(unsigned int cartset) {
 		delete _pages[i];
 	}
 	_pages.resize(0);
-
-	cout << "B" << endl;
+	
 	Transaction T(*_C,"");
 	short pagecount = atoi(T.exec("SELECT max(cartwalls.page) "
                              "FROM cartwalls,cartsets "
@@ -36,7 +34,6 @@ void AudioWallManager::load(unsigned int cartset) {
 			_pages[i]->items.push_back(new AudioWallItem);
 		}
 	}
-	cout << "C" << endl;
 	Result R = T.exec("SELECT audio.md5 AS md5, audio.start_smpl AS start, "
            "audio.end_smpl AS end, cartsaudio.cart AS cart, "
            "cartsaudio.text AS text, cartwalls.name AS name, "
@@ -62,7 +59,7 @@ void AudioWallManager::load(unsigned int cartset) {
 		   "AND cartsets.id = " + dps_itoa(cartset)
            + "ORDER BY cartwalls.id, cartsaudio.cart, cartproperties.id;");
 	T.abort();
-
+	
 	string file = "";
 	string md5 = "";
 	string text = "";
@@ -101,8 +98,6 @@ void AudioWallManager::load(unsigned int cartset) {
 			_pages[page]->title = title;
 			_A->setCaption(page,title);
 		}
-		//_pages[page].description = R[i]["desc"].c_str();
-	cout << "D" << endl;
 		while (i < R.size() && atoi(R[i]["page"].c_str()) == page
 							&& atoi(R[i]["cart"].c_str()) == item) {
 			p = atoi(R[i]["property"].c_str());
@@ -122,14 +117,12 @@ void AudioWallManager::load(unsigned int cartset) {
 			}
 			i++;
 		}
-		cout << "E" << endl;
 		if (change) {
 			_pages[page]->items[item]->state = AUDIO_STATE_STOPPED;
 			_pages[page]->items[item]->pos = 0;
 			_pages[page]->items[item]->index = item;
 
 		}
-		cout << "F" << endl;
 	}
 	for (int page = 0; page < _pages.size(); page++)
 		for (int item = 0; item < _A->getSize(); item++)

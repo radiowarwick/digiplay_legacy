@@ -50,6 +50,7 @@ vector<track> *SearchResults;
 //vector<track> *Playlist = new vector<_track*>;
 QPixmap *sp_audio, *sp_artist, *sp_album;
 QString path;
+ShowPlanItem *activePoint;		// the first item in plan currently loaded
 
 void frmStudioManage::init() {
     // Configure logging
@@ -92,9 +93,9 @@ void frmStudioManage::init() {
 	
 	cout << "success." << endl;
 	
-	
 	lstShowPlan->setColumnWidth(0,lstShowPlan->width() - 5);
 	lstShowPlan->setSorting(-1);
+	lstShowPlan->header()->hide();
 
 	// Load tab panels after removing the template tab.	
 	tabManage->removePage(tabManage->currentPage());
@@ -142,6 +143,8 @@ void frmStudioManage::init() {
 	dbTrigger = new triggerThread(this, QString(conf->getDBConnectString()), 1); 
 	dbTrigger->start();
 	cout << "Triggers active." << endl;	
+
+	activePoint = 0;
 }
 
 void frmStudioManage::destroy() {
@@ -166,7 +169,18 @@ void frmStudioManage::customEvent(QCustomEvent *event) {
 			conf->requery();
 			if (conf->getParam("next_on_showplan") == "" 
 								&& lstShowPlan->childCount() > 0) {
-				delete lstShowPlan->firstChild();
+				if (activePoint == 0) {
+					activePoint = (ShowPlanItem*)lstShowPlan->firstChild();
+				}
+				else {
+					activePoint->setState(SHOWPLAN_STATE_FINISHED);
+					activePoint = (ShowPlanItem*)activePoint->nextSibling();
+				}
+				activePoint->setState(SHOWPLAN_STATE_LOADED);
+				lstShowPlan->ensureItemVisible(activePoint);
+				if (lstShowPlan->selectedItem()) {
+					lstShowPlanSelectionChanged(lstShowPlan->selectedItem());
+				}
 				updateNextTrack();
 			}
 			break;
@@ -276,76 +290,138 @@ void frmStudioManage::btnLoginClicked()
 
 
 void frmStudioManage::btnMoveTopClicked() {
-    if ( lstShowPlan->selectedItem() ) {
-		QListViewItem *temp;
-		temp = lstShowPlan->selectedItem();
-		lstShowPlan->takeItem(temp);
-		lstShowPlan->insertItem(temp);
+	if (lstShowPlan->childCount() == 0) return;
+	QListViewItem *x = lstShowPlan->selectedItem();
+    if ( x && x != lstShowPlan->firstChild()) {
+		lstShowPlan->takeItem(x);
+		lstShowPlan->insertItem(x);
+		lstShowPlan->setSelected(lstShowPlan->firstChild(),true);
+		lstShowPlanSelectionChanged(x);
 		updateNextTrack();
     }
 }
 
 
 void frmStudioManage::btnMoveUpClicked() {
+	if (lstShowPlan->childCount() == 0) return;
 	QListViewItem *x = lstShowPlan->selectedItem();
     if ( x ) {
 		if (x == lstShowPlan->firstChild()->itemBelow() ) {
 		    lstShowPlan->takeItem(x);
 		    lstShowPlan->insertItem(x);
-		    lstShowPlan->firstChild()->setSelected(true);
+		    lstShowPlan->setSelected(x,true);
 		}
-    		else if (x != lstShowPlan->firstChild()) {
+		else if (x != lstShowPlan->firstChild()) {
 			x->moveItem(x->itemAbove()->itemAbove());
 		}
+		lstShowPlanSelectionChanged(x);
 		updateNextTrack();
     }
 }
 
 
 void frmStudioManage::btnDeleteClicked() {
-    if ( lstShowPlan->selectedItem() )
-		delete lstShowPlan->selectedItem();
+	if (lstShowPlan->childCount() == 0) return;
+	QListViewItem *x = lstShowPlan->selectedItem();
+	QListViewItem *y;
+    if ( x ) {
+		y = x->nextSibling();
+		delete x;
+		if ( y ) {
+			lstShowPlan->setSelected(y,true);
+			lstShowPlanSelectionChanged(y);
+		}
+	}
 	updateNextTrack();
 }
 
 void frmStudioManage::btnClearClicked() {
+	if (lstShowPlan->childCount() == 0) return;
     dlgWarn *dlg = new dlgWarn(this, "");
     dlg->setTitle("Clear All");
     dlg->setWarning("Are you sure you wish to clear the show plan?");
     if ( dlg->exec() == QDialog::Accepted ){
 		lstShowPlan->clear();
+		lstShowPlanSelectionChanged(0);
+		activePoint = 0;
 		updateNextTrack();
     }
     delete dlg;
 }
 
 void frmStudioManage::btnMoveDownClicked() {
-    if ( lstShowPlan->selectedItem() ) {
-		lstShowPlan->selectedItem()->moveItem(
-				lstShowPlan->selectedItem()->itemBelow());
-		updateNextTrack();
+	if (lstShowPlan->childCount() == 0) return;
+	QListViewItem *x = lstShowPlan->selectedItem();
+    if ( x ) {
+		if (x != lstShowPlan->lastItem() ) {
+			x->moveItem(x->itemBelow());
+			lstShowPlan->setSelected(x,true);
+			lstShowPlanSelectionChanged(x);
+			updateNextTrack();
+		}
 	}
 }
 
 void frmStudioManage::btnMoveBottomClicked() {
-    if ( lstShowPlan->selectedItem() ) {
-		lstShowPlan->selectedItem()->moveItem(lstShowPlan->lastItem());
+	if (lstShowPlan->childCount() == 0) return;
+	QListViewItem *x = lstShowPlan->selectedItem();
+    if ( x ) {
+		x->moveItem(lstShowPlan->lastItem());
+		lstShowPlan->setSelected(lstShowPlan->lastItem(),true);
+		lstShowPlanSelectionChanged(x);
 		updateNextTrack();
     }
 }
 
 
 void frmStudioManage::updateNextTrack() {
-	if (lstShowPlan->childCount() > 0) {
-		ShowPlanItem *item = (ShowPlanItem*)lstShowPlan->firstChild();
+	ShowPlanItem *x = 0;
+	if (lstShowPlan->childCount() == 0) return;
+	if ( ! activePoint ) {
+		x = (ShowPlanItem*)lstShowPlan->firstChild();
+	}
+	else {
+		x = (ShowPlanItem*)activePoint->nextSibling();
+	}
+	if ( x ) {
 		do
-			if (item->getType() == 0) {
-				ShowPlanAudio *audio = (ShowPlanAudio*)item;
+			if (x->getType() == 0) {
+				ShowPlanAudio *audio = (ShowPlanAudio*)x;
 				track t = audio->getTrack();
 				conf->setParam("next_on_showplan",t.md5);
 				return;
 			}
-		while ((item = (ShowPlanItem*)item->nextSibling()) != 0);
+		while ((x = (ShowPlanItem*)x->nextSibling()) != 0);
 	}
-	conf->setParam("next_on_showplan","");
+}
+
+
+void frmStudioManage::lstShowPlanSelectionChanged(QListViewItem *x) {
+	ShowPlanItem *y = (ShowPlanItem*)x;
+	if ( y && y->getState() == SHOWPLAN_STATE_UNLOADED ) {
+		ShowPlanItem *z = (ShowPlanItem*)y->itemAbove();
+		if ( z && z->getState() == SHOWPLAN_STATE_UNLOADED) {
+			btnMoveUp->setEnabled(true);
+			btnMoveTop->setEnabled(true);
+		}
+		else {
+			btnMoveUp->setEnabled(false);
+			btnMoveTop->setEnabled(false);
+		}
+		if ( y == (ShowPlanItem*)lstShowPlan->lastItem() ) {
+			btnMoveBottom->setEnabled(false);
+			btnMoveDown->setEnabled(false);
+		}
+		else {
+			btnMoveBottom->setEnabled(true);
+			btnMoveDown->setEnabled(true);
+		}
+		btnDelete->setEnabled(true);
+		return;
+	}
+	btnMoveBottom->setEnabled(false);
+	btnMoveDown->setEnabled(false);
+	btnMoveUp->setEnabled(false);
+	btnMoveTop->setEnabled(false);
+	btnDelete->setEnabled(false);
 }

@@ -118,9 +118,9 @@ void ShowPlanItem::paintCell(QPainter *p, const QColorGroup &cg, int column,
 	if (isSelected() != selected || lv->isActiveWindow() != active) {
 		setup();
 	}
-	
+
 	QPixmap *px;
-	QBrush *backBrush;
+	QBrush *backBrush, *backBrushSel;
 	QRect recPix;
 	int wPix = 0;
 	int hPix = 0;
@@ -132,20 +132,25 @@ void ShowPlanItem::paintCell(QPainter *p, const QColorGroup &cg, int column,
 		case SHOWPLAN_STATE_UNLOADED:
 			px = pixUnloaded;
 			backBrush = backBrushUnloaded;
+			backBrushSel = backBrushUnloadedSel;
 			break;
 		case SHOWPLAN_STATE_LOADED:
 			px = pixLoaded;
 			backBrush = backBrushLoaded;
+			backBrushSel = backBrushLoadedSel;
 			break;
 		case SHOWPLAN_STATE_FINISHED:
 			px = pixFinished;
 			backBrush = backBrushFinished;
+			backBrushSel = backBrushFinishedSel;
 			break;
 		default:
 			backBrush = backBrushUnloaded;
+			backBrushSel = backBrushUnloadedSel;
 			break;
 	}
-
+	if (selected) backBrush = backBrushSel;
+	
 	if (px) {
 		wPix = px->width();
 		hPix = px->height();
@@ -182,6 +187,11 @@ void ShowPlanItem::paintCell(QPainter *p, const QColorGroup &cg, int column,
 	clip = clip - recTitle - recSubtitle - recLength - recTime;
 	p->setClipRegion(clip, QPainter::CoordPainter);
 	p->fillRect(0,0,width, height(), *backBrush);
+
+	if (selected) {
+		p->setPen(Qt::red);
+		p->drawRect(0,0,width-1,height());	
+	}
 
 	if (px) {
 		p->drawPixmap(recPix,*px);

@@ -37,8 +37,6 @@ void frmPlayout::init() {
 	btnReset1->setPixmap(*pixReset);
 	btnReset2->setPixmap(*pixReset);
 	btnReset3->setPixmap(*pixReset);
-	//btnSCartPrev->setPixmap(*pixSeekback);
-	//btnSCartNext->setPixmap(*pixSeekforward);
 
     cout << "Connecting to database..." << endl;
     conf = new config("digiplay");
@@ -69,12 +67,11 @@ void frmPlayout::init() {
 	dbTrigger->start();
 	cout << " -> Trigger active." << endl;
 
-	usleep(100000);
 	AudioWall *stnAudioWall = new AudioWall(this,"stnAudioWall",4,3,4);
 	stnAudioWall->setGeometry(560,0,460,373);
 	stnAudioWallMan = new AudioWallManager(stnAudioWall,C);
 	stnAudioWallMan->load(atoi(conf->getParam("station_cartset").c_str()));
-	usleep(100000);
+	
 	AudioWall *usrAudioWall = new AudioWall(this,"usrAudioWall",4,3,stnAudioWall);
 	usrAudioWall->setGeometry(560,373,460,373);
 	usrAudioWallMan = new AudioWallManager(usrAudioWall,C);
@@ -233,28 +230,30 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 		}							  
 	case 30001: {
 			conf->requery();
-			cout << "Configuration updated" << endl;
+			// Configure load buttons
 			if (conf->getParam("next_on_showplan") == "") {
 				btnLoadPlaylist1->setEnabled(false);
 				btnLoadPlaylist2->setEnabled(false);
 				btnLoadPlaylist3->setEnabled(false);
 			}
+			else {
+				if (player1->getState() != STATE_PLAY)
+					btnLoadPlaylist1->setEnabled(true);
+				if (player2->getState() != STATE_PLAY)
+					btnLoadPlaylist2->setEnabled(true);
+				if (player3->getState() != STATE_PLAY)
+					btnLoadPlaylist3->setEnabled(true);
+			}
+			// Configure cartsets if they've changed
 			if (atoi(conf->getParam("station_cartset").c_str()) 
 					!= stnAudioWallMan->getCartset()) {
 				cout << "Load on cartset" << endl;
 				stnAudioWallMan->load(atoi(conf->getParam("station_cartset").c_str()));
+
 			}
 			if (atoi(conf->getParam("user_cartset").c_str())
-					!= usrAudioWallMan->getCartset()) {
+ 				!= usrAudioWallMan->getCartset()) {
 				usrAudioWallMan->load(atoi(conf->getParam("user_cartset").c_str()));
-			}
-			else {
-				if (player1->getState() != STATE_PLAY)
-				btnLoadPlaylist1->setEnabled(true);
-				if (player2->getState() != STATE_PLAY)
-				btnLoadPlaylist2->setEnabled(true);
-				if (player3->getState() != STATE_PLAY)
-				btnLoadPlaylist3->setEnabled(true);
 			}
 			break;
 		}

@@ -36,6 +36,9 @@ void ShowPlanAudio::init() {
 	backBrushUnloaded = new QBrush(QColor(0,153,169));
 	backBrushLoaded = new QBrush(QColor(0,153,169));
 	backBrushFinished = new QBrush(QColor(128,128,128));
+	backBrushUnloadedSel = new QBrush(QColor(0,163,179));
+	backBrushLoadedSel = new QBrush(QColor(0,163,179));
+	backBrushFinishedSel = new QBrush(QColor(188,188,188));
 	pixUnloaded = new QPixmap(path + "/images/libTrack32.png");
 	pixLoaded = new QPixmap(path + "/images/libTrackLoaded32.png");
 	pixFinished = new QPixmap(path + "/images/libTrackGrey32.png");

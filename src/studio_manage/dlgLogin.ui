@@ -23,41 +23,11 @@
         <string>RaW // Digiplay // Login</string>
     </property>
     <property name="sizeGripEnabled">
+        <bool>false</bool>
+    </property>
+    <property name="modal">
         <bool>true</bool>
     </property>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>textLabel1</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>18</x>
-                <y>40</y>
-                <width>113</width>
-                <height>43</height>
-            </rect>
-        </property>
-        <property name="paletteForegroundColor">
-            <color>
-                <red>1</red>
-                <green>73</green>
-                <blue>88</blue>
-            </color>
-        </property>
-        <property name="font">
-            <font>
-                <family>Sans Serif</family>
-                <pointsize>36</pointsize>
-                <bold>1</bold>
-            </font>
-        </property>
-        <property name="text">
-            <string>Login</string>
-        </property>
-        <property name="alignment">
-            <set>AlignCenter</set>
-        </property>
-    </widget>
     <widget class="QLabel">
         <property name="name">
             <cstring>lblLoginUsername</cstring>
@@ -202,9 +172,6 @@
                 <height>29</height>
             </rect>
         </property>
-        <property name="pixmap">
-            <pixmap></pixmap>
-        </property>
         <property name="scaledContents">
             <bool>true</bool>
         </property>
@@ -220,6 +187,39 @@
                 <width>170</width>
                 <height>21</height>
             </rect>
+        </property>
+    </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>textLabel1</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>18</x>
+                <y>40</y>
+                <width>113</width>
+                <height>43</height>
+            </rect>
+        </property>
+        <property name="paletteForegroundColor">
+            <color>
+                <red>1</red>
+                <green>73</green>
+                <blue>88</blue>
+            </color>
+        </property>
+        <property name="font">
+            <font>
+                <family>Sans Serif</family>
+                <pointsize>36</pointsize>
+                <bold>1</bold>
+            </font>
+        </property>
+        <property name="text">
+            <string>Login</string>
+        </property>
+        <property name="alignment">
+            <set>AlignCenter</set>
         </property>
     </widget>
 </widget>

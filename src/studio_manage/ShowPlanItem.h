@@ -18,6 +18,7 @@ class ShowPlanItem : public QListViewItem {
 		virtual void setup();
 		int widthUsed() {return _widthUsed;}
 		void setState(enum showPlanState state) {_state = state; setup();}
+		enum showPlanState getState() {return _state;}
 
 	protected:
 		virtual void init();
@@ -36,6 +37,8 @@ class ShowPlanItem : public QListViewItem {
 
 		QFont titleFont, subtitleFont, lengthFont, timeFont;
 		QBrush *backBrushUnloaded, *backBrushLoaded, *backBrushFinished;
+		QBrush *backBrushUnloadedSel, *backBrushLoadedSel, 
+						*backBrushFinishedSel;
 		QPixmap *pixUnloaded, *pixLoaded, *pixFinished;
 
 		QPen *selectPen;

@@ -29,6 +29,8 @@ class TabPanelPlaylist : public TabPanel {
 
 	public slots:
 		virtual void playlistAdd(QListViewItem *current);
+		virtual void listExpanded(QListViewItem *x);
+		virtual void listCollapsed(QListViewItem *x);
 
 	private:
 		void draw();
@@ -40,6 +42,7 @@ class TabPanelPlaylist : public TabPanel {
 		triggerThread *playlistTrigger;
 		QListView *lstPlaylist;
 		QPixmap *pixAList, *pixBList;
+		QPixmap *pixExpanded, *pixCollapsed, *pixTrack;
 };
 
 #endif

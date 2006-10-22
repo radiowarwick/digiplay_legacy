@@ -16,6 +16,10 @@
 TabPanelPlaylist::TabPanelPlaylist(QTabWidget *parent, frmStudioManage *parent2, string text)
 		: TabPanel(parent,text) {
 	parentForm = parent2;
+	QString path = qApp->applicationDirPath();
+	pixExpanded = new QPixmap(path+"/images/expand16.png");
+	pixCollapsed = new QPixmap(path+"/images/contract16.png");
+	pixTrack = new QPixmap(path+"/images/audiofile16.png");
 	
 	config *conf = new config("digiplay");
 	C = new Connection(conf->getDBConnectString());
@@ -72,6 +76,10 @@ void TabPanelPlaylist::draw() {
 	// connect signals and slots here
 	QObject::connect( lstPlaylist, SIGNAL( doubleClicked(QListViewItem*) ),
 				this, SLOT( playlistAdd(QListViewItem*) ) );
+	QObject::connect( lstPlaylist, SIGNAL( expanded(QListViewItem*) ),
+				this, SLOT( listExpanded(QListViewItem*) ) );
+	QObject::connect( lstPlaylist, SIGNAL( collapsed(QListViewItem*) ),
+				this, SLOT( listCollapsed(QListViewItem*) ) );
 }
 
 
@@ -80,10 +88,8 @@ void TabPanelPlaylist::getPlaylist(){
 	stringstream SQL;
 	track t;
 	QListViewItem *new_playlist = NULL;
-	QString path = qApp->applicationDirPath();
-	QPixmap pixExpand(path+"/images/expand16.png");
-	QPixmap pixContract(path+"/images/contract16.png");
-	QPixmap pixTrack(path+"/images/audiofile16.png");
+
+
 
 	lstPlaylist->clear();
 
@@ -109,9 +115,8 @@ void TabPanelPlaylist::getPlaylist(){
 	for (int j = 0; j < (int)Playlists.size(); j++) {
 
 		string playlist = Playlists[j]["name"].c_str();
-		string playlist_name = playlist + " List";
-		new_playlist = new QListViewItem(lstPlaylist, playlist_name);
-		new_playlist->setPixmap (0, pixExpand);
+		new_playlist = new QListViewItem(lstPlaylist, playlist);
+		new_playlist->setPixmap (0, *pixExpanded);
 		SQL << "SELECT DISTINCT audio.md5 FROM playlists, audio, audioplaylists  WHERE audioplaylists.playlist = " << Playlists[j]["id"].c_str() << " AND audio.id = audioplaylists.audio;";
 		Result R;
 		try {
@@ -121,14 +126,14 @@ void TabPanelPlaylist::getPlaylist(){
 			delete T;
 		}
 		catch (...) {
-			cout << " -> ERROR: Failed to get " << playlist_name << "." << endl;
+			cout << " -> ERROR: Failed to get " << playlist << "." << endl;
 		}
 
 		for (int i = (int)R.size()-1; i > -1; i--) {
 			t = dps_getTrack(C, R[i]["md5"].c_str());
 			QListViewItem *new_track = new QListViewItem(new_playlist,
        	             		 t.title, t.artist, getTime(t.length_smpl),  R[i]["md5"].c_str());
-			new_track->setPixmap(0,pixTrack);
+			new_track->setPixmap(0,*pixTrack);
 		}
 		new_playlist->setOpen(true);
 
@@ -185,4 +190,12 @@ QString TabPanelPlaylist::getTime( long smpl ) {
 
 void TabPanelPlaylist::clear() {
 	delete lstPlaylist;
+}
+
+void TabPanelPlaylist::listExpanded(QListViewItem *x) {
+	x->setPixmap(0,*pixExpanded);
+}
+
+void TabPanelPlaylist::listCollapsed(QListViewItem *x) {
+	x->setPixmap(0,*pixCollapsed);
 }

@@ -186,7 +186,9 @@ void TabPanelSearch::Library_Search() {
 
 void TabPanelSearch::playlistAdd(int row, int col, int button, const QPoint& mousepos) {
         if (mousepos.isNull()) {button = 0; row = 0; col = 0;}
-      	parentForm->playlistAdd(SearchResults->at(row).md5);
+		if (row != -1) {
+	      	parentForm->playlistAdd(SearchResults->at(row).md5);
+		}
 }
 
 void TabPanelSearch::clear() {

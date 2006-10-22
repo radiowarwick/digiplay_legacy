@@ -100,7 +100,7 @@ void TabPanelPlaylist::getPlaylist(){
 	lstPlaylist->header()->setResizeEnabled( FALSE,
 			lstPlaylist->header()->count() -1);
 
-	SQL << "SELECT DISTINCT ON (playlist)  playlist FROM playlist ORDER BY playlist;";
+	SQL << "SELECT id,name FROM playlists ORDER BY name;";
 
 	Result Playlists = T->exec(SQL.str());
 	T->abort();
@@ -108,11 +108,11 @@ void TabPanelPlaylist::getPlaylist(){
 
 	for (int j = 0; j < (int)Playlists.size(); j++) {
 
-		string playlist = Playlists[j]["playlist"].c_str();
+		string playlist = Playlists[j]["name"].c_str();
 		string playlist_name = playlist + " List";
 		new_playlist = new QListViewItem(lstPlaylist, playlist_name);
 		new_playlist->setPixmap (0, pixExpand);
-		SQL << "SELECT  audio.md5 FROM playlist, audio  WHERE playlist = '" << Playlists[j]["playlist"].c_str() << "' AND audio.id = playlist.audio;";
+		SQL << "SELECT DISTINCT audio.md5 FROM playlists, audio, audioplaylists  WHERE audioplaylists.playlist = " << Playlists[j]["id"].c_str() << " AND audio.id = audioplaylists.audio;";
 		Result R;
 		try {
 			Transaction *T = new Transaction(*C,"");

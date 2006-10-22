@@ -693,6 +693,9 @@
             <property name="text">
                 <string>Log In</string>
             </property>
+            <property name="autoDefault">
+                <bool>false</bool>
+            </property>
         </widget>
     </widget>
     <widget class="QFrame">

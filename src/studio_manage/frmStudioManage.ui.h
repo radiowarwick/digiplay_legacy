@@ -293,9 +293,10 @@ void frmStudioManage::btnMoveTopClicked() {
 	if (lstShowPlan->childCount() == 0) return;
 	QListViewItem *x = lstShowPlan->selectedItem();
     if ( x && x != lstShowPlan->firstChild()) {
-		lstShowPlan->takeItem(x);
-		lstShowPlan->insertItem(x);
-		lstShowPlan->setSelected(lstShowPlan->firstChild(),true);
+		x->moveItem(activePoint);
+//		lstShowPlan->takeItem(x);
+//		lstShowPlan->insertItem(x);
+		lstShowPlan->setSelected(x,true);
 		lstShowPlanSelectionChanged(x);
 		updateNextTrack();
     }

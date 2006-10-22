@@ -1,0 +1,91 @@
+#!/bin/bash
+
+printf "\n"
+printf "Radio Warwick Digital Playout System\n"
+printf "Database Installation script\n"
+printf "Copyright (c) 2006 Radio Warwick\n\n"
+
+# check for configuration and use defaults if necessary
+if [ ! -f /etc/digiplay.conf ]; then
+    printf "No digiplay configuration file found, please create one.\n";
+    printf "Will assume database name of \'digiplay\'.\n";
+    printf "Do you wish to abort installation? (Y/n) ";
+    read cont;
+    if [ "${cont:-Y}" == "Y" ] || [ "$cont" == "y" ]; then
+        printf "Database installation aborted.\n";
+        exit 0;
+    fi
+    DBNAME=digiplay;
+    DBUSER=digiplay_user;
+else
+    DBNAME=`cat /etc/digiplay.conf | grep DB_NAME | cut -d "=" -f 2`;
+    DBUSER=`cat /etc/digiplay.conf | grep DB_USER | cut -d "=" -f 2`;
+fi
+printf "Database: $DBNAME \n";
+printf "Username: $DBUSER \n";
+
+# create database
+printf "Checking for existing database...";
+if [ `psql -ls | grep " $DBNAME " | wc -l` == "1" ]; then
+	printf "\n"
+	printf " -> Found existing database '$DBNAME'\n";
+	printf "\nDo you want to backup existing database? [Y/n]: ";
+	read backup;
+	if [ "${backup:-Y}" == "Y" ] || [ "$backup" == "y" ]; then
+		printf " -> Backing up current sustainer playlist..."
+		psql -tc "SELECT md5 FROM audio WHERE sustainer='t'" $DBNAME | cut -d ' ' -f 2 > sustainer.bak
+		printf "done\n"
+		printf " -> Current sustainer playlist saved to 'sustainer.bak'\n"
+		printf " -> Backing up existing database..."
+		if [ `psql -ls | grep ${DBNAME}_bak | wc -l` == "1"]; then
+			psql -qc "DROP DATABASE ${DBNAME}_bak;" template1
+		fi
+		psql -qc "ALTER DATABASE digiplay RENAME TO ${DBNAME}_bak;" template1
+		printf "done.\n"
+		printf " -> Existing database saved as ${DBNAME}_bak\n"
+	else
+		printf "\nInstallation was terminated by the user.\n"
+		exit -1
+	fi
+else
+	printf "none found.\n"
+fi
+
+printf "Creating ${DBNAME} database..."
+psql -qc "CREATE DATABASE ${DBNAME};" template1
+printf "done.\n"
+
+# create users
+printf "Creating digiplay database users..."
+if [ ! `psql -tqc "select usename from pg_user where usename='$DBUSER';" template1` ]; then
+	psql -qc "CREATE USER $DBUSER;" template1
+fi
+printf "done.\n"
+
+# create all the relations, views, etc
+printf "Processing DDL script..."
+echo "BEGIN TRANSACTION;" > /tmp/digiplay.sql.new
+sed -e 's/VARCHAR(10)/VARCHAR/g' -e 's/"id" INTEGER not null/"id" SERIAL/g' \
+   digiplay.sql >> /tmp/digiplay.sql.new
+echo "END TRANSACTION;" >> /tmp/digiplay.sql.new
+printf "done.\n"
+printf "Generating database objects..."
+psql -qf /tmp/digiplay.sql.new $DBNAME  2>/dev/null
+rm /tmp/digiplay.sql.new
+printf "done.\n"
+
+# grant permissions to the digiplay_user on everything (for now)
+printf "Granting database permissions..."
+SQL="SELECT relname FROM pg_class WHERE (relkind = 'r' OR relkind = 'S')
+AND relname !~ '^pg_' AND relname !~ '^sql_' ORDER BY relname"
+OBJ=`psql -t -c "${SQL}" $DBNAME`
+OBJ=`echo ${OBJ} | sed 's/ /, /g'`
+SQL="GRANT ALL ON ${OBJ} TO $DBUSER"
+psql -qc "${SQL}" $DBNAME
+printf "done.\n"
+
+# import default data
+printf "Importing data..."
+psql -qf data.sql $DBNAME
+printf "done.\n\n";
+printf "Installation Complete.\n\n";

@@ -2,13 +2,23 @@
 
 --    Driver Used : Microsoft Visual Studio - IBM DB2 Universal Database Driver.
 --    Document    : G:\Data\cc\raw\digiplay\Database Design v2 (VISIO 2002).vsd.
---    Time Created: 06 August 2006 15:44.
+--    Time Created: 21 October 2006 19:48.
 --    Operation   : From Visio Generate Wizard.
 --    Connected data source : No connection.
 --    Connected server      : No connection.
 --    Connected database    : Not applicable.
 
 
+
+create table "patches" ( 
+	"id" INTEGER not null,
+	"branch" VARCHAR(10) not null,
+	"version" INTEGER not null, constraint "patches_PK" primary key ("id") ); 
+
+create table "audioplaylists" ( 
+	"id" INTEGER not null,
+	"audio" INTEGER not null,
+	"playlist" INTEGER not null, constraint "audioplaylists_PK" primary key ("id") ); 
 
 create table "scriptsdir" ( 
 	"id" INTEGER not null,
@@ -119,10 +129,9 @@ create table "audioext" (
 	"artist_name" VARCHAR(10) not null,
 	"album_name" VARCHAR(10), constraint "audioext_PK" primary key ("id") ); 
 
-create table "playlist" ( 
+create table "playlists" ( 
 	"id" INTEGER not null,
-	"audio" INTEGER not null,
-	"playlist" VARCHAR(10) not null, constraint "playlist_PK" primary key ("id") ); 
+	"name" VARCHAR(10) not null, constraint "playlists_PK" primary key ("id") ); 
 
 create table "cartstyleprops" ( 
 	"id" INTEGER not null,
@@ -436,6 +445,18 @@ create table "artists" (
 	"name" VARCHAR(10) not null,
 	"alt_name" VARCHAR(10), constraint "artists_PK" primary key ("id") ); 
 
+alter table "audioplaylists"
+	add constraint "audio_FK14" foreign key (
+		"audio")
+	 references "audio" (
+		"id") on update restrict on delete restrict; 
+
+alter table "audioplaylists"
+	add constraint "playlists_FK1" foreign key (
+		"playlist")
+	 references "playlists" (
+		"id") on update restrict on delete restrict; 
+
 alter table "scriptsdir"
 	add constraint "scripts_FK4" foreign key (
 		"scriptid")
@@ -503,7 +524,7 @@ alter table "showplans"
 		"id") on update restrict on delete restrict; 
 
 alter table "showitems"
-	add constraint "audio_FK14" foreign key (
+	add constraint "audio_FK13" foreign key (
 		"audio")
 	 references "audio" (
 		"id") on update restrict on delete restrict; 
@@ -557,7 +578,7 @@ alter table "requests"
 		"id") on update restrict on delete restrict; 
 
 alter table "audiocomments"
-	add constraint "audio_FK13" foreign key (
+	add constraint "audio_FK12" foreign key (
 		"audio")
 	 references "audio" (
 		"id") on update restrict on delete restrict; 
@@ -596,12 +617,6 @@ alter table "changelog"
 	add constraint "users_FK9" foreign key (
 		"user")
 	 references "users" (
-		"id") on update restrict on delete restrict; 
-
-alter table "playlist"
-	add constraint "audio_FK12" foreign key (
-		"audio")
-	 references "audio" (
 		"id") on update restrict on delete restrict; 
 
 alter table "cartstyleprops"
@@ -947,6 +962,18 @@ where audiojinglepkgs.audio = audio.id
 order by active desc, package, type, title;
 
 
+create rule r_configuration_update 
+as on update 
+to configuration 
+do NOTIFY trig_id1;
+
+
+create rule r_configuration_insert 
+as on insert 
+to configuration 
+do NOTIFY trig_id1;
+
+
 create rule r_cartsaudio_update 
 as on update 
 to cartsaudio 
@@ -983,16 +1010,22 @@ to email
 do NOTIFY trig_id2;
 
 
-create rule r_configuration_update 
-as on update 
-to configuration 
-do NOTIFY trig_id1;
+create rule r_log_delete 
+as on delete 
+to log 
+do NOTIFY trig_id4;
 
 
-create rule r_configuration_insert 
+create rule r_log_insert 
 as on insert 
-to configuration 
-do NOTIFY trig_id1;
+to log 
+do NOTIFY trig_id4;
+
+
+create rule r_log_update 
+as on update 
+to log 
+do NOTIFY trig_id4;
 
 
 

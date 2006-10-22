@@ -1,0 +1,117 @@
+#!/bin/bash
+# ===============================================
+# 
+printf "\n"
+printf "Radio Warwick Digital Playout System\n"
+printf "Database Patch script\n"
+printf "Copyright (c) 2006 Radio Warwick\n\n"
+
+if [ $# != 1 ]; then
+	printf "Usage: $0 filename.tar.gz";
+	exit -1;
+fi
+
+PATCH_FILE=$1;
+BASE=`echo $1 | cut -c 1-11`;
+VERSION=`echo $BASE | cut -c 1-8`;
+BRANCH=`echo $BASE | cut -c 9-11`;
+
+# check patch file exists
+if [ ! -f $PATCH_FILE ]; then
+	printf "Cannot find patch file \'$1\'\n";
+	exit -1;
+fi
+
+# expand and check patch
+mkdir -p /tmp;
+tar -zxv -C /tmp -f $PATCH_FILE 1>/dev/null 2>&1;
+if [ $? != 0 ]; then
+	printf "Failed to expand patch archive.\n";
+	printf "It may not be a patch.\n";
+	rm -rf /tmp/$BASE;
+	exit -1;
+fi
+
+# check for configuration and use defaults if necessary
+if [ ! -f /etc/digiplay.conf ]; then
+	printf "No digiplay configuration file found, please create one.\n";
+	printf "Will assume database name of \'digiplay\'.\n";
+	printf "Do you wish to abort patching? (Y/n) ";
+	read cont;
+	if [ "${cont:-Y}" == "Y" ] || [ "$cont" == "y" ]; then
+		printf "Database patching aborted.\n";
+		exit 0;
+	fi
+	DBNAME=digiplay;
+else
+	DBNAME=`cat /etc/digiplay.conf | grep DB_NAME | cut -d "=" -f 2`;
+fi
+printf "Database: $DBNAME \n";
+
+# Check the database exists
+printf "Checking database exists...";
+psql -ls 1>/dev/null 2>&1;
+if [ $? != 0 ]; then
+	printf "\n -> Cannot connect to local database server.\n";
+	printf " -> Are you running this on the machine local to the database?\n";
+	exit -1;
+fi
+if [ `psql -ls | grep " $DBNAME " | wc -l` == "1" ]; then
+	printf "\n"
+	printf " -> Found database '$DBNAME'\n";
+else
+	printf "failed.\n"
+	printf " -> Cannot find database $DBNAME. Check configuration file.\n";
+	exit -1;
+fi
+
+
+# --------------------------------
+# Now do the patching
+#
+SCHEMA_PATCH=/tmp/$BASE/schema.sql
+DATA_PATCH=/tmp/$BASE/data.sql
+
+# read patch configuration and check it's ok to patch
+exec 3</tmp/$BASE/patch.conf;
+until [ $done ]; do
+	read <&3 myline;
+	if [ $? != 0 ]; then
+		done=1;
+		continue;
+	fi
+	CHECK_BRANCH=`echo $myline | cut -c 9-11`;
+	CHECK_VERSION=`echo $myline | cut -c 13-`;
+	SQL="select id from patches where branch='$CHECK_BRANCH' and version='$CHECK_VERSION';";
+	if [ ! `psql -tqc "$SQL" ${DBNAME}` ]; then
+		printf "Patch requires $CHECK_BRANCH version $CHECK_VERSION \n";
+		exit -1;
+	fi
+done
+
+# Process the patch into a transaction
+printf "Processing Patch DDL script..."
+echo "BEGIN TRANSACTION;" > /tmp/patch.new
+sed -e 's/VARCHAR(10)/VARCHAR/g' -e 's/"id" INTEGER not null/"id" SERIAL/g' \
+   $SCHEMA_PATCH >> /tmp/patch.new
+echo "END TRANSACTION;" >> /tmp/patch.new
+printf "done.\n"
+
+# Apply the patch
+printf "Applying Patch..."
+psql -qf /tmp/patch.new $DBNAME  2>/dev/null 1>&2
+rm /tmp/patch.new
+printf "done.\n"
+
+# Apply the patch
+printf "Applying new permissions..."
+psql -qf /tmp/$BASE/perms.sql $DBNAME  2>/dev/null 1>&2
+printf "done.\n"
+
+# import default data
+printf "Importing new data..."
+psql -qf /tmp/$BASE/data.sql $DBNAME 2>/dev/null 1>&2
+printf "done.\n\n"
+
+rm -rf /tmp/$BASE;
+printf "Patching complete.\n\n";

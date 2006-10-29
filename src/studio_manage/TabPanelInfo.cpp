@@ -1,6 +1,30 @@
+/*
+ * Information Panel GUI Module
+ * TabPanelInfo.cpp
+ * Provides an information area.
+ *
+ * Copyright (c) 2006 Chris Cantwell
+ * Copyright (c) 2006 Ian Liverton
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
 #include <qtabwidget.h>
 #include <qtextbrowser.h>
 
+#include "dps.h"
 #include "Auth.h"
 #include "Logger.h"
 
@@ -8,26 +32,20 @@
 
 TabPanelInfo::TabPanelInfo(QTabWidget *parent, string text)
 		: TabPanel(parent,text) {
+	panelTag = "TabInfo";
 	txtInfoPanel = 0;
+	draw();
 }
 
 TabPanelInfo::~TabPanelInfo() {
-
-}
-
-void TabPanelInfo::configure(Auth *authModule) {
-	hide();
-	if (authModule->isPermitted("TabInfo")) {
-		draw();
-		show();
-	}
+	clear();
 }
 
 void TabPanelInfo::draw() {
 	char* routine = "TabInfo::draw()";
 	
 	if (txtInfoPanel) {
-		Logger::log(WARNING,routine,"Implicit clear() called",3);
+		L_WARNING(LOG_TABINFO,"Implicit clear() called");
 		clear();
 	}
 	

@@ -139,7 +139,7 @@ void AudioWall::setButton(unsigned short page, unsigned short index,
 //	cout << "AudioWall::setButton" << endl;
 	char *routine = "AudioWall::setButton";
 	if (index > _pageSize) {
-		Logger::log(ERROR,routine,"Button index out of range",1);
+        L_ERROR(LOG_PLAYOUT,"Button index out of range");
 		throw AUDIOWALL_BUTTON_OUT_OF_RANGE;
 	}
 	for (unsigned short i = 0; i <= page; i++) {

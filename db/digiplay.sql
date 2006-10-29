@@ -2,7 +2,7 @@
 
 --    Driver Used : Microsoft Visual Studio - IBM DB2 Universal Database Driver.
 --    Document    : G:\Data\cc\raw\digiplay\Database Design v2 (VISIO 2002).vsd.
---    Time Created: 21 October 2006 19:48.
+--    Time Created: 28 October 2006 18:56.
 --    Operation   : From Visio Generate Wizard.
 --    Connected data source : No connection.
 --    Connected server      : No connection.
@@ -937,8 +937,10 @@ alter table "audiokeywords"
 	 references "keywords" (
 		"id") on update restrict on delete restrict; 
 
-create view music (title, artist, album) as
-select audio.title as title, 
+create view music (id, md5, title, artist, album) as
+select audio.id as id,
+	audio.md5 as md5,
+	audio.title as title, 
 	artists.name as artist, 
 	albums.name as album 
 from audio, artists, audioartists, albums 
@@ -960,6 +962,40 @@ where audiojinglepkgs.audio = audio.id
     and audiojinglepkgs.jingletype = jingletypes.id
     and audio.type = 1
 order by active desc, package, type, title;
+
+
+create view v_playlists (md5, title, artist, album, length_smpl, playlistid) as              
+SELECT DISTINCT audio.md5, 
+	audio.title as title, 
+	artists.name as artist, 
+	albums.name as album,                                       
+	audio.length_smpl as length_smpl,
+	playlists.id as playlistid
+FROM playlists, audio, audioplaylists, artists, audioartists, albums
+WHERE audio.id = audioplaylists.audio 
+	AND playlists.id = audioplaylists.playlist
+	AND audioartists.artist = artists.id 
+	AND audioartists.audio = audio.id 
+	AND albums.id = audio.music_album
+ORDER BY playlistid, title;
+
+
+create rule r_playlists_delete
+as on delete 
+to playlists 
+do NOTIFY trig_id5;
+
+
+create rule r_playlists_insert
+as on insert 
+to playlist 
+do NOTIFY trig_id5;
+
+
+create rule r_playlists_update 
+as on update 
+to playlists 
+do NOTIFY trig_id5;
 
 
 create rule r_configuration_update 
@@ -990,6 +1026,24 @@ create rule r_cartsaudio_delete
 as on delete 
 to cartsaudio 
 do NOTIFY trig_id3;
+
+
+create rule r_audioplaylists_delete
+as on delete 
+to audioplaylists 
+do NOTIFY trig_id5;
+
+
+create rule r_audioplaylists_insert
+as on insert 
+to audioplaylists 
+do NOTIFY trig_id5;
+
+
+create rule r_audioplaylists_update
+as on update 
+to audioplaylists 
+do NOTIFY trig_id5;
 
 
 create rule r_email_update 

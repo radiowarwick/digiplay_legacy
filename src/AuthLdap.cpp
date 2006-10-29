@@ -6,33 +6,33 @@ AuthLdap::AuthLdap(string host, unsigned int port, string baseDn) {
 	char* routine = "AuthLdap::AuthLdap";
 	_myLdap = NULL;
 	if (host == "") {
-		Logger::log(ERROR,routine,"No host specified",1);
+		L_ERROR(LOG_AUTH,"No host specified.");
 		throw AUTH_LDAP_INVALID_PARAM;
 	}
 	if (port == 0 || port >= 65536) {
-		Logger::log(ERROR,routine,"Invalid Port",1);
+		L_ERROR(LOG_AUTH,"Invalid port.");
 		throw AUTH_LDAP_INVALID_PARAM;
 	}
 	if (baseDn == "") {
-		Logger::log(ERROR,routine,"No base DN specified",1);
+		L_ERROR(LOG_AUTH,"No Base DN specified.");
 		throw AUTH_LDAP_INVALID_PARAM;
 	}
 	_host = host;
 	_port = port;
 	_baseDn = baseDn;
 
-	Logger::log(INFO,routine,"Creating connection to LDAP server...",1);
-	Logger::log(INFO,routine," -> server:  " + host,3);
-	Logger::log(INFO,routine," -> base DN: " + baseDn,3);
+	L_INFO(LOG_AUTH,"Creating connection to LDAP server...");
+	L_INFO(LOG_AUTH," -> server: " + host);
+	L_INFO(LOG_AUTH," -> base DN: " + baseDn);
 
 	try {
 		_myLdap = ldap_init(host.c_str(),port);
 	}
 	catch (...) {
-		Logger::log(ERROR,routine,"Failed to create LDAP connection",1);
+		L_ERROR(LOG_AUTH,"Failed to create LDAP connection.");
 		throw AUTH_LDAP_CONNECT_FAILED;
 	}
-	Logger::log(INFO,routine,"Success.",2);
+	L_INFO(LOG_AUTH,"LDAP initialisation successful.");
 }
 
 AuthLdap::~AuthLdap() {
@@ -41,15 +41,15 @@ AuthLdap::~AuthLdap() {
 
 void AuthLdap::authSession(string username, string password) {
 	char* routine = "AuthLdap::authenticate";
-	Logger::log(INFO,routine,"Authenticating user " + username,2);
+	L_INFO(LOG_AUTH,"Authenticating user " + username);
 	
 	if (username == "") {
-		Logger::log(ERROR,routine," -> No username supplied",1);
+		L_ERROR(LOG_AUTH," -> No username supplied.");
 		throw AUTH_INVALID_CREDENTIALS;
 	}
 
 	string dn = "uid=" + username + "," + _baseDn;
-	Logger::log(INFO,routine," -> bind DN is '" + dn + "'",3);
+	L_INFO(LOG_AUTH," -> bind DN is '" + dn + "'");
 
 	int ret = 0;
 	int version = LDAP_VERSION3;
@@ -58,21 +58,20 @@ void AuthLdap::authSession(string username, string password) {
 	ret = ldap_simple_bind_s(_myLdap, dn.c_str(), password.c_str());
 	string retText = ldap_err2string(ret);
 
-
 	if (retText == "Success") {
-		Logger::log(INFO,routine," -> " + retText,3);
+		L_INFO(LOG_AUTH," -> Success.");
 		Auth::authSession(username,password);
 	}
 	else if (retText == "Invalid credentials") {
-		Logger::log(ERROR,routine," -> " + retText,2);
+		L_ERROR(LOG_AUTH," -> Invalid credentials.");
 		throw AUTH_INVALID_CREDENTIALS;
 	}
 	else if (retText == "Protocol error") {
-		Logger::log(INFO,routine," -> " + retText,1);
+		L_ERROR(LOG_AUTH," -> Protocol error");
 		throw AUTH_LDAP_PROTOCOL_ERROR;
 	}
 	else {
-		Logger::log(INFO,routine," -> " + retText,1);
+		L_INFO(LOG_AUTH," -> return status: " + retText);
 		throw AUTH_FAILED;
 	}
 
@@ -92,7 +91,7 @@ void AuthLdap::authSession(string username, string password) {
 	for (e = ldap_first_entry(_myLdap, res); e != NULL; 
 				e = ldap_next_entry(_myLdap, e)) {
 		if ((ldapDn = ldap_get_dn(_myLdap, e)) != NULL) {
-			Logger::log(INFO,routine,ldapDn,4);
+			L_INFO(LOG_AUTH,ldapDn);
 		}
 		for (attr_name = ldap_first_attribute(_myLdap, e, &ber); 
 				attr_name != NULL;

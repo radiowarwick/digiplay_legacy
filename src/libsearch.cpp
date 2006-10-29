@@ -78,22 +78,21 @@ vector<track>* libsearch::query(string search_string) {
   S << searchLimit_value;
   SQL += " LIMIT " + S.str();
  }
- 
  Result R = T->exec(SQL);
  T->abort();
  delete T;
 
- for (int i = 0; i < (int)R.size(); i++) {
-	 track t = dps_getTrack(C,R[i]["md5"].c_str());
-//  int id = atoi(R[i]["id"].c_str());
-//  _track* t = new _track(T,id);
-  Q->push_back(t);
+ Q->resize(R.size());
+ for (unsigned int i = 0; i < R.size(); i++) {
+	Q->at(i).title = R[i]["title"].c_str();
+	Q->at(i).artist = R[i]["artist"].c_str();
+	Q->at(i).album = R[i]["album"].c_str();
+	Q->at(i).md5 = R[i]["md5"].c_str();
  }
  return Q;
 }
 
 bool libsearch::searchTitle() {
-//            searchTitle_flag = false;
  return searchTitle_flag;
 }
 

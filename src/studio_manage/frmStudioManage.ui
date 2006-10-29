@@ -845,6 +845,9 @@
                     <height>60</height>
                 </rect>
             </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
             <property name="text">
                 <string>pushButton4</string>
             </property>
@@ -863,6 +866,9 @@
                     <width>75</width>
                     <height>60</height>
                 </rect>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
             </property>
             <property name="text">
                 <string>pushButton6</string>
@@ -883,6 +889,9 @@
                     <height>60</height>
                 </rect>
             </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
             <property name="text">
                 <string>pushButton5</string>
             </property>
@@ -902,6 +911,9 @@
                     <height>60</height>
                 </rect>
             </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
             <property name="text">
                 <string>pushButton2</string>
             </property>
@@ -920,6 +932,9 @@
                     <width>75</width>
                     <height>60</height>
                 </rect>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
             </property>
             <property name="text">
                 <string>pushButton3</string>
@@ -1022,7 +1037,6 @@
 <functions>
     <function access="private" specifier="non virtual">init()</function>
     <function access="private" specifier="non virtual">destroy()</function>
-    <function returnType="bool">isDefined( QString * name )</function>
     <function access="private" specifier="non virtual" returnType="QString">getTime( long smpl )</function>
     <function access="private">updateNextTrack()</function>
 </functions>

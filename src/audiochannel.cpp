@@ -381,6 +381,7 @@ void audiochannel::cache() {
 }
 
 void *thread_cache(void *ptr) {
+	cout << "Starting a thread" << endl;
 	((audiochannel*)ptr)->cache();
 	pthread_exit(NULL);
 }

@@ -11,6 +11,8 @@ studio: 	$(STUDIO)
 sue:		$(SUE)
 backend:	$(ADMIN)
 
+.PHONY: clean install
+
 all: $(APPS)
 
 %:

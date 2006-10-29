@@ -124,8 +124,8 @@ void AudioWallManager::load(unsigned int cartset) {
 
 		}
 	}
-	for (int page = 0; page < _pages.size(); page++)
-		for (int item = 0; item < _A->getSize(); item++)
+	for (unsigned int page = 0; page < _pages.size(); page++)
+		for (unsigned int item = 0; item < _A->getSize(); item++)
 			_A->setButton(page,item,*(_pages[page]->items[item]));
 }
 

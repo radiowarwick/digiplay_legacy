@@ -9,8 +9,8 @@ unsigned short Logger::logLevel = 0;
 unsigned short Logger::displayLevel = 0;
 string Logger::appName = "";
 
-void Logger::log(MESSAGE_TYPE type, char* routine, string message, 
-												unsigned short level) {
+void Logger::log(LOG_TYPE type, char* routine, string message, 
+												MESSAGE_LEVEL level) {
 	if (logLevel >= level) {
 		if (!logFile) {
 			system("mkdir -p /var/log/dps");
@@ -28,7 +28,7 @@ void Logger::log(MESSAGE_TYPE type, char* routine, string message,
 	    outLine << ":" << local.tm_min;
 	    outLine << ":" << local.tm_sec << "] ";
 	    outLine << routine << ": " << endl << " -> ";
-		switch (type) {
+		switch (level) {
 			case INFO:
 				outLine << "INFO: ";
 				break;
@@ -38,26 +38,36 @@ void Logger::log(MESSAGE_TYPE type, char* routine, string message,
 			case ERROR:
 				outLine << "ERROR: ";
 				break;
-			case FATAL:
-				outLine << "FATAL: ";
+			case GENERAL:
+				outLine << "GENERAL: ";
+				break;
+			case CRITICAL:
+				outLine << "CRITICAL: ";
+				break;
+			default:
 				break;
 		}
 	    outLine << message << endl;
 	    (*logFile) << outLine.str() << flush;
 	}
 	if (displayLevel >= level) {
-		switch (type) {
+		switch (level) {
 			case INFO:
-				cout << "INFO    > ";
+				cout << "INFO      > ";
 				break;
 			case WARNING:
-				cout << "WARNING > ";
+				cout << "WARNING   > ";
 				break;
 			case ERROR:
-				cout << "ERROR   > ";
+				cout << "ERROR     > ";
 				break;
-			case FATAL:
-				cout << "FATAL!  > ";
+			case GENERAL:
+				cout << "GENERAL   > ";
+				break;
+			case CRITICAL:
+				cout << "CRITICAL! > ";
+				break;
+			default:
 				break;
 		}
 		cout << message << endl;

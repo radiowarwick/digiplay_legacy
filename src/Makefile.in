@@ -25,7 +25,7 @@ QT_HDRS		=
 
 # Define compiler and linker flags depending on whether we're
 # compiling a standard executable or a shared library
-CCINC		:=	-I$(ROOT)/src -I$(ROOT)/components -I/usr/include/postgresql
+CCINC		:=	-I$(ROOT)/src -I$(ROOT)/components -I/usr/include/postgresql -DDEBUG=4
 CCFLAGS		:=	-Wall -O3
 LDFLAGS		:=	-o $(DEST)/$(OUTPUT)
 # if QT is enabled, we need to include the necessary compiler and 

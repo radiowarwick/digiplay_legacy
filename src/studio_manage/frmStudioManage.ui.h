@@ -1,14 +1,27 @@
-/****************************************************************************
-** ui.h extension file, included from the uic-generated form implementation.
-**
-** If you want to add, delete, or rename functions or slots, use
-** Qt Designer to update this file, preserving your code.
-**
-** You should not define a constructor or destructor in this file.
-** Instead, write your code in functions called init() and destroy().
-** These will automatically be called by the form's constructor and
-** destructor.
-*****************************************************************************/
+/*
+ * Studio Management Application
+ * frmStudioManage.ui.h
+ * Provides implementation of routines used by the main GUI for the Studio
+ * Management application.
+ *
+ * Copyright (c) 2004-2006 Chris Cantwell
+ * Copyright (c) 2004-2006 Ian Liverton
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
 #include <qapplication.h>
 #include <qmessagebox.h>
 
@@ -64,11 +77,13 @@ void frmStudioManage::init() {
 	C = new Connection(conf->getDBConnectString());
 	cout << "Connected." << endl;
 
-	// Initialise Authentication mechanism
-	authModule = new AuthLdap("ldapserver",389,"ou=People,dc=radio,dc=warwick,dc=ac,dc=uk");
-	
 	// Initialise modules
-	cout << "Initialising Modules..." << endl;
+	cout << "Initialising Core Modules..." << endl;
+	cout << " -> Authentication subsystem...";
+	authModule = new AuthLdap("ldapserver",389,
+								"ou=People,dc=radio,dc=warwick,dc=ac,dc=uk");
+	cout << "success." << endl;
+	
 	cout << " -> Clock...";
 	ck = new clockThread(this);
 	ck->start();
@@ -194,13 +209,8 @@ void frmStudioManage::customEvent(QCustomEvent *event) {
 
 void frmStudioManage::playlistAdd(QString md5) {
 	track t = dps_getTrack(C,md5);
-	ShowPlanAudio *audio_item = new ShowPlanAudio( lstShowPlan, 
-		lstShowPlan->lastItem(), t); 
+	new ShowPlanAudio( lstShowPlan,	lstShowPlan->lastItem(), t); 
 	updateNextTrack();
-}
-
-bool frmStudioManage::isDefined(QString *name) {
-	return false;
 }
 
 QString frmStudioManage::getTime( long smpl ) {

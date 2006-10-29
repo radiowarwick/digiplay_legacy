@@ -1,3 +1,27 @@
+/*
+ * Show Plan Item Base class
+ * ShowPlanItem.cpp
+ * A base class for items in the show plan. Derive classes from this class
+ * and reimplement the init() routine and constructors to format the show
+ * plan item as required. 
+ *
+ * Copyright (c) 2006 Chris Cantwell
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
 #include <iostream>
 using namespace std;
 
@@ -65,7 +89,7 @@ void ShowPlanItem::setup() {
 	int r = lv->itemMargin();
 	int stepSize = lv->treeStepSize();
 
-	QPixmap *px;
+	QPixmap *px = 0;
 	switch (_state) {
 		case SHOWPLAN_STATE_UNLOADED:
 			px = pixUnloaded;
@@ -76,6 +100,9 @@ void ShowPlanItem::setup() {
 		case SHOWPLAN_STATE_FINISHED:
 			px = pixFinished;
 			break;
+        default:
+            px = pixUnloaded;
+            break;
 	}
 
 	int wPix = 0;
@@ -119,7 +146,7 @@ void ShowPlanItem::paintCell(QPainter *p, const QColorGroup &cg, int column,
 		setup();
 	}
 
-	QPixmap *px;
+	QPixmap *px = 0;
 	QBrush *backBrush, *backBrushSel;
 	QRect recPix;
 	int wPix = 0;
@@ -145,6 +172,7 @@ void ShowPlanItem::paintCell(QPainter *p, const QColorGroup &cg, int column,
 			backBrushSel = backBrushFinishedSel;
 			break;
 		default:
+            px = pixUnloaded;
 			backBrush = backBrushUnloaded;
 			backBrushSel = backBrushUnloadedSel;
 			break;

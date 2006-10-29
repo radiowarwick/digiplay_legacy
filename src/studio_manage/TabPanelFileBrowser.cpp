@@ -1,3 +1,27 @@
+/*
+ * Virtual Directory Browser GUI Module
+ * TabPanelFileBrowser.cpp
+ * Provides a tree structure to allow navigation of the virtual directory
+ * hierarchy within the central database.
+ *
+ * Copyright (c) 2006 Chris Cantwell
+ * Copyright (c) 2006 Ian Liverton
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
 #include <qtabwidget.h>
 #include <qheader.h>
 #include <qapplication.h>
@@ -12,9 +36,11 @@
 
 TabPanelFileBrowser::TabPanelFileBrowser(QTabWidget *parent, string text)
 		: TabPanel(parent, text) {
+    panelTag = "TabFileBrowser";
 	config *conf = new config("digiplay");
 	C = new Connection(conf->getDBConnectString());
 	delete conf;
+    draw();
 }
 
 // clean up stuff
@@ -25,29 +51,10 @@ TabPanelFileBrowser::~TabPanelFileBrowser() {
 	delete C;
 }
 
-// this is called whenever the application reconfigures itself,
-// usually due to a change in authentication status (login, logoff)
-void TabPanelFileBrowser::configure(Auth *authModule) {
-	hide();
-	if (authModule->isPermitted("TabFileBrowser")) {
-		draw();
-		show();
-	}
-}
-
 // This handles drawing the contents of the form, and connecting slots,
 // but has little actual implementation
 void TabPanelFileBrowser::draw() {
-	char* routine = "TabFileBrowser::draw()";
-
-/*	// this deletes the objects if they already exist so to avoid a leak
-	if (lstEmail || txtEmailBody) {
-		Logger::log(WARNING,routine,"Implicit clear() called",3);
-		clear();
-	}
-*/
 	// do all form drawing here, create widgets, set properties
-
     lstFileBrowser = new FileBrowser( getPanel(), "lstFileBrowser", 255 );
     lstFileBrowser->addColumn( tr( "Folder" ) );
     lstFileBrowser->setGeometry( QRect( 10, 10, 491, 620 ) );

@@ -1,10 +1,7 @@
 #ifndef CLASS_TRIGGERTHREAD
 #define CLASS_TRIGGERTHREAD
 
-#include <iostream>
-#include <vector>
 #include <string>
-#include <sstream>
 using namespace std;
 
 #include "pqxx/connection.h"

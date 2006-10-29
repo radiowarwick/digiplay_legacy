@@ -63,8 +63,6 @@ void audiowallthread::do_play(unsigned short index) {
 }
 
 void audiowallthread::do_stop(unsigned short index) {
-
-//	if (index == -1) return;
 	state_mutex.lock();
 	if (state == STATE_PLAY || state == STATE_PAUSE) {
 		state = STATE_STOP;
@@ -81,8 +79,6 @@ void audiowallthread::do_stop(unsigned short index) {
 }
 
 void audiowallthread::do_updateCounter(int smpl) {
-	if (active_ch < 0) return;
-	
 	state_mutex.lock();
 	if (smpl == 0) {
 		e_stop->index = active_ch;

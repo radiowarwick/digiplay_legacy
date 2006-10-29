@@ -178,7 +178,7 @@ void TabPanelEmail::getEmail(){
             for (unsigned int i = 0; i < R.size(); i++) {
                 // Examine the emails from the oldest to the newest
                 unsigned int j = R.size() - i - 1;
-                unsigned int k = atoi(R[j]["id"].c_str());
+                int k = atoi(R[j]["id"].c_str());
                 // If the email is already shown, just check it's read status
                 if (k <= atoi(last_id.c_str())) {
                     QListViewItem *x = lstEmail->findItem(R[j]["id"].c_str(),4);
@@ -232,11 +232,11 @@ void TabPanelEmail::getEmailBody(QListViewItem *current) {
         txtEmailBody->setPointSize(pointSize);
         txtEmailBody->setText(R[0]["body"].c_str());
         string flag = R[0]["new_flag"].c_str();
-        if ( flag.compare("t") ) {
+		L_INFO(LOG_TABEMAIL,"Selected email has new_flag=["+flag+"]");
+        if ( !flag.compare("t") ) {
             markRead(id);
         }
         current->setPixmap(0, *pixEmailOld);
-
     }
     catch (...) {
         L_ERROR(LOG_TABEMAIL,"Failed to get email body for id "
@@ -259,8 +259,8 @@ void TabPanelEmail::markRead(string id) {
     }
     catch (...) {
         L_ERROR(LOG_TABEMAIL,"Failed to set e-mail as read.");
+    	T->abort();
     }
-    T->abort();
     delete T;
 }
 

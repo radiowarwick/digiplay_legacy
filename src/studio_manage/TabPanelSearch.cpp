@@ -70,6 +70,7 @@ void TabPanelSearch::draw() {
     lblSearch->setFont( lblSearch_font );
 
     TitleCheckBox = new QCheckBox( getPanel(), "TitleCheckBox" );
+//    TitleCheckBox->setGeometry( QRect( 83, 35, 60, 20 ) );
     TitleCheckBox->setGeometry( QRect( 190, 35, 60, 20 ) );
     QFont TitleCheckBox_font(  TitleCheckBox->font() );
     TitleCheckBox_font.setBold( FALSE );
@@ -91,6 +92,7 @@ void TabPanelSearch::draw() {
     Searchlable->setFont( Searchlable_font );
 
     ArtistCheckBox = new QCheckBox( getPanel(), "ArtistCheckBox" );
+//    ArtistCheckBox->setGeometry( QRect( 190, 35, 70, 20 ) );
     ArtistCheckBox->setGeometry( QRect( 83, 35, 70, 20 ) );
     QFont ArtistCheckBox_font(  ArtistCheckBox->font() );
     ArtistCheckBox_font.setBold( FALSE );
@@ -113,10 +115,10 @@ void TabPanelSearch::draw() {
     tblLibrarySearchResults = new QTable( getPanel(), "tblLibrarySearchResults" );
     tblLibrarySearchResults->setNumCols( tblLibrarySearchResults->numCols() + 1 );
     tblLibrarySearchResults->horizontalHeader()->setLabel(
-	tblLibrarySearchResults->numCols() - 1, tr( "Title          " ) );
+	tblLibrarySearchResults->numCols() - 1, tr( "Artist          " ) );
     tblLibrarySearchResults->setNumCols( tblLibrarySearchResults->numCols() + 1 );
     tblLibrarySearchResults->horizontalHeader()->setLabel(
-	tblLibrarySearchResults->numCols() - 1, tr( "Artist          " ) );
+	tblLibrarySearchResults->numCols() - 1, tr( "Title          " ) );
     tblLibrarySearchResults->setNumCols( tblLibrarySearchResults->numCols() + 1 );
     tblLibrarySearchResults->horizontalHeader()->setLabel(
 	tblLibrarySearchResults->numCols() - 1, tr( "Album          " ) );
@@ -136,8 +138,8 @@ void TabPanelSearch::draw() {
     Searchlable->setText( tr( "Search by:" ) );
     ArtistCheckBox->setText( tr( "Artist" ) );
     btnLibrarySearch->setText( tr( "Search" ) );
-    tblLibrarySearchResults->horizontalHeader()->setLabel( 0, tr( "Title          " ) );
-    tblLibrarySearchResults->horizontalHeader()->setLabel( 1, tr( "Artist          " ) );
+    tblLibrarySearchResults->horizontalHeader()->setLabel( 0, tr( "Artist          " ) );
+    tblLibrarySearchResults->horizontalHeader()->setLabel( 1, tr( "Title          " ) );
     tblLibrarySearchResults->horizontalHeader()->setLabel( 2, tr( "Album          " ) );
     tblLibrarySearchResults->horizontalHeader()->setLabel( 3, tr( "ID" ) );
     QToolTip::add( tblLibrarySearchResults, tr( "Library Search Engine", "Enter text to search for and click the Search button to display matches." ) );
@@ -161,15 +163,15 @@ void TabPanelSearch::Library_Search() {
 	tblLibrarySearchResults->setNumRows(SearchResults->size());
 	for (unsigned int i = 0; i < SearchResults->size(); i++) {
 		tblLibrarySearchResults->setItem(i,0,
-				new QTableItem( tblLibrarySearchResults, QTableItem::Never,
-								SearchResults->at(i).title));
-        tblLibrarySearchResults->setItem(i,1,
 		        new QTableItem( tblLibrarySearchResults, QTableItem::Never,
 								SearchResults->at(i).artist));
-        tblLibrarySearchResults->setItem(i,2,
+        	tblLibrarySearchResults->setItem(i,1,
+				new QTableItem( tblLibrarySearchResults, QTableItem::Never,
+								SearchResults->at(i).title));
+	        tblLibrarySearchResults->setItem(i,2,
 			    new QTableItem( tblLibrarySearchResults, QTableItem::Never,
 								SearchResults->at(i).album));
-        tblLibrarySearchResults->setItem(i,3,
+        	tblLibrarySearchResults->setItem(i,3,
 				new QTableItem( tblLibrarySearchResults, QTableItem::Never,
 								SearchResults->at(i).md5));
 	}

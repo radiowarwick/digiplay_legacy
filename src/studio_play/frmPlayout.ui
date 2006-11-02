@@ -55,7 +55,6 @@
         </property>
         <property name="font">
             <font>
-                <family>Sans Serif</family>
                 <pointsize>16</pointsize>
                 <bold>1</bold>
             </font>
@@ -249,96 +248,6 @@
                 <string></string>
             </property>
         </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblArtist1</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>80</x>
-                    <y>40</y>
-                    <width>450</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>14</pointsize>
-                </font>
-            </property>
-            <property name="text">
-                <string>-</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblTitle1</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>80</x>
-                    <y>20</y>
-                    <width>450</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>14</pointsize>
-                </font>
-            </property>
-            <property name="text">
-                <string>-</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>textLabel2</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>40</y>
-                    <width>60</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>14</pointsize>
-                </font>
-            </property>
-            <property name="text">
-                <string>Artist:</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>textLabel3</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>9</x>
-                    <y>20</y>
-                    <width>60</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>14</pointsize>
-                </font>
-            </property>
-            <property name="mouseTracking">
-                <bool>false</bool>
-            </property>
-            <property name="acceptDrops">
-                <bool>false</bool>
-            </property>
-            <property name="text">
-                <string>Title:</string>
-            </property>
-        </widget>
         <widget class="QSlider">
             <property name="name">
                 <cstring>sldSeek1</cstring>
@@ -363,32 +272,57 @@
                 <enum>Horizontal</enum>
             </property>
         </widget>
-    </widget>
-    <widget class="QGroupBox">
-        <property name="name">
-            <cstring>grpPlayer2</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>247</y>
-                <width>540</width>
-                <height>250</height>
-            </rect>
-        </property>
-        <property name="font">
-            <font>
-                <family>Sans Serif</family>
-                <pointsize>16</pointsize>
-                <bold>1</bold>
-            </font>
-        </property>
-        <property name="title">
-            <string>Audio Player 2</string>
-        </property>
         <widget class="QLabel">
             <property name="name">
-                <cstring>lblArtist2</cstring>
+                <cstring>textLabel3</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>9</x>
+                    <y>40</y>
+                    <width>60</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>14</pointsize>
+                </font>
+            </property>
+            <property name="mouseTracking">
+                <bool>false</bool>
+            </property>
+            <property name="acceptDrops">
+                <bool>false</bool>
+            </property>
+            <property name="text">
+                <string>Title:</string>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel2</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>20</y>
+                    <width>60</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>14</pointsize>
+                </font>
+            </property>
+            <property name="text">
+                <string>Artist:</string>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblTitle1</cstring>
             </property>
             <property name="geometry">
                 <rect>
@@ -407,6 +341,49 @@
                 <string>-</string>
             </property>
         </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblArtist1</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>80</x>
+                    <y>20</y>
+                    <width>450</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>14</pointsize>
+                </font>
+            </property>
+            <property name="text">
+                <string>-</string>
+            </property>
+        </widget>
+    </widget>
+    <widget class="QGroupBox">
+        <property name="name">
+            <cstring>grpPlayer2</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>247</y>
+                <width>540</width>
+                <height>250</height>
+            </rect>
+        </property>
+        <property name="font">
+            <font>
+                <pointsize>16</pointsize>
+                <bold>1</bold>
+            </font>
+        </property>
+        <property name="title">
+            <string>Audio Player 2</string>
+        </property>
         <widget class="QPushButton">
             <property name="name">
                 <cstring>btnStop2</cstring>
@@ -595,75 +572,6 @@
         </widget>
         <widget class="QLabel">
             <property name="name">
-                <cstring>lblTitle2</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>80</x>
-                    <y>20</y>
-                    <width>450</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>14</pointsize>
-                </font>
-            </property>
-            <property name="text">
-                <string>-</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>textLabel2_2</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>40</y>
-                    <width>60</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>14</pointsize>
-                </font>
-            </property>
-            <property name="text">
-                <string>Artist:</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>textLabel3_2</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>20</y>
-                    <width>60</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>14</pointsize>
-                </font>
-            </property>
-            <property name="mouseTracking">
-                <bool>false</bool>
-            </property>
-            <property name="acceptDrops">
-                <bool>false</bool>
-            </property>
-            <property name="text">
-                <string>Title:</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
                 <cstring>lblPlayerTime2</cstring>
             </property>
             <property name="geometry">
@@ -686,32 +594,57 @@
                 <set>AlignCenter</set>
             </property>
         </widget>
-    </widget>
-    <widget class="QGroupBox">
-        <property name="name">
-            <cstring>grpPlayer3</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>10</x>
-                <y>496</y>
-                <width>540</width>
-                <height>250</height>
-            </rect>
-        </property>
-        <property name="font">
-            <font>
-                <family>Sans Serif</family>
-                <pointsize>16</pointsize>
-                <bold>1</bold>
-            </font>
-        </property>
-        <property name="title">
-            <string>Audio Player 3</string>
-        </property>
         <widget class="QLabel">
             <property name="name">
-                <cstring>lblArtist3</cstring>
+                <cstring>textLabel3_2</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>40</y>
+                    <width>60</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>14</pointsize>
+                </font>
+            </property>
+            <property name="mouseTracking">
+                <bool>false</bool>
+            </property>
+            <property name="acceptDrops">
+                <bool>false</bool>
+            </property>
+            <property name="text">
+                <string>Title:</string>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel2_2</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>20</y>
+                    <width>60</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>14</pointsize>
+                </font>
+            </property>
+            <property name="text">
+                <string>Artist:</string>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblTitle2</cstring>
             </property>
             <property name="geometry">
                 <rect>
@@ -730,6 +663,49 @@
                 <string>-</string>
             </property>
         </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblArtist2</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>80</x>
+                    <y>20</y>
+                    <width>450</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>14</pointsize>
+                </font>
+            </property>
+            <property name="text">
+                <string>-</string>
+            </property>
+        </widget>
+    </widget>
+    <widget class="QGroupBox">
+        <property name="name">
+            <cstring>grpPlayer3</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>10</x>
+                <y>496</y>
+                <width>540</width>
+                <height>250</height>
+            </rect>
+        </property>
+        <property name="font">
+            <font>
+                <pointsize>16</pointsize>
+                <bold>1</bold>
+            </font>
+        </property>
+        <property name="title">
+            <string>Audio Player 3</string>
+        </property>
         <widget class="QLabel">
             <property name="name">
                 <cstring>lblCounter3</cstring>
@@ -895,75 +871,6 @@
                 <string></string>
             </property>
         </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblTitle3</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>80</x>
-                    <y>20</y>
-                    <width>450</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>14</pointsize>
-                </font>
-            </property>
-            <property name="text">
-                <string>-</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>textLabel3_3</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>20</y>
-                    <width>60</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>14</pointsize>
-                </font>
-            </property>
-            <property name="mouseTracking">
-                <bool>false</bool>
-            </property>
-            <property name="acceptDrops">
-                <bool>false</bool>
-            </property>
-            <property name="text">
-                <string>Title:</string>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>textLabel2_3</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>40</y>
-                    <width>60</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>14</pointsize>
-                </font>
-            </property>
-            <property name="text">
-                <string>Artist:</string>
-            </property>
-        </widget>
         <widget class="QPushButton">
             <property name="name">
                 <cstring>btnLoadPlaylist3</cstring>
@@ -1002,6 +909,96 @@
             </property>
             <property name="alignment">
                 <set>AlignCenter</set>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel3_3</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>40</y>
+                    <width>60</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>14</pointsize>
+                </font>
+            </property>
+            <property name="mouseTracking">
+                <bool>false</bool>
+            </property>
+            <property name="acceptDrops">
+                <bool>false</bool>
+            </property>
+            <property name="text">
+                <string>Title:</string>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel2_3</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>20</y>
+                    <width>60</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>14</pointsize>
+                </font>
+            </property>
+            <property name="text">
+                <string>Artist:</string>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblTitle3</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>80</x>
+                    <y>40</y>
+                    <width>450</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>14</pointsize>
+                </font>
+            </property>
+            <property name="text">
+                <string>-</string>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblArtist3</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>80</x>
+                    <y>20</y>
+                    <width>450</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <pointsize>14</pointsize>
+                </font>
+            </property>
+            <property name="text">
+                <string>-</string>
             </property>
         </widget>
     </widget>
@@ -1115,10 +1112,10 @@
     <variable access="private">config *conf;</variable>
     <variable access="private">Connection *C;</variable>
     <variable access="private">triggerThread *dbTrigger;</variable>
-	<variable access="private">AudioWall *stnAudioWall;</variable>
-	<variable access="private">AudioWall *usrAudioWall;</variable>
-	<variable access="private">AudioWallManager *stnAudioWallMan;</variable>
-	<variable access="private">AudioWallManager *usrAudioWallMan;</variable>
+    <variable access="private">AudioWall *stnAudioWall;</variable>
+    <variable access="private">AudioWall *usrAudioWall;</variable>
+    <variable access="private">AudioWallManager *stnAudioWallMan;</variable>
+    <variable access="private">AudioWallManager *usrAudioWallMan;</variable>
     <variable access="private">playerThread *player1;</variable>
     <variable access="private">playerThread *player2;</variable>
     <variable access="private">playerThread *player3;</variable>

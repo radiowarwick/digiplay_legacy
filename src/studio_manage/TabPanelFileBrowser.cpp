@@ -55,12 +55,16 @@ TabPanelFileBrowser::~TabPanelFileBrowser() {
 // but has little actual implementation
 void TabPanelFileBrowser::draw() {
 	// do all form drawing here, create widgets, set properties
-    lstFileBrowser = new FileBrowser( getPanel(), "lstFileBrowser", 255 );
-    lstFileBrowser->addColumn( tr( "Folder" ) );
+    lstFileBrowser = new DirectoryView( getPanel() );
+    lstFileBrowser->addColumn( tr( "Name" ) );
+    lstFileBrowser->addColumn( tr( "Type" ) );
+    lstFileBrowser->setTreeStepSize( 20 );
     lstFileBrowser->setGeometry( QRect( 10, 10, 491, 620 ) );
-    lstFileBrowser->header()->setLabel( 0, tr( "Item" ) );
-	lstFileBrowser->header()->setMovingEnabled( FALSE );
-    lstFileBrowser->getFiles();
+    lstFileBrowser->setCaption( tr( "File Browser" ) );
+    lstFileBrowser->setAllColumnsShowFocus( TRUE );
+//    root = new Directory( lstFileBrowser, "/" );
+//    root->setOpen( TRUE );
+    lstFileBrowser->show();
 }
 
 void TabPanelFileBrowser::clear() {

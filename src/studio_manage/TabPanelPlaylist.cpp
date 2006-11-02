@@ -87,10 +87,10 @@ void TabPanelPlaylist::draw() {
 	lstPlaylist->setColumnWidthMode(3, QListView::Manual);
 	lstPlaylist->setColumnWidth(3, 0);
 	lstPlaylist->header()->setMovingEnabled( FALSE );
-	lstPlaylist->addColumn( tr( "Title" ) );
+	lstPlaylist->addColumn( tr( "Artist" ) );
 	lstPlaylist->header()->setResizeEnabled( FALSE,
 			lstPlaylist->header()->count() -1);
-	lstPlaylist->addColumn( tr( "Artist" ) );
+	lstPlaylist->addColumn( tr( "Title" ) );
 	lstPlaylist->header()->setResizeEnabled( FALSE,
 			lstPlaylist->header()->count() -1);
 	lstPlaylist->addColumn( tr( "Length" ) );
@@ -150,8 +150,8 @@ void TabPanelPlaylist::getPlaylist(){
 			R = T->exec(SQL);
 			for (unsigned int i = 0; i < R.size(); i++) {
 				new_track = new QListViewItem(new_playlist,last_track,
-							R[i]["title"].c_str(),
 							R[i]["artist"].c_str(),
+							R[i]["title"].c_str(),
 							dps_prettyTime(atoi(R[i]["length_smpl"].c_str())),
 							R[i]["md5"].c_str());
 				new_track->setPixmap(0,*pixTrack);

@@ -97,7 +97,7 @@ xmlAttribute xmlElement::get_attribute(unsigned int index) {
 	else {
 		stringstream S;
 		S << "Attribute " << index << " out of range in " << name;
-		Logger::log(ERROR,routine,S.str(),1);
+		L_ERROR(LOG_XML,S.str());
 		xmlAttribute A;
 		return A;
 	}
@@ -115,7 +115,7 @@ xmlAttribute xmlElement::get_attribute(string name) {
 			return attributes->at(i);
 	stringstream S;
 	S << "Attribute " << name << " does not exist in " << this->name;
-	Logger::log(ERROR,routine,S.str(),5);
+	L_ERROR(LOG_XML,S.str());
 	xmlAttribute A;
 	return A;
 }
@@ -128,7 +128,7 @@ void xmlElement::remove_attribute(unsigned int index) {
 	else {
 		stringstream S;
 		S << "Attribute " << index << " out of range in " << name;
-		Logger::log(ERROR,routine,S.str(),5);
+		L_ERROR(LOG_XML,S.str());
 	}
 }
 
@@ -141,7 +141,7 @@ void xmlElement::remove_attribute(string name) {
 		}
 	stringstream S;
 	S << "Attribute " << name << " does not exist in " << this->name;
-	Logger::log(ERROR,routine,S.str(),5);
+	L_ERROR(LOG_XML,S.str());
 }
 
 unsigned int xmlElement::count_attributes() {
@@ -164,7 +164,7 @@ xmlElement *xmlElement::get_element(unsigned int index) {
 		return elements->at(index);
 	stringstream S;
 	S << "Element " << index << " out of range in " << name;
-	Logger::log(ERROR,routine,S.str(),5);
+	L_ERROR(LOG_XML,S.str());
 	return NULL;
 }
 
@@ -175,7 +175,7 @@ xmlElement *xmlElement::get_element(string name) {
 			return elements->at(i);
 	stringstream S;
 	S << "Element " << name << " does not exist in " << this->name;
-	Logger::log(ERROR,routine,S.str(),5);
+	L_ERROR(LOG_XML,S.str());
 	return NULL;
 }
 
@@ -186,7 +186,7 @@ void xmlElement::remove_element(unsigned int index) {
 	else {
 		stringstream S;
 		S << "Element " << index << " out of range in " << name;
-		Logger::log(ERROR,routine,S.str(),5);
+		L_ERROR(LOG_XML,S.str());
 	}
 }
 
@@ -199,7 +199,7 @@ void xmlElement::remove_element(string name) {
 		}
 	stringstream S;
 	S << "Element " << name << " does not exist in " << this->name;
-	Logger::log(ERROR,routine,S.str(),5);
+	L_ERROR(LOG_XML,S.str());
 }
 
 unsigned int xmlElement::count_elements() {

@@ -46,7 +46,7 @@ ShowPlanAudio::ShowPlanAudio( QListView *parent, QListViewItem *after, track t )
 	rootElement = false;
 	setText(0,t.title);
 	setText(1,t.artist);
-	setText(2,dps_prettyTime(t.length_smpl));
+	setText(2,dps_prettyTime(t.trim_end_smpl - t.trim_start_smpl));
 	setText(3,"");
 	_t = t;
 	init();

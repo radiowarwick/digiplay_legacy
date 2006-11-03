@@ -53,6 +53,11 @@ void ShowPlanItem::init() {
 	selected = false;
 	_state = SHOWPLAN_STATE_UNLOADED;
 
+    lblTitle = 0;
+    lblSubtitle = 0;
+    lblLength = 0;
+    lblTime = 0;
+
 	selectPen = new QPen( black );
 	selectPen->setWidth(0);
 	unselectPen = new QPen( black );
@@ -74,13 +79,10 @@ void ShowPlanItem::setup() {
 	QString txtSubtitle = text(1);
 	QString txtLength = text(2);
 	QString txtTime = text(3);
-	if (txtTitle.isEmpty() ){
-		if (lblTitle) delete lblTitle;
-		if (lblSubtitle) delete lblSubtitle;
-		if (lblLength) delete lblLength;
-		if (lblTime) delete lblTime;
-		return;
-	}
+	if (lblTitle) delete lblTitle;
+	if (lblSubtitle) delete lblSubtitle;
+	if (lblLength) delete lblLength;
+	if (lblTime) delete lblTime;
 	
 	const QListView *lv = listView();
 	active = lv->isActiveWindow();

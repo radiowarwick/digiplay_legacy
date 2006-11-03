@@ -12,7 +12,7 @@ OUT_LIB		=	no
 OUT_STATIC	=	no
 
 # Enable QT support?
-QT_ENABLED 	=	yes
+QT_ENABLED 	=	no
 
 # .cpp modules from which to create output
 MODS		=	dpsimport

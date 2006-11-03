@@ -16,12 +16,13 @@ QT_ENABLED 	=	yes
 
 # .cpp modules from which to create output
 MODS		=	main
-QT_OBJS		=	dlgLogin dlgWarn
-QT_MODS		=	frmStudioManage TabPanel TabPanelInfo TabPanelEmail\
+#QT_OBJS		=	dlgLogin dlgWarn
+QT_MODS		=	frmStudioManage dlgLogin dlgWarn\
+				TabPanel TabPanelInfo TabPanelEmail\
 				TabPanelSearch TabPanelPlaylist TabPanelLogging\
 				TabPanelScript TabPanelFileBrowser\
 				ShowPlanItem ShowPlanAudio ShowPlanScript\
-				dlgLogin dlgWarn FileBrowser
+				FileBrowser
 SHARED_MODS	=	config libsearch track dps clockThread triggerThread\
 				Auth AuthLdap Logger
 

@@ -303,9 +303,13 @@ void frmStudioManage::btnMoveTopClicked() {
 	if (lstShowPlan->childCount() == 0) return;
 	QListViewItem *x = lstShowPlan->selectedItem();
     if ( x && x != lstShowPlan->firstChild()) {
-		x->moveItem(activePoint);
-//		lstShowPlan->takeItem(x);
-//		lstShowPlan->insertItem(x);
+        if (!activePoint) {
+    		lstShowPlan->takeItem(x);
+    		lstShowPlan->insertItem(x);
+        }
+        else {
+    		x->moveItem(activePoint);
+        }
 		lstShowPlan->setSelected(x,true);
 		lstShowPlanSelectionChanged(x);
 		updateNextTrack();
@@ -340,8 +344,13 @@ void frmStudioManage::btnDeleteClicked() {
 		delete x;
 		if ( y ) {
 			lstShowPlan->setSelected(y,true);
-			lstShowPlanSelectionChanged(y);
 		}
+        else {
+            y = lstShowPlan->lastItem();
+            lstShowPlan->setSelected(y,true);
+        }
+		lstShowPlanSelectionChanged(y);            
+
 	}
 	updateNextTrack();
 }

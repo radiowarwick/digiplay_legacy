@@ -133,7 +133,7 @@ void archivemanager::add(unsigned int index) {
 
 	// if we've not already processed the audio file, do so now
 	if (t.trim_end_smpl == 0) {
-		Logger::log(INFO,routine,"Scanning audio file for trim points.",2);
+		L_INFO(LOG_DB,"Scanning audio file for trim points.");
 		trimAudio(&t);
 		t.fade_in_smpl = t.trim_start_smpl;
 		t.fade_out_smpl = t.trim_end_smpl;
@@ -144,7 +144,7 @@ void archivemanager::add(unsigned int index) {
 		trackInbox->insert(trackInbox->begin() + index, 1, t);
 	}
 	else {
-		Logger::log(WARNING,routine,"No non-zero samples, so track ignored.",1);
+		L_WARNING(LOG_DB,"No non-zero samples, so track ignored.");
 		return;
 	}
 
@@ -438,13 +438,13 @@ void archivemanager::loadInbox(vector<track> *tracks) {
 			if (f_test_xml.good()) {
 				stringstream S;
 				S << "Reading XML " << fn.c_str() << ".xml";
-				Logger::log(INFO,routine,S.str(),5);
+				L_INFO(LOG_DB,S.str());
 				t = readXML(fn + ".xml");
 			}
 			else if (f_test_info.good()) {
 				stringstream S;
 				S << "Reading INFO " << fn.c_str() << ".info";
-				Logger::log(INFO,routine,S.str(),5);
+				L_INFO(LOG_DB,S.str());
 				t = readInfo(fn + ".info");
 			}
 			else {

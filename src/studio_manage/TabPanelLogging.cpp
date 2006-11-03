@@ -147,6 +147,7 @@ void TabPanelLogging::draw() {
     lstRecentlyLogged->header()->setResizeEnabled( FALSE,
             lstRecentlyLogged->header()->count() -1 );
     lstRecentlyLogged->setGeometry( QRect( 10, 120, 491, 510 ) );
+    lstRecentlyLogged->setAllColumnsShowFocus( TRUE );
     lstRecentlyLogged->setVScrollBarMode( QListView::AlwaysOn );
     lstRecentlyLogged->setColumnWidth(0,90);
     lstRecentlyLogged->setColumnWidth(1,194);

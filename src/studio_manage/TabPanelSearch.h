@@ -37,7 +37,8 @@
 #include "TabPanel.h"
 #include "config.h"
 #include "libsearch.h"
-#include "track.h"
+//#include "track.h"
+#include "dlgWarn.h"
 
 #include "pqxx/connection.h"
 #include "pqxx/transaction.h"
@@ -55,7 +56,7 @@ class TabPanelSearch : public TabPanel {
 
 	public slots:
 		virtual void Library_Search();
-		virtual void playlistAdd(int, int, int, const QPoint&);
+		virtual void playlistAdd(QListViewItem *x);
 	
 	private:
 		void draw();
@@ -65,7 +66,7 @@ class TabPanelSearch : public TabPanel {
 		vector<track> *SearchResults;
 		libsearch *library_engine;
 		QPushButton *btnLibrarySearch;
-		QTable *tblLibrarySearchResults;
+		QListView *lstSearchResults;
 		QLineEdit *txtLibrarySearchText;
 		QLabel *Searchlable;
 		QLabel *lblSearch;

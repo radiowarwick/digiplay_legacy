@@ -57,8 +57,6 @@ TabPanelSearch::~TabPanelSearch() {
 // This handles drawing the contents of the form, and connecting slots,
 // but has little actual implementation
 void TabPanelSearch::draw() {
-	char* routine = "TabSearch::draw()";
-
     SearchResults = 0;
 
     library_engine = new libsearch();
@@ -70,7 +68,6 @@ void TabPanelSearch::draw() {
     lblSearch->setFont( lblSearch_font );
 
     TitleCheckBox = new QCheckBox( getPanel(), "TitleCheckBox" );
-//    TitleCheckBox->setGeometry( QRect( 83, 35, 60, 20 ) );
     TitleCheckBox->setGeometry( QRect( 190, 35, 60, 20 ) );
     QFont TitleCheckBox_font(  TitleCheckBox->font() );
     TitleCheckBox_font.setBold( FALSE );
@@ -92,7 +89,6 @@ void TabPanelSearch::draw() {
     Searchlable->setFont( Searchlable_font );
 
     ArtistCheckBox = new QCheckBox( getPanel(), "ArtistCheckBox" );
-//    ArtistCheckBox->setGeometry( QRect( 190, 35, 70, 20 ) );
     ArtistCheckBox->setGeometry( QRect( 83, 35, 70, 20 ) );
     QFont ArtistCheckBox_font(  ArtistCheckBox->font() );
     ArtistCheckBox_font.setBold( FALSE );
@@ -111,26 +107,37 @@ void TabPanelSearch::draw() {
 
     txtLibrarySearchText = new QLineEdit( getPanel(), "txtLibrarySearchText" );
     txtLibrarySearchText->setGeometry( QRect( 83, 10, 330, 20 ) );
+//==========
+    lstSearchResults = new QListView(getPanel(), "lstSearchResults" );
 
-    tblLibrarySearchResults = new QTable( getPanel(), "tblLibrarySearchResults" );
-    tblLibrarySearchResults->setNumCols( tblLibrarySearchResults->numCols() + 1 );
-    tblLibrarySearchResults->horizontalHeader()->setLabel(
-	tblLibrarySearchResults->numCols() - 1, tr( "Artist          " ) );
-    tblLibrarySearchResults->setNumCols( tblLibrarySearchResults->numCols() + 1 );
-    tblLibrarySearchResults->horizontalHeader()->setLabel(
-	tblLibrarySearchResults->numCols() - 1, tr( "Title          " ) );
-    tblLibrarySearchResults->setNumCols( tblLibrarySearchResults->numCols() + 1 );
-    tblLibrarySearchResults->horizontalHeader()->setLabel(
-	tblLibrarySearchResults->numCols() - 1, tr( "Album          " ) );
-    tblLibrarySearchResults->setNumCols( tblLibrarySearchResults->numCols() + 1 );
-    tblLibrarySearchResults->horizontalHeader()->setLabel(
-	tblLibrarySearchResults->numCols() - 1, tr( "ID" ) );
-    tblLibrarySearchResults->setGeometry( QRect( 10, 57, 490, 573 ) );
-    tblLibrarySearchResults->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0,
-	(QSizePolicy::SizeType)0, 0, 0,
-	tblLibrarySearchResults->sizePolicy().hasHeightForWidth() ) );
-    tblLibrarySearchResults->setPaletteForegroundColor( QColor( 0, 0, 0 ) );
-    tblLibrarySearchResults->setColumnWidth(3,0);
+    lstSearchResults->setGeometry( QRect( 10, 60, 510, 570 ) );
+    lstSearchResults->setVScrollBarMode( QListView::AlwaysOn );
+    lstSearchResults->setAllColumnsShowFocus( TRUE );
+    lstSearchResults->setColumnWidthMode(3, QListView::Manual);
+    lstSearchResults->setColumnWidth(3, 0);
+    lstSearchResults->header()->setMovingEnabled( FALSE );
+    lstSearchResults->addColumn( tr( "Title" ) );
+    lstSearchResults->header()->setResizeEnabled( FALSE,
+            lstSearchResults->header()->count() -1);
+    lstSearchResults->addColumn( tr( "Artist" ) );
+    lstSearchResults->header()->setResizeEnabled( FALSE,
+            lstSearchResults->header()->count() -1);
+    lstSearchResults->addColumn( tr( "Album" ) );
+    lstSearchResults->header()->setResizeEnabled( FALSE,
+            lstSearchResults->header()->count() -1);
+    lstSearchResults->addColumn( tr( "ID" ) );
+    lstSearchResults->header()->setResizeEnabled( FALSE,
+            lstSearchResults->header()->count() -1);
+    lstSearchResults->setColumnWidthMode(0, QListView::Manual);
+    lstSearchResults->setColumnWidthMode(1, QListView::Manual);
+    lstSearchResults->setColumnWidthMode(2, QListView::Manual);
+    lstSearchResults->setColumnWidthMode(3, QListView::Manual);
+    lstSearchResults->setColumnWidth(0, 200);
+    lstSearchResults->setColumnWidth(1, 200);
+    lstSearchResults->setColumnWidth(2, 90);
+    lstSearchResults->setColumnWidth(3, 0);
+    lstSearchResults->header()->setMovingEnabled( FALSE );
+    lstSearchResults->setSorting(0,TRUE);
 
     lblSearch->setText( tr( "Search:" ) );
     TitleCheckBox->setText( tr( "Title" ) );
@@ -138,59 +145,68 @@ void TabPanelSearch::draw() {
     Searchlable->setText( tr( "Search by:" ) );
     ArtistCheckBox->setText( tr( "Artist" ) );
     btnLibrarySearch->setText( tr( "Search" ) );
-    tblLibrarySearchResults->horizontalHeader()->setLabel( 0, tr( "Artist          " ) );
-    tblLibrarySearchResults->horizontalHeader()->setLabel( 1, tr( "Title          " ) );
-    tblLibrarySearchResults->horizontalHeader()->setLabel( 2, tr( "Album          " ) );
-    tblLibrarySearchResults->horizontalHeader()->setLabel( 3, tr( "ID" ) );
-    QToolTip::add( tblLibrarySearchResults, tr( "Library Search Engine", "Enter text to search for and click the Search button to display matches." ) );
 
-
-    connect( btnLibrarySearch, SIGNAL( clicked() ), this, SLOT( Library_Search() ) );
-    connect( tblLibrarySearchResults, SIGNAL( doubleClicked(int,int,int,const QPoint&) ), this, SLOT( playlistAdd(int,int,int,const QPoint&) ) );
-    connect( txtLibrarySearchText, SIGNAL( returnPressed() ), this, SLOT( Library_Search() ) );
+    connect( btnLibrarySearch, SIGNAL( clicked() ), 
+                this, SLOT( Library_Search() ) );
+    connect( lstSearchResults, SIGNAL( doubleClicked(QListViewItem*) ), 
+                this, SLOT( playlistAdd(QListViewItem*) ) );
+    connect( txtLibrarySearchText, SIGNAL( returnPressed() ), 
+                this, SLOT( Library_Search() ) );
 
 
 }
 
 void TabPanelSearch::Library_Search() {
-	library_engine->searchLimit(200);
+    if (txtLibrarySearchText->text() == "") {
+        dlgWarn *warning = new dlgWarn(getPanel(), "");
+        warning->setTitle("Oops!");
+        warning->setWarning(
+                "You seem to have forgotten to enter something to search for.");
+        warning->setQuestion(false);
+        warning->exec();
+        delete warning;
+        return;
+    }
+    if ( ! (TitleCheckBox->isChecked()
+                ||ArtistCheckBox->isChecked()
+                ||AlbumCheckBox->isChecked() )) {
+        dlgWarn *warning = new dlgWarn(getPanel(), "");
+        warning->setTitle("Oops!");
+        warning->setWarning(
+                "Please select at least one of Title, Artist, Album.");
+        warning->setQuestion(false);
+        warning->exec();
+        delete warning;
+        return;
+    }
+
+	library_engine->searchLimit(100);
 	library_engine->searchTitle(TitleCheckBox->isChecked());
 	library_engine->searchArtist(ArtistCheckBox->isChecked());
 	library_engine->searchAlbum(AlbumCheckBox->isChecked());
 	delete SearchResults;
 	SearchResults = library_engine->query(txtLibrarySearchText->text());
-        
-	tblLibrarySearchResults->setNumRows(SearchResults->size());
+    
+    lstSearchResults->clear();
 	for (unsigned int i = 0; i < SearchResults->size(); i++) {
-		tblLibrarySearchResults->setItem(i,0,
-		        new QTableItem( tblLibrarySearchResults, QTableItem::Never,
-								SearchResults->at(i).artist));
-        	tblLibrarySearchResults->setItem(i,1,
-				new QTableItem( tblLibrarySearchResults, QTableItem::Never,
-								SearchResults->at(i).title));
-	        tblLibrarySearchResults->setItem(i,2,
-			    new QTableItem( tblLibrarySearchResults, QTableItem::Never,
-								SearchResults->at(i).album));
-        	tblLibrarySearchResults->setItem(i,3,
-				new QTableItem( tblLibrarySearchResults, QTableItem::Never,
-								SearchResults->at(i).md5));
+        new QListViewItem(  lstSearchResults, lstSearchResults->lastItem(),
+                            SearchResults->at(i).title,
+                            SearchResults->at(i).artist,
+                            SearchResults->at(i).album,
+                            SearchResults->at(i).md5 
+                         );
 	}
-    tblLibrarySearchResults->adjustColumn(0);
-    tblLibrarySearchResults->adjustColumn(1);
-    tblLibrarySearchResults->adjustColumn(2);
-    tblLibrarySearchResults->setColumnWidth(3,0); 
 }
 
-void TabPanelSearch::playlistAdd(int row, int col, int button, const QPoint& mousepos) {
-	if (mousepos.isNull()) {button = 0; row = 0; col = 0;}
-	if (row != -1) {
-		parentForm->playlistAdd(SearchResults->at(row).md5);
+void TabPanelSearch::playlistAdd(QListViewItem* x) {
+	if (x) {
+		parentForm->playlistAdd(x->text(3));
 	}
 }
 
 void TabPanelSearch::clear() {
 	delete btnLibrarySearch;
-	delete tblLibrarySearchResults;
+    delete lstSearchResults;
 	delete txtLibrarySearchText;
 	delete Searchlable;
 	delete ArtistCheckBox;

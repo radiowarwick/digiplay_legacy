@@ -15,7 +15,7 @@ using namespace pqxx;
 
 // Error types
 enum LOG_TYPE {
-	LOG_GENERAL = 0,
+	LOG_DB = 0,
 	LOG_AUDIOHW = 1,
 	LOG_AUDIOPROC = 2,
 	LOG_PLAYOUT = 4,
@@ -29,7 +29,8 @@ enum LOG_TYPE {
 	LOG_TABLOGGING = 1024,
 	LOG_TABPLAYLIST = 2048,
 	LOG_TABFILES = 4096,
-	LOG_TABSCRIPT = 8192
+	LOG_TABSCRIPT = 8192,
+	LOG_XML = 16384
 };
 
 struct archive {

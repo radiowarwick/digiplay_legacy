@@ -125,10 +125,10 @@ void frmStudioManage::init() {
 	tabPanelSearch->configure(authModule);
 	cout << " success." << endl;
 
-	cout << " -> File Browser panel..." << flush;
-	tabPanelFileBrowser = new TabPanelFileBrowser(tabManage,"File Browser");
-	tabPanelFileBrowser->configure(authModule);
-	cout << " success." << endl;
+//	cout << " -> File Browser panel..." << flush;
+//	tabPanelFileBrowser = new TabPanelFileBrowser(tabManage,"File Browser");
+//	tabPanelFileBrowser->configure(authModule);
+//	cout << " success." << endl;
 
 	cout << " -> Playlist panel..." << flush;
 	tabPanelPlaylist = new TabPanelPlaylist(tabManage, this, "Playlist");
@@ -145,10 +145,10 @@ void frmStudioManage::init() {
 	tabPanelLogging->configure(authModule);
 	cout << " success." << endl;
 
-	cout << " -> Script panel..." << flush;
-	tabPanelScript = new TabPanelScript(tabManage,"Script");
-	tabPanelScript->configure(authModule);
-	cout << " success." << endl;
+//	cout << " -> Script panel..." << flush;
+//	tabPanelScript = new TabPanelScript(tabManage,"Script");
+//	tabPanelScript->configure(authModule);
+//	cout << " success." << endl;
 
 	btnLogin->setEnabled(true);
 	cout << "Interface initialisation complete." << endl;
@@ -239,12 +239,10 @@ void frmStudioManage::btnLoginClicked()
 		    username = dlg->getUsername();
 		    password = dlg->getPassword();
 		    
-		    cout << " -> Trying login... ";
 		    try {
 			    authModule->authSession(username, password);
 			    if ( authModule->isAuthenticated() ) {
-				cout << "success." << endl;
-				btnLogin->setText("Log Out");
+					btnLogin->setText("Log Out");
 			    }
 			}
 			catch (int e) {
@@ -262,9 +260,9 @@ void frmStudioManage::btnLoginClicked()
 					dlgWarn *warning = new dlgWarn(this, "");
 					warning->setTitle("Error");
 					warning->setWarning("Problem connecting to the server. Please check your settings.");
-				warning->setQuestion(false);
-				warning->exec();
-				delete warning;
+					warning->setQuestion(false);
+					warning->exec();
+					delete warning;
 			    }
 			}
 			catch (...) {
@@ -294,8 +292,8 @@ void frmStudioManage::btnLoginClicked()
 	tabPanelPlaylist->configure(authModule);
 	tabPanelEmail->configure(authModule);
 	tabPanelLogging->configure(authModule);
-	tabPanelScript->configure(authModule);
-	tabPanelFileBrowser->configure(authModule);
+//	tabPanelScript->configure(authModule);
+//	tabPanelFileBrowser->configure(authModule);
 }
 
 

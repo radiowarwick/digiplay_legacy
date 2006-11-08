@@ -346,6 +346,7 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 }
 
 void frmPlayout::Player1_Load() {
+	btnLoadPlaylist1->setEnabled(false);
 	if (conf->getParam("next_on_showplan") == "") {
 		return;
 	}
@@ -409,6 +410,7 @@ void frmPlayout::Player1_Seek() {
 }
 
 void frmPlayout::Player2_Load() {
+	btnLoadPlaylist2->setEnabled(false);
 	if (conf->getParam("next_on_showplan") == "") {
 		return;
 	}
@@ -473,6 +475,7 @@ void frmPlayout::Player2_Seek() {
 }
 
 void frmPlayout::Player3_Load() {
+	btnLoadPlaylist3->setEnabled(false);
 	if (conf->getParam("next_on_showplan") == "") {
 		return;
 	}

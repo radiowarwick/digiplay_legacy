@@ -214,6 +214,7 @@ void TabPanelEmail::getEmail(){
         L_ERROR(LOG_TABEMAIL,"Failed to get new e-mails.");
     }
     T->abort();
+    L_INFO(LOG_TABEMAIL,"Emails retrieved successfully.");
     delete T;
 
 }
@@ -243,6 +244,8 @@ void TabPanelEmail::getEmailBody(QListViewItem *current) {
                                     + current->text(4));
         T->abort();
     }
+    L_INFO(LOG_TABEMAIL,"Email body for id " + current->text(4) 
+                            + " retrieved successfully.");
     delete T;
 }
 
@@ -261,6 +264,7 @@ void TabPanelEmail::markRead(string id) {
         L_ERROR(LOG_TABEMAIL,"Failed to set e-mail as read.");
     	T->abort();
     }
+    L_INFO(LOG_TABEMAIL,"Email id " + id + " now marked as read.");
     delete T;
 }
 
@@ -273,6 +277,7 @@ void TabPanelEmail::customEvent(QCustomEvent *event) {
                 getEmail();
             else
                 flagUpdateDisabled=FALSE;
+            L_INFO(LOG_TABEMAIL,"Change to email relation processed.");
             break;
         }
         default: {

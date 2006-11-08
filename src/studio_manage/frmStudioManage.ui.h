@@ -169,6 +169,7 @@ void frmStudioManage::destroy() {
 }
 
 void frmStudioManage::customEvent(QCustomEvent *event) {
+    char *routine = "frmStudioManage::customEvent";
 	switch (event->type()) {
 	case 20000: {       // Clock update
 			QString *s = (QString *) event->data();
@@ -181,9 +182,11 @@ void frmStudioManage::customEvent(QCustomEvent *event) {
 			break;
 		}
 	case 30001: {       // Configuration changed trigger
+            L_INFO(LOG_DB,"Triggering configuration refresh");
 			conf->requery();
 			if (conf->getParam("next_on_showplan") == "" 
 								&& lstShowPlan->childCount() > 0) {
+                L_INFO(LOG_DB,"Processing track load event");
 				if (activePoint == 0) {
 					activePoint = (ShowPlanItem*)lstShowPlan->firstChild();
 				}
@@ -196,21 +199,28 @@ void frmStudioManage::customEvent(QCustomEvent *event) {
 				if (lstShowPlan->selectedItem()) {
 					lstShowPlanSelectionChanged(lstShowPlan->selectedItem());
 				}
+                L_INFO(LOG_DB,"Triggering update of next_on_showplan entry");
 				updateNextTrack();
 			}
+            L_INFO(LOG_DB,"Configuration refresh complete.");
 			break;
 		}
 	default: {
 			qWarning("Unknown event type: %d", event->type());
+            L_WARNING(LOG_DB,"Unknown event type: " + dps_itoa(event->type()));
 			break;
 		}
 	}
 }
 
 void frmStudioManage::playlistAdd(QString md5) {
+    char *routine = "frmStudioManage::playlistAdd";
+    L_INFO(LOG_SHOWPLAN,"Adding to showplan " + md5);
 	track t = dps_getTrack(C,md5);
 	new ShowPlanAudio( lstShowPlan,	lstShowPlan->lastItem(), t); 
+    L_INFO(LOG_DB,"Triggering update of next_on_showplan entry");
 	updateNextTrack();
+    L_INFO(LOG_DB,"Playlist add complete.");
 }
 
 QString frmStudioManage::getTime( long smpl ) {

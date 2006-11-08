@@ -24,6 +24,7 @@
  */
 #include <qapplication.h>
 #include <qmessagebox.h>
+#include <qmutex.h>
 
 #include "Logger.h"
 #include "AuthLdap.h"
@@ -63,6 +64,7 @@ vector<track> *SearchResults;
 //vector<track> *Playlist = new vector<_track*>;
 QPixmap *sp_audio, *sp_artist, *sp_album;
 QString path;
+QMutex activePointLock;
 ShowPlanItem *activePoint;		// the first item in plan currently loaded
 
 void frmStudioManage::init() {
@@ -185,7 +187,9 @@ void frmStudioManage::customEvent(QCustomEvent *event) {
             L_INFO(LOG_DB,"Triggering configuration refresh");
 			conf->requery();
 			if (conf->getParam("next_on_showplan") == "" 
-								&& lstShowPlan->childCount() > 0) {
+								&& lstShowPlan->childCount() > 0
+                                && activePoint != lstShowPlan->lastItem()) {
+                activePointLock.lock();
                 L_INFO(LOG_DB,"Processing track load event");
 				if (activePoint == 0) {
 					activePoint = (ShowPlanItem*)lstShowPlan->firstChild();
@@ -194,12 +198,14 @@ void frmStudioManage::customEvent(QCustomEvent *event) {
 					activePoint->setState(SHOWPLAN_STATE_FINISHED);
 					activePoint = (ShowPlanItem*)activePoint->nextSibling();
 				}
+                if (!activePoint) cout << "NULL ACTIVE POINT!" << endl;
 				activePoint->setState(SHOWPLAN_STATE_LOADED);
 				lstShowPlan->ensureItemVisible(activePoint);
 				if (lstShowPlan->selectedItem()) {
 					lstShowPlanSelectionChanged(lstShowPlan->selectedItem());
 				}
                 L_INFO(LOG_DB,"Triggering update of next_on_showplan entry");
+                activePointLock.unlock();
 				updateNextTrack();
 			}
             L_INFO(LOG_DB,"Configuration refresh complete.");
@@ -405,12 +411,14 @@ void frmStudioManage::btnMoveBottomClicked() {
 void frmStudioManage::updateNextTrack() {
 	ShowPlanItem *x = 0;
 	if (lstShowPlan->childCount() == 0) return;
+    activePointLock.lock();
 	if ( ! activePoint ) {
 		x = (ShowPlanItem*)lstShowPlan->firstChild();
 	}
 	else {
 		x = (ShowPlanItem*)activePoint->nextSibling();
 	}
+    activePointLock.unlock();
 	if ( x ) {
 		do
 			if (x->getType() == 0) {

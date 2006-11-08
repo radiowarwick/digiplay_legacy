@@ -21,12 +21,17 @@ void Logger::log(LOG_TYPE type, char* routine, string message,
 	    time(&current_time);
 	    tm local=*(localtime(&current_time));
 	    stringstream outLine;
-	    outLine << "[" << 1900 + local.tm_year;
-	    outLine << "/" << local.tm_mon;
-	    outLine << "/" << local.tm_mday;
-	    outLine << " " << local.tm_hour;
-	    outLine << ":" << local.tm_min;
-	    outLine << ":" << local.tm_sec << "] ";
+	    outLine << "[" << 1900 + local.tm_year << "/";
+        if (local.tm_mon < 10) outLine << "0";
+	    outLine << local.tm_mon << "/";
+        if (local.tm_mday < 10) outLine << "0";
+	    outLine << local.tm_mday << " ";
+        if (local.tm_hour < 10) outLine << "0";
+	    outLine << local.tm_hour << ":";
+        if (local.tm_min < 10) outLine << "0";
+	    outLine << local.tm_min << ":";
+        if (local.tm_sec < 10) outLine << "0";
+	    outLine << local.tm_sec << "] ";
 	    outLine << routine << ": " << endl << " -> ";
 		switch (level) {
 			case INFO:

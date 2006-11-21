@@ -127,10 +127,10 @@ void frmStudioManage::init() {
 	tabPanelSearch->configure(authModule);
 	cout << " success." << endl;
 
-//	cout << " -> File Browser panel..." << flush;
-//	tabPanelFileBrowser = new TabPanelFileBrowser(tabManage,"File Browser");
-//	tabPanelFileBrowser->configure(authModule);
-//	cout << " success." << endl;
+	cout << " -> File Browser panel..." << flush;
+	tabPanelFileBrowser = new TabPanelFileBrowser(tabManage, this, "File Browser");
+	tabPanelFileBrowser->configure(authModule);
+	cout << " success." << endl;
 
 	cout << " -> Playlist panel..." << flush;
 	tabPanelPlaylist = new TabPanelPlaylist(tabManage, this, "Playlist");
@@ -223,6 +223,7 @@ void frmStudioManage::playlistAdd(QString md5) {
     char *routine = "frmStudioManage::playlistAdd";
     L_INFO(LOG_SHOWPLAN,"Adding to showplan " + md5);
 	track t = dps_getTrack(C,md5);
+    if (t.isNull) return;
 	new ShowPlanAudio( lstShowPlan,	lstShowPlan->lastItem(), t); 
     L_INFO(LOG_DB,"Triggering update of next_on_showplan entry");
 	updateNextTrack();

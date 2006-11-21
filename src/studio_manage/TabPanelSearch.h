@@ -37,7 +37,6 @@
 #include "TabPanel.h"
 #include "config.h"
 #include "libsearch.h"
-//#include "track.h"
 #include "dlgWarn.h"
 
 #include "pqxx/connection.h"
@@ -74,6 +73,8 @@ class TabPanelSearch : public TabPanel {
 		QCheckBox *ArtistCheckBox;
 		QCheckBox *AlbumCheckBox;
 		QCheckBox *TitleCheckBox;
+        QString path;
+        QPixmap *pixAudio;
 };
 
 #endif

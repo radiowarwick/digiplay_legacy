@@ -29,6 +29,7 @@
 #include "triggerThread.h"
 #include "config.h"
 #include "FileBrowser.h"
+#include "frmStudioManage.h"
 
 #include <qlistview.h>
 
@@ -44,13 +45,17 @@ class Auth;
 class TabPanelFileBrowser : public TabPanel {
 	Q_OBJECT
 	public:
-		TabPanelFileBrowser(QTabWidget *parent, string text);
+		TabPanelFileBrowser(QTabWidget *parent, frmStudioManage *parent2, string text);
 		~TabPanelFileBrowser();
+
+    protected slots:
+        void playlistAdd(QListViewItem* x);
 
 	private:
 		void draw();
 		void clear();
-
+        
+        frmStudioManage *parentForm;
 		Connection *C;
 		DirectoryView *lstFileBrowser;
 		Directory *root;

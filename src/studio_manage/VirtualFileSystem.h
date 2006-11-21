@@ -12,15 +12,15 @@
 class QString;
 using namespace pqxx;
 
-class VirtualDirectory : QDir {
+class VDir : QDir {
 	Q_OBJECT
 	public:	
-		VirtualDirectory();
-		VirtualDirectory( const QString & path, ,const QString & 
+		VDir();
+		VDir( const QString & path, ,const QString & 
 			nameFilter = QString::null, int sortSpec = Name |
 			IgnoreCase, int filterSpec = All );
-		VirtualDirectry( VirtualDirectory & d );
-		~VirtualDirectory();
+		VDir( VirtualDirectory & d );
+		~VDir();
 		virtual void setPath ( const QString & path )
 		virtual QString path () const
 //		virtual QString absPath () const

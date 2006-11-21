@@ -76,7 +76,7 @@ void TabPanelPlaylist::draw() {
 	QString path = qApp->applicationDirPath();
 	pixExpanded = new QPixmap(path+"/images/expand16.png");
 	pixCollapsed = new QPixmap(path+"/images/contract16.png");
-	pixTrack = new QPixmap(path+"/images/audiofile16.png");
+	pixTrack = new QPixmap(path+"/images/music16.png");
 	
 	// do all form drawing here, create widgets, set properties
 	lstPlaylist = new QListView(getPanel(), "lstEmail" );

@@ -34,9 +34,10 @@
 
 #include "TabPanelFileBrowser.h"
 
-TabPanelFileBrowser::TabPanelFileBrowser(QTabWidget *parent, string text)
+TabPanelFileBrowser::TabPanelFileBrowser(QTabWidget *parent, frmStudioManage *parent2, string text)
 		: TabPanel(parent, text) {
     panelTag = "TabFileBrowser";
+    parentForm = parent2;
 	config *conf = new config("digiplay");
 	C = new Connection(conf->getDBConnectString());
 	delete conf;
@@ -57,16 +58,36 @@ void TabPanelFileBrowser::draw() {
 	// do all form drawing here, create widgets, set properties
     lstFileBrowser = new DirectoryView( getPanel() );
     lstFileBrowser->addColumn( tr( "Name" ) );
+    lstFileBrowser->header()->setResizeEnabled( FALSE,
+                    lstFileBrowser->header()->count() - 1 );
+    lstFileBrowser->setColumnWidthMode(0, QListView::Manual);
     lstFileBrowser->addColumn( tr( "Type" ) );
+    lstFileBrowser->header()->setResizeEnabled( FALSE,
+                    lstFileBrowser->header()->count() - 1 );
+    lstFileBrowser->setColumnWidthMode(1, QListView::Manual);
     lstFileBrowser->setTreeStepSize( 20 );
     lstFileBrowser->setGeometry( QRect( 10, 10, 491, 620 ) );
     lstFileBrowser->setCaption( tr( "File Browser" ) );
     lstFileBrowser->setAllColumnsShowFocus( TRUE );
-//    root = new Directory( lstFileBrowser, "/" );
-//    root->setOpen( TRUE );
+    lstFileBrowser->setVScrollBarMode( QListView::AlwaysOn );
+    lstFileBrowser->setColumnWidth(0, 360);
+    lstFileBrowser->setColumnWidth(1, 100);
+    lstFileBrowser->header()->setMovingEnabled( FALSE );
+    lstFileBrowser->setSorting(1, TRUE);
+
+    connect( lstFileBrowser, SIGNAL( doubleClicked(QListViewItem*) ),
+                this, SLOT( playlistAdd(QListViewItem*) ) );
     lstFileBrowser->show();
 }
 
 void TabPanelFileBrowser::clear() {
 	delete lstFileBrowser;
+}
+
+void TabPanelFileBrowser::playlistAdd(QListViewItem* x) {
+    if (x) {
+        if (x->text(1) == "Audio file") {
+            parentForm->playlistAdd(x->text(2));
+        }
+    }
 }

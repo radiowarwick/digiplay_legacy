@@ -29,10 +29,7 @@ using namespace std;
 #include "Auth.h"
 
 Auth::Auth() {
-	addPrivilage("TabInfo");
-	addPrivilage("TabSearch");
-	addPrivilage("TabLogging");
-
+    closeSession();
 }
 
 Auth::~Auth() {
@@ -82,6 +79,7 @@ void Auth::closeSession() {
 	addPrivilage("TabInfo");
 	addPrivilage("TabSearch");
 	addPrivilage("TabLogging");
+    addPrivilage("TabFileBrowser");
 }
 
 void Auth::addPrivilage(string privilage) {

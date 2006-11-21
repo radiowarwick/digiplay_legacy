@@ -40,6 +40,8 @@ TabPanelSearch::TabPanelSearch(QTabWidget *parent, frmStudioManage *parent2, str
 		: TabPanel(parent,text)  {
 	panelTag = "TabSearch";
 	parentForm = parent2;
+    path = qApp->applicationDirPath();
+    pixAudio = new QPixmap(path + "/images/music16.png");
 	config *conf = new config("digiplay");
 	C = new Connection(conf->getDBConnectString());
 	delete conf;
@@ -153,7 +155,6 @@ void TabPanelSearch::draw() {
     connect( txtLibrarySearchText, SIGNAL( returnPressed() ), 
                 this, SLOT( Library_Search() ) );
 
-
 }
 
 void TabPanelSearch::Library_Search() {
@@ -188,13 +189,15 @@ void TabPanelSearch::Library_Search() {
 	SearchResults = library_engine->query(txtLibrarySearchText->text());
     
     lstSearchResults->clear();
+    QListViewItem *x;
 	for (unsigned int i = 0; i < SearchResults->size(); i++) {
-        new QListViewItem(  lstSearchResults, lstSearchResults->lastItem(),
+        x = new QListViewItem(  lstSearchResults, lstSearchResults->lastItem(),
                             SearchResults->at(i).title,
                             SearchResults->at(i).artist,
                             SearchResults->at(i).album,
                             SearchResults->at(i).md5 
                          );
+        x->setPixmap(0,*pixAudio);
 	}
 }
 

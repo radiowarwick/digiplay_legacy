@@ -48,6 +48,7 @@ track dps_getTrack(Connection *C, string md5) {
         t.trim_end_smpl = atoi(R[0]["end"].c_str());
         t.fade_in_smpl = atoi(R[0]["fade_in"].c_str());
         t.fade_out_smpl = atoi(R[0]["fade_out"].c_str());
+        t.isNull = false;
         return t;
     }
     else {

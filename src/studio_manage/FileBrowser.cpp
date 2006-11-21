@@ -10,6 +10,8 @@
 *****************************************************************************/
 
 #include "FileBrowser.h"
+#include "config.h"
+#include "dps.h"
 
 #include <qdir.h>
 #include <qfile.h>
@@ -25,123 +27,19 @@
 #include <qapplication.h>
 #include <qheader.h>
 
-static const char* folder_closed_xpm[]={
-    "16 16 9 1",
-    "g c #808080",
-    "b c #c0c000",
-    "e c #c0c0c0",
-    "# c #000000",
-    "c c #ffff00",
-    ". c None",
-    "a c #585858",
-    "f c #a0a0a4",
-    "d c #ffffff",
-    "..###...........",
-    ".#abc##.........",
-    ".#daabc#####....",
-    ".#ddeaabbccc#...",
-    ".#dedeeabbbba...",
-    ".#edeeeeaaaab#..",
-    ".#deeeeeeefe#ba.",
-    ".#eeeeeeefef#ba.",
-    ".#eeeeeefeff#ba.",
-    ".#eeeeefefff#ba.",
-    ".##geefeffff#ba.",
-    "...##gefffff#ba.",
-    ".....##fffff#ba.",
-    ".......##fff#b##",
-    ".........##f#b##",
-    "...........####."};
-
-static const char* folder_open_xpm[]={
-    "16 16 11 1",
-    "# c #000000",
-    "g c #c0c0c0",
-    "e c #303030",
-    "a c #ffa858",
-    "b c #808080",
-    "d c #a0a0a4",
-    "f c #585858",
-    "c c #ffdca8",
-    "h c #dcdcdc",
-    "i c #ffffff",
-    ". c None",
-    "....###.........",
-    "....#ab##.......",
-    "....#acab####...",
-    "###.#acccccca#..",
-    "#ddefaaaccccca#.",
-    "#bdddbaaaacccab#",
-    ".eddddbbaaaacab#",
-    ".#bddggdbbaaaab#",
-    "..edgdggggbbaab#",
-    "..#bgggghghdaab#",
-    "...ebhggghicfab#",
-    "....#edhhiiidab#",
-    "......#egiiicfb#",
-    "........#egiibb#",
-    "..........#egib#",
-    "............#ee#"};
-
-static const char * folder_locked[]={
-    "16 16 10 1",
-    "h c #808080",
-    "b c #ffa858",
-    "f c #c0c0c0",
-    "e c #c05800",
-    "# c #000000",
-    "c c #ffdca8",
-    ". c None",
-    "a c #585858",
-    "g c #a0a0a4",
-    "d c #ffffff",
-    "..#a#...........",
-    ".#abc####.......",
-    ".#daa#eee#......",
-    ".#ddf#e##b#.....",
-    ".#dfd#e#bcb##...",
-    ".#fdccc#daaab#..",
-    ".#dfbbbccgfg#ba.",
-    ".#ffb#ebbfgg#ba.",
-    ".#ffbbe#bggg#ba.",
-    ".#fffbbebggg#ba.",
-    ".##hf#ebbggg#ba.",
-    "...###e#gggg#ba.",
-    ".....#e#gggg#ba.",
-    "......###ggg#b##",
-    ".........##g#b##",
-    "...........####."};
-
-static const char * pix_file []={
-    "16 16 7 1",
-    "# c #000000",
-    "b c #ffffff",
-    "e c #000000",
-    "d c #404000",
-    "c c #c0c000",
-    "a c #ffffc0",
-    ". c None",
-    "................",
-    ".........#......",
-    "......#.#a##....",
-    ".....#b#bbba##..",
-    "....#b#bbbabbb#.",
-    "...#b#bba##bb#..",
-    "..#b#abb#bb##...",
-    ".#a#aab#bbbab##.",
-    "#a#aaa#bcbbbbbb#",
-    "#ccdc#bcbbcbbb#.",
-    ".##c#bcbbcabb#..",
-    "...#acbacbbbe...",
-    "..#aaaacaba#....",
-    "...##aaaaa#.....",
-    ".....##aa#......",
-    ".......##......."};
-
 QPixmap *folderLocked = 0;
 QPixmap *folderClosed = 0;
 QPixmap *folderOpen = 0;
+QPixmap *folderTopOpen = 0;
+QPixmap *folderTopClosed = 0;
+QPixmap *folderHome = 0;
 QPixmap *fileNormal = 0;
+QPixmap *fileAudio = 0;
+QPixmap *fileJingle = 0;
+QPixmap *fileAdvert = 0;
+QPixmap *fileScript = 0;
+QPixmap *fileCartset = 0;
+QPixmap *fileShowplan = 0;
 
 /*****************************************************************************
  *
@@ -150,12 +48,15 @@ QPixmap *fileNormal = 0;
  
 *****************************************************************************/
 
-Directory::Directory( Directory * parent, const QString& filename )
+Directory::Directory( Directory * parent, const int my_id, 
+                        const QString& filename, Connection *openC )
     : QListViewItem( parent ), f(filename),
       showDirsOnly( parent->showDirsOnly ),
       pix( 0 )
 {
     p = parent;
+    C = openC;
+    id = my_id;
     readable = QDir( fullName() ).isReadable();
 
     if ( !readable )
@@ -165,12 +66,15 @@ Directory::Directory( Directory * parent, const QString& filename )
 }
 
 
-Directory::Directory( QListView * parent, const QString& filename )
+Directory::Directory( QListView * parent, const int my_id,
+                        const QString& filename, Connection *openC )
     : QListViewItem( parent ), f(filename),
       showDirsOnly( ( (DirectoryView*)parent )->showDirsOnly() ),
       pix( 0 )
 {
     p = 0;
+    C = openC;
+    id = my_id;
     readable = QDir( fullName() ).isReadable();
 }
 
@@ -194,13 +98,78 @@ const QPixmap *Directory::pixmap( int i ) const
 
 void Directory::setOpen( bool o )
 {
-    if ( o )
-        setPixmap( folderOpen );
-    else
-        setPixmap( folderClosed );
+    if ( o ) {
+        if (parent())
+            setPixmap( folderOpen );
+        else
+            setPixmap( folderTopOpen );
+    }
+    else {
+        if (parent())
+            setPixmap( folderClosed );
+        else
+            setPixmap( folderTopClosed );
+    }
 
     if ( o && !childCount() ) {
-        QString s( fullName() );
+        Transaction T(*C,"");
+        try {
+            Result R_dir = T.exec("SELECT id,name,notes FROM dir WHERE parent="
+                                + dps_itoa(id));
+            Result R_audio = T.exec("SELECT audio.id,audio.title,audio.md5,audiotypes.name as type FROM audio,audiodir,audiotypes WHERE audio.type = audiotypes.id AND audio.id = audiodir.audio AND audiodir.directory = " + dps_itoa(id));
+            Result R_cartset = T.exec("SELECT cartsets.id,cartsets.name FROM cartsets,cartsetsdir WHERE cartsets.id = cartsetsdir.cartsetid AND cartsetsdir.dir = " + dps_itoa(id));
+            Result R_script = T.exec("SELECT scripts.id,scripts.name FROM scripts,scriptsdir WHERE scripts.id = scriptsdir.scriptid AND scriptsdir.dir = " + dps_itoa(id));
+            Result R_showplan = T.exec("SELECT showplans.id,showplans.name FROM showplans,showplandir WHERE showplans.id = showplandir.showplanid AND showplandir.dir = " + dps_itoa(id));
+            T.abort();
+            Directory *D;
+            FileItem *F;
+            for (unsigned int i = 0; i < R_dir.size(); i++) {
+                D = new Directory(this,atoi(R_dir[i]["id"].c_str()),
+                                        R_dir[i]["name"].c_str(),C);
+                D->setPixmap( folderClosed );
+            }
+            for (unsigned int i = 0; i < R_audio.size(); i++) {
+                if (string(R_audio[i]["type"].c_str()) == "jingle") {
+                    F = new FileItem(this,R_audio[i]["title"].c_str(),
+                                    "Audio Ident");
+                    F->setPixmap( fileJingle );
+                }
+                else if (string(R_audio[i]["type"].c_str()) == "advert") {
+                    F = new FileItem(this,R_audio[i]["title"].c_str(),
+                                    "Audio Advert");
+                    F->setPixmap( fileAdvert );
+                }
+                else {
+                    F = new FileItem(this,R_audio[i]["title"].c_str(),
+                                    "Audio file");
+                    F->setPixmap( fileAudio );
+                }
+                F->setText(2, R_audio[i]["md5"].c_str());
+            }
+            for (unsigned int i = 0; i < R_cartset.size(); i++) {
+                F = new FileItem(this,R_cartset[i]["name"].c_str(),
+                                    "Cartset");
+                F->setPixmap( fileCartset );
+                F->setText(2, R_cartset[i]["id"].c_str());
+            }
+            for (unsigned int i = 0; i < R_script.size(); i++) {
+                F = new FileItem(this,R_script[i]["name"].c_str(),
+                                    "Script");
+                F->setPixmap( fileScript );
+                F->setText(2, R_script[i]["id"].c_str());
+            }
+            for (unsigned int i = 0; i < R_showplan.size(); i++) {
+                F = new FileItem(this,R_showplan[i]["name"].c_str(),
+                                    "Showplan");
+                F->setPixmap( fileShowplan );
+                F->setText(2, R_showplan[i]["id"].c_str());
+            }
+        }
+        catch (...) {
+            cout << "Caught exception on Directory::setOpen" << endl;
+            T.abort();
+        }
+/*        QString s( fullName() );
         QDir thisDir( s );
         if ( !thisDir.isReadable() ) {
             readable = FALSE;
@@ -234,7 +203,7 @@ void Directory::setOpen( bool o )
             }
         }
         listView()->setUpdatesEnabled( TRUE );
-    }
+*/    }
     QListViewItem::setOpen( o );
 }
 
@@ -264,10 +233,12 @@ QString Directory::text( int column ) const
 {
     if ( column == 0 )
         return f.name();
-    else if ( readable )
-        return "Directory";
     else
-        return "Unreadable Directory";
+        return "";
+//    else if ( readable )
+//        return "Directory";
+//    else
+//        return "Unreadable Directory";
 }
 
 /*****************************************************************************
@@ -281,20 +252,48 @@ DirectoryView::DirectoryView( QWidget *parent, const char *name, bool sdo )
     : QListView( parent, name ), dirsOnly( sdo ), oldCurrent( 0 ),
       dropItem( 0 ), mousePressed( FALSE )
 {
+    config *conf = new config("digiplay");
+    C = new Connection(conf->getDBConnectString());
+    delete conf;
+
     autoopen_timer = new QTimer( this );
     if ( !folderLocked ) {
-        folderLocked = new QPixmap( folder_locked );
-        folderClosed = new QPixmap( folder_closed_xpm );
-        folderOpen = new QPixmap( folder_open_xpm );
-        fileNormal = new QPixmap( pix_file );
+        QString path = qApp->applicationDirPath();
+        folderLocked = new QPixmap(path + "/images/folderLocked.png");
+        folderClosed = new QPixmap(path + "/images/folder.png");
+        folderOpen = new QPixmap(path + "/images/folderOpen.png");
+        folderTopClosed = new QPixmap(path + "/images/folderTop.png");
+        folderTopOpen = new QPixmap(path + "/images/folderTopOpen.png");
+        folderHome = new QPixmap(path + "/images/folderHome.png");
+        fileNormal = new QPixmap(path + "/images/script16.png" );
+        fileAudio = new QPixmap(path + "/images/music16.png");
+        fileJingle = new QPixmap(path + "/images/jingle16.png");
+        fileAdvert = new QPixmap(path + "/images/jingle16.png");
+        fileScript = new QPixmap(path + "/images/script16.png");
+        fileCartset = new QPixmap(path + "/images/cartset16.png");
+        fileShowplan = new QPixmap(path + "/images/info16.png");
     }
 
+    Directory *D;
+    Transaction T(*C,"");
+    try {
+        Result R = T.exec("SELECT id,name,notes FROM dir WHERE parent<0");
+        T.abort();
+        for (unsigned int i = 0; i < R.size(); i++) {
+            D = new Directory(this,atoi(R[i]["id"].c_str()),
+                            R[i]["name"].c_str(),C);
+            D->setPixmap(folderTopClosed);
+        }
+    }
+    catch (...) {
+        T.abort();    
+    }
     connect( this, SIGNAL( doubleClicked( QListViewItem * ) ),
              this, SLOT( slotFolderSelected( QListViewItem * ) ) );
     connect( this, SIGNAL( returnPressed( QListViewItem * ) ),
              this, SLOT( slotFolderSelected( QListViewItem * ) ) );
 
-    setAcceptDrops( TRUE );
+//    setAcceptDrops( TRUE );
 //    viewport()->setAcceptDrops( TRUE );
 
     connect( autoopen_timer, SIGNAL( timeout() ),

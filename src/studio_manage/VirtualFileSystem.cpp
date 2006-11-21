@@ -3,13 +3,13 @@
 #include <QStringList>
 #include <QString>
 
-VirtualDirectory::VirtualDirectory() {
+VDir::VDir() {
         config *conf = new config("digiplay");
         C = new Connection(conf->getDBConnectString());
         delete conf;
 }
 
-VirtualDirectory::VirtualDirectory( const QString & path, const QString &
+VDir::VDir( const QString & path, const QString &
                         nameFilter = QString::null, int sortSpec = Name |
                         IgnoreCase, int filterSpec = All ) {
         config *conf = new config("digiplay");
@@ -20,26 +20,26 @@ VirtualDirectory::VirtualDirectory( const QString & path, const QString &
         _name = GetNameFromID()
 }
 
-VirtualDirectory::VirtualDirectory( VirtualDirectory & d ) {
+VDir::VDir( VDir & d ) {
         config *conf = new config("digiplay");
         C = new Connection(conf->getDBConnectString());
         delete conf;
 }
 
-VirtualDirectory::~VirtualDirectory() {
+VDir::~VDir() {
         if (C && C->is_open()) {
                 C->Deactivate();
         }
         delete C;
 }
 
-virtual void VirtualDirectory::setPath ( const QString & path ) {
+virtual void VDir::setPath ( const QString & path ) {
 	_path = path;
 	_id=GetIDFromPath(path);
         _name = GetNameFromID(_id)
 }
 
-virtual QString VirtualDirectory::path () const {
+virtual QString VDir::path () const {
 	return _path();
 }
 

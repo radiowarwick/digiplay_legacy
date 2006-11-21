@@ -60,9 +60,9 @@ void ShowPlanAudio::init() {
 	backBrushUnloadedSel = new QBrush(QColor(0,213,229));
 	backBrushLoadedSel = new QBrush(QColor(0,213,229));
 	backBrushFinishedSel = new QBrush(QColor(188,188,188));
-	pixUnloaded = new QPixmap(path + "/images/libTrack32.png");
-	pixLoaded = new QPixmap(path + "/images/libTrackLoaded32.png");
-	pixFinished = new QPixmap(path + "/images/libTrackGrey32.png");
+	pixUnloaded = new QPixmap(path + "/images/music32.png");
+	pixLoaded = new QPixmap(path + "/images/musicLoaded32.png");
+	pixFinished = new QPixmap(path + "/images/musicGrey32.png");
 	ShowPlanItem::init();
 }
 

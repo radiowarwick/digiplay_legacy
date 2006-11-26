@@ -86,7 +86,8 @@ void TabPanelFileBrowser::clear() {
 
 void TabPanelFileBrowser::handleLoad(QListViewItem* x) {
     if (x) {
-        if (x->text(1) == "Audio file") {
+        if (x->text(1) == "Audio file" ||
+				x->text(1) == "Audio Ident") {
             parentForm->playlistAdd(x->text(2));
         }
         if (x->text(1) == "Cartset") {

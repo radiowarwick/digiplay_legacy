@@ -325,6 +325,28 @@ void archivemanager::add(unsigned int index) {
 				return;
 		    }
 		}
+		//Sort out the directory structure stuff.
+		//TODO: This needs something to deal with adverts.
+		SQL = "SELECT last_value FROM audio_id_seq";
+		R = T->exec(SQL);
+		if (R.size() > 0) {
+			audio_id = atoi(R[0][0].c_str());
+		} else {
+			cout << "Failed to retrieve last audio id!" << endl;
+			T->abort();
+			return;
+		}
+		if (is_jingle) {
+			//Unsurprisingly, this is a jingle.
+			SQL = "INSERT INTO audiodir (audio, directory, linktype) "
+				"VALUES (" + dps_itoa(audio_id) + ", 2, 0)";
+			T->exec(SQL);
+		} else {
+			//It's music.
+			SQL = "INSERT INTO audiodir (audio, directory, linktype) "
+				"VALUES (" + dps_itoa(audio_id) + ", 1, 0)";
+			T->exec(SQL);
+		}
 	    T->commit();
 		delete T;
 	}

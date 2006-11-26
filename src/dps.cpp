@@ -71,7 +71,7 @@ track dps_getTrack(Connection *C, string md5) {
 	            "audio.length_smpl AS length, audio.start_smpl AS start, "
 	            "audio.end_smpl AS end, audio.intro_smpl AS fade_in, "
 	            "audio.extro_smpl AS fade_out, audio.censor AS censor "
-	            "FROM audio, archives "
+	            "FROM audio, archives, albums "
 	            "WHERE audio.archive = archives.id "
 	                "AND audio.music_album = albums.id "
 	                "AND audio.md5 = '" + md5 + "' "

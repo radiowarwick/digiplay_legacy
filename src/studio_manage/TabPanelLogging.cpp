@@ -30,6 +30,7 @@
 #include "Auth.h"
 #include "Logger.h"
 #include "dps.h"
+#include "triggerThread.h"
 
 #include "TabPanelLogging.h"
 
@@ -40,6 +41,10 @@ TabPanelLogging::TabPanelLogging(QTabWidget *parent, string text)
     C = new Connection(conf->getDBConnectString());
     location = atoi( conf->getParam("LOCATION").c_str() );
     delete conf;
+
+    loggerTrigger = new triggerThread(this,
+                        QString(conf->getDBConnectString()),4);
+    loggerTrigger->start();
 
     draw();
 }
@@ -241,6 +246,21 @@ void TabPanelLogging::buttonPressed() {
     txtArtist->setText("");
     txtTitle->setText("");
     getRecentlyLogged();
+}
+
+void TabPanelLogging::customEvent(QCustomEvent *event) {
+    char *routine = "TabPanelLogging::customEvent";
+    switch (event->type()) {
+        case 30004:
+            L_INFO(LOG_TABLOGGING,"A change to the log relation has occured.");
+            getRecentlyLogged();
+            L_INFO(LOG_TABLOGGING,"Change to log relation processed.");
+            break;
+        default:
+            L_WARNING(LOG_TABLOGGING,"Unknown event " 
+                                            + dps_itoa(event->type()));
+            break;
+    }
 }
 
 void TabPanelLogging::clear() {

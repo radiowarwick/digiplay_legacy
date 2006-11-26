@@ -260,7 +260,7 @@ DirectoryView::DirectoryView( QWidget *parent, const char *name, bool sdo )
     Directory *D;
     Transaction T(*C,"");
     try {
-        Result R = T.exec("SELECT id,name,notes FROM dir WHERE parent<0");
+        Result R = T.exec("SELECT id,name,notes FROM dir WHERE parent=-1");
         T.abort();
         for (unsigned int i = 0; i < R.size(); i++) {
             D = new Directory(this,atoi(R[i]["id"].c_str()),

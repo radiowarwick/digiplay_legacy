@@ -40,13 +40,15 @@ using namespace pqxx;
 
 class QTabWidget;
 class Auth;
+class triggerThread;
 
 class TabPanelLogging : public TabPanel {
 	Q_OBJECT
 	public:
 		TabPanelLogging(QTabWidget *parent, string text);
 		~TabPanelLogging();
-		void configure(Auth *authModule);	
+		void configure(Auth *authModule);
+        void customEvent(QCustomEvent *event);
 
 	public slots:
 		virtual void buttonPressed();		
@@ -58,6 +60,7 @@ class TabPanelLogging : public TabPanel {
 		void getRecentlyLogged();
 		
 		Connection *C;
+        triggerThread *loggerTrigger;
 		int location, userid;
 		QListView *lstRecentlyLogged;
 		QLineEdit *txtArtist, *txtTitle, *txtReclibID;

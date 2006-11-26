@@ -38,9 +38,8 @@ TabPanelFileBrowser::TabPanelFileBrowser(QTabWidget *parent, frmStudioManage *pa
 		: TabPanel(parent, text) {
     panelTag = "TabFileBrowser";
     parentForm = parent2;
-	config *conf = new config("digiplay");
+	conf = new config("digiplay");
 	C = new Connection(conf->getDBConnectString());
-	delete conf;
     draw();
 }
 
@@ -50,6 +49,7 @@ TabPanelFileBrowser::~TabPanelFileBrowser() {
 		C->Deactivate();
 	}
 	delete C;
+    delete conf;
 }
 
 // This handles drawing the contents of the form, and connecting slots,
@@ -76,7 +76,7 @@ void TabPanelFileBrowser::draw() {
     lstFileBrowser->setSorting(1, TRUE);
 
     connect( lstFileBrowser, SIGNAL( doubleClicked(QListViewItem*) ),
-                this, SLOT( playlistAdd(QListViewItem*) ) );
+                this, SLOT( handleLoad(QListViewItem*) ) );
     lstFileBrowser->show();
 }
 
@@ -84,10 +84,13 @@ void TabPanelFileBrowser::clear() {
 	delete lstFileBrowser;
 }
 
-void TabPanelFileBrowser::playlistAdd(QListViewItem* x) {
+void TabPanelFileBrowser::handleLoad(QListViewItem* x) {
     if (x) {
         if (x->text(1) == "Audio file") {
             parentForm->playlistAdd(x->text(2));
+        }
+        if (x->text(1) == "Cartset") {
+            conf->setParam("user_cartset",x->text(2).ascii());
         }
     }
 }

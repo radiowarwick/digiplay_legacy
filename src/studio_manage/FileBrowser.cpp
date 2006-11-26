@@ -14,16 +14,11 @@
 #include "dps.h"
 
 #include <qdir.h>
-#include <qfile.h>
-#include <qfileinfo.h>
 #include <qpixmap.h>
 #include <qevent.h>
 #include <qpoint.h>
 #include <qmessagebox.h>
 #include <qdragobject.h>
-#include <qmime.h>
-#include <qstrlist.h>
-#include <qstringlist.h>
 #include <qapplication.h>
 #include <qheader.h>
 
@@ -40,13 +35,6 @@ QPixmap *fileAdvert = 0;
 QPixmap *fileScript = 0;
 QPixmap *fileCartset = 0;
 QPixmap *fileShowplan = 0;
-
-/*****************************************************************************
- *
- * Class Directory
- *
- 
-*****************************************************************************/
 
 Directory::Directory( Directory * parent, const int my_id, 
                         const QString& filename, Connection *openC )
@@ -235,10 +223,6 @@ QString Directory::text( int column ) const
         return f.name();
     else
         return "";
-//    else if ( readable )
-//        return "Directory";
-//    else
-//        return "Unreadable Directory";
 }
 
 /*****************************************************************************
@@ -256,7 +240,6 @@ DirectoryView::DirectoryView( QWidget *parent, const char *name, bool sdo )
     C = new Connection(conf->getDBConnectString());
     delete conf;
 
-    autoopen_timer = new QTimer( this );
     if ( !folderLocked ) {
         QString path = qApp->applicationDirPath();
         folderLocked = new QPixmap(path + "/images/folderLocked.png");
@@ -292,12 +275,6 @@ DirectoryView::DirectoryView( QWidget *parent, const char *name, bool sdo )
              this, SLOT( slotFolderSelected( QListViewItem * ) ) );
     connect( this, SIGNAL( returnPressed( QListViewItem * ) ),
              this, SLOT( slotFolderSelected( QListViewItem * ) ) );
-
-//    setAcceptDrops( TRUE );
-//    viewport()->setAcceptDrops( TRUE );
-
-    connect( autoopen_timer, SIGNAL( timeout() ),
-             this, SLOT( openFolder() ) );
 }
 
 void DirectoryView::slotFolderSelected( QListViewItem *i )
@@ -311,129 +288,11 @@ void DirectoryView::slotFolderSelected( QListViewItem *i )
 
 void DirectoryView::openFolder()
 {
-    autoopen_timer->stop();
     if ( dropItem && !dropItem->isOpen() ) {
         dropItem->setOpen( TRUE );
         dropItem->repaint();
     }
 }
-
-static const int autoopenTime = 750;
-
-
-void DirectoryView::contentsDragEnterEvent( QDragEnterEvent *e )
-{
-    if ( !QUriDrag::canDecode(e) ) {
-        e->ignore();
-        return;
-    }
-
-    oldCurrent = currentItem();
-
-    QListViewItem *i = itemAt( contentsToViewport(e->pos()) );
-    if ( i ) {
-        dropItem = i;
-        autoopen_timer->start( autoopenTime );
-    }
-}
-
-
-void DirectoryView::contentsDragMoveEvent( QDragMoveEvent *e )
-{
-    if ( !QUriDrag::canDecode(e) ) {
-        e->ignore();
-        return;
-    }
-
-    QPoint vp = contentsToViewport( ( (QDragMoveEvent*)e )->pos() );
-    QListViewItem *i = itemAt( vp );
-    if ( i ) {
-        setSelected( i, TRUE );
-        e->accept();
-        if ( i != dropItem ) {
-            autoopen_timer->stop();
-            dropItem = i;
-            autoopen_timer->start( autoopenTime );
-        }
-        switch ( e->action() ) {
-        case QDropEvent::Copy:
-            break;
-        case QDropEvent::Move:
-            e->acceptAction();
-            break;
-        case QDropEvent::Link:
-            e->acceptAction();
-            break;
-        default:
-            ;
-        }
-    } else {
-        e->ignore();
-        autoopen_timer->stop();
-        dropItem = 0;
-    }
-}
-
-void DirectoryView::contentsDragLeaveEvent( QDragLeaveEvent * )
-{
-    autoopen_timer->stop();
-    dropItem = 0;
-
-    setCurrentItem( oldCurrent );
-    setSelected( oldCurrent, TRUE );
-}
-
-void DirectoryView::contentsDropEvent( QDropEvent *e )
-{
-    autoopen_timer->stop();
-
-    if ( !QUriDrag::canDecode(e) ) {
-        e->ignore();
-        return;
-    }
-
-    QListViewItem *item = itemAt( contentsToViewport(e->pos()) );
-    if ( item ) {
-
-        QStrList lst;
-
-        QUriDrag::decode( e, lst );
-
-        QString str;
-
-        switch ( e->action() ) {
-            case QDropEvent::Copy:
-            str = "Copy";
-            break;
-            case QDropEvent::Move:
-            str = "Move";
-            e->acceptAction();
-            break;
-            case QDropEvent::Link:
-            str = "Link";
-            e->acceptAction();
-            break;
-            default:
-            str = "Unknown";
-        }
-
-        str += "\n\n";
-
-        e->accept();
-
-        for ( uint i = 0; i < lst.count(); ++i ) {
-            QString filename = lst.at( i );
-            str += filename + "\n";
-        }
-        str += QString( "\nTo\n\n   %1" )
-               .arg( fullPath(item) );
-
-        QMessageBox::information( this, "Drop target", str, "Not implemented" );
-    } else
-        e->ignore();
-
-}
-
 
 QString DirectoryView::fullPath(QListViewItem* item)
 {
@@ -445,46 +304,6 @@ QString DirectoryView::fullPath(QListViewItem* item)
             fullpath = item->text(0) + fullpath;
     }
     return fullpath;
-}
-
-void DirectoryView::contentsMousePressEvent( QMouseEvent* e )
-{
-    QListView::contentsMousePressEvent(e);
-    QPoint p( contentsToViewport( e->pos() ) );
-    QListViewItem *i = itemAt( p );
-    if ( i ) {
-        // if the user clicked into the root decoration of the item, don't try to start a drag!
-        if ( p.x() > header()->cellPos( header()->mapToActual( 0 ) ) +
-             treeStepSize() * ( i->depth() + ( rootIsDecorated() ? 1 : 0) ) + itemMargin() ||
-             p.x() < header()->cellPos( header()->mapToActual( 0 ) ) ) {
-            presspos = e->pos();
-            mousePressed = TRUE;
-        }
-    }
-}
-
-void DirectoryView::contentsMouseMoveEvent( QMouseEvent* e )
-{
-    if ( mousePressed && ( presspos - e->pos() ).manhattanLength() > 
-QApplication::startDragDistance() ) {
-        mousePressed = FALSE;
-        QListViewItem *item = itemAt( contentsToViewport(presspos) );
-        if ( item ) {
-            QString source = fullPath(item);
-            if ( QFile::exists(source) ) {
-                QUriDrag* ud = new QUriDrag(viewport());
-                ud->setUnicodeUris( source );
-                if ( ud->drag() )
-                    QMessageBox::information( this, "Drag source",
-                                              QString("Delete ")+source, "Not implemented" );
-            }
-        }
-    }
-}
-
-void DirectoryView::contentsMouseReleaseEvent( QMouseEvent * )
-{
-    mousePressed = FALSE;
 }
 
 void DirectoryView::setDir( const QString &s )

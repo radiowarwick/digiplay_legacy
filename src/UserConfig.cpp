@@ -1,0 +1,71 @@
+#include "UserConfig.h"
+
+#include "Auth.h"
+#include "config.h"
+#include "Logger.h"
+
+UserConfig::UserConfig(Auth *authModule) {
+    _userInfo.clear();
+    config *conf = new config("digiplay");
+    C = new Connection(conf->getDBConnectString());
+    delete conf;
+
+    if (!authModule->isAuthenticated()) {
+        _username = "guest";
+    }
+    else {	
+        _username = authModule->getUser();
+    }
+    retrieveConfig();
+}
+
+UserConfig::~UserConfig() {
+
+}
+
+string UserConfig::get(string param) {
+    return _userInfo[param];
+}
+
+void UserConfig::set(string param, string val) {
+    char *routine = "UserConfig::set";
+    Transaction T(*C,"");
+    string SQL =    "UPDATE usersconfigs "
+                    "SET val=0 "
+                    "WHERE userid=(SELECT id FROM users WHERE username='"
+                        + _username + "') "
+                    "AND configoption=(SELECT id FROM configs WHERE name='"
+                        + param + "')";
+    try {
+        T.exec(SQL);
+        T.commit();
+        _userInfo[param] = val;
+    }
+    catch (...) {
+        L_ERROR(LOG_DB,"Failed to update '" + param + "' to '" + val
+                        + "' for user '" + _username + "'");
+        T.abort();
+    }
+}
+
+void UserConfig::retrieveConfig() {
+    char *routine = "UserConfig::retrieveConfig";
+    Transaction T(*C,"");
+    string SQL =    "SELECT configs.name AS name, usersconfigs.val AS value "
+                    "FROM users, usersconfigs, configs "
+                    "WHERE users.username = '" + _username + "' "
+                    " AND usersconfigs.userid = users.id "
+                    " AND usersconfigs.configoption = configs.id ";
+    try {
+        Result R = T.exec(SQL);
+        T.abort();
+        for (unsigned int i = 0; i < R.size(); i++) {
+            _userInfo[R[i]["name"].c_str()] = R[i]["value"].c_str();
+        }
+    }
+    catch (...) {
+        L_ERROR(LOG_DB,"Failed to retrieve config for user '" 
+                            + _username + "'");
+        T.abort();
+    }
+}

@@ -45,9 +45,6 @@ class Directory : public QListViewItem {
     public:
         Directory( QListView * parent, const int my_id, 
                     const QString& filename, Connection *openC);
-//        Directory( Directory * parent, const QString& filename, const QString 
-//                    &col2 )
-//            : QListViewItem( parent, filename, col2 ), pix( 0 ) {}
         Directory( Directory * parent, const int my_id, 
                     const QString& filename, Connection *openC);
 
@@ -90,22 +87,12 @@ class DirectoryView : public QListView {
         void slotFolderSelected( QListViewItem * );
         void openFolder();
 
-    protected:
-        void contentsDragEnterEvent( QDragEnterEvent *e );
-        void contentsDragMoveEvent( QDragMoveEvent *e );
-        void contentsDragLeaveEvent( QDragLeaveEvent *e );
-        void contentsDropEvent( QDropEvent *e );
-        void contentsMouseMoveEvent( QMouseEvent *e );
-        void contentsMousePressEvent( QMouseEvent *e );
-        void contentsMouseReleaseEvent( QMouseEvent *e );
-
     private:
         Connection *C;
         QString fullPath(QListViewItem* item);
         bool dirsOnly;
         QListViewItem *oldCurrent;
         QListViewItem *dropItem;
-        QTimer* autoopen_timer;
         QPoint presspos;
         bool mousePressed;
 

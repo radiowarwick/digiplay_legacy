@@ -49,7 +49,7 @@ class TabPanelFileBrowser : public TabPanel {
 		~TabPanelFileBrowser();
 
     protected slots:
-        void playlistAdd(QListViewItem* x);
+        void handleLoad(QListViewItem* x);
 
 	private:
 		void draw();
@@ -57,6 +57,7 @@ class TabPanelFileBrowser : public TabPanel {
         
         frmStudioManage *parentForm;
 		Connection *C;
+        config *conf;
 		DirectoryView *lstFileBrowser;
 		Directory *root;
 };

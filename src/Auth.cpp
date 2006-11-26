@@ -63,6 +63,7 @@ void Auth::authSession(string username, string password) {
 	_privilages.clear();
 	_userInfo.clear();
 	addUserInfo("username",username);
+    
 	// bodge --cc
 	addPrivilage("TabInfo");
 	addPrivilage("TabSearch");

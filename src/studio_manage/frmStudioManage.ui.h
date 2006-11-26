@@ -28,6 +28,7 @@
 
 #include "Logger.h"
 #include "AuthLdap.h"
+#include "UserConfig.h"
 #include "TabPanelInfo.h"
 #include "TabPanelEmail.h"
 #include "TabPanelSearch.h"
@@ -48,6 +49,7 @@
 #include "dps.h"
 
 AuthLdap *authModule;
+UserConfig *userConfig;
 TabPanelInfo *tabPanelInfo;
 TabPanelEmail *tabPanelEmail;
 TabPanelSearch *tabPanelSearch;
@@ -84,6 +86,7 @@ void frmStudioManage::init() {
 	cout << " -> Authentication subsystem...";
 	authModule = new AuthLdap("ldapserver",389,
 								"ou=People,dc=radio,dc=warwick,dc=ac,dc=uk");
+    userConfig = new UserConfig(authModule);
 	cout << "success." << endl;
 	
 	cout << " -> Clock...";
@@ -198,7 +201,6 @@ void frmStudioManage::customEvent(QCustomEvent *event) {
 					activePoint->setState(SHOWPLAN_STATE_FINISHED);
 					activePoint = (ShowPlanItem*)activePoint->nextSibling();
 				}
-                if (!activePoint) cout << "NULL ACTIVE POINT!" << endl;
 				activePoint->setState(SHOWPLAN_STATE_LOADED);
 				lstShowPlan->ensureItemVisible(activePoint);
 				if (lstShowPlan->selectedItem()) {
@@ -259,6 +261,10 @@ void frmStudioManage::btnLoginClicked()
 		    try {
 			    authModule->authSession(username, password);
 			    if ( authModule->isAuthenticated() ) {
+                    delete userConfig;
+                    userConfig = new UserConfig(authModule);
+                    conf->setParam("user_cartset",
+                                    userConfig->get("default_cartset"));
 					btnLogin->setText("Log Out");
 			    }
 			}

@@ -347,6 +347,21 @@ void archivemanager::add(unsigned int index) {
 				"VALUES (" + dps_itoa(audio_id) + ", 1, 0)";
 			T->exec(SQL);
 		}
+	
+		//Now it's in the directory structure, set the permissions.
+		SQL = "SELECT id FROM groups WHERE name = 'All users'";
+		T->exec(SQL);
+		if (R.size() > 0) {
+			group_id = atoi(R[0][0].c_str());
+		} else {
+			cout << "Failed to retrieve ID of the all users group!" << endl;
+			T->abort();
+			return;
+		}
+		SQL = "INSERT into audiogroups (audio, groupid, permissions)"
+			"VALUES ( " + dps_itoa(audio_id) + "," + dps_itoa(group_id) + ", 'r')";
+		T->exec(SQL);
+
 	    T->commit();
 		delete T;
 	}

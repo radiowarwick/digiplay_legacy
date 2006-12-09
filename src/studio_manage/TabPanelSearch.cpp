@@ -36,10 +36,9 @@
 
 #include "TabPanelSearch.h"
 
-TabPanelSearch::TabPanelSearch(QTabWidget *parent, frmStudioManage *parent2, string text)
+TabPanelSearch::TabPanelSearch(QTabWidget *parent, string text)
 		: TabPanel(parent,text)  {
 	panelTag = "TabSearch";
-	parentForm = parent2;
     path = qApp->applicationDirPath();
     pixAudio = new QPixmap(path + "/images/music16.png");
 	config *conf = new config("digiplay");
@@ -109,7 +108,6 @@ void TabPanelSearch::draw() {
 
     txtLibrarySearchText = new QLineEdit( getPanel(), "txtLibrarySearchText" );
     txtLibrarySearchText->setGeometry( QRect( 83, 10, 330, 20 ) );
-//==========
     lstSearchResults = new QListView(getPanel(), "lstSearchResults" );
 
     lstSearchResults->setGeometry( QRect( 10, 60, 510, 570 ) );
@@ -203,7 +201,7 @@ void TabPanelSearch::Library_Search() {
 
 void TabPanelSearch::playlistAdd(QListViewItem* x) {
 	if (x) {
-		parentForm->playlistAdd(x->text(3));
+        emit itemSelected( x->text(3) );
 	}
 }
 

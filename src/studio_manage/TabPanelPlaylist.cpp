@@ -38,10 +38,9 @@
 
 #include "TabPanelPlaylist.h"
 
-TabPanelPlaylist::TabPanelPlaylist(QTabWidget *parent, frmStudioManage *parent2, string text)
+TabPanelPlaylist::TabPanelPlaylist(QTabWidget *parent, string text)
 		: TabPanel(parent,text) {
 	panelTag = "TabPlaylist";
-	parentForm = parent2;
 		
 	config *conf = new config("digiplay");
 	C = new Connection(conf->getDBConnectString());
@@ -185,8 +184,7 @@ void TabPanelPlaylist::customEvent(QCustomEvent *event) {
 
 void TabPanelPlaylist::playlistAdd(QListViewItem *current) {
 	if (current->text(3)) {
-		string md5 = current->text(3).ascii();
-		parentForm->playlistAdd(md5);
+        emit itemSelected( current->text(3) );
 	}
 }
 

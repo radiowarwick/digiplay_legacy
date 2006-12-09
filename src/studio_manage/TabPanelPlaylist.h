@@ -47,12 +47,15 @@ class Auth;
 class TabPanelPlaylist : public TabPanel {
 	Q_OBJECT
 	public:
-		TabPanelPlaylist(QTabWidget *parent, frmStudioManage *parent2, string text);
+		TabPanelPlaylist(QTabWidget *parent, string text);
 		~TabPanelPlaylist();
 		void configure(Auth *authModule);
 		void customEvent(QCustomEvent *event);
 
-	public slots:
+    signals:
+        void itemSelected( QString md5 );
+
+	private slots:
 		virtual void playlistAdd(QListViewItem *current);
 		virtual void listExpanded(QListViewItem *x);
 		virtual void listCollapsed(QListViewItem *x);
@@ -61,8 +64,6 @@ class TabPanelPlaylist : public TabPanel {
 		void draw();
 		void clear();
 		void getPlaylist();		
-//		QString getTime( long smpl );
-		frmStudioManage *parentForm;
 		Connection *C;
 		triggerThread *playlistTrigger;
 		QListView *lstPlaylist;

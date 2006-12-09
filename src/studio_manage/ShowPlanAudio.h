@@ -25,24 +25,27 @@
 #include <qlistview.h>
 
 #include "dps.h"
+#include "DpsObject.h"
 #include "ShowPlanItem.h"
 
 class QPainter;
 class QColorGroup;
 class QString;
 class QSimpleRichText;
+class DpsShowTrack;
 
 class ShowPlanAudio : public ShowPlanItem {
 	public:
 		ShowPlanAudio( QListView *parent, QListViewItem *after );
 		ShowPlanAudio( QListViewItem *parent, QListViewItem *after );
-		ShowPlanAudio( QListView *parent, QListViewItem *after, track t);
+		ShowPlanAudio( QListView *parent, QListViewItem *after, 
+                            DpsShowItem& t);
 		int getType() {return 0;}
-		track getTrack() {return _t;}
+		DpsShowItem& getTrack() {return *_t;}
 
 	private:
 		void init();
-		track _t;
+		DpsShowItem* _t;
 };
 
 #endif

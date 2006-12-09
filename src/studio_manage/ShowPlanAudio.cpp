@@ -41,14 +41,28 @@ ShowPlanAudio::ShowPlanAudio( QListViewItem *parent, QListViewItem *after )
 	init();
 }
 
-ShowPlanAudio::ShowPlanAudio( QListView *parent, QListViewItem *after, track t )
-		: ShowPlanItem(parent, after) {
+ShowPlanAudio::ShowPlanAudio( QListView *parent, QListViewItem *after, 
+        DpsShowItem& t ) : ShowPlanItem(parent, after) {
 	rootElement = false;
-	setText(0,t.title);
-	setText(1,t.artist);
-	setText(2,dps_prettyTime(t.trim_end_smpl - t.trim_start_smpl));
+    setText(0,t["title"]);
+    setText(2,dps_prettyTime(atoi(t["end"].c_str()) 
+                             - atoi(t["start"].c_str())));
+    switch (t.getType()) {
+        case DPS_TRACK:
+        	setText(1,t["artist"]);
+            break;
+        case DPS_JINGLE:
+            setText(1,t["package"]);
+            break;
+        case DPS_ADVERT:
+            setText(1,t["company"]);
+            break;
+        default:
+            cout << "Unknown type: " << t.getType() << endl;
+            break;
+    }
 	setText(3,"");
-	_t = t;
+	_t = &t;
 	init();
 }
 

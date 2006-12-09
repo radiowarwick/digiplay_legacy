@@ -34,6 +34,7 @@
 
 #include "frmStudioManage.h"
 
+#include "Showplan.h"
 #include "TabPanel.h"
 #include "config.h"
 #include "libsearch.h"
@@ -50,13 +51,16 @@ class Auth;
 class TabPanelSearch : public TabPanel {
 	Q_OBJECT
 	public:
-		TabPanelSearch(QTabWidget *parent, frmStudioManage *parent2, string text);
+		TabPanelSearch(QTabWidget *parent, string text);
 		~TabPanelSearch();
 
-	public slots:
+	signals:
+        void itemSelected( QString );
+
+	private slots:
 		virtual void Library_Search();
 		virtual void playlistAdd(QListViewItem *x);
-	
+
 	private:
 		void draw();
 		void clear();
@@ -69,7 +73,6 @@ class TabPanelSearch : public TabPanel {
 		QLineEdit *txtLibrarySearchText;
 		QLabel *Searchlable;
 		QLabel *lblSearch;
-		frmStudioManage *parentForm;
 		QCheckBox *ArtistCheckBox;
 		QCheckBox *AlbumCheckBox;
 		QCheckBox *TitleCheckBox;

@@ -129,7 +129,7 @@ void Directory::setOpen( bool o )
                 }
                 else {
                     F = new FileItem(this,R_audio[i]["title"].c_str(),
-                                    "Audio file");
+                                    "Audio File");
                     F->setPixmap( fileAudio );
                 }
                 F->setText(2, R_audio[i]["md5"].c_str());

@@ -34,22 +34,15 @@
 
 #include "TabPanelFileBrowser.h"
 
-TabPanelFileBrowser::TabPanelFileBrowser(QTabWidget *parent, frmStudioManage *parent2, string text)
+TabPanelFileBrowser::TabPanelFileBrowser(QTabWidget *parent, string text)
 		: TabPanel(parent, text) {
     panelTag = "TabFileBrowser";
-    parentForm = parent2;
-	conf = new config("digiplay");
-	C = new Connection(conf->getDBConnectString());
     draw();
 }
 
 // clean up stuff
 TabPanelFileBrowser::~TabPanelFileBrowser() {
-	if (C && C->is_open()) {
-		C->Deactivate();
-	}
-	delete C;
-    delete conf;
+
 }
 
 // This handles drawing the contents of the form, and connecting slots,
@@ -86,12 +79,20 @@ void TabPanelFileBrowser::clear() {
 
 void TabPanelFileBrowser::handleLoad(QListViewItem* x) {
     if (x) {
-        if (x->text(1) == "Audio file" ||
-				x->text(1) == "Audio Ident") {
-            parentForm->playlistAdd(x->text(2));
+        if (x->text(1) == "Audio File") {
+            emit trackSelected( x->text(2) );
+        }
+        if (x->text(1) == "Audio Ident") {
+            emit jingleSelected( x->text(2) );
+        }
+        if (x->text(1) == "Audio Advert") {
+            emit advertSelected( x->text(2) );
+        }
+        if (x->text(1) == "Script") {
+            emit scriptSelected( x->text(2) );
         }
         if (x->text(1) == "Cartset") {
-            conf->setParam("user_cartset",x->text(2).ascii());
+            emit cartsetSelected( x->text(2) );
         }
     }
 }

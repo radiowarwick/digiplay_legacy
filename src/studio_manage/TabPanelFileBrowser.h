@@ -27,17 +27,9 @@
 
 #include "TabPanel.h"
 #include "triggerThread.h"
-#include "config.h"
 #include "FileBrowser.h"
-#include "frmStudioManage.h"
 
 #include <qlistview.h>
-
-
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h"
-using namespace pqxx;
 
 class QTabWidget;
 class Auth;
@@ -45,8 +37,15 @@ class Auth;
 class TabPanelFileBrowser : public TabPanel {
 	Q_OBJECT
 	public:
-		TabPanelFileBrowser(QTabWidget *parent, frmStudioManage *parent2, string text);
+		TabPanelFileBrowser(QTabWidget *parent, string text);
 		~TabPanelFileBrowser();
+
+    signals:
+        void trackSelected( QString md5 );
+        void jingleSelected( QString md5 );
+        void advertSelected( QString md5 );
+        void scriptSelected( QString index );
+        void cartsetSelected( QString index );
 
     protected slots:
         void handleLoad(QListViewItem* x);
@@ -55,9 +54,6 @@ class TabPanelFileBrowser : public TabPanel {
 		void draw();
 		void clear();
         
-        frmStudioManage *parentForm;
-		Connection *C;
-        config *conf;
 		DirectoryView *lstFileBrowser;
 		Directory *root;
 };

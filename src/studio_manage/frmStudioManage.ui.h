@@ -26,6 +26,7 @@
 #include <qmessagebox.h>
 #include <qmutex.h>
 
+#include "DpsObject.h"
 #include "Logger.h"
 #include "AuthLdap.h"
 #include "UserConfig.h"
@@ -36,6 +37,7 @@
 #include "TabPanelLogging.h"
 #include "TabPanelScript.h"
 #include "TabPanelFileBrowser.h"
+#include "Showplan.h"
 #include "ShowPlanItem.h"
 #include "ShowPlanAudio.h"
 #include "ShowPlanScript.h"
@@ -50,6 +52,7 @@
 
 AuthLdap *authModule;
 UserConfig *userConfig;
+Showplan *sp;
 TabPanelInfo *tabPanelInfo;
 TabPanelEmail *tabPanelEmail;
 TabPanelSearch *tabPanelSearch;
@@ -58,16 +61,8 @@ TabPanelPlaylist *tabPanelPlaylist;
 TabPanelLogging *tabPanelLogging;
 TabPanelScript *tabPanelScript;
 
-triggerThread *dbTrigger;
 config *conf;
-Connection *C;
 clockThread *ck;
-vector<track> *SearchResults;
-//vector<track> *Playlist = new vector<_track*>;
-QPixmap *sp_audio, *sp_artist, *sp_album;
-QString path;
-QMutex activePointLock;
-ShowPlanItem *activePoint;		// the first item in plan currently loaded
 
 void frmStudioManage::init() {
     // Configure logging
@@ -78,12 +73,13 @@ void frmStudioManage::init() {
 	// Connect to database
 	cout << "Connecting to database..." << endl;
 	conf = new config("digiplay");
-	C = new Connection(conf->getDBConnectString());
+    DpsObject::dbInit();
 	cout << "Connected." << endl;
 
 	// Initialise modules
 	cout << "Initialising Core Modules..." << endl;
 	cout << " -> Authentication subsystem...";
+	btnLogin->setEnabled(true);
 	authModule = new AuthLdap("ldapserver",389,
 								"ou=People,dc=radio,dc=warwick,dc=ac,dc=uk");
     userConfig = new UserConfig(authModule);
@@ -97,46 +93,33 @@ void frmStudioManage::init() {
 	
 	// Initialise interface
 	cout << "Initialising Interface..." << endl;
-	path = qApp->applicationDirPath();
+	QString path = qApp->applicationDirPath();
 
 	//Load Images
 	cout << " -> Loading Images... ";
 	pixFade->setPixmap(QPixmap(path + "/images/fade.png"));
 	pixLogo->setPixmap(QPixmap(path + "/images/rawdigiplay.png"));
-
-	btnMoveUp->setPixmap(QPixmap(path + "/images/moveup32.png"));
-	btnMoveDown->setPixmap(QPixmap(path + "/images/movedown32.png"));
-	btnMoveTop->setPixmap(QPixmap(path + "/images/movetop32.png"));
-	btnMoveBottom->setPixmap(QPixmap(path + "/images/movebottom32.png"));
-	btnDelete->setPixmap(QPixmap(path + "/images/delete48.png"));
-	btnClear->setPixmap(QPixmap(path + "/images/clear32.png"));
-	
 	cout << "success." << endl;
 	
-	lstShowPlan->setColumnWidth(0,lstShowPlan->width() - 5);
-	lstShowPlan->setSorting(-1);
-	lstShowPlan->header()->hide();
-
 	// Load tab panels after removing the template tab.	
 	tabManage->removePage(tabManage->currentPage());
-	cout << "Loading panels" << endl;
 	cout << " -> Info panel..." << flush;
 	tabPanelInfo = new TabPanelInfo(tabManage,"Info");
 	tabPanelInfo->configure(authModule);
 	cout << " success." << endl;
 
 	cout << " -> Search panel..." << flush;
-	tabPanelSearch = new TabPanelSearch(tabManage, this, "Library Search");
+	tabPanelSearch = new TabPanelSearch(tabManage, "Library Search");
 	tabPanelSearch->configure(authModule);
 	cout << " success." << endl;
 
 	cout << " -> File Browser panel..." << flush;
-	tabPanelFileBrowser = new TabPanelFileBrowser(tabManage, this, "File Browser");
+	tabPanelFileBrowser = new TabPanelFileBrowser(tabManage, "File Browser");
 	tabPanelFileBrowser->configure(authModule);
 	cout << " success." << endl;
 
 	cout << " -> Playlist panel..." << flush;
-	tabPanelPlaylist = new TabPanelPlaylist(tabManage, this, "Playlist");
+	tabPanelPlaylist = new TabPanelPlaylist(tabManage, "Playlist");
 	tabPanelPlaylist->configure(authModule);
 	cout << " success." << endl;
 	
@@ -155,22 +138,31 @@ void frmStudioManage::init() {
 //	tabPanelScript->configure(authModule);
 //	cout << " success." << endl;
 
-	btnLogin->setEnabled(true);
+	cout << " -> Showplan..." << flush;
+	sp = new Showplan(this,"sp");
+    sp->configure(authModule);
+    sp->setGeometry( QRect( 550, 40, 470, 670) );
+	cout << "success." << endl;
+
+    connect ( tabPanelSearch, SIGNAL( itemSelected( QString ) ),
+                sp, SLOT( addTrack( QString ) ) );
+    connect ( tabPanelPlaylist, SIGNAL( itemSelected( QString ) ),
+                sp, SLOT( addTrack( QString ) ) );
+
+    connect ( tabPanelFileBrowser, SIGNAL( trackSelected( QString ) ),
+                sp, SLOT( addTrack( QString ) ) );
+    connect ( tabPanelFileBrowser, SIGNAL( jingleSelected( QString ) ),
+                sp, SLOT( addJingle( QString ) ) );
+    connect ( tabPanelFileBrowser, SIGNAL( advertSelected( QString ) ),
+                sp, SLOT( addAdvert( QString ) ) );
+    connect ( tabPanelFileBrowser, SIGNAL( cartsetSelected( QString ) ),
+                this, SLOT( updateCartset( QString ) ) );
+
 	cout << "Interface initialisation complete." << endl;
-
-	// Create trigger for configuration
-	cout << "Creating database triggers..." << endl;
-	dbTrigger = new triggerThread(this, QString(conf->getDBConnectString()), 1); 
-	dbTrigger->start();
-	cout << "Triggers active." << endl;	
-
-	activePoint = 0;
 }
 
 void frmStudioManage::destroy() {
-//	for (unsigned int i = 0; i < Playlist->size(); i++)
-//		delete Playlist->at(i);
-//	delete Playlist;
+
 }
 
 void frmStudioManage::customEvent(QCustomEvent *event) {
@@ -186,33 +178,6 @@ void frmStudioManage::customEvent(QCustomEvent *event) {
 			lblDate->setText(*s);
 			break;
 		}
-	case 30001: {       // Configuration changed trigger
-            L_INFO(LOG_DB,"Triggering configuration refresh");
-			conf->requery();
-			if (conf->getParam("next_on_showplan") == "" 
-								&& lstShowPlan->childCount() > 0
-                                && activePoint != lstShowPlan->lastItem()) {
-                activePointLock.lock();
-                L_INFO(LOG_DB,"Processing track load event");
-				if (activePoint == 0) {
-					activePoint = (ShowPlanItem*)lstShowPlan->firstChild();
-				}
-				else {
-					activePoint->setState(SHOWPLAN_STATE_FINISHED);
-					activePoint = (ShowPlanItem*)activePoint->nextSibling();
-				}
-				activePoint->setState(SHOWPLAN_STATE_LOADED);
-				lstShowPlan->ensureItemVisible(activePoint);
-				if (lstShowPlan->selectedItem()) {
-					lstShowPlanSelectionChanged(lstShowPlan->selectedItem());
-				}
-                L_INFO(LOG_DB,"Triggering update of next_on_showplan entry");
-                activePointLock.unlock();
-				updateNextTrack();
-			}
-            L_INFO(LOG_DB,"Configuration refresh complete.");
-			break;
-		}
 	default: {
 			qWarning("Unknown event type: %d", event->type());
             L_WARNING(LOG_DB,"Unknown event type: " + dps_itoa(event->type()));
@@ -221,31 +186,8 @@ void frmStudioManage::customEvent(QCustomEvent *event) {
 	}
 }
 
-void frmStudioManage::playlistAdd(QString md5) {
-    char *routine = "frmStudioManage::playlistAdd";
-    L_INFO(LOG_SHOWPLAN,"Adding to showplan " + md5);
-	track t = dps_getTrack(C,md5);
-    if (t.isNull) return;
-	new ShowPlanAudio( lstShowPlan,	lstShowPlan->lastItem(), t); 
-    L_INFO(LOG_DB,"Triggering update of next_on_showplan entry");
-	updateNextTrack();
-    L_INFO(LOG_DB,"Playlist add complete.");
-}
-
-QString frmStudioManage::getTime( long smpl ) {
-	QString S;
-	int mil, sec, min;
-	
-	mil = smpl/441;
-    sec = (int)(mil / 100);
-    mil = mil%100;
-    min = (int)(sec / 60);
-    sec = sec%60;
-	if (min < 10) S += "0";
-	S += QString::number(min) + ":";
-	if (sec < 10) S += "0";
-	S += QString::number(sec);
-	return S;
+void frmStudioManage::updateCartset( QString index ) {
+    conf->setParam("user_cartset",index.ascii());
 }
 
 void frmStudioManage::btnLoginClicked()
@@ -316,155 +258,5 @@ void frmStudioManage::btnLoginClicked()
 	tabPanelEmail->configure(authModule);
 	tabPanelLogging->configure(authModule);
 //	tabPanelScript->configure(authModule);
-//	tabPanelFileBrowser->configure(authModule);
-}
-
-
-void frmStudioManage::btnMoveTopClicked() {
-	if (lstShowPlan->childCount() == 0) return;
-	QListViewItem *x = lstShowPlan->selectedItem();
-    if ( x && x != lstShowPlan->firstChild()) {
-        if (!activePoint) {
-    		lstShowPlan->takeItem(x);
-    		lstShowPlan->insertItem(x);
-        }
-        else {
-    		x->moveItem(activePoint);
-        }
-		lstShowPlan->setSelected(x,true);
-		lstShowPlanSelectionChanged(x);
-		updateNextTrack();
-    }
-}
-
-
-void frmStudioManage::btnMoveUpClicked() {
-	if (lstShowPlan->childCount() == 0) return;
-	QListViewItem *x = lstShowPlan->selectedItem();
-    if ( x ) {
-		if (x == lstShowPlan->firstChild()->itemBelow() ) {
-		    lstShowPlan->takeItem(x);
-		    lstShowPlan->insertItem(x);
-		    lstShowPlan->setSelected(x,true);
-		}
-		else if (x != lstShowPlan->firstChild()) {
-			x->moveItem(x->itemAbove()->itemAbove());
-		}
-		lstShowPlanSelectionChanged(x);
-		updateNextTrack();
-    }
-}
-
-
-void frmStudioManage::btnDeleteClicked() {
-	if (lstShowPlan->childCount() == 0) return;
-	QListViewItem *x = lstShowPlan->selectedItem();
-	QListViewItem *y;
-    if ( x ) {
-		y = x->nextSibling();
-		delete x;
-		if ( y ) {
-			lstShowPlan->setSelected(y,true);
-		}
-        else {
-            y = lstShowPlan->lastItem();
-            lstShowPlan->setSelected(y,true);
-        }
-		lstShowPlanSelectionChanged(y);            
-
-	}
-	updateNextTrack();
-}
-
-void frmStudioManage::btnClearClicked() {
-	if (lstShowPlan->childCount() == 0) return;
-    dlgWarn *dlg = new dlgWarn(this, "");
-    dlg->setTitle("Clear All");
-    dlg->setWarning("Are you sure you wish to clear the show plan?");
-    if ( dlg->exec() == QDialog::Accepted ){
-		lstShowPlan->clear();
-		lstShowPlanSelectionChanged(0);
-		activePoint = 0;
-		updateNextTrack();
-    }
-    delete dlg;
-}
-
-void frmStudioManage::btnMoveDownClicked() {
-	if (lstShowPlan->childCount() == 0) return;
-	QListViewItem *x = lstShowPlan->selectedItem();
-    if ( x ) {
-		if (x != lstShowPlan->lastItem() ) {
-			x->moveItem(x->itemBelow());
-			lstShowPlan->setSelected(x,true);
-			lstShowPlanSelectionChanged(x);
-			updateNextTrack();
-		}
-	}
-}
-
-void frmStudioManage::btnMoveBottomClicked() {
-	if (lstShowPlan->childCount() == 0) return;
-	QListViewItem *x = lstShowPlan->selectedItem();
-    if ( x ) {
-		x->moveItem(lstShowPlan->lastItem());
-		lstShowPlan->setSelected(lstShowPlan->lastItem(),true);
-		lstShowPlanSelectionChanged(x);
-		updateNextTrack();
-    }
-}
-
-
-void frmStudioManage::updateNextTrack() {
-	ShowPlanItem *x = 0;
-	if (lstShowPlan->childCount() == 0) return;
-    activePointLock.lock();
-	if ( ! activePoint ) {
-		x = (ShowPlanItem*)lstShowPlan->firstChild();
-	}
-	else {
-		x = (ShowPlanItem*)activePoint->nextSibling();
-	}
-    activePointLock.unlock();
-	if ( x ) {
-		do
-			if (x->getType() == 0) {
-				ShowPlanAudio *audio = (ShowPlanAudio*)x;
-				track t = audio->getTrack();
-				conf->setParam("next_on_showplan",t.md5);
-				return;
-			}
-		while ((x = (ShowPlanItem*)x->nextSibling()) != 0);
-	}
-}
-
-
-void frmStudioManage::lstShowPlanSelectionChanged(QListViewItem *x) {
-	ShowPlanItem *y = (ShowPlanItem*)x;
-	if ( y && y->getState() == SHOWPLAN_STATE_UNLOADED ) {
-		ShowPlanItem *z = (ShowPlanItem*)y->itemAbove();
-		if ( z && z->getState() == SHOWPLAN_STATE_UNLOADED) {
-			btnMoveUp->setEnabled(true);
-			btnMoveTop->setEnabled(true);
-		}
-		else {
-			btnMoveUp->setEnabled(false);
-			btnMoveTop->setEnabled(false);
-		}
-		if ( y == (ShowPlanItem*)lstShowPlan->lastItem() ) {
-			btnMoveBottom->setEnabled(false);
-			btnMoveDown->setEnabled(false);
-		}
-		else {
-			btnMoveBottom->setEnabled(true);
-			btnMoveDown->setEnabled(true);
-		}
-		btnDelete->setEnabled(true);
-		return;
-	}
-	btnMoveBottom->setEnabled(false);
-	btnMoveDown->setEnabled(false);
-	btnMoveUp->setEnabled(false);
-	btnMoveTop->setEnabled(false);
-	btnDelete->setEnabled(false);
+	tabPanelFileBrowser->configure(authModule);
 }

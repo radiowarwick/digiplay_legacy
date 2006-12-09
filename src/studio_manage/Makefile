@@ -22,9 +22,9 @@ QT_MODS		=	frmStudioManage dlgLogin dlgWarn\
 				TabPanelSearch TabPanelPlaylist TabPanelLogging\
 				TabPanelScript TabPanelFileBrowser\
 				ShowPlanItem ShowPlanAudio ShowPlanScript\
-				FileBrowser
+				FileBrowser Showplan
 SHARED_MODS	=	config libsearch track dps clockThread triggerThread\
-				Auth AuthLdap Logger UserConfig
+				Auth AuthLdap Logger UserConfig DpsObject
 
 # Global header files on which dependance exists
 HDRS		=

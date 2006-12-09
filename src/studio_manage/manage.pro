@@ -9,10 +9,7 @@ FORMS	= frmStudioManage.ui \
 	dlgLogin.ui \
 	dlgWarn.ui
 
-IMAGES	= images/bin.bmp \
-	images/dir_audio.bmp \
-	images/dir_folder.bmp \
-	images/logo.bmp \
+IMAGES	= images/logo.bmp \
 	images/logo.png
 
 unix {

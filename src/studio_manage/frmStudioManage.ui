@@ -747,222 +747,6 @@
             <string></string>
         </property>
     </widget>
-    <widget class="QGroupBox">
-        <property name="name">
-            <cstring>groupBox1</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>550</x>
-                <y>40</y>
-                <width>470</width>
-                <height>670</height>
-            </rect>
-        </property>
-        <property name="font">
-            <font>
-                <family>Sans Serif</family>
-                <pointsize>16</pointsize>
-                <bold>1</bold>
-            </font>
-        </property>
-        <property name="frameShadow">
-            <enum>Sunken</enum>
-        </property>
-        <property name="lineWidth">
-            <number>1</number>
-        </property>
-        <property name="title">
-            <string>Show Plan</string>
-        </property>
-        <property name="flat">
-            <bool>false</bool>
-        </property>
-        <widget class="QListView">
-            <column>
-                <property name="text">
-                    <string>Item</string>
-                </property>
-                <property name="clickable">
-                    <bool>false</bool>
-                </property>
-                <property name="resizable">
-                    <bool>false</bool>
-                </property>
-            </column>
-            <property name="name">
-                <cstring>lstShowPlan</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>20</y>
-                    <width>450</width>
-                    <height>580</height>
-                </rect>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>255</red>
-                    <green>255</green>
-                    <blue>255</blue>
-                </color>
-            </property>
-            <property name="font">
-                <font>
-                    <pointsize>10</pointsize>
-                    <bold>0</bold>
-                </font>
-            </property>
-            <property name="frameShape">
-                <enum>Box</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Plain</enum>
-            </property>
-            <property name="vScrollBarMode">
-                <enum>AlwaysOn</enum>
-            </property>
-            <property name="hScrollBarMode">
-                <enum>AlwaysOff</enum>
-            </property>
-            <property name="allColumnsShowFocus">
-                <bool>true</bool>
-            </property>
-            <property name="resizeMode">
-                <enum>NoColumn</enum>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnDelete</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>160</x>
-                    <y>600</y>
-                    <width>75</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="text">
-                <string>pushButton4</string>
-            </property>
-            <property name="toolTip" stdset="0">
-                <string>Delete an item from the show plan</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnMoveBottom</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>385</x>
-                    <y>600</y>
-                    <width>75</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="text">
-                <string>pushButton6</string>
-            </property>
-            <property name="toolTip" stdset="0">
-                <string>Move item to the bottom of the show plan</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnMoveDown</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>310</x>
-                    <y>600</y>
-                    <width>75</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="text">
-                <string>pushButton5</string>
-            </property>
-            <property name="toolTip" stdset="0">
-                <string>Move item down in the show plan</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnMoveTop</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>600</y>
-                    <width>75</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="text">
-                <string>pushButton2</string>
-            </property>
-            <property name="toolTip" stdset="0">
-                <string>Move item to the top of the show plan</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnMoveUp</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>85</x>
-                    <y>600</y>
-                    <width>75</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="enabled">
-                <bool>false</bool>
-            </property>
-            <property name="text">
-                <string>pushButton3</string>
-            </property>
-            <property name="toolTip" stdset="0">
-                <string>Move item up in the show plan</string>
-            </property>
-        </widget>
-        <widget class="QPushButton">
-            <property name="name">
-                <cstring>btnClear</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>235</x>
-                    <y>600</y>
-                    <width>75</width>
-                    <height>60</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>pushButton7</string>
-            </property>
-            <property name="toolTip" stdset="0">
-                <string>Clear the show plan</string>
-            </property>
-        </widget>
-    </widget>
 </widget>
 <images>
     <image name="image0">
@@ -971,52 +755,10 @@
 </images>
 <connections>
     <connection>
-        <sender>btnClear</sender>
-        <signal>clicked()</signal>
-        <receiver>frmStudioManage</receiver>
-        <slot>btnClearClicked()</slot>
-    </connection>
-    <connection>
-        <sender>btnMoveTop</sender>
-        <signal>clicked()</signal>
-        <receiver>frmStudioManage</receiver>
-        <slot>btnMoveTopClicked()</slot>
-    </connection>
-    <connection>
-        <sender>btnMoveUp</sender>
-        <signal>clicked()</signal>
-        <receiver>frmStudioManage</receiver>
-        <slot>btnMoveUpClicked()</slot>
-    </connection>
-    <connection>
-        <sender>btnDelete</sender>
-        <signal>clicked()</signal>
-        <receiver>frmStudioManage</receiver>
-        <slot>btnDeleteClicked()</slot>
-    </connection>
-    <connection>
-        <sender>btnMoveDown</sender>
-        <signal>clicked()</signal>
-        <receiver>frmStudioManage</receiver>
-        <slot>btnMoveDownClicked()</slot>
-    </connection>
-    <connection>
-        <sender>btnMoveBottom</sender>
-        <signal>clicked()</signal>
-        <receiver>frmStudioManage</receiver>
-        <slot>btnMoveBottomClicked()</slot>
-    </connection>
-    <connection>
         <sender>btnLogin</sender>
         <signal>clicked()</signal>
         <receiver>frmStudioManage</receiver>
         <slot>btnLoginClicked()</slot>
-    </connection>
-    <connection>
-        <sender>lstShowPlan</sender>
-        <signal>selectionChanged(QListViewItem*)</signal>
-        <receiver>frmStudioManage</receiver>
-        <slot>lstShowPlanSelectionChanged(QListViewItem*)</slot>
     </connection>
 </connections>
 <includes>
@@ -1024,21 +766,13 @@
 </includes>
 <slots>
     <slot>customEvent( QCustomEvent * event )</slot>
-    <slot>playlistAdd( QString md5 )</slot>
     <slot>btnLoginClicked()</slot>
-    <slot>btnMoveTopClicked()</slot>
-    <slot>btnMoveUpClicked()</slot>
-    <slot>btnDeleteClicked()</slot>
-    <slot>btnClearClicked()</slot>
-    <slot>btnMoveDownClicked()</slot>
-    <slot>btnMoveBottomClicked()</slot>
-    <slot>lstShowPlanSelectionChanged(QListViewItem *x)</slot>
+    <slot>updateCartset( QString index )</slot>
 </slots>
 <functions>
     <function access="private" specifier="non virtual">init()</function>
     <function access="private" specifier="non virtual">destroy()</function>
     <function access="private" specifier="non virtual" returnType="QString">getTime( long smpl )</function>
-    <function access="private">updateNextTrack()</function>
 </functions>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

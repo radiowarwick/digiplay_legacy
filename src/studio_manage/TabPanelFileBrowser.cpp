@@ -45,6 +45,13 @@ TabPanelFileBrowser::~TabPanelFileBrowser() {
 
 }
 
+void TabPanelFileBrowser::configure(Auth *authModule) {
+    if (lstFileBrowser) {
+        lstFileBrowser->setUser(authModule->getUser());
+    }
+    TabPanel::configure(authModule);
+}
+
 // This handles drawing the contents of the form, and connecting slots,
 // but has little actual implementation
 void TabPanelFileBrowser::draw() {
@@ -89,10 +96,16 @@ void TabPanelFileBrowser::handleLoad(QListViewItem* x) {
             emit advertSelected( x->text(2) );
         }
         if (x->text(1) == "Script") {
-            emit scriptSelected( x->text(2) );
+            DpsShowScript S(atoi(x->text(2).ascii()));
+            emit scriptSelected( S );
         }
         if (x->text(1) == "Cartset") {
             emit cartsetSelected( x->text(2) );
+        }
+        if (x->text(1) == "Showplan") {
+            DpsShowplan s;
+            s.load(atoi(x->text(2).ascii()));
+            emit showplanSelected( s );
         }
     }
 }

@@ -21,7 +21,6 @@ QT_MODS		=	frmStudioManage dlgLogin dlgWarn\
 				TabPanel TabPanelInfo TabPanelEmail\
 				TabPanelSearch TabPanelPlaylist TabPanelLogging\
 				TabPanelScript TabPanelFileBrowser\
-				ShowPlanItem ShowPlanAudio ShowPlanScript\
 				FileBrowser Showplan
 SHARED_MODS	=	config libsearch track dps clockThread triggerThread\
 				Auth AuthLdap Logger UserConfig DpsObject

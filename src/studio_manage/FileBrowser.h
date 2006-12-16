@@ -1,15 +1,32 @@
-/****************************************************************************
-** $Id:  qt/dirview.h   3.0.6   edited Oct 12 2001 $
-**
-** Copyright (C) 1992-2000 Trolltech AS.  All rights reserved.
-**
-** This file is part of an example program for Qt.  This example
-** program may be used, distributed and modified without limitation.
-**
-*****************************************************************************/
+/*
+ * Filebrowser Widget
+ * FileBrowser.h
+ * Provides a graphical interface to the virtual file system
+ *
+ * Copyright (c) 2006 Chris Cantwell
+ * Copyright (c) 2006 Ian Liverton
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
 
 #ifndef DIRVIEW_H
 #define DIRVIEW_H
+
+#include <string>
+using namespace std;
 
 #include "pqxx/connection.h"
 #include "pqxx/transaction.h"
@@ -52,6 +69,7 @@ class Directory : public QListViewItem {
 
         QString fullName();
 
+        void setUid( string );
         void setOpen( bool );
         void setup();
 
@@ -66,7 +84,7 @@ class Directory : public QListViewItem {
         bool readable;
         bool showDirsOnly;
         QPixmap *pix;
-
+        string _uid;
 };
 
 class DirectoryView : public QListView {
@@ -76,6 +94,7 @@ class DirectoryView : public QListView {
         DirectoryView( QWidget *parent = 0, const char *name = 0, bool sdo = 
                         FALSE );
         bool showDirsOnly() { return dirsOnly; }
+        void setUser(string username);
 
     public slots:
         void setDir( const QString & );
@@ -88,6 +107,7 @@ class DirectoryView : public QListView {
         void openFolder();
 
     private:
+        void populate();
         Connection *C;
         QString fullPath(QListViewItem* item);
         bool dirsOnly;
@@ -95,7 +115,7 @@ class DirectoryView : public QListView {
         QListViewItem *dropItem;
         QPoint presspos;
         bool mousePressed;
-
+        string _uid;
 };
 
 #endif

@@ -25,6 +25,7 @@
 #ifndef CLASS_TAB_PANEL_FILEBROWSER
 #define CLASS_TAB_PANEL_FILEBROWSER
 
+#include "DpsObject.h"
 #include "TabPanel.h"
 #include "triggerThread.h"
 #include "FileBrowser.h"
@@ -39,13 +40,15 @@ class TabPanelFileBrowser : public TabPanel {
 	public:
 		TabPanelFileBrowser(QTabWidget *parent, string text);
 		~TabPanelFileBrowser();
+        void configure(Auth *authModule);
 
     signals:
         void trackSelected( QString md5 );
         void jingleSelected( QString md5 );
         void advertSelected( QString md5 );
-        void scriptSelected( QString index );
+        void scriptSelected( DpsShowScript& S );
         void cartsetSelected( QString index );
+        void showplanSelected( DpsShowplan& s );
 
     protected slots:
         void handleLoad(QListViewItem* x);

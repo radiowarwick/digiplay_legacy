@@ -2,7 +2,7 @@
 
 --    Driver Used : Microsoft Visual Studio - IBM DB2 Universal Database Driver.
 --    Document    : G:\Data\cc\raw\digiplay\Database Design v2 (VISIO 2002).vsd.
---    Time Created: 28 October 2006 18:56.
+--    Time Created: 16 December 2006 13:53.
 --    Operation   : From Visio Generate Wizard.
 --    Connected data source : No connection.
 --    Connected server      : No connection.
@@ -65,7 +65,8 @@ create table "showitems" (
 	"audio" INTEGER,
 	"script" INTEGER,
 	"comment" VARCHAR(10),
-	"length" INTEGER not null, constraint "showitems_PK" primary key ("id") ); 
+	"length" INTEGER not null,
+	"state" SMALLINT not null, constraint "showitems_PK" primary key ("id") ); 
 
 create table "scriptusers" ( 
 	"id" INTEGER not null,
@@ -427,7 +428,7 @@ create table "log" (
 
 create table "audiokeywords" ( 
 	"id" INTEGER not null,
-	"track" INTEGER not null,
+	"audio" INTEGER not null,
 	"keyword" INTEGER not null, constraint "audiokeywords_PK" primary key ("id") ); 
 
 create table "keywords" ( 
@@ -444,6 +445,86 @@ create table "artists" (
 	"id" INTEGER not null,
 	"name" VARCHAR(10) not null,
 	"alt_name" VARCHAR(10), constraint "artists_PK" primary key ("id") ); 
+
+create index "scriptsdir_i2" on "scriptsdir" (
+	"scriptid" ASC); 
+
+
+create index "scriptsdir_i1" on "scriptsdir" (
+	"dir" ASC); 
+
+
+create index "scriptusers_i1" on "scriptusers" (
+	"scriptid" ASC); 
+
+
+create index "scriptusers_i2" on "scriptusers" (
+	"userid" ASC); 
+
+
+create index "scriptgroups_i2" on "scriptgroups" (
+	"scriptid" ASC); 
+
+
+create index "scriptgroups_i1" on "scriptgroups" (
+	"groupid" ASC); 
+
+
+create index "audiodir_i1" on "audiodir" (
+	"audio" ASC); 
+
+
+create index "audiodir_i2" on "audiodir" (
+	"directory" ASC); 
+
+
+create index "audioartists_i2" on "audioartists" (
+	"audio" ASC); 
+
+
+create index "audioartists_i1" on "audioartists" (
+	"artist" ASC); 
+
+
+create index "cartsaudio_i1" on "cartsaudio" (
+	"cartwall" ASC); 
+
+
+create index "audiogroups_i1" on "audiogroups" (
+	"audio" ASC); 
+
+
+create index "audiogroups_i2" on "audiogroups" (
+	"groupid" ASC); 
+
+
+create index "audiousers_i1" on "audiousers" (
+	"audio" ASC); 
+
+
+create index "audiousers_i2" on "audiousers" (
+	"userid" ASC); 
+
+
+create index "audio_i1" on "audio" (
+	"md5" ASC); 
+
+
+create index "groupmembers_i2" on "groupmembers" (
+	"userid" ASC); 
+
+
+create index "groupmembers_i1" on "groupmembers" (
+	"groupid" ASC); 
+
+
+create index "audiokeywords_i1" on "audiokeywords" (
+	"audio" ASC); 
+
+
+create index "audiokeywords_i2" on "audiokeywords" (
+	"keyword" ASC); 
+
 
 alter table "audioplaylists"
 	add constraint "audio_FK14" foreign key (
@@ -927,7 +1008,7 @@ alter table "log"
 
 alter table "audiokeywords"
 	add constraint "audio_FK1" foreign key (
-		"track")
+		"audio")
 	 references "audio" (
 		"id") on update restrict on delete restrict; 
 
@@ -980,6 +1061,60 @@ WHERE audio.id = audioplaylists.audio
 ORDER BY playlistid, title;
 
 
+create rule r_log_delete 
+as on delete 
+to log 
+do NOTIFY trig_id4;
+
+
+create rule r_log_insert 
+as on insert 
+to log 
+do NOTIFY trig_id4;
+
+
+create rule r_log_update 
+as on update 
+to log 
+do NOTIFY trig_id4;
+
+
+create rule r_email_update 
+as on update 
+to email 
+do NOTIFY trig_id2;
+
+
+create rule r_email_insert 
+as on insert 
+to email 
+do NOTIFY trig_id2;
+
+
+create rule r_email_delete 
+as on delete 
+to email 
+do NOTIFY trig_id2;
+
+
+create rule r_audioplaylists_delete
+as on delete 
+to audioplaylists 
+do NOTIFY trig_id5;
+
+
+create rule r_audioplaylists_insert
+as on insert 
+to audioplaylists 
+do NOTIFY trig_id5;
+
+
+create rule r_audioplaylists_update
+as on update 
+to audioplaylists 
+do NOTIFY trig_id5;
+
+
 create rule r_playlists_delete
 as on delete 
 to playlists 
@@ -988,7 +1123,7 @@ do NOTIFY trig_id5;
 
 create rule r_playlists_insert
 as on insert 
-to playlist 
+to playlists 
 do NOTIFY trig_id5;
 
 
@@ -1026,60 +1161,6 @@ create rule r_cartsaudio_delete
 as on delete 
 to cartsaudio 
 do NOTIFY trig_id3;
-
-
-create rule r_audioplaylists_delete
-as on delete 
-to audioplaylists 
-do NOTIFY trig_id5;
-
-
-create rule r_audioplaylists_insert
-as on insert 
-to audioplaylists 
-do NOTIFY trig_id5;
-
-
-create rule r_audioplaylists_update
-as on update 
-to audioplaylists 
-do NOTIFY trig_id5;
-
-
-create rule r_email_update 
-as on update 
-to email 
-do NOTIFY trig_id2;
-
-
-create rule r_email_insert 
-as on insert 
-to email 
-do NOTIFY trig_id2;
-
-
-create rule r_email_delete 
-as on delete 
-to email 
-do NOTIFY trig_id2;
-
-
-create rule r_log_delete 
-as on delete 
-to log 
-do NOTIFY trig_id4;
-
-
-create rule r_log_insert 
-as on insert 
-to log 
-do NOTIFY trig_id4;
-
-
-create rule r_log_update 
-as on update 
-to log 
-do NOTIFY trig_id4;
 
 
 

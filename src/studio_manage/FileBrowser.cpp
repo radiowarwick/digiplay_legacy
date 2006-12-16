@@ -1,13 +1,26 @@
-/****************************************************************************
-** $Id:  qt/dirview.cpp   3.0.6   edited Oct 12 2001 $
-**
-** Copyright (C) 1992-2000 Trolltech AS.  All rights reserved.
-**
-** This file is part of an example program for Qt.  This example
-** program may be used, distributed and modified without limitation.
-**
-** Modified for the Digiplay DB by Ian Liverton, 2006			
-*****************************************************************************/
+/*
+ * Filebrowser Widget
+ * FileBrowser.cpp
+ * Provides a graphical interface to the virtual file system
+ *
+ * Copyright (c) 2006 Chris Cantwell
+ * Copyright (c) 2006 Ian Liverton
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
 
 #include "FileBrowser.h"
 #include "config.h"
@@ -22,6 +35,10 @@
 #include <qapplication.h>
 #include <qheader.h>
 
+/* =======================================================================
+ * Directory
+ * =======================================================================
+ */
 QPixmap *folderLocked = 0;
 QPixmap *folderClosed = 0;
 QPixmap *folderOpen = 0;
@@ -84,6 +101,10 @@ const QPixmap *Directory::pixmap( int i ) const
     return pix;
 }
 
+void Directory::setUid( string u ) {
+    _uid = u;
+}
+
 void Directory::setOpen( bool o )
 {
     if ( o ) {
@@ -101,19 +122,123 @@ void Directory::setOpen( bool o )
 
     if ( o && !childCount() ) {
         Transaction T(*C,"");
+        string SQL;
         try {
-            Result R_dir = T.exec("SELECT id,name,notes FROM dir WHERE parent="
-                                + dps_itoa(id));
-            Result R_audio = T.exec("SELECT audio.id,audio.title,audio.md5,audiotypes.name as type FROM audio,audiodir,audiotypes WHERE audio.type = audiotypes.id AND audio.id = audiodir.audio AND audiodir.directory = " + dps_itoa(id));
-            Result R_cartset = T.exec("SELECT cartsets.id,cartsets.name FROM cartsets,cartsetsdir WHERE cartsets.id = cartsetsdir.cartsetid AND cartsetsdir.dir = " + dps_itoa(id));
-            Result R_script = T.exec("SELECT scripts.id,scripts.name FROM scripts,scriptsdir WHERE scripts.id = scriptsdir.scriptid AND scriptsdir.dir = " + dps_itoa(id));
-            Result R_showplan = T.exec("SELECT showplans.id,showplans.name FROM showplans,showplandir WHERE showplans.id = showplandir.showplanid AND showplandir.dir = " + dps_itoa(id));
+            SQL =   "SELECT dir.id, dir.name, dir.notes "
+                    "FROM dir, dirusers "
+                    "WHERE dir.id = dirusers.directory "
+                        "AND (dirusers.permissions='r' "
+                            "OR dirusers.permissions='rw' "
+                            "OR dirusers.permissions='o') "
+                        "AND dir.parent=" + dps_itoa(id) + " "
+                        "AND dirusers.userid=" + _uid + " "
+                    "UNION "
+                    "SELECT dir.id, dir.name, dir.notes "
+                    "FROM dir, dirgroups, groups, groupmembers "
+                    "WHERE dir.id = dirgroups.directory "
+                        "AND (dirgroups.permissions='r' "
+                            "OR dirgroups.permissions='rw' "
+                            "OR dirgroups.permissions='o') "
+                        "AND dir.parent=" + dps_itoa(id) + " "
+                        "AND dirgroups.groupid = groups.id "
+                        "AND groupmembers.groupid = groups.id "
+                        "AND groupmembers.userid = " + _uid;
+            Result R_dir = T.exec(SQL);
+            SQL =   "SELECT audio.id, audio.title, audio.md5, "
+                        "audiotypes.name as type "
+                    "FROM audio, audiodir, audiotypes, audiousers "
+                    "WHERE audio.type = audiotypes.id "
+                        "AND audio.id = audiodir.audio "
+                        "AND (audiousers.permissions='r' "
+                            "OR audiousers.permissions='rw' "
+                            "OR audiousers.permissions='o') "
+                        "AND audiodir.directory = " + dps_itoa(id) + " "
+                        "AND audiousers.userid=" + _uid + " "
+                    "UNION "
+                    "SELECT audio.id, audio.title, audio.md5, "
+                        "audiotypes.name as type "
+                    "FROM audio, audiodir, audiotypes, audiogroups, groups, "
+                        "groupmembers "
+                    "WHERE audio.type = audiotypes.id "
+                        "AND audio.id = audiodir.audio "
+                        "AND (audiogroups.permissions='r' "
+                            "OR audiogroups.permissions='rw' "
+                            "OR audiogroups.permissions='o') "
+                        "AND audiodir.directory = " + dps_itoa(id) + " "
+                        "AND audiogroups.groupid = groups.id "
+                        "AND groupmembers.groupid = groups.id "
+                        "AND groupmembers.userid = " + _uid;
+            Result R_audio = T.exec(SQL);
+            SQL =   "SELECT cartsets.id,cartsets.name "
+                    "FROM cartsets,cartsetsdir,cartsetsusers "
+                    "WHERE cartsets.id = cartsetsdir.cartsetid "
+                        "AND (cartsetsusers.permissions='r' "
+                            "OR cartsetsusers.permissions='rw' "
+                            "OR cartsetsusers.permissions='o') "
+                        "AND cartsetsdir.dir = " + dps_itoa(id) + " "
+                        "AND cartsetsusers.userid=" + _uid + " "
+                    "UNION "
+                    "SELECT cartsets.id, cartsets.name "
+                    "FROM cartsets, cartsetsdir, cartsetsgroups, groups, "
+                        "groupmembers "
+                    "WHERE cartsets.id = cartsetsdir.cartsetid "
+                        "AND (cartsetsgroups.permissions='r' "
+                            "OR cartsetsgroups.permissions='rw' "
+                            "OR cartsetsgroups.permissions='o') "
+                        "AND cartsetsdir.dir = " + dps_itoa(id) + " "
+                        "AND cartsetsgroups.groupid = groups.id "
+                        "AND groupmembers.groupid = groups.id "
+                        "AND groupmembers.userid = " + _uid;
+            Result R_cartset = T.exec(SQL);
+            SQL =   "SELECT scripts.id, scripts.name "
+                    "FROM scripts,scriptsdir,scriptusers "
+                    "WHERE scripts.id = scriptsdir.scriptid "
+                        "AND (scriptusers.permissions='r' "
+                            "OR scriptusers.permissions='rw' "
+                            "OR scriptusers.permissions='o') "
+                        "AND scriptsdir.dir = " + dps_itoa(id) + " "
+                        "AND scriptusers.userid = " + _uid + " "
+                    "UNION "
+                    "SELECT scripts.id, scripts.name "
+                    "FROM scripts, scriptsdir, scriptgroups, groups, "
+                        "groupmembers "
+                    "WHERE scripts.id = scriptsdir.scriptid "
+                        "AND (scriptgroups.permissions='r' "
+                            "OR scriptgroups.permissions='rw' "
+                            "OR scriptgroups.permissions='o') "
+                        "AND scriptsdir.dir = " + dps_itoa(id) + " "
+                        "AND scriptgroups.groupid = groups.id "
+                        "AND groupmembers.groupid = groups.id "
+                        "AND groupmembers.userid = " + _uid;
+            Result R_script = T.exec(SQL);
+            SQL =   "SELECT showplans.id,showplans.name "
+                    "FROM showplans,showplandir,showplanusers "
+                    "WHERE showplans.id = showplandir.showplanid "
+                        "AND (showplanusers.permissions='r' "
+                            "OR showplanusers.permissions='rw' "
+                            "OR showplanusers.permissions='o') "
+                        "AND showplandir.dir = " + dps_itoa(id) + " "
+                        "AND showplanusers.userid = " + _uid + " "
+                    "UNION "
+                    "SELECT showplans.id, showplans.name "
+                    "FROM showplans,showplandir,showplangroups,groups, "
+                        "groupmembers "
+                    "WHERE showplans.id = showplandir.showplanid "
+                        "AND (showplangroups.permissions = 'r' "
+                            "OR showplangroups.permissions = 'rw' "
+                            "OR showplangroups.permissions = 'o') "
+                        "AND showplandir.dir = " + dps_itoa(id) + " "
+                        "AND showplangroups.groupid = groups.id "
+                        "AND groupmembers.groupid = groups.id "
+                        "AND groupmembers.userid = " + _uid;
+            Result R_showplan = T.exec(SQL);
             T.abort();
             Directory *D;
             FileItem *F;
             for (unsigned int i = 0; i < R_dir.size(); i++) {
                 D = new Directory(this,atoi(R_dir[i]["id"].c_str()),
                                         R_dir[i]["name"].c_str(),C);
+                D->setUid(_uid);
                 D->setPixmap( folderClosed );
             }
             for (unsigned int i = 0; i < R_audio.size(); i++) {
@@ -157,41 +282,7 @@ void Directory::setOpen( bool o )
             cout << "Caught exception on Directory::setOpen" << endl;
             T.abort();
         }
-/*        QString s( fullName() );
-        QDir thisDir( s );
-        if ( !thisDir.isReadable() ) {
-            readable = FALSE;
-            setExpandable( FALSE );
-            return;
-        }
-
-        listView()->setUpdatesEnabled( FALSE );
-        const QFileInfoList * files = thisDir.entryInfoList();
-        if ( files ) {
-            QFileInfoListIterator it( *files );
-            QFileInfo * fi;
-            while( (fi=it.current()) != 0 ) {
-                ++it;
-                if ( fi->fileName() == "." || fi->fileName() == ".." )
-                    ; // nothing
-                else if ( fi->isSymLink() && !showDirsOnly ) {
-                    FileItem *item = new FileItem( this, fi->fileName(),
-                                                     "Symbolic Link" );
-                    item->setPixmap( fileNormal );
-                }
-                else if ( fi->isDir() )
-                    (void)new Directory( this, fi->fileName() );
-                else if ( !showDirsOnly ) {
-                    FileItem *item
-                        = new FileItem( this, fi->fileName(),
-                                             fi->isFile()?"File":"Special" 
-);
-                    item->setPixmap( fileNormal );
-                }
-            }
-        }
-        listView()->setUpdatesEnabled( TRUE );
-*/    }
+    }
     QListViewItem::setOpen( o );
 }
 
@@ -225,13 +316,11 @@ QString Directory::text( int column ) const
         return "";
 }
 
-/*****************************************************************************
- *
- * Class DirectoryView
- *
- 
-*****************************************************************************/
 
+/* =======================================================================
+ * DirectoryView
+ * =======================================================================
+ */
 DirectoryView::DirectoryView( QWidget *parent, const char *name, bool sdo )
     : QListView( parent, name ), dirsOnly( sdo ), oldCurrent( 0 ),
       dropItem( 0 ), mousePressed( FALSE )
@@ -239,6 +328,7 @@ DirectoryView::DirectoryView( QWidget *parent, const char *name, bool sdo )
     config *conf = new config("digiplay");
     C = new Connection(conf->getDBConnectString());
     delete conf;
+    _uid = "-1";
 
     if ( !folderLocked ) {
         QString path = qApp->applicationDirPath();
@@ -257,6 +347,14 @@ DirectoryView::DirectoryView( QWidget *parent, const char *name, bool sdo )
         fileShowplan = new QPixmap(path + "/images/info16.png");
     }
 
+    connect( this, SIGNAL( doubleClicked( QListViewItem * ) ),
+             this, SLOT( slotFolderSelected( QListViewItem * ) ) );
+    connect( this, SIGNAL( returnPressed( QListViewItem * ) ),
+             this, SLOT( slotFolderSelected( QListViewItem * ) ) );
+}
+
+void DirectoryView::populate() {
+    clear();
     Directory *D;
     Transaction T(*C,"");
     try {
@@ -265,16 +363,32 @@ DirectoryView::DirectoryView( QWidget *parent, const char *name, bool sdo )
         for (unsigned int i = 0; i < R.size(); i++) {
             D = new Directory(this,atoi(R[i]["id"].c_str()),
                             R[i]["name"].c_str(),C);
+            D->setUid(_uid);
             D->setPixmap(folderTopClosed);
+            D->setOpen(true);
         }
     }
     catch (...) {
-        T.abort();    
+        T.abort();
     }
-    connect( this, SIGNAL( doubleClicked( QListViewItem * ) ),
-             this, SLOT( slotFolderSelected( QListViewItem * ) ) );
-    connect( this, SIGNAL( returnPressed( QListViewItem * ) ),
-             this, SLOT( slotFolderSelected( QListViewItem * ) ) );
+}
+
+void DirectoryView::setUser(string username) {
+    if (username == "") {
+        _uid = "-1";
+        populate();
+        return;
+    }
+    Transaction T(*C,"");
+    Result R = T.exec("SELECT id FROM users WHERE username='" + username + "'");
+    T.abort();
+    if (R.size() == 1) {
+        _uid = R[0]["id"].c_str();
+    }
+    else {
+        _uid = "-1";
+    }
+    populate();
 }
 
 void DirectoryView::slotFolderSelected( QListViewItem *i )
@@ -331,6 +445,10 @@ void DirectoryView::setDir( const QString &s )
         setCurrentItem( item );
 }
 
+/* =======================================================================
+ * FileItem
+ * =======================================================================
+ */
 void FileItem::setPixmap( QPixmap *p )
 {
     pix = p;

@@ -78,7 +78,7 @@ void AuthLdap::authSession(string username, string password) {
 	return;
 
 	//TODO: Get information about user
-	string filter = "(uid=" + username;
+/*	string filter = "(uid=" + username;
 	LDAPMessage *res;
 	ret = ldap_search_s(_myLdap, _baseDn.c_str(), LDAP_SCOPE_BASE, 
 							filter.c_str(), NULL, 0, &res);
@@ -98,5 +98,5 @@ void AuthLdap::authSession(string username, string password) {
 				attr_name = ldap_next_attribute(_myLdap, e, ber)) {
 			
 		}
-	}
+	}*/
 }

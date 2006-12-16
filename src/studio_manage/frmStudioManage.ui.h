@@ -38,9 +38,6 @@
 #include "TabPanelScript.h"
 #include "TabPanelFileBrowser.h"
 #include "Showplan.h"
-#include "ShowPlanItem.h"
-#include "ShowPlanAudio.h"
-#include "ShowPlanScript.h"
 #include "dlgLogin.h"
 #include "dlgWarn.h"
 
@@ -128,7 +125,7 @@ void frmStudioManage::init() {
 	tabPanelEmail->configure(authModule);
 	cout << " success." << endl;
 
-	cout << " -> Logging panel..." << flush;
+    cout << " -> Logging panel..." << flush;
 	tabPanelLogging = new TabPanelLogging(tabManage,"Logging");
 	tabPanelLogging->configure(authModule);
 	cout << " success." << endl;
@@ -140,8 +137,8 @@ void frmStudioManage::init() {
 
 	cout << " -> Showplan..." << flush;
 	sp = new Showplan(this,"sp");
-    sp->configure(authModule);
     sp->setGeometry( QRect( 550, 40, 470, 670) );
+    sp->configure(authModule);
 	cout << "success." << endl;
 
     connect ( tabPanelSearch, SIGNAL( itemSelected( QString ) ),
@@ -155,6 +152,10 @@ void frmStudioManage::init() {
                 sp, SLOT( addJingle( QString ) ) );
     connect ( tabPanelFileBrowser, SIGNAL( advertSelected( QString ) ),
                 sp, SLOT( addAdvert( QString ) ) );
+    connect ( tabPanelFileBrowser, SIGNAL( scriptSelected( DpsShowScript& ) ),
+                sp, SLOT( addScript( DpsShowScript& ) ) );
+    connect ( tabPanelFileBrowser, SIGNAL( showplanSelected( DpsShowplan& ) ),
+                sp, SLOT( loadShowplan( DpsShowplan& ) ) );
     connect ( tabPanelFileBrowser, SIGNAL( cartsetSelected( QString ) ),
                 this, SLOT( updateCartset( QString ) ) );
 

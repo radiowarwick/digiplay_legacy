@@ -40,8 +40,8 @@ using namespace pqxx;
 
 enum DpsObjectType {
     DPS_OBJECT, DPS_SHOWPLAN, DPS_SHOWITEM, 
-    DPS_TRACK, DPS_JINGLE, DPS_ADVERT, DPS_NOTE,
-    DPS_CARTSET
+    DPS_SHOWTRACK, DPS_SHOWJINGLE, DPS_SHOWADVERT, DPS_SHOWNOTE,
+    DPS_SHOWSCRIPT, DPS_CARTSET
 };
 
 class DpsObject {
@@ -83,6 +83,8 @@ class DpsShowplan : public DpsObject {
         string getName();
         void setName(string name);
         DpsShowItem* at(unsigned int index);
+        DpsShowItem* at(string md5);
+        unsigned int size() {return _items.size();}
         void save();
         void load(int id);
 
@@ -90,8 +92,8 @@ class DpsShowplan : public DpsObject {
         DpsShowItem& lastItem();
 
     protected:
-        void insert(const DpsShowItem& x);
-        void insert(const DpsShowItem& x, const DpsShowItem& after);
+        void insert(const DpsShowItem* x);
+        void insert(const DpsShowItem* x, const DpsShowItem& after);
         void drop(DpsShowItem* x);
 
         int _id;
@@ -106,6 +108,7 @@ class DpsShowItem : public DpsObject {
         DpsShowItem(const DpsShowplan& parent);
         DpsShowItem(const DpsShowplan& parent, const DpsShowItem& after);
         DpsShowItem(const DpsShowItem& x);
+        DpsShowItem(const DpsShowItem& x, const DpsShowplan& parent);
         virtual ~DpsShowItem();
 
         bool operator==(const DpsShowItem& item);
@@ -166,6 +169,20 @@ class DpsShowAdvert : public DpsShowItem {
         DpsShowAdvert();
         void load(string md5);
 };
+
+
+class DpsShowScript: public DpsShowItem {
+    public:
+        DpsShowScript(unsigned int id);
+        DpsShowScript(const DpsShowplan& parent, unsigned int id);
+        DpsShowScript(const DpsShowplan& parent, const DpsShowItem& after, unsigned int id);
+        virtual ~DpsShowScript();
+
+    private:
+        DpsShowScript();
+        void load(unsigned int id);
+};
+
 
 class DpsShowNote : public DpsShowItem {
     public:

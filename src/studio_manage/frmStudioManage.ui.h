@@ -24,7 +24,6 @@
  */
 #include <qapplication.h>
 #include <qmessagebox.h>
-#include <qmutex.h>
 
 #include "DpsObject.h"
 #include "Logger.h"
@@ -42,8 +41,6 @@
 #include "dlgWarn.h"
 
 #include "clockThread.h"
-#include "triggerThread.h"
-#include "track.h"
 #include "config.h"
 #include "dps.h"
 

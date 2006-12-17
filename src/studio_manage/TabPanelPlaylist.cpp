@@ -34,7 +34,6 @@
 #include "Auth.h"
 #include "Logger.h"
 #include "dps.h"
-#include "track.h"
 
 #include "TabPanelPlaylist.h"
 

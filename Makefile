@@ -1,6 +1,6 @@
 STUDIO		=	audio studio_play studio_manage
 SUE			=	audio sueplay suesched
-ADMIN		=	admin tools playin
+ADMIN		=	tools
 APPS		= 	$(STUDIO) $(SUE) $(ADMIN)
 
 INSTALLDIR	=	/usr/local/bin

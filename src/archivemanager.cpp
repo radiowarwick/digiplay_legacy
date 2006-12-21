@@ -712,23 +712,23 @@ bool archivemanager::hasAudio(string md5) {
 }
 
 void archivemanager::cleanInfo(track *t) {
-    dps_strTrim(&(t->title));
+    dps_strTrim(t->title);
     dps_strPcase(&(t->title));
 	if ((t->title).length() > 4 && (t->title).substr(0,4) == "The ") {
 		t->title = (t->title).substr(4,(t->title).length() - 4) + ", The";
 	}
-    dps_strTrim(&(t->artist));
+    dps_strTrim(t->artist);
     dps_strPcase(&(t->artist));
 	if ((t->artist).length() > 4 && (t->artist).substr(0,4) == "The ") {
 		t->artist = (t->artist).substr(4,(t->artist).length() - 4) + ", The";
 	}
-    dps_strTrim(&(t->album));
+    dps_strTrim(t->album);
     dps_strPcase(&(t->album));
 	if ((t->album).length() > 4 && (t->album).substr(0,4) == "The ") {
 		t->album = (t->album).substr(4,(t->album).length() - 4) + ", The";
 	}
 	
-	dps_strTrim(&(t->reclibid));
+	dps_strTrim(t->reclibid);
 	dps_strPcase(&(t->reclibid));
 	if ((t->reclibid).length() > 0 && (t->reclibid).length() < 5) {
 		cout << "Malformed reclibid: " << t->reclibid << endl;
@@ -748,8 +748,8 @@ void archivemanager::cleanInfo(track *t) {
 		t->reclibid += "-";
 		t->reclibid += dps_strNum(atoi(number.c_str()),4);
 	}
-	dps_strTrim(&(t->release_date));
-    dps_strTrim(&(t->origin));
+	dps_strTrim(t->release_date);
+    dps_strTrim(t->origin);
 	dps_strPcase(&(t->origin));
 	if (t->origin == "Reclibid" || t->origin == "Eclib" || t->origin == "Raclib" || t->origin == "Reclab" || t->origin == "Riclab")
 		t->origin = "Reclib";

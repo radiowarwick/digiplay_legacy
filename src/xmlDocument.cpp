@@ -100,7 +100,7 @@ void xmlDocument::read_element(xmlElement *E, string *content, unsigned int star
 		text += content->at(i);
 		i++;
 	}
-	E->set_name(dps_strTrim(&(text)));
+	E->set_name(dps_strTrim(text));
 	text = "";
 //	cout << "[" << E->get_name() << "]" << endl;
 //	cout << " -> " << (*content).substr(start, end - start) << endl;
@@ -152,7 +152,7 @@ void xmlDocument::read_element(xmlElement *E, string *content, unsigned int star
 		text += content->at(i);
 		i++;
 	}
-	E->set_cdata(dps_strTrim(&(text)));
+	E->set_cdata(dps_strTrim(text));
 	if (E->get_cdata() != "") {
 	//	cout << "CDATA: [" << E->get_cdata() << "]" << endl;
 		return;

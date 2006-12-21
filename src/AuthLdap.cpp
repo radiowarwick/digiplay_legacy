@@ -26,6 +26,7 @@
 
 AuthLdap::AuthLdap(string host, unsigned int port, string baseDn) {
 	char* routine = "AuthLdap::AuthLdap";
+	
 	_myLdap = NULL;
 	if (host == "") {
 		L_ERROR(LOG_AUTH,"No host specified.");

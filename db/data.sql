@@ -115,6 +115,12 @@ INSERT INTO cartstyleprops (style, property, value)
  * Sustainer is LOCATION=0
  */
 INSERT INTO configuration (parameter, val, location)
+	VALUES ('ldap_host','ldapserver',-1);
+INSERT INTO configuration (parameter, val, location)
+	VALUES ('ldap_port','389',-1);
+INSERT INTO configuration (parameter, val, location)
+	VALUES ('ldap_dn','ou=People,dc=example,dc=com',-1);
+INSERT INTO configuration (parameter, val, location)
 	VALUES ('bin_weighting_1','5',0);
 INSERT INTO configuration (parameter, val, location)
 	VALUES ('bin_weighting_2','9',0);

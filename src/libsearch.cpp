@@ -58,11 +58,13 @@ vector<track>* libsearch::query(string search_string) {
   "artists.name AS artist, "
   "audio.title, "
   "albums.name AS album "
-  "FROM artists, audioartists, audio, albums "
+  "FROM artists, audioartists, audio, albums, audiodir "
   "WHERE audioartists.audio=audio.id "
   "AND audioartists.artist=artists.id "
   "AND albums.id=audio.music_album "
-  "AND audio.censor='f'";
+  "AND audio.censor='f' "
+  "AND audiodir.audio = audio.id "
+  "AND audiodir.directory = 1";
 
  if (searchArtist_flag == false &&
      searchTitle_flag == false && 

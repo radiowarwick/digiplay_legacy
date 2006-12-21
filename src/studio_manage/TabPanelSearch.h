@@ -64,7 +64,8 @@ class TabPanelSearch : public TabPanel {
 	private:
 		void draw();
 		void clear();
-		
+	
+		config *conf;
 		Connection *C;
 		vector<track> *SearchResults;
 		libsearch *library_engine;

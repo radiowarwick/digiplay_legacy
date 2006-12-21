@@ -1,0 +1,13 @@
+#!/bin/bash
+if [ $# != 1 ]; then
+	printf "Usage: $0 [db2file]\n" > /dev/stderr
+	exit -1
+fi
+if [ ! -f $1 ]; then
+	printf "ERROR: $1 does not exist." > /dev/stderr
+fi
+
+echo "BEGIN TRANSACTION;"
+sed -e 's/VARCHAR(10)/VARCHAR/g' -e 's/"id" INTEGER not null/"id" SERIAL/g' \
+   -e 's/ ASC)/)/g' $1
+echo "END TRANSACTION;"

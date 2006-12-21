@@ -27,6 +27,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <map>
 using namespace std;
 
 #include "pqxx/connection.h"
@@ -48,9 +49,12 @@ class config {
 
 	private:
 		bool isDefined(string name);
-
+		
 		vector<string> *names;
 		vector<string> *values;
+		map<string,string> _file;
+		map<string,string> _db;
+		bool setFlag;
 		Connection *C;
 		Transaction *T;
 		string DB_CONNECT;

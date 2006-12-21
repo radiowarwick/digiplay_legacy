@@ -41,9 +41,8 @@ TabPanelSearch::TabPanelSearch(QTabWidget *parent, string text)
 	panelTag = "TabSearch";
     path = qApp->applicationDirPath();
     pixAudio = new QPixmap(path + "/images/music16.png");
-	config *conf = new config("digiplay");
+	conf = new config("digiplay");
 	C = new Connection(conf->getDBConnectString());
-	delete conf;
 	draw();
 }
 
@@ -53,6 +52,7 @@ TabPanelSearch::~TabPanelSearch() {
 		C->Deactivate();
 	}
 	delete C;
+	delete conf;
 }
 
 // This handles drawing the contents of the form, and connecting slots,
@@ -179,14 +179,23 @@ void TabPanelSearch::Library_Search() {
         return;
     }
 
-	library_engine->searchLimit(100);
+    lstSearchResults->clear();
+	lstSearchResults->setEnabled(false);
+	conf->requery();
+	library_engine->searchLimit(atoi(conf->getParam("search_limit").c_str()));
 	library_engine->searchTitle(TitleCheckBox->isChecked());
 	library_engine->searchArtist(ArtistCheckBox->isChecked());
 	library_engine->searchAlbum(AlbumCheckBox->isChecked());
 	delete SearchResults;
 	SearchResults = library_engine->query(txtLibrarySearchText->text());
     
-    lstSearchResults->clear();
+	if (SearchResults->size() == 0) {
+		new QListViewItem( lstSearchResults, lstSearchResults->lastItem(),
+							"(Sorry, no matches found.)");
+		return;
+	}
+	lstSearchResults->setUpdatesEnabled(false);
+	lstSearchResults->setEnabled(true);
     QListViewItem *x;
 	for (unsigned int i = 0; i < SearchResults->size(); i++) {
         x = new QListViewItem(  lstSearchResults, lstSearchResults->lastItem(),
@@ -197,6 +206,8 @@ void TabPanelSearch::Library_Search() {
                          );
         x->setPixmap(0,*pixAudio);
 	}
+	lstSearchResults->setUpdatesEnabled(true);
+	lstSearchResults->repaint();
 }
 
 void TabPanelSearch::playlistAdd(QListViewItem* x) {

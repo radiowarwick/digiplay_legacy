@@ -20,13 +20,16 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "dps.h"
+#include "Logger.h"
+
 #include "config.h"
 
 config::config(string application) {
-	names = new vector<string>;
-	values = new vector<string>;
-
+	char* routine = "config::config";
+	setFlag = false;
 	string f = "/etc/" + application + ".conf";
+	L_INFO(LOG_CONFIG,"Processing config file " + f);
 	ifstream config_file(f.c_str(), ios::in);
 	if (config_file.is_open() && config_file.good()) {
 		config_file.seekg(0);
@@ -41,44 +44,55 @@ config::config(string application) {
 			if (x == string::npos) {
 			}
 			else {
-				names->push_back(str.substr(0,x));
-				values->push_back(str.substr(x+1,str.length()));
+				string name = str.substr(0,x);
+				string val = str.substr(x+1,str.length());
+				dps_strTrim(name);
+				dps_strTrim(val);
+				dps_strLcase(name);
+				if (name == "" || val == "") continue;
+				_file[name] = val;
 			}
 		}
+		_db = _file;
+
 		DB_CONNECT = "";
 	    if (isDefined("DB_HOST"))
-			DB_CONNECT += "hostaddr=" + getParam("DB_HOST") + " ";
+			DB_CONNECT += "host=" + getParam("DB_HOST") + " ";
+		if (isDefined("DB_PORT"))
+			DB_CONNECT += "port=" + getParam("DB_PORT") + " ";
 		if (isDefined("DB_NAME"))
 	        DB_CONNECT += "dbname=" + getParam("DB_NAME") + " ";
 	    if (isDefined("DB_USER"))
 	        DB_CONNECT += "user=" + getParam("DB_USER") + " ";
+		if (isDefined("DB_PASS"))
+			DB_CONNECT += "password=" + getParam("DB_PASS") + " ";
 		if (isDefined("LOCATION"))
 			LOCATION = getParam("LOCATION");
 	}
 	config_file.close();
 	if (DB_CONNECT == "") {
-		cout << " -> FATAL: Missing config file " << f 
-								<< " or syntax error in file." << endl;
+		L_CRITICAL(LOG_CONFIG,"Missing config file " + f
+								+ " or syntax error in file.");
 		exit(-1);
 	}
 	if (LOCATION == "") {
-		cout << " -> FATAL: 'LOCATION' not specified in " << f << endl;
+		L_CRITICAL(LOG_CONFIG,"'LOCATION' not specificed in " + f);
 		exit(-1);
 	}
+	
 	try {
 		C = new Connection(DB_CONNECT);
 		T = new Transaction(*C,"");
 	}
 	catch (...) {
-		cout << " -> FATAL: Failed to connect to database." << endl;
+		L_ERROR(LOG_CONFIG,"Failed to connect to database.");
 		exit(-1);
 	}
 	requery();
 }
 
 config::~config() {
-	delete names;
-	delete values;
+
 }
 
 string config::getDBConnectString() {
@@ -86,58 +100,60 @@ string config::getDBConnectString() {
 }
 
 string config::getParam(string name) {
-	if (name == "location") return LOCATION;
-    for (unsigned short i = 0; i < names->size(); i++) {
-        if (names->at(i) == name)
-            return values->at(i);
-    }
+	dps_strLcase(name);
+	if (isDefined(name)) return _db[name];
     return "";
 }
 
 void config::setParam(string name, string value) {
+	char* routine = "config::setParam";
 	if (isDefined(name)) {
-		string SQL = "UPDATE configuration SET val='" 
-			+ value + "' WHERE parameter='" + name + "' "
-			"AND location=" + LOCATION ;
+		string SQL = "UPDATE configuration SET val='" + value 
+					+ "' WHERE parameter='" + name 
+					+ "' AND location=" + LOCATION ;
 		try {
+			setFlag = true;
 			T->exec(SQL);
 			T->commit();
 			delete T;
 			T = new Transaction(*C,"");
+			_db[name] = value;
 		}
 		catch (...) {
-			cout << " -> ERROR: Failed to update parameter." << endl;
+			L_ERROR(LOG_CONFIG,"Failed to update parameter.");
 		}
 	}
 	else {
-		cout << " -> ERROR: Parameter '" << name << "' is not defined!" << endl;
+		L_ERROR(LOG_CONFIG,"Parameter '" + name + "' is not defined!");
 	}
 }
 
 void config::requery() {
-    delete names;
-    delete values;
-    names = new vector<string>;
-    values = new vector<string>;
-	try {	
-	    Result Conf = T->exec("SELECT * FROM configuration WHERE location=" 
-															+ LOCATION);
-	    for (unsigned int i = 0; i < Conf.size(); i++) {
-	        names->push_back(Conf[i]["parameter"].c_str());
-	        values->push_back(Conf[i]["val"].c_str());
-    	}
+	char* routine = "conf::requery";
+	if (setFlag) {
+		setFlag = false;
+		return;
+	}
+	_db.clear();
+	_db = _file;
+	try {
+		Result R = T->exec("SELECT * FROM configuration WHERE "
+							"location=" + LOCATION + " OR location=-1");
+		for (unsigned int i = 0; i < R.size(); i++) {
+			_db[R[i]["parameter"].c_str()] = R[i]["val"].c_str();
+		}
 	}
 	catch (...) {
-		cout << " -> FATAL: Failed to retrieve configuration data." << endl;
+		L_CRITICAL(LOG_CONFIG,"Failed to retrieve configuration data.");
 		exit(-1);
 	}
 }
 
 // ====== PRIVATE =======
 bool config::isDefined(string name) {
-	for (unsigned short i = 0; i < names->size(); i++) {
-		if (names->at(i) == name)
-			return true;
+	dps_strLcase(name);
+	if (_db.find(name) != _db.end()) {
+		return true;
 	}
 	return false;
 }

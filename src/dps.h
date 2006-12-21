@@ -142,7 +142,8 @@ enum showPlanState {
 
 track dps_getTrack(Connection *C, string md5);
 string dps_itoa(long num);
-string dps_strTrim(string *Str);
+string& dps_strTrim(string& s);
+string& dps_strLcase(string& s);
 string dps_strPcase(string *Str);
 string dps_strNum(long num, unsigned int digits);
 string dps_prettyTime(long samples);

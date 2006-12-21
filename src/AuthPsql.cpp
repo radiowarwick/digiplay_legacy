@@ -20,3 +20,45 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "Logger.h"
+#include "config.h"
+
+#include "AuthPsql.h"
+
+AuthPsql::AuthPsql() {
+	config* conf = new config("digiplay");
+	C = new Connection(conf->getDBConnectString());
+	delete conf;
+}
+
+AuthPsql::~AuthPsql() {
+
+}
+
+void AuthPsql::authSession(string username, string password) {
+	char* routine = "AuthPsql:authenticate";
+	L_INFO(LOG_AUTH,"Authenticating user " + username);
+
+	if (username == "") {
+		L_ERROR(LOG_AUTH," -> No username supplied.");
+		throw AUTH_INVALID_CREDENTIALS;
+	}
+
+	Transaction T(*C,"");
+	string SQL = "SELECT password FROM users WHERE username='" 
+					+ username + "'";
+	Result R = T.exec(SQL);
+
+	if (R.size() == 0) {
+		L_ERROR(LOG_AUTH,"No such user!");
+		throw AUTH_FAILED;
+	}
+
+	if (string(R[0]["password"].c_str()) == password) {
+		L_INFO(LOG_AUTH," -> Success.");
+		Auth::authSession(username,password);
+	}
+	else {
+		throw AUTH_INVALID_CREDENTIALS;
+	}
+}

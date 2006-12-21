@@ -27,7 +27,6 @@
 
 #include "DpsObject.h"
 #include "Logger.h"
-#include "AuthLdap.h"
 #include "UserConfig.h"
 #include "TabPanelInfo.h"
 #include "TabPanelEmail.h"
@@ -39,12 +38,19 @@
 #include "Showplan.h"
 #include "dlgLogin.h"
 #include "dlgWarn.h"
+#include "Auth.h"
+#ifdef AUTH_LDAP
+	#include "AuthLdap.h"
+#endif
+#ifdef AUTH_PSQL
+	#include "AuthPsql.h"
+#endif
 
 #include "clockThread.h"
 #include "config.h"
 #include "dps.h"
 
-AuthLdap *authModule;
+Auth *authModule;
 UserConfig *userConfig;
 Showplan *sp;
 TabPanelInfo *tabPanelInfo;
@@ -74,8 +80,14 @@ void frmStudioManage::init() {
 	cout << "Initialising Core Modules..." << endl;
 	cout << " -> Authentication subsystem...";
 	btnLogin->setEnabled(true);
-	authModule = new AuthLdap("ldapserver",389,
-								"ou=People,dc=radio,dc=warwick,dc=ac,dc=uk");
+#ifdef AUTH_LDAP
+	authModule = new AuthLdap(conf->getParam("ldap_host"),
+								atoi(conf->getParam("ldap_port").c_str()),
+								conf->getParam("ldap_dn"));
+#endif
+#ifdef AUTH_PSQL
+	authModule = new AuthPsql();
+#endif
     userConfig = new UserConfig(authModule);
 	cout << "success." << endl;
 	

@@ -3,10 +3,6 @@ SUE			=	audio sueplay suesched
 ADMIN		=	tools
 APPS		= 	$(STUDIO) $(SUE) $(ADMIN)
 
-INSTALLDIR	=	/usr/local/bin
-LIBDIR		=	/usr/local/lib
-LOGDIR		=	/var/log/dps
-
 studio: 	$(STUDIO)
 sue:		$(SUE)
 backend:	$(ADMIN)

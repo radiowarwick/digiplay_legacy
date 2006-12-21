@@ -53,7 +53,7 @@ void UserConfig::set(string param, string val) {
     char *routine = "UserConfig::set";
     Transaction T(*C,"");
     string SQL =    "UPDATE usersconfigs "
-                    "SET val=0 "
+                    "SET val=" + val +
                     "WHERE userid=(SELECT id FROM users WHERE username='"
                         + _username + "') "
                     "AND configoption=(SELECT id FROM configs WHERE name='"

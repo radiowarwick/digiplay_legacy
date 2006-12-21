@@ -20,3 +20,27 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#ifndef CLASS_AUTH_PSQL
+#define CLASS_AUTH_PSQL
+
+#include <string>
+using namespace std;
+
+#include "pqxx/connection.h"
+#include "pqxx/transaction.h"
+#include "pqxx/result.h"
+using namespace pqxx;
+
+#include "Auth.h"
+
+class AuthPsql: public Auth {
+	public:
+		AuthPsql();
+		~AuthPsql();
+		void authSession(string username, string password);
+
+	private:
+		Connection *C;
+};
+
+#endif

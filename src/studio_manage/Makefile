@@ -23,13 +23,13 @@ QT_MODS		=	frmStudioManage dlgLogin dlgWarn\
 				TabPanelScript TabPanelFileBrowser\
 				FileBrowser Showplan
 SHARED_MODS	=	config libsearch dps clockThread triggerThread\
-				Auth AuthLdap Logger UserConfig DpsObject
+				Auth Logger UserConfig DpsObject
 
 # Global header files on which dependance exists
 HDRS		=
 
 # Compiler and linker options
-LIBS		=	-lpq /usr/lib/libpqxx.a -lreadline -lm -lpthread -lldap
+LIBS		=	-lpq /usr/lib/libpqxx.a -lreadline -lm -lpthread
 
 POSTCOMPILE	=	if [ ! -e $(ROOT)/bin/images ]; \
 					then mkdir $(ROOT)/bin/images; fi; \

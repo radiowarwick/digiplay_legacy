@@ -127,7 +127,7 @@ string dps_itoa(long num) {
     return S.str();
 }
 
-string dps_strTrim(string *Str) {
+/*string dps_strTrim(string *Str) {
     int i = Str->length();
     if (i == 0) return *Str;
     while (Str->substr(i - 1,1) == " ") {
@@ -140,6 +140,26 @@ string dps_strTrim(string *Str) {
         Str->erase(0);
     }
     return *Str;
+}*/
+
+string& dps_strTrim(string& s) {
+	string::size_type pos = s.find_last_not_of(' ');
+	if (pos != string::npos) {
+		s.erase(pos + 1);
+		pos = s.find_first_not_of(' ');
+		if (pos != string::npos) s.erase(0,pos);
+	}
+	else {
+		s.erase(s.begin(), s.end());
+	}
+	return s;
+}
+
+string& dps_strLcase(string& s) {
+	for (unsigned int i = 0; i < s.length() - 1; i++) {
+		if (s[i] >= 'A' && s[i] <= 'Z') s[i] = s[i] + 32;
+	}
+	return s;
 }
 
 string dps_strPcase(string *Str) {

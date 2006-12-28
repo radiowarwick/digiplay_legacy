@@ -26,6 +26,11 @@
 #include <sstream>
 using namespace std;
 
+#include <sys/types.h>
+#include <pwd.h>
+#include <unistd.h>
+#include <stdlib.h>
+
 track dps_getTrack(Connection *C, string md5) {
     track t;
     t.isNull = true;
@@ -246,3 +251,47 @@ long dps_current_time() {
 	    return (long)time(NULL) - 946080000;
 }
 
+unsigned int getDigiplayUser() {
+	struct passwd *digiplay_user;
+	digiplay_user = getpwnam("digiplay");
+	return digiplay_user->pw_uid;
+}
+
+void dropPrivilage() {
+	if (ruid == -1) {
+		ruid = getuid();
+		euid = geteuid();
+	}
+	unsigned int newuid = getDigiplayUser();
+	#ifdef _POSIX_SAVED_IDS
+	int status = setuid(newuid);
+	#else
+	int status = setreuid(ruid,newuid);
+	#endif
+	if (status != 0) {
+		cout << "ERROR: Could not change to required unprivilaged user" << endl;
+		cout << " Make sure ownership is by unprivilaged user" << endl;
+		cout << " and the setuid bit is set, or run as root" << endl;
+		abort();
+	}
+}
+
+void gainPrivilage() {
+    #ifdef _POSIX_SAVED_IDS
+    int status = setuid(ruid);
+    #else
+    int status = setreuid(ruid,euid);
+    #endif
+	if (status != 0) {
+		cout << "ERROR: Could not regain privilages for some reason." << endl;
+	}
+}
+
+void showPrivilage() {
+	unsigned int x = getuid();
+	unsigned int y = geteuid();
+	struct passwd *z = getpwuid(x);
+	cout << "Real User: " << z->pw_name << endl;
+	z = getpwuid(y);
+	cout << "Effe User: " << z->pw_name << endl;
+}

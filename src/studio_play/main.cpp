@@ -22,9 +22,12 @@
 #include <qapplication.h>
 #include <qstring.h>
 #include "frmPlayout.h"
+#include "dps.h"
 
 int main( int argc, char ** argv )
 {
+	dropPrivilage();
+
     QApplication a( argc, argv );
     frmPlayout w;
     w.show();

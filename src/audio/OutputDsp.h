@@ -2,7 +2,12 @@
 #define CLASS_AUDIO_OUTPUT_DSP
 
 #include <string>
+#include <iostream>
+#include "fcntl.h"
 using namespace std;
+
+#include <sys/soundcard.h>
+#include <sys/ioctl.h>
 
 #include "Output.h"
 
@@ -19,7 +24,7 @@ class Audio::OutputDsp : public Audio::Output {
 		void initialise(string device);
 
 		string deviceName;
-
+		int audio;
 };
 
 #endif

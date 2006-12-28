@@ -1,5 +1,9 @@
 #include "Thread.h"
 
+Thread::~Thread() {
+
+}
+
 int Thread::threadStart() {
 	int code = pthread_create(&threadId, NULL, Thread::threadEntry, 
 									(void*)this);
@@ -50,3 +54,6 @@ int Thread::threadReceive() {
 	return m;
 }
 		
+void Thread::threadWait() {
+
+}

@@ -17,7 +17,7 @@ QT_ENABLED 	=	no
 # .cpp modules from which to create output
 MODS		=	sueplay
 QT_MODS		=	
-SHARED_MODS	=	audiochannel audiomixer audioplayer config
+SHARED_MODS	=	audiochannel audiomixer audioplayer config Logger dps
 
 # Global header files on which dependance exists
 HDRS		=

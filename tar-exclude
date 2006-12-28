@@ -1,0 +1,16 @@
+.svn
+*.swp
+*.swo
+digiplay-*.tar*
+tar-exclude
+src/audio
+db/procs
+doc/sample*.xml
+doc/oss.pdf
+src/FLAC*
+src/tools/FLAC*
+src/tools/Makefile.FLAC*
+src/tools/dpsexport*
+src/tools/Makefile.dpsexport*
+src/tools/dpsimport_*
+src/tools/Makefile.dpsimport_*

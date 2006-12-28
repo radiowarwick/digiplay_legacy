@@ -23,7 +23,7 @@ all: $(APPS)
 
 clean:
 	@echo "Cleaning source tree"
-	@rm -rf bin lib src/*.o
+	@rm -rf bin lib src/*.o *.tar.gz
 	@-$(foreach APP,$(APPS), if [ -d src/$(APP) ]; then $(MAKE) -C src/$(APP) clean; fi;)
 
 install:
@@ -41,4 +41,9 @@ install:
 	@chmod 666 $(LOGDIR)
 	@echo "Installation complete."
 
-
+tar:
+	make clean
+	ln -s . `cat VERSION`
+	tar -h --exclude `cat VERSION`/`cat VERSION` --exclude-from tar-exclude -cvf `cat VERSION`.tar `cat VERSION`
+	rm `cat VERSION`
+	gzip `cat VERSION`.tar

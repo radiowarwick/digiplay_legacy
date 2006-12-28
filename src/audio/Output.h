@@ -6,11 +6,7 @@
 class Audio::Output : public Audio::Component {
 	public:
 		virtual ~Output();
-//		virtual void getAudio(short *audioData, int samples);
-//		virtual void play();		// play track
-//		virtual void stop();		// stop track and seek to start
-//		virtual void pause();		// pause track
-//		virtual void seek(long sample);
+		virtual void getAudio(short *audioData, int samples) {return;}
 
 	protected:
 		virtual void receive(PORT inPort, MESSAGE message);

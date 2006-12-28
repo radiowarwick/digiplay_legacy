@@ -34,7 +34,7 @@ void Audio::InputRaw::getAudio(short *audioData, unsigned long samples) {
     char *ptr = (char*)audioData;
     short count = 0;
     long x;
-
+	cout << "InputRaw::getAudio" << endl;
 	if ((state == STATE_PLAY)  && cacheSize - cacheFree < 1024) {
 		stop();
 	}
@@ -97,17 +97,17 @@ void Audio::InputRaw::load(string filename, long start_smpl, long end_smpl) {
 
 void Audio::InputRaw::play() {
 	state = STATE_PLAY;
-	send(OUT1,PLAY);
+	send(OUT0,PLAY);
 }
 
 void Audio::InputRaw::stop() {
 	state = STATE_STOP;
-	send(OUT1,STOP);
+	send(OUT0,STOP);
 }
 
 void Audio::InputRaw::pause() {
 	state = STATE_PAUSE;
-	send(OUT1,PAUSE);
+	send(OUT0,PAUSE);
 }
 
 void Audio::InputRaw::seek(long sample) {

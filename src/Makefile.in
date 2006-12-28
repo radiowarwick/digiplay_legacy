@@ -42,7 +42,7 @@ QT_HDRS		=
 # compiling a standard executable or a shared library
 CCINC		:=	-I$(ROOT)/src -I$(ROOT)/components -I/usr/include/postgresql -DDEBUG=4
 CCFLAGS		:=	$(DPSFLAGS) -Wall -O3
-LDFLAGS		:=	-o $(DEST)/$(OUTPUT)
+LDFLAGS		:=	-L$(ROOT)/lib -o $(DEST)/$(OUTPUT)
 # if QT is enabled, we need to include the necessary compiler and 
 # linker options. We also need to make a few more objects and generate
 # the necessary header files

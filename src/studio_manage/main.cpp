@@ -23,9 +23,12 @@
 #include <qapplication.h>
 #include "frmStudioManage.h"
 #include "clockThread.h"
+#include "dps.h"
 
 int main( int argc, char ** argv )
 {
+	dropPrivilage();
+
     QApplication a( argc, argv );
 	frmStudioManage w;
     w.show();

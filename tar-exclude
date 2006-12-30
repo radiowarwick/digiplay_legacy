@@ -7,6 +7,7 @@ src/audio
 db/procs
 doc/sample*.xml
 doc/oss.pdf
+doc/manual
 src/FLAC*
 src/tools/FLAC*
 src/tools/Makefile.FLAC*

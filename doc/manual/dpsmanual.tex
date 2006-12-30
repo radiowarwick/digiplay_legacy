@@ -170,6 +170,7 @@ apt-get update
 apt-get install libpqxx-dev libpthread-dev \
 	libldap2-dev libqt3-mt-dev
 \end{lstlisting}
+\item Create a non-privilaged user account, \texttt{digiplay}, for the studio software.
 \item Compile and install the \texttt{studio\_manage} application.
 \begin{lstlisting}
 make studio_manage install
@@ -187,6 +188,7 @@ The \texttt{digiplay.conf} file should now be edited to correctly identify the c
 apt-get update
 apt-get install libpqxx-dev libpthread-dev libqt3-mt-dev
 \end{lstlisting}
+\item Create a non-privilaged user account, \texttt{digiplay}, for the studio software.
 \item Compile and install the \texttt{studio\_play} application.
 \begin{lstlisting}
 make studio_play install
@@ -194,7 +196,41 @@ make studio_play install
 \item Install and modify the configuration as done previously.
 \end{enumerate}
 
+\section{Other Features}
+\subsection{Studio Email support}
+To enable studio emails, the incoming emails must be transfered to the DPS database by your Mail Transfer Agent (MTA). The \texttt{scripts} directory includes \texttt{dpsemail.pl} which receives email from your MTA (e.g. Exim), processes it and stores it in the database.
+\begin{enumerate}
+\item Install dependancies. The script is written in perl and uses database, email and mime perl libraries.
+\begin{lstlisting}
+apt-get update
+apt-get install perl libmailtools-perl libmime-perl \
+    libdbi-perl libdbd-pg-perl
+\end{lstlisting}
+This may install other packages on which these depend.
+\item Copy the script to a suitable location (e.g. \texttt{/usr/local/bin}) which is accessible by the MTA. Ensure it has execute permissions. 
+\begin{lstlisting}
+cp /usr/local/src/digiplay/scripts/dpsemailpl /usr/local/bin
+chmod +x /usr/local/bin/dpsemail.pl
+\end{lstlisting}
+\item Copy and configure the \texttt{/etc/digiplay.conf} file if this is not already present on the host which runs the MTA.
+\item Instruct the MTA to pipe incoming emails to the script. For Exim, this would be done in the \texttt{/etc/aliases} file by adding the following line.
+\begin{lstlisting}
+cat >> /etc/aliases << EOF
+studio: "|/usr/local/bin/dpsemail.pl"
+EOF
+\end{lstlisting}
+\end{enumerate}
+
 \chapter{Starting Digiplay}
 \section{Studio Software}
-
+The Studio software applications should be run from the running X servers \texttt{.xsession} file. A window manager is not required. For example,
+\begin{lstlisting}
+cat > /home/digiplay/.xsession << EOF
+xset dpms 0 0 900
+xset s off
+exec /usr/local/bin/studio_play
+EOF
+\end{lstlisting}
+This disables the DPMS standby and suspend states for the monitor, setting it to switch off after 15 minutes. It also disables the screensaver. Finally, it runs the studio software. If run as root, the studio software will drop to the unprivilaged \texttt{digiplay} user immediately. \par
+\textbf{Note:} The X server will terminate when the studio software terminates. If run from \texttt{/etc/inittab}, it will restart automatically.
 \end{document}

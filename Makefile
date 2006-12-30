@@ -41,9 +41,12 @@ install:
 	@chmod 666 $(LOGDIR)
 	@echo "Installation complete."
 
-tar:
-	make clean
-	ln -s . `cat VERSION`
-	tar -h --exclude `cat VERSION`/`cat VERSION` --exclude-from tar-exclude -cvf `cat VERSION`.tar `cat VERSION`
-	rm `cat VERSION`
-	gzip `cat VERSION`.tar
+manual:
+	@cd doc/manual; pdflatex dpsmanual.tex; mv dpsmanual.pdf ../../; cd ../../
+
+tar: manual
+	@make clean
+	@ln -s . `cat VERSION`
+	@tar -h --exclude `cat VERSION`/`cat VERSION` --exclude-from tar-exclude -cvf `cat VERSION`.tar `cat VERSION`
+	@rm `cat VERSION`
+	@gzip `cat VERSION`.tar

@@ -4,24 +4,20 @@ See ./doc/INSTALL.TXT for details
 
 Project Hierarchy
 =================
-Please follow the structure below when adding components and applications.
+Below is a description of the contents of this project.
 
 digiplay
  |
- |-> bin (Binary executables)
+ |-> bin (Binary executables when compiled)
  |
  |-> db (Database schema and related files)
  |
  |-> doc (Documentation, usage instructions etc)
  |
- |-> lib (Libraries)
+ |-> lib (Libraries when compiled)
  |
  |-> src (Source code common to applications)
       |
-	  |-> admin (Admin application source code)
-	  |
-	  |-> audio (Audio component soure code)
-	  |
 	  |-> playin (Audio acquisition source code)
 	  |
 	  |-> studio_manage (Studio Manage source code)
@@ -31,6 +27,4 @@ digiplay
 	  |-> sueplay (Sustainer playout source code)
 	  |
 	  |-> suesched (Sustainer scheduler source code)
-	  |
-	  |-> www (Website source code)
 

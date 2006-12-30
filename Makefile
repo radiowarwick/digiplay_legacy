@@ -41,12 +41,17 @@ install:
 	@chmod 666 $(LOGDIR)
 	@echo "Installation complete."
 
-manual:
-	@cd doc/manual; pdflatex dpsmanual.tex; mv dpsmanual.pdf ../../; cd ../../
+doc: manual
+manual: doc/manual/dpsmanual.tex
+	@cd doc/manual; pdflatex dpsmanual.tex > /dev/null; \
+		mv dpsmanual.pdf ../../; cd ../../
 
 tar: manual
-	@make clean
+	@make -s clean
+	@echo "Generating tarball..."
+	@if [ -h `cat VERSION` ]; then rm `cat VERSION`; fi
 	@ln -s . `cat VERSION`
-	@tar -h --exclude `cat VERSION`/`cat VERSION` --exclude-from tar-exclude -cvf `cat VERSION`.tar `cat VERSION`
+	@tar -h --exclude `cat VERSION`/`cat VERSION` --exclude-from tar-exclude -cvf `cat VERSION | sed 's/-/_/g'`.tar `cat VERSION` > /dev/null
 	@rm `cat VERSION`
-	@gzip `cat VERSION`.tar
+	@gzip `cat VERSION | sed 's/-/_/g'`.tar
+	@echo "Created ./`cat VERSION | sed 's/-/_/g'`.tar.gz"

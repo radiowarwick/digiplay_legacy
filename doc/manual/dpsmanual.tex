@@ -78,7 +78,7 @@ There are two components to the studio software: a management interface, and a p
 \section{Hardware Requirements}
 The system was designed to use commonly available consumer hardware wherever possible to minimise hardware costs. The main exception is the studio playout software, for which a touchscreen is recommended. The studio playout software can still be operated using a conventional keyboard and mouse.
 
-\chapter{Quick Installation}
+\chapter{Installation}
 Installation consists of the following tasks. We will assume the use of a Debian based distribution, but other distributions will follow a similar procedure.
 \begin{enumerate}
 \item Preliminaries: download and unpacking the software.
@@ -89,10 +89,10 @@ Installation consists of the following tasks. We will assume the use of a Debian
 \end{enumerate}
 
 \section{Preliminaries}
-Download the latest version of digiplay onto every digital playout computer. This guide will assume it has been downloaded to \texttt{/usr/local/src}. As root (replace <release> with the latest version),
+Download the latest version of digiplay onto every digital playout computer. This guide will assume it has been downloaded to \texttt{/usr/local/src}. As root (replace $<$release$>$ with the latest version),
 \begin{lstlisting}
 cd /usr/local/src
-tar -zxvf digiplay-<release>.tar.gz
+tar -zxvf digiplay_<release>.tar.gz
 cd digiplay
 \end{lstlisting}
 The \texttt{INSTALL} file contains a more detailed description of the archive contents, including a full list of package dependancies.
@@ -103,9 +103,12 @@ This must be installed on one machine only. The database uses the PostgreSQL dat
 \item Install the database server (it is recommended to use PostgreSQL 8.0 or later).
 \begin{lstlisting}
 apt-get update
-apt-get install postgresql postgresql-client
+apt-get install postgresql-8.1 postgresql-client-8.1
 \end{lstlisting}
-This will most likely install additional dependancies. The configuration of the PostgreSQL server itself is beyond the scope of this document. Of particular importance is the configuration of the \texttt{pg\_hba.conf} file if the system configuration chosen consists of multiple hosts.
+This will most likely install additional dependancies. The configuration of the PostgreSQL server itself is beyond the scope of this document. Of particular importance is the configuration of the \texttt{pg\_hba.conf} file if the system configuration chosen consists of multiple hosts. For ease of installation, it is recommended to add a suitable line to trust the digiplay\_user access to the digiplay database from your local network. Security can be improved upon successful installation. For example,
+\begin{lstlisting}
+host     digiplay     digiplay_user    192.168.1.0/24    trust
+\end{lstlisting}
 \item Install the \texttt{/etc/digiplay.conf} configuration file.
 \begin{lstlisting}
 cp doc/digiplay.conf /etc/
@@ -125,8 +128,7 @@ The management tools perform administrative functions on the system. They are ge
 \item Install dependancies
 \begin{lstlisting}
 apt-get update
-apt-get install libreadline-dev libpqxx-dev libpthread-dev \
-	make g++
+apt-get install libreadline-dev libpqxx-dev	make g++
 \end{lstlisting}
 This may install additional packages required by the above.
 \item Compile and install the tools. By default applications are installed in \texttt{/usr/local/bin} and libraries in \texttt{/usr/local/lib}, but this may be altered by editing the \texttt{Makefile} in the root of the digiplay package.
@@ -150,7 +152,7 @@ This is used to transfer music from CD's onto the system. It simply requires a m
 \begin{enumerate}
 \item Install dependancies.
 \begin{lstlisting}
-apt-get install libreadline-dev cdparanoia
+apt-get install libreadline-dev make g++
 \end{lstlisting}
 \item Compile and install the software.
 \begin{lstlisting}
@@ -167,8 +169,8 @@ There are two components to the studio software.
 \item Install dependancies
 \begin{lstlisting}
 apt-get update
-apt-get install libpqxx-dev libpthread-dev \
-	libldap2-dev libqt3-mt-dev
+apt-get install libpqxx-dev	libldap2-dev libqt3-mt-dev \
+     make g++
 \end{lstlisting}
 \item Create a non-privilaged user account, \texttt{digiplay}, for the studio software.
 \item Compile and install the \texttt{studio\_manage} application.
@@ -186,7 +188,7 @@ The \texttt{digiplay.conf} file should now be edited to correctly identify the c
 \item Install dependancies
 \begin{lstlisting}
 apt-get update
-apt-get install libpqxx-dev libpthread-dev libqt3-mt-dev
+apt-get install libpqxx-dev libqt3-mt-dev make g++
 \end{lstlisting}
 \item Create a non-privilaged user account, \texttt{digiplay}, for the studio software.
 \item Compile and install the \texttt{studio\_play} application.
@@ -231,6 +233,10 @@ xset s off
 exec /usr/local/bin/studio_play
 EOF
 \end{lstlisting}
-This disables the DPMS standby and suspend states for the monitor, setting it to switch off after 15 minutes. It also disables the screensaver. Finally, it runs the studio software. If run as root, the studio software will drop to the unprivilaged \texttt{digiplay} user immediately. \par
+This disables the DPMS standby and suspend states for the monitor, setting it to switch off after 15 minutes. It also disables the screensaver. Finally, it runs the studio software. If run as root, the studio software will drop to the unprivilaged \texttt{digiplay} user immediately. This may cause issues with X server permissions if the X server is not running as digiplay. Fix with
+\begin{lstlisting}
+xhost +digiplay
+\end{lstlisting}
+The X server should also use 75dpi fonts, rather than 100dpi. It may be necessary to edit \texttt{/etc/X11/xinit/xserverrc} to enforce this.
 \textbf{Note:} The X server will terminate when the studio software terminates. If run from \texttt{/etc/inittab}, it will restart automatically.
 \end{document}

@@ -6,9 +6,8 @@ package. Detailed installation instructions are now provided in dpsmanual.pdf.
 
 Configuration
 -------------
-Configuration for this software is stored in /etc/digiplay. A sample config
-file is included called digiplay.conf. This should be copied to /etc and named
-'digiplay'.
+Configuration for this software is stored in /etc/digiplay.conf. A sample config
+file is included called digiplay.conf. This should be copied to /etc and adjusted appropriately.
 
 Database Configuration
 ----------------------

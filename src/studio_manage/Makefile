@@ -29,7 +29,7 @@ SHARED_MODS	=	config libsearch dps clockThread triggerThread\
 HDRS		=
 
 # Compiler and linker options
-LIBS		=	-lpq /usr/lib/libpqxx.a -lreadline -lm -lpthread
+LIBS		=	-lpq /usr/lib/libpqxx.a -lm -lpthread
 
 POSTCOMPILE	=	if [ ! -e $(ROOT)/bin/images ]; \
 					then mkdir $(ROOT)/bin/images; fi; \

@@ -7,6 +7,8 @@ studio: 	$(STUDIO)
 sue:		$(SUE)
 backend:	$(ADMIN)
 
+include Makefile.settings
+
 .PHONY: clean install
 
 all: $(APPS)
@@ -43,7 +45,7 @@ install:
 
 doc: manual
 manual: doc/manual/dpsmanual.tex
-	@cd doc/manual; pdflatex dpsmanual.tex > /dev/null; \
+	@cd doc/manual; pdflatex dpsmanual.tex; \
 		mv dpsmanual.pdf ../../; cd ../../
 
 tar: manual

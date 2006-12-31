@@ -141,6 +141,10 @@ if [[ ! -f digiplay.sql ]]; then
 		exit -1
 	fi
 	printf " -> Processing DDL script..."
+	if [ ! -w . ]; then
+		printf " -> Cannot write to current directory needed for temp files.\n"
+		exit -1
+	fi
 	./db2tosql digiplay.db2 > digiplay.sql
 	printf "done.\n"
 fi

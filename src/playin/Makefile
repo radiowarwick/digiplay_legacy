@@ -25,6 +25,8 @@ HDRS		=
 # Compiler and linker options
 LIBS		=	-lncurses -lform
 
+POSTCOMPILE =   cp cdparanoia $(ROOT)/bin
+
 # Include make rules and change any default variables
 include $(ROOT)/src/Makefile.in
 CC			=	gcc

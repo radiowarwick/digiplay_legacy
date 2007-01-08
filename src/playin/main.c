@@ -581,7 +581,7 @@ int main(int argc, char *argv[])
 				close(fdpair[0]);
 				snprintf(buf2, 128, "%d", tracks[i].num);
 				snprintf(buf, 1023, "/mnt/audio/audio/inbox/%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x",
-					tracks[i].uid[0], tracks[i].uid[1], tracks[i].uid[2], tracks[i].uid[2],
+					tracks[i].uid[0], tracks[i].uid[1], tracks[i].uid[2], tracks[i].uid[3],
 					tracks[i].uid[4], tracks[i].uid[5], tracks[i].uid[6], tracks[i].uid[7],
 					tracks[i].uid[8], tracks[i].uid[9], tracks[i].uid[10], tracks[i].uid[11],
 					tracks[i].uid[12], tracks[i].uid[13], tracks[i].uid[14], tracks[i].uid[15]);
@@ -625,13 +625,13 @@ int main(int argc, char *argv[])
 			}
 			}
 			snprintf(buf, 1023, "/mnt/audio/audio/inbox/%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x.info",
-					tracks[i].uid[0], tracks[i].uid[1], tracks[i].uid[2], tracks[i].uid[2],
+					tracks[i].uid[0], tracks[i].uid[1], tracks[i].uid[2], tracks[i].uid[3],
 					tracks[i].uid[4], tracks[i].uid[5], tracks[i].uid[6], tracks[i].uid[7],
 					tracks[i].uid[8], tracks[i].uid[9], tracks[i].uid[10], tracks[i].uid[11],
 					tracks[i].uid[12], tracks[i].uid[13], tracks[i].uid[14], tracks[i].uid[15]);
 			fd = open(buf, O_WRONLY | O_CREAT, 0644);
 			len = snprintf(buf, 1023, "uid: %.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x\n",
-					tracks[i].uid[0], tracks[i].uid[1], tracks[i].uid[2], tracks[i].uid[2],
+					tracks[i].uid[0], tracks[i].uid[1], tracks[i].uid[2], tracks[i].uid[3],
 					tracks[i].uid[4], tracks[i].uid[5], tracks[i].uid[6], tracks[i].uid[7],
 					tracks[i].uid[8], tracks[i].uid[9], tracks[i].uid[10], tracks[i].uid[11],
 					tracks[i].uid[12], tracks[i].uid[13], tracks[i].uid[14], tracks[i].uid[15]);

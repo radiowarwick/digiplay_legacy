@@ -55,8 +55,12 @@ void triggerThread::run() {
 		usleep(100000);
 		C->get_notifs();
 	}
+    if (C && C->is_open()) {
+        C->Disconnect();
+    }
+    delete C;
 }
 
 void triggerThread::stop() {
-
+    enabled = false;
 }

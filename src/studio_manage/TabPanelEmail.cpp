@@ -69,6 +69,7 @@ TabPanelEmail::TabPanelEmail(QTabWidget *parent, string text)
 
 // clean up stuff
 TabPanelEmail::~TabPanelEmail() {
+    emailTrigger->stop();
     if (C && C->is_open()) {
         C->Disconnect();
     }

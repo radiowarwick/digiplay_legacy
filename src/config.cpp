@@ -85,6 +85,10 @@ config::config(string application) {
 		T = new Transaction(*C,"");
 	}
 	catch (...) {
+        if (C && C->is_open()) {
+            C->Disconnect();
+        }
+        delete C;
 		L_ERROR(LOG_CONFIG,"Failed to connect to database.");
 		exit(-1);
 	}
@@ -92,7 +96,10 @@ config::config(string application) {
 }
 
 config::~config() {
-
+    if (C && C->is_open()) {
+        C->Disconnect();
+    }
+    delete C;
 }
 
 string config::getDBConnectString() {

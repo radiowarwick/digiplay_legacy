@@ -33,7 +33,10 @@ libsearch::libsearch() {
 }
 
 libsearch::~libsearch() {
-
+    if (C && C->is_open()) {
+        C->Disconnect();
+    }
+    delete C;
 }
 
 /* 

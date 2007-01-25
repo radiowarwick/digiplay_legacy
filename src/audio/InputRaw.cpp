@@ -30,16 +30,21 @@ Audio::InputRaw::~InputRaw() {
 
 }
 
-void Audio::InputRaw::getAudio(short *audioData, unsigned long samples) {
+void Audio::InputRaw::getAudio(short *audioData, unsigned long stereoSamples) {
+    // Fills audioData with the requested number of samples
+    // 2 bytes per sample, and 2 channels
+    // => get 4xsamples bytes
     char *ptr = (char*)audioData;
+    unsigned long bytes = stereoSamples * 4;
+
     short count = 0;
     long x;
-	cout << "InputRaw::getAudio" << endl;
 	if ((state == STATE_PLAY)  && cacheSize - cacheFree < 1024) {
+        cout << "Out of cached audio: " << cacheSize - cacheFree << endl;
 		stop();
 	}
     
-	for (unsigned long i = 0; i < samples * 4; i++) {
+	for (unsigned long i = 0; i < bytes; i++) {
         if (state == STATE_STOP) {
             *ptr = 0;
         }
@@ -143,7 +148,7 @@ void Audio::InputRaw::updateCounters(long sample) {
 	}
 }
 
-void Audio::InputRaw::receive(PORT inPort, MESSAGE message) {
+void Audio::InputRaw::receiveMessage(PORT inPort, MESSAGE message) {
 
 }
 

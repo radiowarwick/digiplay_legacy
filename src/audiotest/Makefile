@@ -4,27 +4,25 @@
 ROOT		=	../..
 
 # Base name for output (executable name, library basename) and version
-OUT_BASE	=	audio
+OUT_BASE	=	audiotest
 VERSION		=	1
 
 # Create a library and whether it should be a static library
-OUT_LIB		=	yes
+OUT_LIB		=	no
 OUT_STATIC	=	no
 
 # Enable QT support?
 QT_ENABLED 	=	no
 
 # .cpp modules from which to create output
-MODS		=	Thread Component Input InputRaw Output OutputRaw OutputDsp Process  ProcessMixer Counter
+MODS		=	audiotest
+QT_MODS		=
 SHARED_MODS	=	
 
 # Global header files on which dependance exists
-HDRS		=	Audio.h
+HDRS		=
 
 # Compiler and linker options
-LIBS		=	-lm -lpthread
-
-POSTCOMPILE =  cd $(ROOT)/lib; ln -sf lib$(OUT_BASE).so.$(VERSION) \
-					lib$(OUT_BASE).so
+LIBS		=	-lpq /usr/lib/libpqxx.a -lreadline -lm -lpthread -laudio
 
 include $(ROOT)/src/Makefile.in

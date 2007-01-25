@@ -12,7 +12,7 @@ class Audio::InputRaw : public Audio::Input {
 		InputRaw();
 		~InputRaw();
 
-		void getAudio(short *audioData, unsigned long samples);
+		virtual void getAudio(short *audioData, unsigned long stereoSamples);
 
 		void load(string filename, long start_smpl, long end_smpl);
 		void play();		// play track
@@ -23,7 +23,7 @@ class Audio::InputRaw : public Audio::Input {
 		void addCounter(Audio::Counter *counter);
 		void removeCounter(Audio::Counter *counter);
 		
-		void receive(PORT inPort, MESSAGE message);
+		void receiveMessage(PORT inPort, MESSAGE message);
 
 		void threadExecute();
 

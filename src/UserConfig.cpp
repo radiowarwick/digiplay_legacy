@@ -42,7 +42,8 @@ UserConfig::UserConfig(Auth *authModule) {
 }
 
 UserConfig::~UserConfig() {
-
+    C->Disconnect();
+    delete C;
 }
 
 string UserConfig::get(string param) {

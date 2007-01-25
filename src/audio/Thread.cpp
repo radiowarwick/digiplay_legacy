@@ -1,5 +1,9 @@
 #include "Thread.h"
 
+Thread::Thread() {
+    t_active = false;
+}
+
 Thread::~Thread() {
 
 }
@@ -53,7 +57,11 @@ int Thread::threadReceive() {
 	pthread_mutex_unlock(&t_messages_mutex);
 	return m;
 }
-		
+
+bool Thread::isThreadActive() {
+    return t_active;
+}
+
 void Thread::threadWait() {
 
 }

@@ -16,7 +16,7 @@ class Audio::OutputDsp : public Audio::Output {
 		OutputDsp(string channel);
 		~OutputDsp();
 
-		void receive(PORT inPort, MESSAGE message);
+		void receiveMessage(PORT inPort, MESSAGE message);
 
 		void threadExecute();
 
@@ -24,6 +24,7 @@ class Audio::OutputDsp : public Audio::Output {
 		void initialise(string device);
 
 		string deviceName;
+        enum STATE audioState;
 		int audio;
 };
 

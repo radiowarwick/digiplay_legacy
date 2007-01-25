@@ -16,6 +16,7 @@ enum MESSAGE { NONE=0,
 
 class Thread {
 	public:
+        Thread();
 		virtual ~Thread() = 0;
 
 	protected:

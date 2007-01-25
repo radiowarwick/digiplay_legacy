@@ -6,10 +6,10 @@
 class Audio::Output : public Audio::Component {
 	public:
 		virtual ~Output();
-		virtual void getAudio(short *audioData, int samples) {return;}
+		virtual void getAudio(short *audioData, unsigned long samples) {return;}
 
 	protected:
-		virtual void receive(PORT inPort, MESSAGE message);
+		virtual void receiveMessage(PORT inPort, MESSAGE message);
 		virtual void threadExecute();
 
 	private:

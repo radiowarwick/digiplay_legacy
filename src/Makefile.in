@@ -69,7 +69,7 @@ ifeq ($(OUT_LIB),yes)
     else
 		OUTPUT      =   lib$(OUT_BASE).so
 		LDFLAGS     :=   -shared -Wl,-soname,$(OUTPUT).$(VERSION) \
-						-o $(DEST)/$(OUTPUT)
+						-o $(DEST)/$(OUTPUT).$(VERSION)
     endif
 endif
 

@@ -7,12 +7,12 @@ Audio::Input::~Input() {
 
 }
 
-void Audio::Input::getAudio(short *audioData, int samples) {
-
+void Audio::Input::getAudio(short *audioData, unsigned long samples) {
+    cout << "Input::getAudio" << endl;
 }
 
-void Audio::Input::receive(PORT inPort, MESSAGE message) {
-
+void Audio::Input::receiveMessage(PORT inPort, MESSAGE message) {
+    cout << "Input::receive" << endl;
 }
 
 void Audio::Input::play() {

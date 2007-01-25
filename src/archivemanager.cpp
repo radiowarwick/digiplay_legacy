@@ -783,6 +783,7 @@ void archivemanager::trimAudio(track *t) {
 				t->trim_start_smpl += 1;
             else break;
         }
+        if (file_handle->eof()) break;
     } while (abs(*left) < SAMPLE_TOL && abs(*right) < SAMPLE_TOL);
 
     // Scan for end of track
@@ -796,6 +797,7 @@ void archivemanager::trimAudio(track *t) {
 				t->trim_end_smpl -= 1;
             else break;
         }
+        if (long(t->trim_end_smpl) - BLOCK_SAMPLES < 0) break;
         file_handle->seekg((t->trim_end_smpl - BLOCK_SAMPLES)*4, ios::beg);
     } while (abs(*left) < SAMPLE_TOL && abs(*right) < SAMPLE_TOL);
     

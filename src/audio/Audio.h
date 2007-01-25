@@ -14,18 +14,20 @@ namespace Audio {
 	class OutputDsp;
 
 	class Process;
+    class ProcessMixer;
 
 	class Counter;
 }
 
-enum PORT { IN0, IN1, IN2, IN3, IN4, IN5, IN6, IN7, 
-            OUT0, OUT1, OUT2, OUT3, OUT4, OUT5, OUT6, OUT7 };
-
-struct ConnectionMapping {
-    PORT port;
-    Audio::Component *component;
-    PORT remotePort;
-};
+typedef unsigned int PORT;
+#define IN0 0
+#define IN1 1
+#define IN2 2
+#define IN3 3
+#define OUT0 0
+#define OUT1 1
+#define OUT2 2
+#define OUT3 3
 
 #ifndef ENUM_MESSAGE
 #define ENUM_MESSAGE
@@ -41,5 +43,12 @@ enum STATE {	STATE_STOP = 0,
 				STATE_PLAY = 1,
 				STATE_PAUSE = 2 };
 #endif
+
+struct ConnectionMapping {
+    PORT port;
+    Audio::Component *component;
+    STATE state;
+    PORT remotePort;
+};
 
 #endif

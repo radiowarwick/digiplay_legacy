@@ -52,7 +52,7 @@ TabPanelLogging::TabPanelLogging(QTabWidget *parent, string text)
 // clean up stuff
 TabPanelLogging::~TabPanelLogging() {
     if (C && C->is_open()) {
-        C->Deactivate();
+        C->Disconnect();
     }
     delete C;
     delete lstRecentlyLogged;

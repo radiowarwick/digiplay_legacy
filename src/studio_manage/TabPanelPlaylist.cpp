@@ -54,7 +54,7 @@ TabPanelPlaylist::TabPanelPlaylist(QTabWidget *parent, string text)
 // clean up stuff
 TabPanelPlaylist::~TabPanelPlaylist() {
 	if (C && C->is_open()) {
-		C->Deactivate();
+		C->Disconnect();
 	}
 	delete C;
 }

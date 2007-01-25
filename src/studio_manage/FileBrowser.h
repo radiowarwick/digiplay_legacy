@@ -93,6 +93,7 @@ class DirectoryView : public QListView {
     public:
         DirectoryView( QWidget *parent = 0, const char *name = 0, bool sdo = 
                         FALSE );
+        ~DirectoryView();
         bool showDirsOnly() { return dirsOnly; }
         void setUser(string username);
 

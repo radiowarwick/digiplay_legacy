@@ -353,6 +353,13 @@ DirectoryView::DirectoryView( QWidget *parent, const char *name, bool sdo )
              this, SLOT( slotFolderSelected( QListViewItem * ) ) );
 }
 
+DirectoryView::~DirectoryView() {
+    if (C && C->is_open()) {
+        C->Disconnect();
+    }
+    delete C;
+}
+
 void DirectoryView::populate() {
     clear();
     Directory *D;

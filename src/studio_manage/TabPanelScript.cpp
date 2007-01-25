@@ -47,7 +47,7 @@ TabPanelScript::TabPanelScript(QTabWidget *parent, string text)
 // clean up stuff
 TabPanelScript::~TabPanelScript() {
 	if (C && C->is_open()) {
-		C->Deactivate();
+		C->Disconnect();
 	}
 	delete C;
 }

@@ -49,7 +49,7 @@ TabPanelSearch::TabPanelSearch(QTabWidget *parent, string text)
 // clean up stuff
 TabPanelSearch::~TabPanelSearch() {
 	if (C && C->is_open()) {
-		C->Deactivate();
+		C->Disconnect();
 	}
 	delete C;
 	delete conf;

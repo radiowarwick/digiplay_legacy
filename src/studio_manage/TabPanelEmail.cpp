@@ -70,7 +70,7 @@ TabPanelEmail::TabPanelEmail(QTabWidget *parent, string text)
 // clean up stuff
 TabPanelEmail::~TabPanelEmail() {
     if (C && C->is_open()) {
-        C->Deactivate();
+        C->Disconnect();
     }
     delete C;
 

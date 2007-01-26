@@ -1,0 +1,39 @@
+USER LEVELS
+-----------
+ id |        name        |                                       description                                        
+----+--------------------+------------------------------------------------------------------------------------------
+  1 | sust_stats         | Web access to Sustainer configuration
+  3 | admin              | Can manage user accounts, create user managers, and assign any access privilages. Is God
+  4 | sust_edit          | Can edit the playlist for the sustainer service
+  5 | music_playlist     | Can edit the studio playlist
+  6 | music_censor       | Can censor a track, making it unavailable for playout on air
+  7 | music_edit_info    | Can edit the track information for music
+  8 | music_manager      | Can assign sust_edit, music_flag, music_censor, music_edit_info rights to users
+  9 | production_manager | Can organise jingles and jingle packages, and enable them
+ 10 | marketing_manager  | Can organise and schedule adverts
+
+PHIL
+----
+
+CC
+--
+- Log played tracks
+- Check log for repeats (dont play track twice in one hour)
+- Schedules to start on the hour (link to real time)
+- Advert scheduling
+- Sue logs as 'System' userid=0
+- Track through songs using tracker bar
+- Views for censoring tracks/ editing info
+
+IAN
+---
+- Logging module (cras section)
+- Email module (strengthing)
+
+HAWLEY & IT People
+------------------
+- Unify Diged software
+
+RUSS
+----
+- Switcher interface for dps0

@@ -1,0 +1,42 @@
+*.allow    {
+	color: #00CC00;
+	font-weight: bold;
+}
+
+*.deny    {
+	color: #CC0000;
+	font-weight: bold;
+}
+
+*.inGroup    {
+	font-weight: bold;
+}
+
+h1    {
+	font-size: 24px;
+}
+
+h2    {
+	font-size: 18px;
+	font-style: normal;
+}
+
+h3    {
+	font-size: 16px;
+	font-style: normal;
+}
+
+*.label    {
+	font-weight: bold;
+}
+
+*.groupperm    {
+	text-decoration: line-through;
+}
+
+*.pageTitle    {
+	font-size: 32px;
+	font-style: normal;
+	text-align: right;
+}
+

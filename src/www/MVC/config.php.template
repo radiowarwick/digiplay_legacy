@@ -31,7 +31,8 @@ $cfg['MVC']['templatefields'] = array('filename' => 'File Name',
 ######################
 
 //The path to the Smarty package (download from http://smarty.php.net)
-$cfg['smarty']['dir']['root'] = '/path/to/smarty'; #CHANGE
+// NO! Use the version packaged with your distribution
+$cfg['smarty']['dir']['root'] = '/usr/share/php/smarty'; #CHANGE
 
 //The path to the smarty templates that will be used
 //Seperate multiple paths with a semi-colon

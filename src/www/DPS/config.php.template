@@ -16,7 +16,7 @@
 //$cfg['DPS']['dsn']      = 'pgsql://www@dps0/digiplay';
 //$cfg['DPS']['dsn']      = 'pgsql://www@vm4/digiplaydev';
 
-$cfg['DPS']['dsn_web']      = 'pgsql://tcp(dbserver:5433)/rawwww';
+$cfg['DPS']['dsn_web']      = 'pgsql://tcp(server:5433)/rawwww';
 
 $cfg['DPS']['resultLimit'] = 50;
 $cfg['DPS']['defaultShowID'] = 0;
@@ -30,5 +30,5 @@ $cfg['DPS']['playlistInfo'] = array(array('id' => 0,
 								    array('id' => 1,
 									'name' => 'B')
 									);
-$cfg['DPS']['HomeSite'] = "https://www.radio.warwick.ac.uk";
+$cfg['DPS']['HomeSite'] = "http://www.cocacola.kicks-ass.net/~cc/dps/";
 ?>

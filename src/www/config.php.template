@@ -21,8 +21,7 @@ $cfg = array();
  * then this should be appended to $cfg['general']['siteRoot']. Eg:
  * $cfg['general']['siteRoot'] = '/path/to/my/site/mypage.php'
  */
-//$cfg['general']['domain'] = 'www.radio.warwick.ac.uk'; #CHECK
-$cfg['general']['domain'] = 'www.radio.warwick.ac.uk'; #CHECK
+$cfg['general']['domain'] = 'hosts.companyname.com'; #CHECK
 /*
  * This is the path to the site. For example, if the url to your index.php 
  * file is:
@@ -32,11 +31,11 @@ $cfg['general']['domain'] = 'www.radio.warwick.ac.uk'; #CHECK
  * 
  * Note: This is may be overidden by different config files if required
 */
-$cfg['general']['siteRoot'] = '/dps-dev/'; #CHECK
+$cfg['general']['siteRoot'] = '/path/to/my/site/'; #CHECK
 	
 
 //The protocol to be used. Normally 'http://' (or 'https://' if using SSL)
-$cfg['general']['protocol'] = 'https://'; #CHECK
+$cfg['general']['protocol'] = 'http://'; #CHECK
 
 // The path to the toolkit root directory
 $cfg['general']['toolkitRoot'] = '/var/www'; #CHANGE

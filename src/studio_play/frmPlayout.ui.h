@@ -268,6 +268,16 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 			}
 			break;
 		}
+	case 40000: {
+		if (player1->getState() == STATE_PLAY) {
+			player1->do_pause();
+			btnPlay1->setPixmap(*pixPlay);
+			if (conf->getParam("next_on_showplan") != "") {
+				btnLoadPlaylist1->setEnabled(true);
+			}
+		}
+		break;
+	}
 	case 40001: {
 		switch (player1->getState()) {
 			case STATE_STOP: {
@@ -285,12 +295,12 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 		}
 		break;
 	}
-	case 40000: {
-		if (player1->getState() == STATE_PLAY) {
-			player1->do_pause();
-			btnPlay1->setPixmap(*pixPlay);
+	case 40002: {
+		if (player2->getState() == STATE_PLAY) {
+			player2->do_pause();
+			btnPlay2->setPixmap(*pixPlay);
 			if (conf->getParam("next_on_showplan") != "") {
-				btnLoadPlaylist1->setEnabled(true);
+				btnLoadPlaylist2->setEnabled(true);
 			}
 		}
 		break;
@@ -312,12 +322,12 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 		}
 		break;
 	}
-	case 40002: {
-		if (player2->getState() == STATE_PLAY) {
-			player2->do_pause();
-			btnPlay2->setPixmap(*pixPlay);
+	case 40004: {
+		if (player3->getState() == STATE_PLAY) {
+			player3->do_pause();
+			btnPlay3->setPixmap(*pixPlay);
 			if (conf->getParam("next_on_showplan") != "") {
-				btnLoadPlaylist2->setEnabled(true);
+				btnLoadPlaylist3->setEnabled(true);
 			}
 		}
 		break;
@@ -335,16 +345,6 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 				btnPlay3->setPixmap(*pixPause);
 				btnLoadPlaylist3->setEnabled(false);
 				break;
-			}
-		}
-		break;
-	}
-	case 40004: {
-		if (player3->getState() == STATE_PLAY) {
-			player3->do_pause();
-			btnPlay3->setPixmap(*pixPlay);
-			if (conf->getParam("next_on_showplan") != "") {
-				btnLoadPlaylist3->setEnabled(true);
 			}
 		}
 		break;

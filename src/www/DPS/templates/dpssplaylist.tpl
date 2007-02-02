@@ -83,7 +83,7 @@
 		  <th rowspan="2">{templateLink id="53" text="<img class='musicSearchTableTh' src='DPS/images/blackExpand.gif'>" _trackID=$track.id}</th>
 		  {/if}
 		  <td rowspan="2">{$track.artist}</td>
-		  <td rowspan="2">{templateLink id="55" text=$track.title _trackID=$track.id}</td>
+		  <td>{templateLink id="55" text=$track.title _trackID=$track.id}</td>
 		  <td>{templateLink id="57" text="Preview" _trackID=$track.id}</td>
 			{if $VIEWER.Access_Delete == 't'}
 			<td>
@@ -102,6 +102,7 @@
 		  {/if}
 		</tr>
 		<tr>
+			<td><div class="music_mini">{$track.album}</div></td>
 			{if $VIEWER.Access_Delete == 't'}
 			<td colspan="2"><div class="music_mini">
 			{else}

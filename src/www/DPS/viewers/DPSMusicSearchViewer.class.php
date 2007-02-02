@@ -39,8 +39,9 @@ class DPSMusicSearchViewer extends Viewer {
       if($searchType == "Title") {
 	$count_query = "SELECT count(*) FROM (
 			  SELECT min(audio.id) 
-			  FROM audio, artists, audioartists, audiodir, audiotypes 
+			  FROM audio, artists, audioartists, audiodir, audiotypes, albums 
 			  WHERE audio.type = audiotypes.id 
+				AND audio.music_album = albums.id 
 				AND audiotypes.name = 'music' 
 				AND audio.id = audiodir.audio 
 				AND audiodir.directory != " . $cfg['DPS']['binDirectoryID'] . " 
@@ -53,9 +54,11 @@ class DPSMusicSearchViewer extends Viewer {
 	$searchInfo = $rNum . ' Results for "' . $searchValue . '"';
 	$query = "SELECT min(audio.title) AS title, min(audio.id) AS id, min(audio.sustainer) as sust, 
 			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name), 
-			min(audio.reclibid) as reclibid, min(audio.length_smpl) as length_smpl, min(audio.origin) as origin 
-		  FROM audio, artists, audioartists, audiodir, audiotypes 
+			min(audio.reclibid) as reclibid, min(audio.length_smpl) as length_smpl, min(audio.origin) as origin, 
+			min(albums.name) as album 
+		  FROM audio, artists, audioartists, audiodir, audiotypes, albums 
 		  WHERE audio.type = audiotypes.id 
+			AND audio.music_album = albums.id 
 			AND audiotypes.name = 'music' 
 			AND audio.id = audiodir.audio 
 			AND audiodir.directory != " . $cfg['DPS']['binDirectoryID'] . " 
@@ -83,8 +86,9 @@ class DPSMusicSearchViewer extends Viewer {
       } else if($searchType == "Both") {
 	$count_query = "SELECT count(*) FROM (
 			  SELECT min(audio.id) 
-			  FROM audio, artists, audioartists, audiodir, audiotypes 
+			  FROM audio, artists, audioartists, audiodir, audiotypes, albums 
 			  WHERE audio.type = audiotypes.id 
+				AND audio.music_album = albums.id 
 				AND audiotypes.name = 'music' 
 				AND audio.id = audiodir.audio 
 				AND audiodir.directory != " . $cfg['DPS']['binDirectoryID'] . " 
@@ -98,9 +102,11 @@ class DPSMusicSearchViewer extends Viewer {
 	$searchInfo = $rNum . ' Results for "' . $searchValue . '"';
 	$query = "SELECT min(audio.title) AS title, min(audio.id) AS id, min(audio.sustainer) as sust, 
 			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name),  
-			min(audio.reclibid) as reclibid, min(audio.length_smpl) as length_smpl, min(audio.origin) as origin 
-		  FROM audio, artists, audioartists, audiodir, audiotypes 
+			min(audio.reclibid) as reclibid, min(audio.length_smpl) as length_smpl, min(audio.origin) as origin,  
+			min(albums.name) as album 
+		  FROM audio, artists, audioartists, audiodir, audiotypes, albums  
 		  WHERE audio.type = audiotypes.id 
+			AND audio.music_album = albums.id 
 			AND audiotypes.name = 'music' 
 			AND audio.id = audiodir.audio 
 			AND audiodir.directory != " . $cfg['DPS']['binDirectoryID'] . " 
@@ -130,8 +136,9 @@ class DPSMusicSearchViewer extends Viewer {
 	$count_query = "SELECT count(*) 
 			FROM (
 			  SELECT min(audio.id) 
-			  FROM audio, artists, audioartists, audiodir, audiotypes 
+			  FROM audio, artists, audioartists, audiodir, audiotypes, albums  
 			  WHERE audio.type = audiotypes.id 
+				AND audio.music_album = albums.id 
 				AND audiotypes.name = 'music' 
 				AND audio.id = audiodir.audio 
 				AND audiodir.directory != " . $cfg['DPS']['binDirectoryID'] . " 
@@ -144,9 +151,11 @@ class DPSMusicSearchViewer extends Viewer {
 	$searchInfo = $rNum . ' Results for "' . $searchValue . '"';
 	$query = "SELECT min(audio.title) AS title, min(audio.id) AS id, min(audio.sustainer) as sust,
 			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name),
-			min(audio.reclibid) as reclibid, min(audio.length_smpl) as length_smpl, min(audio.origin) as origin 
-		  FROM audio, artists, audioartists, audiodir, audiotypes 
+			min(audio.reclibid) as reclibid, min(audio.length_smpl) as length_smpl, min(audio.origin) as origin, 
+			min(albums.name) as album 
+		  FROM audio, artists, audioartists, audiodir, audiotypes, albums  
 		  WHERE audio.type = audiotypes.id 
+			AND audio.music_album = albums.id 
 			AND audiotypes.name = 'music' 
 			AND audio.id = audiodir.audio 
 			AND audiodir.directory != " . $cfg['DPS']['binDirectoryID'] . " 
@@ -176,8 +185,9 @@ class DPSMusicSearchViewer extends Viewer {
       if($searchType == "Title") {
 	$count_query = "SELECT count(*) FROM (
 			  SELECT min(audio.id) 
-			  FROM audio, artists, audioartists, audiodir, audiotypes 
+			  FROM audio, artists, audioartists, audiodir, audiotypes, albums  
 			  WHERE audio.type = audiotypes.id 
+				AND audio.music_album = albums.id 
 				AND audiotypes.name = 'music' 
 				AND audio.id = audiodir.audio 
 				AND audiodir.directory != " . $cfg['DPS']['binDirectoryID'] . " 
@@ -190,9 +200,11 @@ class DPSMusicSearchViewer extends Viewer {
 	$searchInfo = $rNum . ' Results for "' . $searchValue . '"';
 	$query = "SELECT min(audio.title) AS title, min(audio.id) AS id, min(audio.sustainer) as sust, 
 			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name),  
-			min(audio.reclibid) as reclibid, min(audio.length_smpl) as length_smpl, min(audio.origin) as origin 
-		  FROM audio, artists, audioartists, audiodir, audiotypes 
+			min(audio.reclibid) as reclibid, min(audio.length_smpl) as length_smpl, min(audio.origin) as origin, 
+			min(albums.name) as album 
+		  FROM audio, artists, audioartists, audiodir, audiotypes, albums 
 		  WHERE audio.type = audiotypes.id 
+			AND audio.music_album = albums.id 
 			AND audiotypes.name = 'music' 
 			AND audio.id = audiodir.audio 
 			AND audiodir.directory != " . $cfg['DPS']['binDirectoryID'] . " 
@@ -220,8 +232,9 @@ class DPSMusicSearchViewer extends Viewer {
       } else if($searchType == "Both") {
 	$count_query = "SELECT count(*) FROM (
 			  SELECT min(audio.id) 
-			  FROM audio, artists, audioartists, audiodir, audiotypes 
+			  FROM audio, artists, audioartists, audiodir, audiotypes, albums  
 			  WHERE audio.type = audiotypes.id 
+				AND audio.music_album = albums.id 
 				AND audiotypes.name = 'music' 
 				AND audio.id = audiodir.audio 
 				AND audiodir.directory != " . $cfg['DPS']['binDirectoryID'] . " 
@@ -235,9 +248,11 @@ class DPSMusicSearchViewer extends Viewer {
 	$searchInfo = $rNum . ' Results for "' . $searchValue . '"';
 	$query = "SELECT min(audio.title) AS title, min(audio.id) AS id, min(audio.sustainer) as sust, 
 			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name),  
-			min(audio.reclibid) as reclibid, min(audio.length_smpl) as length_smpl, min(audio.origin) as origin 
-		  FROM audio, artists, audioartists, audiodir, audiotypes 
+			min(audio.reclibid) as reclibid, min(audio.length_smpl) as length_smpl, min(audio.origin) as origin, 
+			min(albums.name) as album 
+		  FROM audio, artists, audioartists, audiodir, audiotypes, albums  
 		  WHERE audio.type = audiotypes.id 
+			AND audio.music_album = albums.id 
 			AND audiotypes.name = 'music' 
 			AND audio.id = audiodir.audio 
 			AND audiodir.directory != " . $cfg['DPS']['binDirectoryID'] . " 
@@ -267,8 +282,9 @@ class DPSMusicSearchViewer extends Viewer {
 	$count_query = "SELECT count(*) 
 			FROM (
 			  SELECT min(audio.id) 
-			  FROM audio, artists, audioartists, audiodir, audiotypes 
+			  FROM audio, artists, audioartists, audiodir, audiotypes, albums  
 			  WHERE audio.type = audiotypes.id 
+				AND audio.music_album = albums.id 
 				AND audiotypes.name = 'music' 
 				AND audio.id = audiodir.audio 
 				AND audiodir.directory != " . $cfg['DPS']['binDirectoryID'] . " 
@@ -281,9 +297,11 @@ class DPSMusicSearchViewer extends Viewer {
 	$searchInfo = $rNum . ' Results for "' . $searchValue . '"';
 	$query = "SELECT min(audio.title) AS title, min(audio.id) AS id, min(audio.sustainer) as sust,
 			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name),  
-			min(audio.reclibid) as reclibid, min(audio.length_smpl) as length_smpl, min(audio.origin) as origin 
-		  FROM audio, artists, audioartists, audiodir, audiotypes 
+			min(audio.reclibid) as reclibid, min(audio.length_smpl) as length_smpl, min(audio.origin) as origin, 
+			min(albums.name) as album 
+		  FROM audio, artists, audioartists, audiodir, audiotypes, albums  
 		  WHERE audio.type = audiotypes.id 
+			AND audio.music_album = albums.id 
 			AND audiotypes.name = 'music' 
 			AND audio.id = audiodir.audio 
 			AND audiodir.directory != " . $cfg['DPS']['binDirectoryID'] . " 

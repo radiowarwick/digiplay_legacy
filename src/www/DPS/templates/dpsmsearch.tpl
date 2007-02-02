@@ -47,7 +47,7 @@
 		  <th rowspan="2">{templateLink id="53" text="<img class='musicSearchTableTh' src='DPS/images/blackExpand.gif'>" _trackID=$track.id}</th>
 		  {/if}
 		  <td rowspan="2">{$track.artist}</td>
-		  <td rowspan="2">{$track.title}</td>
+		  <td>{$track.title}</td>
 		  <td>{templateLink id="57" text="Preview" _trackID=$track.id}</td>
 			{if $VIEWER.DeleteTrack == 't'}
 		  <td>
@@ -77,6 +77,7 @@
 		  </td>
 		</tr>
 		<tr>
+			<td><div class="music_mini">{$track.album}</div></td>
 			<td colspan="2"><div class="music_mini">
 				{$track.origin} 
 				{if $track.reclibid != ''}

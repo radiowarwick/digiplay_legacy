@@ -268,7 +268,7 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 			}
 			break;
 		}
-	case 40000: {
+	case 40001: {
 		switch (player1->getState()) {
 			case STATE_STOP: {
 				player1->do_play();
@@ -285,7 +285,7 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 		}
 		break;
 	}
-	case 40001: {
+	case 40000: {
 		if (player1->getState() == STATE_PLAY) {
 			player1->do_pause();
 			btnPlay1->setPixmap(*pixPlay);
@@ -295,7 +295,7 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 		}
 		break;
 	}
-	case 40002: {
+	case 40003: {
 		switch (player2->getState()) {
 			case STATE_STOP: {
 				player2->do_play();
@@ -312,7 +312,7 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 		}
 		break;
 	}
-	case 40003: {
+	case 40002: {
 		if (player2->getState() == STATE_PLAY) {
 			player2->do_pause();
 			btnPlay2->setPixmap(*pixPlay);
@@ -322,7 +322,7 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 		}
 		break;
 	}
-	case 40004: {
+	case 40005: {
 		switch (player3->getState()) {
 			case STATE_STOP: {
 				player3->do_play();
@@ -339,7 +339,7 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 		}
 		break;
 	}
-	case 40005: {
+	case 40004: {
 		if (player3->getState() == STATE_PLAY) {
 			player3->do_pause();
 			btnPlay3->setPixmap(*pixPlay);

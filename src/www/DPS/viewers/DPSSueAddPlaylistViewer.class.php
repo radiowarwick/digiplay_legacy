@@ -63,8 +63,8 @@ class DPSSueAddPlaylistViewer extends Viewer {
 	$rNum = $db->getOne($count_query);
 	$searchInfo = $rNum . ' Results for "' . $searchValue . '"';
 	$query = "SELECT min(audio.title) AS title, min(audio.id) AS id, min(audio.sustainer) as sust, 
-			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name), min(audio.length_smpl) as length_smpl,  
-			min(audio.origin) as origin, min(audio.reclibid) as reclibid, min(albums.name) as album 
+			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name), min(audio.start_smpl) as start_smpl,  
+			min(audio.origin) as origin, min(audio.reclibid) as reclibid, min(albums.name) as album, min(audio.end_smpl) as end_smpl 
 		  FROM audio, artists, audioartists, audiodir, audiotypes, albums  
 		  WHERE audio.type = audiotypes.id 
 			AND audio.music_album = albums.id 
@@ -81,8 +81,8 @@ class DPSSueAddPlaylistViewer extends Viewer {
 	$searchResult = $db->getAll($query);
 	$number=0;
 	foreach($searchResult as $key => &$track) {
-	  $samples = $track['length_smpl'];
-	  $track['length'] = $tracksLen = round((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
+	  $samples = $track['end_smpl']-$track['start_smpl'];
+	  $track['length'] = $tracksLen = floor((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
 	  $sql = "SELECT DISTINCT artists.name as name FROM artists, audioartists WHERE audioartists.audio = " . $track['id'] . " AND audioartists.artist = artists.id order by artists.name asc";
 	  $artists = $db->getAll($sql);
 	  foreach($artists as $artist) {
@@ -110,8 +110,8 @@ class DPSSueAddPlaylistViewer extends Viewer {
 	$rNum = $db->getOne($count_query);
 	$searchInfo = $rNum . ' Results for "' . $searchValue . '"';
 	$query = "SELECT min(audio.title) AS title, min(audio.id) AS id, min(audio.sustainer) as sust, 
-			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name), min(audio.length_smpl) as length_smpl, 
-			min(audio.origin) as origin, min(audio.reclibid) as reclibid, min(albums.name) as album
+			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name), min(audio.start_smpl) as start_smpl, 
+			min(audio.origin) as origin, min(audio.reclibid) as reclibid, min(albums.name) as album, min(audio.end_smpl) as end_smpl 
 		  FROM audio, artists, audioartists, audiodir, audiotypes, albums  
 		  WHERE audio.type = audiotypes.id 
 			AND audio.music_album = albums.id 
@@ -129,8 +129,8 @@ class DPSSueAddPlaylistViewer extends Viewer {
 	$searchResult = $db->getAll($query);
 	$number=0;
 	foreach($searchResult as $key => &$track) { 
-	  $samples = $track['length_smpl'];
-	  $track['length'] = $tracksLen = round((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
+	  $samples = $track['end_smpl'] - $track['start_smpl'];
+	  $track['length'] = $tracksLen = floor((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
 	  $sql = "SELECT DISTINCT artists.name as name FROM artists, audioartists WHERE audioartists.audio = " . $track['id'] . " AND audioartists.artist = artists.id order by artists.name asc";
 	  $artists = $db->getAll($sql);
 	  foreach($artists as $artist) {
@@ -158,8 +158,8 @@ class DPSSueAddPlaylistViewer extends Viewer {
 	$rNum = $db->getOne($count_query);
 	$searchInfo = $rNum . ' Results for "' . $searchValue . '"';
 	$query = "SELECT min(audio.title) AS title, min(audio.id) AS id, min(audio.sustainer) as sust,
-			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name), min(audio.length_smpl) as length_smpl,  
-			min(audio.origin) as origin, min(audio.reclibid) as reclibid, min(albums.name) as album
+			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name), min(audio.end_smpl) as end_smpl,  
+			min(audio.origin) as origin, min(audio.reclibid) as reclibid, min(albums.name) as album, min(audio.start_smpl) as start_smpl 
 		  FROM audio, artists, audioartists, audiodir, audiotypes, albums  
 		  WHERE audio.type = audiotypes.id 
 			AND audio.music_album = albums.id 
@@ -176,8 +176,8 @@ class DPSSueAddPlaylistViewer extends Viewer {
 	$searchResult = $db->getAll($query);
 	$number=0;
 	foreach($searchResult as $key => &$track) { 
-	  $samples = $track['length_smpl'];
-	  $track['length'] = $tracksLen = round((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
+	  $samples = $track['end_smpl'] - $track['start_smpl'];
+	  $track['length'] = $tracksLen = floor((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
 	  $sql = "SELECT DISTINCT artists.name as name FROM artists, audioartists WHERE audioartists.audio = " . $track['id'] . " AND audioartists.artist = artists.id order by artists.name asc";
 	  $artists = $db->getAll($sql);
 	  foreach($artists as $artist) {
@@ -205,8 +205,8 @@ class DPSSueAddPlaylistViewer extends Viewer {
 	$rNum = $db->getOne($count_query);
 	$searchInfo = $rNum . ' Results for "' . $searchValue . '"';
 	$query = "SELECT min(audio.title) AS title, min(audio.id) AS id, min(audio.sustainer) as sust,
-			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name), min(audio.length_smpl) as length_smpl,  
-			min(audio.origin) as origin, min(audio.reclibid) as reclibid, min(albums.name) as album
+			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name), min(audio.start_smpl) as start_smpl,  
+			min(audio.origin) as origin, min(audio.reclibid) as reclibid, min(albums.name) as album, min(audio.start_smpl) as start_smpl
 		  FROM audio, artists, audioartists, audiodir, audiotypes, albums  
 		  WHERE audio.type = audiotypes.id 
 			AND audio.music_album = albums.id 
@@ -223,8 +223,8 @@ class DPSSueAddPlaylistViewer extends Viewer {
 	$searchResult = $db->getAll($query);
 	$number=0;
 	foreach($searchResult as $key => &$track) { 
-	  $samples = $track['length_smpl'];
-	  $track['length'] = $tracksLen = round((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
+	  $samples = $track['end_smpl']-$track['start_smpl'];
+	  $track['length'] = $tracksLen = floor((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
 	  $sql = "SELECT DISTINCT artists.name as name FROM artists, audioartists WHERE audioartists.audio = " . $track['id'] . " AND audioartists.artist = artists.id order by artists.name asc";
 	  $artists = $db->getAll($sql);
 	  foreach($artists as $artist) {
@@ -262,8 +262,8 @@ class DPSSueAddPlaylistViewer extends Viewer {
 	$rNum = $db->getOne($count_query);
 	$searchInfo = $rNum . ' Results for "' . $searchValue . '"';
 	$query = "SELECT min(audio.title) AS title, min(audio.id) AS id, min(audio.sustainer) as sust,
-			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name), min(audio.length_smpl) as length_smpl,  
-			min(audio.origin) as origin, min(audio.reclibid) as reclibid, min(albums.name) as album
+			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name), min(audio.end_smpl) as end_smpl,  
+			min(audio.origin) as origin, min(audio.reclibid) as reclibid, min(albums.name) as album, min(audio.start_smpl) as start_smpl
 		  FROM audio, artists, audioartists, audiodir, audiotypes, albums  
 		  WHERE audio.type = audiotypes.id 
 			AND audio.music_album = albums.id 
@@ -290,8 +290,8 @@ class DPSSueAddPlaylistViewer extends Viewer {
 	$searchResult = $db->getAll($query);
 	$number=0;
 	foreach($searchResult as $key => &$track) { 
-	  $samples = $track['length_smpl'];
-	  $track['length'] = $tracksLen = round((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
+	  $samples = $track['end_smpl']-$track['start_smpl'];
+	  $track['length'] = $tracksLen = floor((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
 	  $sql = "SELECT DISTINCT artists.name as name FROM artists, audioartists WHERE audioartists.audio = " . $track['id'] . " AND audioartists.artist = artists.id order by artists.name asc";
 	  $artists = $db->getAll($sql);
 	  foreach($artists as $artist) {
@@ -320,8 +320,8 @@ class DPSSueAddPlaylistViewer extends Viewer {
 	$rNum = $db->getOne($count_query);
 	$searchInfo = $rNum . ' Results for "' . $searchValue . '"';
 	$query = "SELECT min(audio.title) AS title, min(audio.id) AS id, min(audio.sustainer) as sust, 
-			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name), min(audio.length_smpl) as length_smpl,  
-			min(audio.origin) as origin, min(audio.reclibid) as reclibid, min(albums.name) as album
+			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name), min(audio.end_smpl) as end_smpl,  
+			min(audio.origin) as origin, min(audio.reclibid) as reclibid, min(albums.name) as album, min(audio.start_smpl) as start_smpl
 		  FROM audio, artists, audioartists, audiodir, audiotypes, albums  
 		  WHERE audio.type = audiotypes.id 
 			AND audio.music_album = albums.id 
@@ -338,8 +338,8 @@ class DPSSueAddPlaylistViewer extends Viewer {
 	$searchResult = $db->getAll($query);
 	$number=0;
 	foreach($searchResult as $key => &$track) { 
-	  $samples = $track['length_smpl'];
-	  $track['length'] = $tracksLen = round((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
+	  $samples = $track['end_smpl']-$track['start_smpl'];
+	  $track['length'] = $tracksLen = floor((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
 	  $sql = "SELECT DISTINCT artists.name as name FROM artists, audioartists WHERE audioartists.audio = " . $track['id'] . " AND audioartists.artist = artists.id order by artists.name asc";
 	  $artists = $db->getAll($sql);
 	  foreach($artists as $artist) {
@@ -367,8 +367,8 @@ class DPSSueAddPlaylistViewer extends Viewer {
 	$rNum = $db->getOne($count_query);
 	$searchInfo = $rNum . ' Results for "' . $searchValue . '"';
 	$query = "SELECT min(audio.title) AS title, min(audio.id) AS id, min(audio.sustainer) as sust, 
-			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name), min(audio.length_smpl) as length_smpl,  
-			min(audio.origin) as origin, min(audio.reclibid) as reclibid, min(albums.name) as album
+			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name), min(audio.end_smpl) as end_smpl,  
+			min(audio.origin) as origin, min(audio.reclibid) as reclibid, min(albums.name) as album, min(audio.start_smpl) as start_smpl
 		  FROM audio, artists, audioartists, audiodir, audiotypes, albums  
 		  WHERE audio.type = audiotypes.id 
 			AND audio.music_album = albums.id 
@@ -386,8 +386,8 @@ class DPSSueAddPlaylistViewer extends Viewer {
 	$searchResult = $db->getAll($query);
 	$number=0;
 	foreach($searchResult as $key => &$track) { 
-	  $samples = $track['length_smpl'];
-	  $track['length'] = $tracksLen = round((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
+	  $samples = $track['end_smpl']-$track['start_smpl'];
+	  $track['length'] = $tracksLen = floor((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
 	  $sql = "SELECT DISTINCT artists.name as name FROM artists, audioartists WHERE audioartists.audio = " . $track['id'] . " AND audioartists.artist = artists.id order by artists.name asc";
 	  $artists = $db->getAll($sql);
 	  foreach($artists as $artist) {
@@ -415,8 +415,8 @@ class DPSSueAddPlaylistViewer extends Viewer {
 	$rNum = $db->getOne($count_query);
 	$searchInfo = $rNum . ' Results for "' . $searchValue . '"';
 	$query = "SELECT min(audio.title) AS title, min(audio.id) AS id, min(audio.sustainer) as sust,
-			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name), min(audio.length_smpl) as length_smpl,  
-			min(audio.origin) as origin, min(audio.reclibid) as reclibid, min(albums.name) as album
+			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name), min(audio.end_smpl) as end_smpl,  
+			min(audio.origin) as origin, min(audio.reclibid) as reclibid, min(albums.name) as album, min(audio.start_smpl) as start_smpl
 		  FROM audio, artists, audioartists, audiodir, audiotypes, albums  
 		  WHERE audio.type = audiotypes.id 
 			AND audio.music_album = albums.id 
@@ -433,8 +433,8 @@ class DPSSueAddPlaylistViewer extends Viewer {
 	$searchResult = $db->getAll($query);
 	$number=0;
 	foreach($searchResult as $key => &$track) { 
-	  $samples = $track['length_smpl'];
-	  $track['length'] = $tracksLen = round((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
+	  $samples = $track['end_smpl']-$track['start_smpl'];
+	  $track['length'] = $tracksLen = floor((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
 	  $sql = "SELECT DISTINCT artists.name as name FROM artists, audioartists WHERE audioartists.audio = " . $track['id'] . " AND audioartists.artist = artists.id order by artists.name asc";
 	  $artists = $db->getAll($sql);
 	  foreach($artists as $artist) {
@@ -462,8 +462,8 @@ class DPSSueAddPlaylistViewer extends Viewer {
 	$rNum = $db->getOne($count_query);
 	$searchInfo = $rNum . ' Results for "' . $searchValue . '"';
 	$query = "SELECT min(audio.title) AS title, min(audio.id) AS id, min(audio.sustainer) as sust,
-			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name), min(audio.length_smpl) as length_smpl,  
-			min(audio.origin) as origin, min(audio.reclibid) as reclibid, min(albums.name) as album
+			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name), min(audio.end_smpl) as end_smpl,  
+			min(audio.origin) as origin, min(audio.reclibid) as reclibid, min(albums.name) as album, min(audio.start_smpl) as start_smpl
 		  FROM audio, artists, audioartists, audiodir, audiotypes, albums  
 		  WHERE audio.type = audiotypes.id 
 			AND audio.music_album = albums.id 
@@ -480,8 +480,8 @@ class DPSSueAddPlaylistViewer extends Viewer {
 	$searchResult = $db->getAll($query);
 	$number=0;
 	foreach($searchResult as $key => &$track) { 
-	  $samples = $track['length_smpl'];
-	  $track['length'] = $tracksLen = round((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
+	  $samples = $track['end_smpl']-$track['start_smpl'];
+	  $track['length'] = $tracksLen = floor((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
 	  $sql = "SELECT DISTINCT artists.name as name FROM artists, audioartists WHERE audioartists.audio = " . $track['id'] . " AND audioartists.artist = artists.id order by artists.name asc";
 	  $artists = $db->getAll($sql);
 	  foreach($artists as $artist) {
@@ -520,8 +520,8 @@ class DPSSueAddPlaylistViewer extends Viewer {
 	$rNum = $db->getOne($count_query);
 	$searchInfo = $rNum . ' Results for "' . $searchValue . '"';
 	$query = "SELECT min(audio.title) AS title, min(audio.id) AS id, min(audio.sustainer) as sust,
-			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name), min(audio.length_smpl) as length_smpl,  
-			min(audio.origin) as origin, min(audio.reclibid) as reclibid, min(albums.name) as album
+			min(audio.flagged) as flagged, min(audio.censor) as censor, min(artists.name), min(audio.end_smpl) as end_smpl,  
+			min(audio.origin) as origin, min(audio.reclibid) as reclibid, min(albums.name) as album, min(audio.start_smpl) as start_smpl
 		  FROM audio, artists, audioartists, audiodir, audiotypes, albums  
 		  WHERE audio.type = audiotypes.id 
 			AND audio.music_album = albums.id 
@@ -548,8 +548,8 @@ class DPSSueAddPlaylistViewer extends Viewer {
 	$searchResult = $db->getAll($query);
 	$number=0;
 	foreach($searchResult as $key => &$track) { 
-	  $samples = $track['length_smpl'];
-	  $track['length'] = $tracksLen = round((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
+	  $samples = $track['end_smpl']-$track['start_smpl'];
+	  $track['length'] = $tracksLen = floor((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
 	  $sql = "SELECT DISTINCT artists.name as name FROM artists, audioartists WHERE audioartists.audio = " . $track['id'] . " AND audioartists.artist = artists.id order by artists.name asc";
 	  $artists = $db->getAll($sql);
 	  foreach($artists as $artist) {

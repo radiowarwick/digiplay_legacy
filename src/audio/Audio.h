@@ -19,15 +19,15 @@ namespace Audio {
 	class Counter;
 }
 
-typedef unsigned int PORT;
-#define IN0 0
-#define IN1 1
-#define IN2 2
-#define IN3 3
-#define OUT0 0
-#define OUT1 1
-#define OUT2 2
-#define OUT3 3
+typedef int PORT;
+#define IN0 1
+#define IN1 2
+#define IN2 3
+#define IN3 4
+#define OUT0 -1
+#define OUT1 -2
+#define OUT2 -3
+#define OUT3 -4
 
 #ifndef ENUM_MESSAGE
 #define ENUM_MESSAGE

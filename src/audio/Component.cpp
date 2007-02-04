@@ -99,7 +99,9 @@ void Audio::Component::receive(PORT inPort, MESSAGE message) {
                     break;
                 default:
                     break;
-            }       
+            }
+            cout << "ReceiveMessage(" << inPort << ")" << endl;
+            cout << "ReceiveMessage(" << message << ")" << endl;
             receiveMessage(inPort,message);
             return;
         }

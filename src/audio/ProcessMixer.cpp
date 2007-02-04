@@ -1,44 +1,84 @@
 #include "ProcessMixer.h"
 
+#include <iostream>
+#include <cmath>
 #include <algorithm>
 using namespace std;
 
 Audio::ProcessMixer::ProcessMixer() {
-    audioBuffer = new short[256];
-    cacheStart = audioBuffer;
-    cacheEnd = audioBuffer + 256;
-    cacheRead = audioBuffer;
-    cacheWrite = audioBuffer;
+
 }
 
 Audio::ProcessMixer::~ProcessMixer() {
 
 }
 
+/** Receives messages to this component after they've been preprocessed by the
+ * component base class. 
+ */
 void Audio::ProcessMixer::receiveMessage(PORT inPort, MESSAGE message) {
-    for (unsigned int i = 0; i < connectedDevices()->size(); i++) {
-        if (connectedDevices()->at(i).state == STATE_PLAY 
-                && !isThreadActive()) {
-            if (find(channelFlags.begin(), channelFlags.end(), int(inPort))
-                    == channelFlags.end()) {
-                channelFlags.push_back(int(inPort));
+    // Determine if the current channel is already playing
+    // see if it's in our active channel flag list
+    vector<int>::iterator x;
+    if ((x=find(channelFlags.begin(), channelFlags.end(), int(inPort)))
+            == channelFlags.end()) {
+        cout << "Adding port " << inPort << endl;
+        // if not, add it to the list, and allocate buffer
+        channelFlags.push_back(int(inPort));
+        channelBuffers.push_back(new short[128]);
+    }
+    else {
+        // otherwise it exists so we disable this channel in the mixer
+        cout << "Disabling port " << inPort << endl;
+        int i = x - channelFlags.begin();
+        channelFlags.erase(x);
+        delete channelBuffers.at(i);
+        channelBuffers.erase(channelBuffers.begin() + i);
+    }
+    if (channelFlags.size() == 1 && message == PLAY) {
+        cout << "Setting mixer state to play." << endl;
+        send(OUT0,PLAY);
+    }
+    else if (channelFlags.size() == 0) {
+        cout << "Setting mixer state to stop." << endl;
+        send(OUT0,STOP);
+    }
+}
+
+void Audio::ProcessMixer::getAudio(short* buffer, unsigned long stereoSamples) {
+//    unsigned short N = channelFlags.size();
+//    short **chs = new short*[N];
+//    for (unsigned short i = 0; i < N; i++) {
+//        chs[i] = channelBuffers.at(i);
+//    }
+
+    // request audio for each channel into separate buffers
+    for (unsigned int i = 0; i < channelFlags.size(); i++) {
+        Component *ch = connectedDevice(channelFlags.at(i));
+        ch->getAudio(channelBuffers.at(i),stereoSamples);
+    }
+    // perform mix
+    short M = 32768;
+    double factor;
+    // process each sample in turn
+    for (unsigned int k = 0; k < stereoSamples * 2; k++) {
+        // start with zero sample
+        buffer[k] = 0;
+        for (unsigned int i = 0; i < channelFlags.size(); i++) {
+            // Set the scale factor for each channel to unity to start with
+            factor = 1.0;
+            // Compute scale factor for each channel based on the amplitude
+            // of the remaining channels in the mix
+            for (unsigned int j = i+1; j < channelFlags.size(); j++) {
+                factor *= (1.0 - abs(double(channelBuffers.at(j)[k])/M));
             }
-            threadStart();
-            break;
-        }
-        else {
-            vector<int>::iterator x;
-            if ((x=find(channelFlags.begin(), channelFlags.end(), int(inPort)))
-                    != channelFlags.end()) {
-                channelFlags.erase(x);
-            }
+            // Scale and add this channel to the mix
+            buffer[k] += short(channelBuffers.at(i)[k]*factor);
         }
     }
 }
 
-void Audio::ProcessMixer::threadExecute() {
-    for (unsigned int ch = 0; ch < channelFlags.size(); ch++) {
-        
 
-    }
+void Audio::ProcessMixer::threadExecute() {
+
 }

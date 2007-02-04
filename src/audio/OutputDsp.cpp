@@ -28,8 +28,10 @@ void Audio::OutputDsp::receiveMessage(PORT inPort, MESSAGE message) {
 }
 
 void Audio::OutputDsp::threadExecute() {
-	short int* buffer = new short int[256];
-	Component* device = connectedDevice(0);
+    cout << "Player start threadExecute()" << endl;
+    if (!connectedDevice(IN0)) cout << "CONNECTED DEVICE IS NULL" << endl;
+	short int* buffer = new short int[128];
+	Component* device = connectedDevice(IN0);
 	while (audioState == STATE_PLAY) {
 		device->getAudio(buffer,64);
 		if (write (audio, buffer, 256) != 256) {

@@ -1,9 +1,12 @@
 #include <iostream>
-using namespace std;
+using std::cout;
+using std::endl;
 
+#include "Counter.h"
 #include "InputRaw.h"
+using Audio::InputRaw;
 
-Audio::InputRaw::InputRaw() {
+InputRaw::InputRaw() {
 	state = STATE_STOP;
 
 	// Configure cache
@@ -26,16 +29,16 @@ Audio::InputRaw::InputRaw() {
 	audioBuffer = new char[256];
 }
 
-Audio::InputRaw::~InputRaw() {
+InputRaw::~InputRaw() {
 
 }
 
-void Audio::InputRaw::getAudio(short *audioData, unsigned long stereoSamples) {
+void InputRaw::getAudio(AudioPacket& audioData) {
     // Fills audioData with the requested number of samples
     // 2 bytes per sample, and 2 channels
     // => get 4xsamples bytes
-    char *ptr = (char*)audioData;
-    unsigned long bytes = stereoSamples * 4;
+    char *ptr = (char*)&audioData[0];
+    unsigned long bytes = audioData.getSize() * 2;
 
     short count = 0;
     long x;
@@ -61,17 +64,17 @@ void Audio::InputRaw::getAudio(short *audioData, unsigned long stereoSamples) {
         count++;
     }
 
-    if ((state == STATE_PLAY) && countersList.size() > 0) {
+/*    if ((state == STATE_PLAY) && countersList.size() > 0) {
         x = f_pos_byte - f_start_byte;
         if ((x - (x % 64)) % 8192 == 0) {
             updateCounters(x/4);
 		}
     }
-
+*/
     return;
 }
 
-void Audio::InputRaw::load(string filename, long start_smpl, long end_smpl) {
+void InputRaw::load(string filename, long start_smpl, long end_smpl) {
 	if (filename == "") return;
 	state = STATE_STOP;
 	threadWait();
@@ -98,24 +101,28 @@ void Audio::InputRaw::load(string filename, long start_smpl, long end_smpl) {
 		return;
 	}
 	if (countersList.size() > 0) updateCounters(0);
+    while ( cacheSize - cacheFree < 4096 ) {
+        cout << cacheSize - cacheFree << endl;
+        usleep(100);
+    }
 }
 
-void Audio::InputRaw::play() {
+void InputRaw::play() {
 	state = STATE_PLAY;
 	send(OUT0,PLAY);
 }
 
-void Audio::InputRaw::stop() {
+void InputRaw::stop() {
 	state = STATE_STOP;
 	send(OUT0,STOP);
 }
 
-void Audio::InputRaw::pause() {
+void InputRaw::pause() {
 	state = STATE_PAUSE;
 	send(OUT0,PAUSE);
 }
 
-void Audio::InputRaw::seek(long sample) {
+void InputRaw::seek(long sample) {
 	sample -= (sample % 64);
 	f_pos_byte = sample*4;
 	f.seekg(f_pos_byte, ios::beg);
@@ -123,7 +130,7 @@ void Audio::InputRaw::seek(long sample) {
 	cacheFree = cacheSize;
 }
 
-void Audio::InputRaw::addCounter(Audio::Counter *counter) {
+void InputRaw::addCounter(Audio::Counter *counter) {
 	vector<Audio::Counter *>::iterator i 
 		= find(countersList.begin(), countersList.end(), counter);
 	if (i == countersList.end()) {
@@ -131,7 +138,7 @@ void Audio::InputRaw::addCounter(Audio::Counter *counter) {
 	}
 }
 
-void Audio::InputRaw::removeCounter(Audio::Counter *counter) {
+void InputRaw::removeCounter(Audio::Counter *counter) {
 	vector<Audio::Counter *>::iterator i 
 		= find(countersList.begin(), countersList.end(), counter);
 	if (i != countersList.end()) {
@@ -142,17 +149,17 @@ void Audio::InputRaw::removeCounter(Audio::Counter *counter) {
 	}
 }
 
-void Audio::InputRaw::updateCounters(long sample) {
+void InputRaw::updateCounters(unsigned long sample) {
 	for (unsigned int i = 0; i < countersList.size(); i++) {
-		//countersList.at(i)->update(sample);
+		countersList.at(i)->setSample(sample);
 	}
 }
 
-void Audio::InputRaw::receiveMessage(PORT inPort, MESSAGE message) {
+void InputRaw::receiveMessage(PORT inPort, MESSAGE message) {
 
 }
 
-void Audio::InputRaw::threadExecute() {
+void InputRaw::threadExecute() {
 	f.clear();
 	f.seekg(f_start_byte, ios::beg);
 

@@ -6,7 +6,7 @@
 class Audio::Input : public Audio::Component {
 	public:
 		virtual ~Input();
-		virtual void getAudio(short *audioData, unsigned long samples);
+		virtual void getAudio(AudioPacket& audioData);
 		virtual void play();		// play track
 		virtual void stop();		// stop track and seek to start
 		virtual void pause();		// pause track

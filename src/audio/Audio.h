@@ -1,6 +1,9 @@
 #ifndef NS_AUDIO
 #define NS_AUDIO
+// Audio namespace
 namespace Audio {
+    class AudioPacket;
+
 	class Component;
 
 	class Input;
@@ -15,11 +18,16 @@ namespace Audio {
 
 	class Process;
     class ProcessMixer;
+    class ProcessFader;
 
 	class Counter;
 }
 
-typedef int PORT;
+// Basic audio typedefs and definitions
+typedef unsigned long   SAMPLE;
+typedef short           SAMPLEVAL;
+typedef int             PORT;
+#define OTHER 0
 #define IN0 1
 #define IN1 2
 #define IN2 3

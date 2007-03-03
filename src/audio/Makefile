@@ -15,7 +15,8 @@ OUT_STATIC	=	no
 QT_ENABLED 	=	no
 
 # .cpp modules from which to create output
-MODS		=	Thread Component Input InputRaw Output OutputRaw OutputDsp Process  ProcessMixer Counter
+MODS		=	AudioPacket Thread Component Input InputRaw Output OutputRaw \
+				OutputDsp Process  ProcessMixer ProcessFader Counter
 SHARED_MODS	=	
 
 # Global header files on which dependance exists

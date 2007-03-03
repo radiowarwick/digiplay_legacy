@@ -2,10 +2,9 @@
 #define CLASS_AUDIO_OUTPUT_DSP
 
 #include <string>
-#include <iostream>
-#include "fcntl.h"
-using namespace std;
+using std::string;
 
+#include "fcntl.h"
 #include <sys/soundcard.h>
 #include <sys/ioctl.h>
 

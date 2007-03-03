@@ -1,17 +1,22 @@
-#include "InputRaw.h"
+#include <iostream>
+#include <fstream>
+using std::ofstream;
+using std::cout;
+using std::endl;
 
 #include "OutputDsp.h"
+using Audio::OutputDsp;
 
-Audio::OutputDsp::OutputDsp(string channel) {
+OutputDsp::OutputDsp(string channel) {
 	initialise(channel);
 //	threadStart();
 }
 
-Audio::OutputDsp::~OutputDsp() {
+OutputDsp::~OutputDsp() {
 
 }
 
-void Audio::OutputDsp::receiveMessage(PORT inPort, MESSAGE message) {
+void OutputDsp::receiveMessage(PORT inPort, MESSAGE message) {
     cout << "Message on port " << inPort << ", message " << message << endl;
     if (inPort != IN0) {
         cout << "OutputDsp::receive: only use IN0 on a DSP device" << endl;
@@ -27,22 +32,24 @@ void Audio::OutputDsp::receiveMessage(PORT inPort, MESSAGE message) {
     }
 }
 
-void Audio::OutputDsp::threadExecute() {
+void OutputDsp::threadExecute() {
     cout << "Player start threadExecute()" << endl;
     if (!connectedDevice(IN0)) cout << "CONNECTED DEVICE IS NULL" << endl;
-	short int* buffer = new short int[128];
-	Component* device = connectedDevice(IN0);
+    AudioPacket buffer(512);
+    char* d = (char*)&(buffer[0]);
+    ofstream f_out("/mnt/dps0-0/audio/output.raw");
 	while (audioState == STATE_PLAY) {
-		device->getAudio(buffer,64);
-		if (write (audio, buffer, 256) != 256) {
+		connectedDevice(IN0)->getAudio(buffer);
+        for (unsigned int i = 0; i < 1024; i++) f_out << d[i];
+		if (write (audio, &(buffer[0]), 1024) != 1024) {
 			cout << "Failed to write all of buffer" << endl;
 			abort();
 		}
 	}
-	delete[] buffer;
+    f_out.close();
 }
 
-void Audio::OutputDsp::initialise(string device) {
+void OutputDsp::initialise(string device) {
     // Open audio device
 	audio = open(device.c_str(), O_WRONLY, 0);
 	if (audio == -1) {

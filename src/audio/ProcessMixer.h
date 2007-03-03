@@ -16,7 +16,7 @@ class Audio::ProcessMixer : public Audio::Process {
         ProcessMixer();
         ~ProcessMixer();
 
-        virtual void getAudio(short *audioData, unsigned long samples);
+        virtual void getAudio(AudioPacket& audioData);
 
         virtual void receiveMessage(PORT inPort, MESSAGE message);
 
@@ -25,7 +25,7 @@ class Audio::ProcessMixer : public Audio::Process {
     private:
         short *audioBuffer, *cacheStart, *cacheEnd, *cacheRead, *cacheWrite;
         vector<int> channelFlags;
-        vector<short*> channelBuffers;
+        vector<AudioPacket> channelBuffers;
 };
 
 #endif

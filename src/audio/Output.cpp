@@ -1,13 +1,14 @@
 #include "Output.h"
+using Audio::Output;
 
-Audio::Output::~Output() {
-
-}
-
-void Audio::Output::receiveMessage(PORT inPort, MESSAGE message) {
+Output::~Output() {
 
 }
 
-void Audio::Output::threadExecute() {
+void Output::receiveMessage(PORT inPort, MESSAGE message) {
+
+}
+
+void Output::threadExecute() {
 
 }

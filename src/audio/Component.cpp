@@ -1,20 +1,23 @@
 #include <iostream>
-using namespace std;
+using std::cout;
+using std::endl;
 
 #include "Component.h"
+#include "Counter.h"
+using Audio::Component;
 
-Audio::Component::Component() {
-    portMap = new vector<ConnectionMapping>;
+Component::Component() {
+
 }
 
 /** Processes the components mapping lists and removes and mappings to this
  * object. Each component map is processed in turn and the connected
  * component is sent a destroyMapping() request.
  */
-Audio::Component::~Component() {
-	for (unsigned int i = 0; i < portMap->size(); i++)
-		destroyMapping(portMap->at(i).port);
-    delete portMap;
+Component::~Component() {
+	for (unsigned int i = 0; i < portMap.size(); i++) {
+        portMap.at(i).component->destroyMapping(portMap.at(i).remotePort, this);
+    }
 }
 
 /** Establishes a connection between a local port and a port on a remote
@@ -27,36 +30,72 @@ Audio::Component::~Component() {
  * @param remotePort The port on the remote component to connect to
  * @return Success or failure of connection
  */
-bool Audio::Component::connect(PORT localPort, Component *c, 
+bool Component::connect(PORT localPort, Component *c, 
 								PORT remotePort) {
-	for (unsigned int i = 0; i < portMap->size(); i++) {
-		if (portMap->at(i).port == localPort) {
-			cout << "Port " << localPort << " is already mapped." << endl;
-			return false;
-		}
-	}
-	if (c->connectRequest(remotePort, this, localPort) == false) {
-		cout << "Remote Port " << remotePort << " is already mapped." << endl;
-		return false;
-	}
+    // Need to check the local port is only mapped once if it's non-zero.
+    if (localPort != OTHER) {
+    	for (unsigned int i = 0; i < portMap.size(); i++) {
+    		if (portMap.at(i).port == localPort) {
+    			cout << "Port " << localPort << " is already mapped." << endl;
+    			return false;
+    		}
+    	}
+    }
+    // Request the reverse mapping from the other component
+    // if it fails, we should not add a mapping and fail ourself
+    if (c->createMapping(remotePort, this, localPort) == false) {
+    	cout << "Remote Port " << remotePort << " is already mapped." 
+                << endl;
+    	return false;
+    }
+    // If all is good, add the mapping
 	createMapping(localPort, c, remotePort);
 	return true;
 }
 
 
-bool Audio::Component::connectRequest(PORT localPort, Component *c,
-								PORT remotePort) {
-	createMapping(localPort, c, remotePort);
-	return true;
+/** Disconnect all components connected to a port on this component
+ * @param localPort The local port which is disconnected
+ */
+void Component::disconnect(PORT localPort) {
+    unsigned int i = 0;
+    while (i < portMap.size()) {
+        if (portMap.at(i).port == localPort) {
+            portMap.at(i).component->destroyMapping(
+                portMap.at(i).remotePort, this);
+	        destroyMapping(localPort,portMap.at(i).component);
+        }
+        i++;
+    }
+
 }
 
-void Audio::Component::disconnect(PORT localPort) {
-	destroyMapping(localPort);
+
+/** Adds a counter component to this components counter update list
+ * @param C The counter component to be added to be updated during getAudio
+ */
+void Component::addCounter(Counter* C) {
+    for (unsigned int i = 0; i < _counters.size(); i++) {
+        if (_counters.at(i) == C) {
+            return;
+        }
+    }
+    _counters.push_back(C);
 }
 
-void Audio::Component::getAudio(short *audioData, unsigned long samples) {
-    cout << "Component getAudio" << endl;
+
+/** Removes a counter component from the list of components to be updated
+ * @param C The counter component to be removed
+ */
+void Component::removeCounter(Counter* C) {
+    for (unsigned int i = 0; i < _counters.size(); i++) {
+        if (_counters.at(i) == C) {
+            _counters.erase(_counters.begin() + i);
+            return;
+        }
+    }
 }
+
 
 /** Sends a message from one component to another. The local OUT port is
  * specified and the destination component is then looked up from this in the
@@ -65,17 +104,21 @@ void Audio::Component::getAudio(short *audioData, unsigned long samples) {
  * @param outPort Specify the port on which to send the message
  * @param message Specify the message to send
  */
-void Audio::Component::send(PORT outPort, MESSAGE message) {
+void Component::send(PORT outPort, MESSAGE message) {
     cout << "Component::send" << endl;
-    for (unsigned int i = 0; i < portMap->size(); i++) {
-        if (portMap->at(i).port == outPort) {
-            portMap->at(i).component->receive(portMap->at(i).remotePort,
+    for (unsigned int i = 0; i < portMap.size(); i++) {
+        if (portMap.at(i).port == outPort) {
+            portMap.at(i).component->receive(portMap.at(i).remotePort,
                                                 message);
-            return;
+            // Multiple components may be connected to OTHER port
+            if (outPort != OTHER) return;
         }
     }
-    cout << "No such port: " << outPort << endl;
+    if (outPort != OTHER) {
+        cout << "No such port: " << outPort << endl;
+    }
 }
+
 
 /** Processes received message for this component. This is a virtual function
  * and should be reimplemented in each derived class to handle messages as
@@ -83,19 +126,19 @@ void Audio::Component::send(PORT outPort, MESSAGE message) {
  * @param inPort Specifies the port on which the message is received
  * @param message Specifies the message received.
  */
-void Audio::Component::receive(PORT inPort, MESSAGE message) {
+void Component::receive(PORT inPort, MESSAGE message) {
     cout << "Component::receive" << endl;
-    for (unsigned int i = 0; i < portMap->size(); i++) {
-        if (portMap->at(i).port == inPort) {
+    for (unsigned int i = 0; i < portMap.size(); i++) {
+        if (portMap.at(i).port == inPort) {
             switch (message) {
                 case PLAY:
-                    portMap->at(i).state = STATE_PLAY;
+                    portMap.at(i).state = STATE_PLAY;
                     break;
                 case STOP:
-                    portMap->at(i).state = STATE_STOP;
+                    portMap.at(i).state = STATE_STOP;
                     break;
                 case PAUSE:
-                    portMap->at(i).state = STATE_PAUSE;
+                    portMap.at(i).state = STATE_PAUSE;
                     break;
                 default:
                     break;
@@ -109,32 +152,64 @@ void Audio::Component::receive(PORT inPort, MESSAGE message) {
     cout << "No such port: " << inPort << endl;
 }
 
+
 /** A pointer to the connected component on the specified port is returned
  * @param inPort The port to get the connected component for.
  * @return The component connected to \c inPort.
  */
-Audio::Component* Audio::Component::connectedDevice(PORT inPort) {
-	for (unsigned int i = 0; i < portMap->size(); i++) {
-		if (portMap->at(i).port == inPort) {
-			return portMap->at(i).component;
+Component* Component::connectedDevice(PORT inPort) {
+	for (unsigned int i = 0; i < portMap.size(); i++) {
+		if (portMap.at(i).port == inPort) {
+			return portMap.at(i).component;
 		}
 	}
 	return 0;
 }
 
-void Audio::Component::createMapping(PORT localPort, Component *c,
+
+/** Adds a new component mapping to this components mapping list specifying
+ * the remote component and port connected to a local port.
+ * @param localPort The local port the component \c is connected to
+ * @param c The component connected to this component
+ * @param remotePort The port on the remote component this is connected to.
+ * @return Success or failure of the mapping.
+ */
+bool Component::createMapping(PORT localPort, Component *c,
 										PORT remotePort) {
+    // Fail if this port has already been mapped
+    if (localPort != OTHER) {
+        for (unsigned int i = 0; i < portMap.size(); i++) {
+            if (portMap.at(i).port == localPort) {
+                return false;
+            }
+        }
+    }
 	ConnectionMapping CM;
 	CM.port = localPort;
 	CM.component = c;
 	CM.remotePort = remotePort;
-	portMap->push_back(CM);
+	portMap.push_back(CM);
+
+    // See if the other component is also a counter
+    Counter *C =  dynamic_cast<Counter*>(c);
+    if (C) addCounter(C);
+    return true;
 }
 
-void Audio::Component::destroyMapping(PORT localPort) {
 
-}
-
-void Audio::Component::destroyMapping(Component *c, PORT remotePort) {
-
+/** Removes a mapping
+ */
+bool Component::destroyMapping(PORT localPort, Component *c) {
+    // if it's a counter, remove it from the list
+    Counter *C = dynamic_cast<Counter*>(c);
+    if (C) removeCounter(C);
+    
+    for (unsigned int i = 0; i < portMap.size(); i++) {
+        if (portMap.at(i).port == localPort
+                && portMap.at(i).component == c) {
+            portMap.erase(portMap.begin() + i);
+            return true;
+        }
+    }
+    return false;
 }

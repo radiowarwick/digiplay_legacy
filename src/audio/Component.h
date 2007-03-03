@@ -2,10 +2,13 @@
 #define CLASS_COMPONENT
 
 #include <vector>
-using namespace std;
+using std::vector;
 
 #include "Audio.h"
 #include "Thread.h"
+#include "AudioPacket.h"
+
+class Counter;
 
 /** Audio Component base class.
  * This provides a base for all audio components and implements functionality
@@ -16,12 +19,17 @@ class Audio::Component : public Thread {
         /// Clean up all component mappings
 		virtual ~Component();
         /// Places \c samples stereo samples of audio into \c audioData.
-		virtual void getAudio(short *audioData, unsigned long samples) =0;
+		virtual void getAudio(AudioPacket& audioData) =0;
 
         /// Connect a local port on this component to another component.
 		bool connect(PORT localPort, Component *c, PORT remotePort);
         /// Disconnect a components connected to a local port
 		void disconnect(PORT localPort);
+        
+        /// Stores a pointer to a counter object to update on getAudio
+        void addCounter(Counter* C);
+        /// Attempts to remove the counter from the list
+        void removeCounter(Counter* C);
 
 	protected:
         Component();
@@ -36,18 +44,21 @@ class Audio::Component : public Thread {
         /// Access a connected component
 		Audio::Component* connectedDevice(PORT inPort);
         /// Access the list of connected component mappings
-        const vector<ConnectionMapping>* connectedDevices() {return portMap;}
+        const vector<ConnectionMapping>& connectedDevices() {return portMap;}
+        const vector<Counter*>& connectedCounters() {return _counters;}
 
 	private:
-        /// Process a reverse connection request from another component
-		bool connectRequest(PORT localPort, Component *c, PORT remotePort);
         /// Add a component mapping to this components mapping list
-		void createMapping(PORT localPort, Component *c, 
+		bool createMapping(PORT localPort, Component *c, 
 							PORT remotePort);
         /// Remove a component mapping from this components mapping list
-		void destroyMapping(PORT localPort);
-        /// Remove a component mapping from this components mapping list
-		void destroyMapping(Component *c, PORT remotePort);
-		vector<ConnectionMapping>* portMap;
+		bool destroyMapping(PORT localPort, Component *c);
+
+        /// Store the components port map and connected components
+		vector<ConnectionMapping> portMap;
+        /// Holds the current sample (exact specification dependant on context)
+        SAMPLE _currentSample;
+        /// Store the counters attached to this component
+        vector<Counter*> _counters;
 };
 #endif

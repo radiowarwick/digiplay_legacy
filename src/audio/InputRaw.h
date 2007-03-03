@@ -7,12 +7,14 @@ using namespace std;
 
 #include "Input.h"
 
+class Audio::Counter;
+
 class Audio::InputRaw : public Audio::Input {
 	public:
 		InputRaw();
 		~InputRaw();
 
-		virtual void getAudio(short *audioData, unsigned long stereoSamples);
+		virtual void getAudio(AudioPacket& audioData);
 
 		void load(string filename, long start_smpl, long end_smpl);
 		void play();		// play track
@@ -36,7 +38,7 @@ class Audio::InputRaw : public Audio::Input {
 		vector<Audio::Counter*> countersList;
 		STATE state;
 
-		void updateCounters(long sample);
+		void updateCounters(unsigned long sample);
 };
 
 #endif

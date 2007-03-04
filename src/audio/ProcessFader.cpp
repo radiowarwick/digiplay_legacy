@@ -5,7 +5,7 @@ using Audio::ProcessFader;
 using namespace std;
 
 ProcessFader::ProcessFader() {
-
+	vol = 1.0;
 }
 
 ProcessFader::~ProcessFader() {
@@ -16,7 +16,6 @@ void ProcessFader::getAudio(AudioPacket& audioData) {
     connectedDevice(IN0)->getAudio(audioData);
 	SAMPLE smpl;
 	double x;
-	double vol;
 	for (SAMPLE i = 0; i < audioData.getSize(); i++) {
 		x = static_cast<double>(audioData[i]);
 		smpl = audioData.getStart() + i;
@@ -27,10 +26,9 @@ void ProcessFader::getAudio(AudioPacket& audioData) {
 						/ (F._end - F._start) + F._startpct;
 				if (vol > 0.99) vol = 1.0;
 				if (vol < 0.01) vol = 0.0;
-				x *= vol;
 			}
 		}
-		audioData[i] = static_cast<SAMPLEVAL>(x);
+		audioData[i] = static_cast<SAMPLEVAL>(x * vol);
 	}
 }
 
@@ -42,7 +40,7 @@ void ProcessFader::threadExecute() {
 
 }
 
-void ProcessFader::addFade(Fade& F) {
+void ProcessFader::addFade(Fade F) {
 	Fades.push_back(F);
 }
 

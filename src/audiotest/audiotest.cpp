@@ -13,6 +13,8 @@ int main() {
 //    InputRaw* filereader2 = new InputRaw();
 //    InputRaw* filereader3 = new InputRaw();
     ProcessFader* fader1 = new ProcessFader();
+	fader1->addFade(ProcessFader::Fade(0,220500,0.0,1.0));
+	fader1->addFade(ProcessFader::Fade(2205000,2425500,1.0,0.0));
 	OutputDsp* player = new OutputDsp("/dev/dsp");
 //    ProcessMixer* mixer = new ProcessMixer();
     cout << "== Connect filereader" << endl;

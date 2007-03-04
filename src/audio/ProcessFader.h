@@ -32,12 +32,13 @@ class Audio::ProcessFader : public Audio::Process,
 
         virtual void threadExecute();
 
-        void addFade(Fade&);
+        void addFade(Fade);
         void clearFades();
 
     private:
         vector<Fade> Fades;
         SAMPLEVAL * data;
+		double vol;
 };
 
 #endif

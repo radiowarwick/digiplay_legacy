@@ -39,9 +39,9 @@ void InputRaw::getAudio(AudioPacket& audioData) {
     // => get 4xsamples bytes
     char *ptr = (char*)&audioData[0];
     unsigned long bytes = audioData.getSize() * 2;
-
+    long pos = static_cast<long>((f_pos_byte - f_start_byte) / 4);
     short count = 0;
-    long x;
+
 	if ((state == STATE_PLAY)  && cacheSize - cacheFree < 1024) {
         cout << "Out of cached audio: " << cacheSize - cacheFree << endl;
 		stop();
@@ -63,14 +63,14 @@ void InputRaw::getAudio(AudioPacket& audioData) {
         ptr++;
         count++;
     }
+	audioData.setStart(pos);
 
-/*    if ((state == STATE_PLAY) && countersList.size() > 0) {
-        x = f_pos_byte - f_start_byte;
-        if ((x - (x % 64)) % 8192 == 0) {
-            updateCounters(x/4);
+    if ((state == STATE_PLAY) && countersList.size() > 0) {
+        if ((pos - (pos % 64)) % 8192 == 0) {
+            updateCounters(pos/4);
 		}
     }
-*/
+
     return;
 }
 

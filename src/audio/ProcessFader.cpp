@@ -14,10 +14,24 @@ ProcessFader::~ProcessFader() {
 
 void ProcessFader::getAudio(AudioPacket& audioData) {
     connectedDevice(IN0)->getAudio(audioData);
-//    for (SAMPLE i = 0; i < audioData.getSize(); i++) {
-//        audioData[i] = static_cast<short>(audioData[i]*1.0);
-//            
-//    }
+	SAMPLE smpl;
+	double x;
+	double vol;
+	for (SAMPLE i = 0; i < audioData.getSize(); i++) {
+		x = static_cast<double>(audioData[i]);
+		smpl = audioData.getStart() + i;
+		for (unsigned int j = 0; j < Fades.size(); j++) {
+			Fade F = Fades.at(j);
+			if (F._start <= smpl && F._end > smpl) {
+				vol = ((smpl - F._start)*(F._endpct - F._startpct))
+						/ (F._end - F._start) + F._startpct;
+				if (vol > 0.99) vol = 1.0;
+				if (vol < 0.01) vol = 0.0;
+				x *= vol;
+			}
+		}
+		audioData[i] = static_cast<SAMPLEVAL>(x);
+	}
 }
 
 void ProcessFader::receiveMessage(PORT inPort, MESSAGE message) {
@@ -29,11 +43,11 @@ void ProcessFader::threadExecute() {
 }
 
 void ProcessFader::addFade(Fade& F) {
-
+	Fades.push_back(F);
 }
 
 void ProcessFader::clearFades() {
-
+	Fades.clear();
 }
 
 // ProcessFader::Fade -----------------------------------------
@@ -50,9 +64,13 @@ ProcessFader::Fade::~Fade() {
 }
 
 ProcessFader::Fade::Fade(const Fade& F) {
-
+	operator=(F);
 }
 
 ProcessFader::Fade& ProcessFader::Fade::operator=(const Fade& F) {
+	_start = F._start;
+	_end = F._end;
+	_startpct = F._startpct;
+	_endpct = F._endpct;
     return (*this);
 }

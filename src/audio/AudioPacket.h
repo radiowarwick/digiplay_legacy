@@ -14,6 +14,8 @@ class Audio::AudioPacket {
         SAMPLEVAL& operator[](SAMPLE index);
 
         SAMPLE getSize() {return _size;}
+		SAMPLE getStart() {return _start;}
+		void setStart(SAMPLE start) {_start = start;}
 
     private: 
         SAMPLEVAL * _data;

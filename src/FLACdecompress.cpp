@@ -21,8 +21,18 @@
  *
  */
 #include "FLACdecompress.h"
+#include <iostream>
 
 	FLACdecompress::FLACdecompress() {
+		outFile.open("decomp.raw", ios::out | ios::binary);
+	}
+
+	FLACdecompress::FLACdecompress(string filename) {
+		outFile.open(filename.c_str(), ios::out | ios::binary);
+	}
+
+	FLACdecompress::~FLACdecompress() {
+		outFile.close();
 	}
 
 	::FLAC__StreamDecoderWriteStatus FLACdecompress::write_callback(const::FLAC__Frame *frame, const FLAC__int32 *const 
@@ -37,7 +47,7 @@ buffer[]) {
 			j=left[4*i+1];
 			m=right[4*i];
 			l=right[4*i+1];
-			cout << j << k << l << m;
+			outFile << k << j << m << l;
 		}
 
 		return ::FLAC__StreamDecoderWriteStatus(FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE);

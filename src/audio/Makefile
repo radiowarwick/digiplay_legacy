@@ -16,7 +16,8 @@ QT_ENABLED 	=	no
 
 # .cpp modules from which to create output
 MODS		=	AudioPacket Thread Component Input InputRaw Output OutputRaw \
-				OutputDsp Process  ProcessMixer ProcessFader Counter
+				OutputDsp Process  ProcessMixer ProcessFader Counter \
+				InputFlac
 SHARED_MODS	=	
 
 # Global header files on which dependance exists

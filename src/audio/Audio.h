@@ -5,9 +5,9 @@ namespace Audio {
     class AudioPacket;
 
 	class Component;
-
 	class Input;
 	class InputRaw;
+        class InputFlac;
 	class InputWav;
 	class InputMp3;
 	class InputDsp;

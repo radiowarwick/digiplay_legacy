@@ -58,15 +58,13 @@ void frmPlayout::init() {
 	player1 = new playerThread(this, 1);
 	player2 = new playerThread(this, 2);	
 	player3 = new playerThread(this, 3);
-//	remoteStartThread *remotes = new remoteStartThread(this);
+	remoteStartThread *remotes = new remoteStartThread(this);
 	player1->start();
 	usleep(100000);
 	player2->start();
 	usleep(100000);
 	player3->start();
 	usleep(100000);
-//	remotes->start();
-//	usleep(500000);
 	cout << " -> Hardware initialisation complete." << endl;
 
 	QCustomEvent *config_refresh = new QCustomEvent(30001);
@@ -87,6 +85,9 @@ void frmPlayout::init() {
 	usrAudioWall->setGeometry(560,373,460,373);
 	usrAudioWallMan = new AudioWallManager(usrAudioWall,C);
 	usrAudioWallMan->load(atoi(conf->getParam("user_cartset").c_str()));
+
+	usleep(500000);
+	remotes->start();
 
 	cout << "Finished init" << endl;
 }

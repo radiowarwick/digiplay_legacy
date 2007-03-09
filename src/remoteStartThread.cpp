@@ -26,6 +26,8 @@
 #include <unistd.h>
 #include <sys/io.h>
 
+#include "dps.h"
+
 #define ADDRESS 0x378
 
 remoteStartThread::remoteStartThread(QObject *o) {
@@ -37,43 +39,59 @@ void remoteStartThread::run() {
 	mutex.lock();
 	stopped = FALSE;
 	mutex.unlock();
-	while(!stopped) {
-		if (ioperm(ADDRESS,2,1)) {
-			cout << "Couldn't open port at 0x378" << endl;
-		}
-		else {
+//	gainPrivilage();
+//	showPrivilage();
+	if (ioperm(ADDRESS,2,1)) {
+		dropPrivilage();
+		cout << "Couldn't open port at address ";
+		printf("%x\n",ADDRESS);
+	}
+	else {
+		dropPrivilage();
+		while(!stopped) {
 			status = inb(ADDRESS+1);
+			cout << status << endl;
 			if (status != old_status) {
+				int changed = status^old_status;
+				cout << "Matched" << endl;
 				QCustomEvent *remote;
-				if ((status & 0x80) != 0x80) {
-					remote = new QCustomEvent(40000);
-					QApplication::postEvent(receiver, remote);
+				if ((changed & 0x80) == 0x80) {
+					if ((status & 0x80) == 0x80) {
+						remote = new QCustomEvent(40000);
+						QApplication::postEvent(receiver, remote);
+					}
+					else {
+						remote = new QCustomEvent(40001);
+						QApplication::postEvent(receiver, remote);
+					}
 				}
-				else {
-					remote = new QCustomEvent(40001);
-					QApplication::postEvent(receiver, remote);
+				if ((changed & 0x40) == 0x40) {
+					if ((status & 0x40) != 0x40) {
+						remote = new QCustomEvent(40002);
+						QApplication::postEvent(receiver, remote);
+					}
+					else {
+						remote = new QCustomEvent(40003);
+						QApplication::postEvent(receiver, remote);
+					}
 				}
-				if ((status & 0x40) == 0x40) {
-					remote = new QCustomEvent(40002);
-					QApplication::postEvent(receiver, remote);
-				}
-				else {
-					remote = new QCustomEvent(40003);
-					QApplication::postEvent(receiver, remote);
-				}
-				if ((status & 0x20) == 0x20) {
-					remote = new QCustomEvent(40004);
-					QApplication::postEvent(receiver, remote);
-				}
-				else {
-					remote = new QCustomEvent(40005);
-					QApplication::postEvent(receiver, remote);
+				if ((changed & 0x20) == 0x20) {
+					if ((status & 0x20) != 0x20) {
+						remote = new QCustomEvent(40004);
+						QApplication::postEvent(receiver, remote);
+					}
+					else {
+						remote = new QCustomEvent(40005);
+						QApplication::postEvent(receiver, remote);
+					}
 				}
 				old_status = status;
 			}
-		}
+
 		usleep(100000);
+		}
 	}
+	cout << "Finished thread" << endl;
 }
 
 void remoteStartThread::stop() {

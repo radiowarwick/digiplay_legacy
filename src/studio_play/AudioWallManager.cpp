@@ -49,7 +49,8 @@ void AudioWallManager::load(unsigned int cartset) {
 	Transaction T(*_C,"");
 	short pagecount = atoi(T.exec("SELECT max(cartwalls.page) "
                              "FROM cartwalls,cartsets "
-                             "WHERE cartwalls.cartset = 0")[0][0].c_str()) + 1;
+                             "WHERE cartwalls.cartset = " 
+							 	+ dps_itoa(cartset))[0][0].c_str()) + 1;
 	for (int i = 0; i < pagecount; i++) {
 		_pages.push_back(new AudioWallPage);
 		for (int j = 0; j < _A->getSize(); j++) {

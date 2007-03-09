@@ -26,7 +26,8 @@
 
 int main( int argc, char ** argv )
 {
-	dropPrivilage();
+	showPrivilage();
+//	dropPrivilage();
 
     QApplication a( argc, argv );
     frmPlayout w;

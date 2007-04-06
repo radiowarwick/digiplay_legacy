@@ -1,0 +1,7 @@
+#!/bin/bash
+PROG="tedia2sql"
+PARAM="-t postgres -o ../digiplay.sql -c"
+FILES="usersgroupsdir.dia cartsets.dia audio.dia scripts.dia \
+       showplans.dia sustainer.dia website.dia digiplay.dia"
+
+$PROG $PARAM $FILES

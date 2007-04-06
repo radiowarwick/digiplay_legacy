@@ -6,6 +6,7 @@ using namespace std;
 
 AudioPacket::AudioPacket(SAMPLE size) {
     _size = size;
+	_allocated = size;
     _start = 0;
     _data = new SAMPLEVAL[_size];
 }
@@ -41,4 +42,11 @@ SAMPLEVAL& AudioPacket::operator[] (SAMPLE index) {
         cout << "OUT OF RANGE: " << index << endl;
     }
     return _data[index];
+}
+
+void AudioPacket::setSize(SAMPLE size) {
+	if (size > _allocated) {
+		throw;
+	}
+	_size = size;
 }

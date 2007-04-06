@@ -19,13 +19,17 @@ class Audio::Component : public Thread {
         /// Clean up all component mappings
 		virtual ~Component();
         /// Places \c samples stereo samples of audio into \c audioData.
-		virtual void getAudio(AudioPacket& audioData) =0;
+		virtual void getAudio(AudioPacket* audioData) =0;
 
         /// Connect a local port on this component to another component.
 		bool connect(PORT localPort, Component *c, PORT remotePort);
         /// Disconnect a components connected to a local port
 		void disconnect(PORT localPort);
-        
+		/// Pure virtual function called when a connect has been made
+		virtual void onConnect(PORT localPort) = 0;
+		/// Pure virtual function called when a disconnection has been made
+		virtual void onDisconnect(PORT localPort) = 0;
+
         /// Stores a pointer to a counter object to update on getAudio
         void addCounter(Counter* C);
         /// Attempts to remove the counter from the list

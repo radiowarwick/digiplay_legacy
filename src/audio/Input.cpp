@@ -7,7 +7,7 @@ Audio::Input::~Input() {
 
 }
 
-void Audio::Input::getAudio(AudioPacket& audioData) {
+void Audio::Input::getAudio(AudioPacket* audioData) {
     cout << "Input::getAudio" << endl;
 }
 

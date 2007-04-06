@@ -67,7 +67,7 @@ void Component::disconnect(PORT localPort) {
         }
         i++;
     }
-
+	onDisconnect(localPort);
 }
 
 
@@ -105,7 +105,7 @@ void Component::removeCounter(Counter* C) {
  * @param message Specify the message to send
  */
 void Component::send(PORT outPort, MESSAGE message) {
-    cout << "Component::send" << endl;
+//    cout << "Component::send" << endl;
     for (unsigned int i = 0; i < portMap.size(); i++) {
         if (portMap.at(i).port == outPort) {
             portMap.at(i).component->receive(portMap.at(i).remotePort,
@@ -115,7 +115,7 @@ void Component::send(PORT outPort, MESSAGE message) {
         }
     }
     if (outPort != OTHER) {
-        cout << "No such port: " << outPort << endl;
+        cout << "Component::send: No such port: " << outPort << endl;
     }
 }
 
@@ -127,7 +127,7 @@ void Component::send(PORT outPort, MESSAGE message) {
  * @param message Specifies the message received.
  */
 void Component::receive(PORT inPort, MESSAGE message) {
-    cout << "Component::receive" << endl;
+//    cout << "Component::receive" << endl;
     for (unsigned int i = 0; i < portMap.size(); i++) {
         if (portMap.at(i).port == inPort) {
             switch (message) {
@@ -143,13 +143,13 @@ void Component::receive(PORT inPort, MESSAGE message) {
                 default:
                     break;
             }
-            cout << "ReceiveMessage(" << inPort << ")" << endl;
-            cout << "ReceiveMessage(" << message << ")" << endl;
+            //cout << "ReceiveMessage(" << inPort << ")" << endl;
+            //cout << "ReceiveMessage(" << message << ")" << endl;
             receiveMessage(inPort,message);
             return;
         }
     }
-    cout << "No such port: " << inPort << endl;
+    cout << "Component::receive: No such port: " << inPort << endl;
 }
 
 
@@ -176,6 +176,8 @@ Component* Component::connectedDevice(PORT inPort) {
  */
 bool Component::createMapping(PORT localPort, Component *c,
 										PORT remotePort) {
+	//cout << "Creating mapping from local " << localPort
+	//	<< " to remote " << remotePort << endl;
     // Fail if this port has already been mapped
     if (localPort != OTHER) {
         for (unsigned int i = 0; i < portMap.size(); i++) {
@@ -193,6 +195,7 @@ bool Component::createMapping(PORT localPort, Component *c,
     // See if the other component is also a counter
     Counter *C =  dynamic_cast<Counter*>(c);
     if (C) addCounter(C);
+	onConnect(localPort);
     return true;
 }
 

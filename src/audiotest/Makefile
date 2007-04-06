@@ -23,6 +23,6 @@ SHARED_MODS	=
 HDRS		=
 
 # Compiler and linker options
-LIBS		=	-lpq /usr/lib/libpqxx.a -lreadline -lm -lpthread -laudio
+LIBS		=	-lpq /usr/lib/libpqxx.a -lreadline -lm -lpthread -lFLAC++ -laudio
 
 include $(ROOT)/src/Makefile.in

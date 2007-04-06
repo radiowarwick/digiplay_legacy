@@ -6,66 +6,43 @@
 using namespace std;
 
 Audio::ProcessMixer::ProcessMixer() {
-
+	pthread_mutex_init(&channelLock,NULL);
 }
 
 Audio::ProcessMixer::~ProcessMixer() {
 
 }
 
-/** Receives messages to this component after they've been preprocessed by the
- * component base class. 
- */
-void Audio::ProcessMixer::receiveMessage(PORT inPort, MESSAGE message) {
-    // Determine if the current channel is already playing
-    // see if it's in our active channel flag list
-    vector<int>::iterator x;
-    if ((x=find(channelFlags.begin(), channelFlags.end(), int(inPort)))
-            == channelFlags.end() && message == PLAY) {
-        // if it's not, and the message is PLAY, add it to list and allocate
-        // the audio buffer
-        cout << "Adding port " << inPort << endl;
-        channelFlags.push_back(int(inPort));
-        channelBuffers.push_back(AudioPacket(512));
-    }
-    else if (message == STOP) {
-        // otherwise it exists so if message is STOP we disable this channel 
-        // in the mixer and free it's resources
-        cout << "Disabling port " << inPort << endl;
-        int i = x - channelFlags.begin();
-        channelFlags.erase(x);
-        channelBuffers.erase(channelBuffers.begin() + i);
-    }
-    if (channelFlags.size() == 1 && message == PLAY) {
-        cout << "Setting mixer state to play." << endl;
-        send(OUT0,PLAY);
-    }
-    else if (channelFlags.size() == 0) {
-        cout << "Setting mixer state to stop." << endl;
-        send(OUT0,STOP);
-    }
-}
-
-void Audio::ProcessMixer::getAudio(AudioPacket& buffer) {
-    unsigned short N = channelFlags.size();
-    short **chs = new short*[N];
-    for (unsigned short i = 0; i < N; i++) {
-//        channelBuffers.at(i)._size = 512;
-        chs[i] = &(channelBuffers.at(i)[0]);
-    }
-
+void Audio::ProcessMixer::getAudio(AudioPacket* buffer) {
+	pthread_mutex_lock(&channelLock);
+    unsigned short N = ch_active.size();
     // request audio for each channel into separate buffers
-    for (unsigned int i = 0; i < N; i++) {
-        Component *ch = connectedDevice(channelFlags.at(i));
-        ch->getAudio(channelBuffers.at(i));
+	map<PORT,MixerChannel*>::iterator x = ch_active.begin();
+    while (x != ch_active.end()) {
+		(*x).second->cmpt->getAudio((*x).second->data);
+		x++;
     }
+   
+	// Short arrays used to access channel audio data
+	short **chs = new short*[N];
+	// Short array used to access output audio data
+	short *mix = buffer->getData();
+	// Get a pointer to each audio data array and store in chs
+	x = ch_active.begin();
+	unsigned int i = 0;
+    while (x != ch_active.end()) {
+        chs[i] = (*x).second->data->getData();
+		x++;
+		i++;
+    }
+
     // perform mix
     short M = 32768;
     double factor;
     // process each sample in turn
-    for (unsigned int k = 0; k < buffer.getSize(); k++) {
+    for (unsigned int k = 0; k < PACKET_SAMPLES; k++) {
         // start with zero sample
-        buffer[k] = 0;
+        mix[k] = 0;
         for (unsigned int i = 0; i < N; i++) {
             // Set the scale factor for each channel to unity to start with
             factor = 1.0;
@@ -75,12 +52,83 @@ void Audio::ProcessMixer::getAudio(AudioPacket& buffer) {
                 factor *= (1.0 - abs(double(chs[j][k])/M));
             }
             // Scale and add this channel to the mix
-            buffer[k] += short(chs[i][k]*factor);
+            mix[k] += short(chs[i][k]*factor);
         }
     }
     delete[] chs;
+
+	x = ch_active.begin();
+	while (x != ch_active.end()) {
+		if ((*x).second->state == STATE_STOP) {
+			PORT p = (*x).second->port;
+			cout << "Making channel " << p << " inactive." << endl; 
+			ch_inactive[p] = ch_active[p];
+			ch_active.erase(p);
+		}
+		x++;
+	}
+
+	pthread_mutex_unlock(&channelLock);
 }
 
+/** Receives messages to this component after they've been preprocessed by the
+ * component base class. 
+ */
+void Audio::ProcessMixer::receiveMessage(PORT inPort, MESSAGE message) {
+	if (!channels[inPort]) {
+		cout << "Channel has not been initialised!" << endl;
+		exit(-1);
+	}
+	if (message == STOP) {
+		cout << "ProcessMixer: Stopping channel " << inPort << endl;
+		channels[inPort]->state = STATE_STOP;
+	}
+	else if (message == PLAY) {
+		cout << "ProcessMixer: Starting channel " << inPort << endl;
+		channels[inPort]->state = STATE_PLAY;
+		ch_inactive.erase(inPort);
+		ch_active[inPort] = channels[inPort];
+	}
+	if (ch_active.size() == 1 && message == PLAY) {
+		cout << "ProcessMixer: Setting mixer to play" << endl;
+		send(OUT0,PLAY);
+	}
+	else if (ch_active.size() == 0) {
+		cout << "ProcessMixer: Setting mixer to stop" << endl;
+		send(OUT0,STOP);
+	}
+	cout << "Done processmixer::receive message" << endl;
+}
+
+void Audio::ProcessMixer::onConnect(PORT localPort) {
+	if (localPort <= 0) return;
+	cout << "ProcessMixer: OnConnect " << localPort << endl;
+	pthread_mutex_lock(&channelLock);
+	MixerChannel *C = new MixerChannel;
+	C->state = STATE_STOP;
+	C->cmpt = connectedDevice(localPort);
+	C->data = new AudioPacket(PACKET_SAMPLES);
+	C->port = localPort;
+	channels[localPort] = C;
+	ch_inactive[localPort] = C;
+	pthread_mutex_unlock(&channelLock);
+}
+
+void Audio::ProcessMixer::onDisconnect(PORT localPort) {
+	if (localPort <= 0) return;
+	cout << "ProcessMixer: OnDisconnect" << endl;
+	// Lock mutex to prevent access to channels while removing one
+	pthread_mutex_lock(&channelLock);
+	// remove links in active and inactive maps
+	ch_inactive.erase(localPort);
+	ch_active.erase(localPort);
+	// delete the data off the heap and remove the channel
+	delete channels[localPort]->data;
+	delete channels[localPort];
+	channels.erase(localPort);
+	// unlock channels again
+	pthread_mutex_unlock(&channelLock);
+}
 
 void Audio::ProcessMixer::threadExecute() {
 

@@ -1,5 +1,5 @@
 #include "Counter.h"
-
+#include <iostream>
 Audio::Counter::Counter() {
 
 }
@@ -14,6 +14,12 @@ Audio::Counter::~Counter() {
  */
 void Audio::Counter::setSample(unsigned long sample) {
     _currentSample = sample;
+	onSetSample();
+}
+
+void Audio::Counter::setState(enum STATE state) {
+	_state = state;
+	onSetState();
 }
 
 /** This is used by an audio component to set the total number of samples for
@@ -24,4 +30,5 @@ void Audio::Counter::setSample(unsigned long sample) {
  */
 void Audio::Counter::setTotalSamples(unsigned long sample) {
     _totalSamples = sample;
+	onSetTotalSamples();
 }

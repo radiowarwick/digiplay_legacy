@@ -6,10 +6,12 @@
 class Audio::Output : public Audio::Component {
 	public:
 		virtual ~Output();
-		virtual void getAudio(AudioPacket& audioData) {return;}
+		virtual void getAudio(AudioPacket* audioData) {return;}
 
 	protected:
 		virtual void receiveMessage(PORT inPort, MESSAGE message);
+		virtual void onConnect(PORT localPort) {}
+		virtual void onDisconnect(PORT localPort) {}
 		virtual void threadExecute();
 
 	private:

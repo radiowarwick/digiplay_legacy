@@ -15,12 +15,15 @@ class Audio::AudioPacket {
 
         SAMPLE getSize() {return _size;}
 		SAMPLE getStart() {return _start;}
+		SAMPLEVAL* getData() {return _data;}
 		void setStart(SAMPLE start) {_start = start;}
+		void setSize(SAMPLE size);
 
     private: 
         SAMPLEVAL * _data;
         SAMPLE _start;
         SAMPLE _size;
+		SAMPLE _allocated;
 };
 
 #endif

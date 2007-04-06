@@ -9,7 +9,6 @@ using Audio::OutputDsp;
 
 OutputDsp::OutputDsp(string channel) {
 	initialise(channel);
-//	threadStart();
 }
 
 OutputDsp::~OutputDsp() {
@@ -33,20 +32,24 @@ void OutputDsp::receiveMessage(PORT inPort, MESSAGE message) {
 }
 
 void OutputDsp::threadExecute() {
-    cout << "Player start threadExecute()" << endl;
-    if (!connectedDevice(IN0)) cout << "CONNECTED DEVICE IS NULL" << endl;
-    AudioPacket buffer(512);
-    char* d = (char*)&(buffer[0]);
-    ofstream f_out("/mnt/dps0-0/audio/output.raw");
+    if (!connectedDevice(IN0)) 
+		cout << "CONNECTED DEVICE IS NULL" << endl;
+
+    AudioPacket *buffer = new AudioPacket(PACKET_SAMPLES);
+    char* d = (char*)(buffer->getData());
+	Component *C = connectedDevice(IN0);
+
 	while (audioState == STATE_PLAY) {
-		connectedDevice(IN0)->getAudio(buffer);
-        for (unsigned int i = 0; i < 1024; i++) f_out << d[i];
-		if (write (audio, &(buffer[0]), 1024) != 1024) {
-			cout << "Failed to write all of buffer" << endl;
-			abort();
+		C->getAudio(buffer);
+		for (unsigned int i = 0; i < PACKET_MULTIPLIER; i++) {
+			if (write (audio, d+(i*AUDIO_BUFFER), AUDIO_BUFFER) 
+													!= AUDIO_BUFFER) {
+				cout << "Failed to write all of buffer" << endl;
+				abort();
+			}
 		}
 	}
-    f_out.close();
+	delete buffer;
 }
 
 void OutputDsp::initialise(string device) {

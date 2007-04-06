@@ -21,6 +21,7 @@ namespace Audio {
     class ProcessFader;
 
 	class Counter;
+	class CounterTrigger;
 }
 
 // Basic audio typedefs and definitions
@@ -36,6 +37,14 @@ typedef int             PORT;
 #define OUT1 -2
 #define OUT2 -3
 #define OUT3 -4
+
+#define AUDIO_BUFFER 512
+#define PACKET_MULTIPLIER 4
+
+#define PACKET_SAMPLES AUDIO_BUFFER/2*PACKET_MULTIPLIER
+#define FADER_STEPS 16
+#define FADER_GRANULARITY PACKET_SAMPLES/FADER_STEPS
+#define PACKET_BYTES PACKET_SAMPLES*2
 
 #ifndef ENUM_MESSAGE
 #define ENUM_MESSAGE

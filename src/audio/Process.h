@@ -8,7 +8,7 @@ class Audio::Process : public Audio::Component {
         Process();
         virtual ~Process();
 
-        virtual void getAudio(AudioPacket& audioData) =0;
+        virtual void getAudio(AudioPacket* audioData) =0;
 
         virtual void receiveMessage(PORT inPort, MESSAGE message);
 

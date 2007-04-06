@@ -17,12 +17,12 @@ QT_ENABLED 	=	no
 # .cpp modules from which to create output
 MODS		=	sueplay
 QT_MODS		=	
-SHARED_MODS	=	audiochannel audiomixer audioplayer config Logger dps
+SHARED_MODS	=	config Logger dps
 
 # Global header files on which dependance exists
 HDRS		=
 
 # Compiler and linker options
-LIBS		=	-lpq /usr/lib/libpqxx.a -lreadline -lm -lpthread
+LIBS		=	-lpq /usr/lib/libpqxx.a -lreadline -lm -lpthread -laudio -lFLAC++
 
 include $(ROOT)/src/Makefile.in

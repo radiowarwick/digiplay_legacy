@@ -1,7 +1,26 @@
 #ifndef CLASS_AUDIO_PROCESS_MIXER
 #define CLASS_AUDIO_PROCESS_MIXER
 
+#include <map>
+#include <vector>
+
+#include "AudioPacket.h"
+using namespace Audio;
+
 #include "Process.h"
+
+struct MixerChannel {
+	enum STATE state;
+	AudioPacket* data;
+	Component* cmpt;
+	PORT port;
+};
+
+struct ltport {
+	bool operator()(PORT s1, PORT s2) const {
+	    return (s1<s2);
+	}
+};
 
 /** Audio mixer for combining audio from multiple audio components.
  * This component retrieves audio from connected input audio components and
@@ -16,16 +35,23 @@ class Audio::ProcessMixer : public Audio::Process {
         ProcessMixer();
         ~ProcessMixer();
 
-        virtual void getAudio(AudioPacket& audioData);
+        virtual void getAudio(AudioPacket* audioData);
 
         virtual void receiveMessage(PORT inPort, MESSAGE message);
+
+		virtual void onConnect(PORT localPort);
+		virtual void onDisconnect(PORT localPort);
 
         virtual void threadExecute();
 
     private:
+		STATE _state;
         short *audioBuffer, *cacheStart, *cacheEnd, *cacheRead, *cacheWrite;
-        vector<int> channelFlags;
-        vector<AudioPacket> channelBuffers;
+		std::map<PORT,MixerChannel*> ch_inactive;
+		std::map<PORT,MixerChannel*> channels;
+		std::map<PORT,MixerChannel*> ch_active;
+
+		pthread_mutex_t channelLock;
 };
 
 #endif

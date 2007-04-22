@@ -66,6 +66,11 @@ class archivemanager {
 		void loadInbox(vector<track> *tracks);
 		void loadTrash(vector<track> *tracks);
 
+        void addTrack(track t);
+        void addJingle(track t);
+        void addAdvert(track t);
+        void removeTrack(string id);
+
 		bool hasAudio(string md5);
 		void cleanInfo(track *t);
 		void trimAudio(track *t);

@@ -2367,16 +2367,16 @@
         <dia:point val="17.4,-38.0125"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="17.35,-38.9625;24,-35.7625"/>
+        <dia:rectangle val="17.35,-38.9625;25.4,-34.9625"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="17.4,-38.0125"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="6.5499999999999998"/>
+        <dia:real val="7.9499999999999993"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="2.2000000000000002"/>
+        <dia:real val="3"/>
       </dia:attribute>
       <dia:attribute name="line_colour">
         <dia:color val="#000000"/>
@@ -2390,7 +2390,8 @@
       <dia:attribute name="text">
         <dia:composite type="text">
           <dia:attribute name="string">
-            <dia:string>#END transaction;#</dia:string>
+            <dia:string>#\i digiplay-views.sql
+END transaction;#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
             <dia:font family="monospace" style="0" name="Courier"/>

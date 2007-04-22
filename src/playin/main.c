@@ -163,12 +163,22 @@ int csv2tracks(struct track **t, char *buf, int len)
 
 void wnd_splash(char *text)
 {
+    char *notice1 = "************************************************";
+    char *notice2 = "*            == IMPORTANT NOTICE ==            *";
+    char *notice3 = "*         This is now for music only!          *";
+    char *notice4 = "* Please upload other items using the website. *";
+    char *notice5 = "************************************************";
 	int w, h;
 	getmaxyx(win_title, h, w);
 	mvwprintw(win_title, 0, w - strlen(NAME), "%s", NAME);
 	wclear(win_main);
 	getmaxyx(win_main, h, w);
 	mvwprintw(win_main, h / 2, (w - strlen(text)) / 2, "%s", text);
+    mvwprintw(win_main, h/2 - 7, (w -strlen(notice1)) /2, "%s",notice1);
+    mvwprintw(win_main, h/2 - 6, (w -strlen(notice2)) /2, "%s",notice2);
+    mvwprintw(win_main, h/2 - 5, (w -strlen(notice3)) /2, "%s",notice3);
+    mvwprintw(win_main, h/2 - 4, (w -strlen(notice4)) /2, "%s",notice4);
+    mvwprintw(win_main, h/2 - 3, (w -strlen(notice4)) /2, "%s",notice5);
 	wrefresh(win_main);
 	wrefresh(win_title);
 //	refresh();
@@ -511,7 +521,7 @@ int main(int argc, char *argv[])
 		memset(mcn, 0, sizeof (mcn));
 	
 		/* 1. display splash screen */
-		wnd_splash("Please insert an Audio CD");
+		wnd_splash("Please insert an Music CD.");
 
 		/* 2. poll the cdrom drive to see if a CD has been inserted */
 		fd = open((argc == 2) ? argv[1] : "/dev/cdrom", O_RDONLY | O_NONBLOCK);

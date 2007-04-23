@@ -10,6 +10,10 @@ using std::string;
 
 #include "Output.h"
 
+/** Class to output audio to a DSP device.
+ * This class reads audio from it's connected component and writes it to the
+ * specified dsp device.
+ */
 class Audio::OutputDsp : public Audio::Output {
 	public:
 		OutputDsp(string channel);

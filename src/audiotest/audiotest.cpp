@@ -16,12 +16,16 @@ int main() {
 	    
 	// Create faders
 	ProcessFader* fader1 = new ProcessFader();
-	fader1->addFade(ProcessFader::Fade(0,220500,0.0,1.0));
-	fader1->addFade(ProcessFader::Fade(441000,661500,1.0,0.0));
-	fader1->addFade(ProcessFader::Fade(2646000,2866500,0.0,1.0));
+	fader1->addNode(0,0.0);
+	fader1->addNode(220500,1.0);
+	fader1->addNode(441000,1.0);
+	fader1->addNode(661500,0.0);
+	fader1->addNode(2646000,0.0);
+	fader1->addNode(2866500,1.0);
 
 	ProcessFader* fader2 = new ProcessFader();
-	fader2->addFade(ProcessFader::Fade(0,220500,0.0,1.0));
+	fader2->addNode(0,0.0);
+	fader2->addNode(220500,1.0);
 
 	// Create a trigger
 	CounterTrigger* trig = new CounterTrigger();
@@ -42,9 +46,9 @@ int main() {
 	fader2->connect(OUT0,mixer,IN1);
 	mixer->connect(OUT0,player,IN0);
 
-	filereader1->load("/home/admin/06b4bfbfe7f57d98d9f0f1fe5c8cde4f"
+	filereader1->load("/mnt/dps0-0/audio/0/06b4bfbfe7f57d98d9f0f1fe5c8cde4f"
 						,0,1052637);
-	filereader2->load("/home/admin/06b4bfbfe7f57d98d9f0f1fe5c8cde4f"
+	filereader2->load("/mnt/dps0-0/audio/0/06b4bfbfe7f57d98d9f0f1fe5c8cde4f"
 						,5000000,10526376);
 	trig->setTriggerSample(441000);
 	filereader1->play();

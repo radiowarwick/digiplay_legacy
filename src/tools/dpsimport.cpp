@@ -31,14 +31,15 @@ using namespace std;
 #include "archivemanager.h"
 #include "Logger.h"
 
+static int verbose;
+
 int main(int argc, char* argv[]) {
-	cout << "Digital Playout System Audio Import Tool" << endl;
-	cout << "Copyright (c) 2005-2006 Chris Cantwell" << endl;
 	char* routine = "dpsimport::main";
 	string target_md5 = "";
 
 	// Parse command options
 	static struct option long_options[] = {
+		{"verbose",no_argument,&verbose,1},
 		{"md5",required_argument,0,'m'},
 		{0,0,0,0}
 	};
@@ -48,6 +49,11 @@ int main(int argc, char* argv[]) {
 		c = getopt_long (argc, argv, "m:", long_options, &option_index);
 		if (c == -1) break;
 		if (c == 'm') target_md5 = optarg;
+	}
+
+	if (verbose) {
+		cout << "Digital Playout System Audio Import Tool" << endl;
+		cout << "Copyright (c) 2005-2006 Chris Cantwell" << endl;
 	}
     
 	// Configure logging

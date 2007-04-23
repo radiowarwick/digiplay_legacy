@@ -2,8 +2,12 @@
 #define CLASS_AUDIO_PROCESS
 
 #include "Component.h"
+using Audio::Component;
 
-class Audio::Process : public Audio::Component {
+/**
+ * Pure virtual base class for audio processing components
+ */
+class Audio::Process : public Component {
     public:
         Process();
         virtual ~Process();

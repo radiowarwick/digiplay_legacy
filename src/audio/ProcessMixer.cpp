@@ -13,6 +13,10 @@ Audio::ProcessMixer::~ProcessMixer() {
 
 }
 
+/**
+ * Retrieves audio from each attached input component and mixes it together
+ * according to the formula described.
+ */
 void Audio::ProcessMixer::getAudio(AudioPacket* buffer) {
 	pthread_mutex_lock(&channelLock);
     unsigned short N = ch_active.size();
@@ -71,7 +75,8 @@ void Audio::ProcessMixer::getAudio(AudioPacket* buffer) {
 	pthread_mutex_unlock(&channelLock);
 }
 
-/** Receives messages to this component after they've been preprocessed by the
+/** 
+ * Receives messages to this component after they've been preprocessed by the
  * component base class. 
  */
 void Audio::ProcessMixer::receiveMessage(PORT inPort, MESSAGE message) {

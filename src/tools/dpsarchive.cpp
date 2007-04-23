@@ -38,8 +38,6 @@ void listArchives();
 static int verbose;
 
 int main(int argc, char *argv[]) {
-    cout << "Digital Playout System Archive Tool" << endl;
-    cout << "Copyright (c) 2005-2006 Radio Warwick" << endl << endl;
     char* routine = "dpsarchive::main";
 	int c;
 	char task = 0;
@@ -91,6 +89,10 @@ int main(int argc, char *argv[]) {
 				exit(0);
 				break;
 		}
+	}
+	if (verbose) {
+	    cout << "Digital Playout System Archive Tool" << endl;
+	    cout << "Copyright (c) 2005-2006 Radio Warwick" << endl << endl;
 	}
 	if (task == 'A') addArchive(archiveName, localPath, remotePath);
 	if (task == 'D') dropArchive(archiveName);

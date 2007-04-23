@@ -39,19 +39,27 @@ using namespace pqxx;
 #include "schedule.h"
 #include "config.h"
 
-#define BIN1_SQL "SELECT audio.id,audio.md5,audio.length_smpl,audio.start_smpl,audio.end_smpl,audio.intro_smpl,audio.extro_smpl,audio.title,artists.name AS artist FROM audio,artists,audioartists WHERE audioartists.audio=audio.id AND audioartists.artist=artists.id AND sustainer='t' AND type=0 ORDER BY audio.title"
+#define BIN1_SQL "SELECT * from v_audio_track WHERE sustainer='t' ORDER BY title"
+#define BIN2_SQL "SELECT * from v_audio_track WHERE sustainer='t' ORDER BY title"
+#define BIN3_SQL "SELECT * from v_audio_track WHERE sustainer='t' ORDER BY title"
+#define BIN4_SQL "SELECT * from v_audio_track WHERE sustainer='t' ORDER BY title"
+#define BIN5_SQL "SELECT * from v_audio_track WHERE sustainer='t' ORDER BY title"
 
-#define BIN2_SQL "SELECT audio.id,audio.md5,audio.length_smpl,audio.start_smpl,audio.end_smpl,audio.intro_smpl,audio.extro_smpl,audio.title,artists.name AS artist FROM audio,artists,audioartists WHERE audioartists.audio=audio.id AND audioartists.artist=artists.id AND sustainer='t' AND type=0 ORDER BY audio.title"
+//#define BIN1_SQL "SELECT audio.id,audio.md5,audio.length_smpl,audio.start_smpl,audio.end_smpl,audio.intro_smpl,audio.extro_smpl,audio.title,artists.name AS artist FROM audio,artists,audioartists WHERE audioartists.audio=audio.id AND audioartists.artist=artists.id AND sustainer='t' AND type=0 ORDER BY audio.title"
 
-#define BIN3_SQL "SELECT audio.id,audio.md5,audio.length_smpl,audio.start_smpl,audio.end_smpl,audio.intro_smpl,audio.extro_smpl,audio.title,artists.name AS artist FROM audio,artists,audioartists WHERE audioartists.audio=audio.id AND audioartists.artist=artists.id AND sustainer='t' AND type=0 ORDER BY audio.title"
+//#define BIN2_SQL "SELECT audio.id,audio.md5,audio.length_smpl,audio.start_smpl,audio.end_smpl,audio.intro_smpl,audio.extro_smpl,audio.title,artists.name AS artist FROM audio,artists,audioartists WHERE audioartists.audio=audio.id AND audioartists.artist=artists.id AND sustainer='t' AND type=0 ORDER BY audio.title"
 
-#define BIN4_SQL "SELECT audio.id,audio.md5,audio.length_smpl,audio.start_smpl,audio.end_smpl,audio.intro_smpl,audio.extro_smpl,audio.title,artists.name AS artist FROM audio,artists,audioartists WHERE audioartists.audio=audio.id AND audioartists.artist=artists.id AND sustainer='t' AND type=0 ORDER BY audio.title"
+//#define BIN3_SQL "SELECT audio.id,audio.md5,audio.length_smpl,audio.start_smpl,audio.end_smpl,audio.intro_smpl,audio.extro_smpl,audio.title,artists.name AS artist FROM audio,artists,audioartists WHERE audioartists.audio=audio.id AND audioartists.artist=artists.id AND sustainer='t' AND type=0 ORDER BY audio.title"
 
-#define BIN5_SQL "SELECT audio.id,audio.md5,audio.length_smpl,audio.start_smpl,audio.end_smpl,audio.intro_smpl,audio.extro_smpl,audio.title,artists.name AS artist FROM audio,artists,audioartists WHERE audioartists.audio=audio.id AND audioartists.artist=artists.id AND sustainer='t' AND type=0 ORDER BY audio.title"
+//#define BIN4_SQL "SELECT audio.id,audio.md5,audio.length_smpl,audio.start_smpl,audio.end_smpl,audio.intro_smpl,audio.extro_smpl,audio.title,artists.name AS artist FROM audio,artists,audioartists WHERE audioartists.audio=audio.id AND audioartists.artist=artists.id AND sustainer='t' AND type=0 ORDER BY audio.title"
 
-#define BIN6_SQL "SELECT audio.id,audio.md5,audio.length_smpl,audio.start_smpl,audio.end_smpl,audio.intro_smpl,audio.extro_smpl,audio.title FROM audio,audiojinglepkgs,jinglepkgs,jingletypes WHERE audiojinglepkgs.jinglepkg=jinglepkgs.id AND audiojinglepkgs.audio=audio.id AND audiojinglepkgs.jingletype=0 AND jinglepkgs.enabled='t' AND sustainer='t' AND audio.type=1 ORDER BY audio.title"
+//#define BIN5_SQL "SELECT audio.id,audio.md5,audio.length_smpl,audio.start_smpl,audio.end_smpl,audio.intro_smpl,audio.extro_smpl,audio.title,artists.name AS artist FROM audio,artists,audioartists WHERE audioartists.audio=audio.id AND audioartists.artist=artists.id AND sustainer='t' AND type=0 ORDER BY audio.title"
 
-#define BIN7_SQL "SELECT audio.id,audio.md5,audio.length_smpl,audio.start_smpl,audio.end_smpl,audio.intro_smpl,audio.extro_smpl,audio.title FROM audio WHERE sustainer='t' AND audio.type=2 ORDER BY audio.title"
+#define BIN6_SQL "SELECT * from v_audio_jingles WHERE enabled='t' ORDER BY title"
+//#define BIN6_SQL "SELECT audio.id,audio.md5,audio.length_smpl,audio.start_smpl,audio.end_smpl,audio.intro_smpl,audio.extro_smpl,audio.title FROM audio,audiojinglepkgs,jinglepkgs,jingletypes WHERE audiojinglepkgs.jinglepkg=jinglepkgs.id AND audiojinglepkgs.audio=audio.id AND audiojinglepkgs.jingletype=0 AND jinglepkgs.enabled='t' AND sustainer='t' AND audio.type=1 ORDER BY audio.title"
+
+#define BIN7_SQL "SELECT * from v_audio_adverts WHERE sustainer='t' ORDER BY title"
+//#define BIN7_SQL "SELECT audio.id,audio.md5,audio.length_smpl,audio.start_smpl,audio.end_smpl,audio.intro_smpl,audio.extro_smpl,audio.title FROM audio WHERE sustainer='t' AND audio.type=2 ORDER BY audio.title"
 
 #define AUDIO_TYPE_MUSIC "0"
 #define AUDIO_TYPE_JINGLE "1"

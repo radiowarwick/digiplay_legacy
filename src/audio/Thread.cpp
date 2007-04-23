@@ -1,4 +1,8 @@
+#include <iostream>
+using namespace std;
+
 #include "Thread.h"
+using Audio::Thread;
 
 Thread::Thread() {
     t_active = false;
@@ -8,18 +12,39 @@ Thread::~Thread() {
 
 }
 
+/**
+ * Starts the thread, triggering the \c threadExecute routine to be called.
+ * This should be reimplemented in the derived class. If the thread is already
+ * running, it is killed first.
+ */
 int Thread::threadStart() {
-	int code = pthread_create(&threadId, NULL, Thread::threadEntry, 
+    // first kill our thread if it is running
+	threadKill();
+
+    // get default attributes
+	pthread_attr_init(&threadAttr);
+	
+    // create the new thread with default attributes starting \c threadEntry
+    // The \c this pointer is passed to provide a reference to this instance
+	int code = pthread_create(&threadId, &threadAttr, Thread::threadEntry, 
 									(void*)this);
 	return code;
 }
 
+/**
+ * Static routine to handle the creation of a new pthread
+ */
 void *Thread::threadEntry(void *pthis) {
+    // Typecast void pointer back to \c Thread pointer
 	Thread *pt = (Thread*)pthis;
+
+    // Set thread active, run it, then set unactive
 	pt->t_active = true;
 	pt->threadExecute();
 	pt->t_active = false;
-	return 0;
+
+    // terminate the thread cleanly
+	pthread_exit(0);
 }
 
 void Thread::threadExecute() {
@@ -62,6 +87,26 @@ bool Thread::isThreadActive() {
     return t_active;
 }
 
+/**
+ * This routine blocks the execution of the calling thread until our thread
+ * terminates.
+ */
 void Thread::threadWait() {
+	pthread_join(threadId,NULL);
+}
 
+/**
+ * This routine requests termination of our thread. By default, this occurs at
+ * the next 'cancellation point', set using \c threadTestKill
+ */
+void Thread::threadKill() {
+	pthread_cancel(threadId);
+}
+
+/**
+ * Mark a cancellation point in the \c threadExecute implementation. This
+ * allows the thread to be killed off at any such points if requested.
+ */
+void Thread::threadTestKill() {
+	pthread_testcancel();
 }

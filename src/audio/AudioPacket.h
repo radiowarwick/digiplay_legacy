@@ -3,6 +3,11 @@
 
 #include "Audio.h"
 
+/** Container class for a packet of audio.
+ * This class is used to pass audio between components along with information
+ * about its context. This includes its start position in samples. The size of
+ * the packet is customisable in Audio.h
+ */
 class Audio::AudioPacket {
     public:
         AudioPacket(SAMPLE size);

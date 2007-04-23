@@ -3,14 +3,17 @@
 
 #include "Component.h"
 
+/** Pure virtual base class for input components.
+ * This class provides a base class from which to derive input components.
+ */
 class Audio::Input : public Audio::Component {
 	public:
 		virtual ~Input();
-		virtual void getAudio(AudioPacket* audioData);
-		virtual void play();		// play track
-		virtual void stop();		// stop track and seek to start
-		virtual void pause();		// pause track
-		virtual void seek(long sample);
+		virtual void getAudio(AudioPacket* audioData) = 0;
+		virtual void play() = 0;
+		virtual void stop() = 0;
+		virtual void pause() = 0;
+		virtual void seek(long sample) = 0;
 		virtual void onConnect(PORT localPort) {}
 		virtual void onDisconnect(PORT localPort) {}
 

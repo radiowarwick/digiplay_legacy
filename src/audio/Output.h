@@ -3,6 +3,9 @@
 
 #include "Component.h"
 
+/** Pure virtual output base class.
+ * A base class from which audio output classes are derived.
+ */
 class Audio::Output : public Audio::Component {
 	public:
 		virtual ~Output();

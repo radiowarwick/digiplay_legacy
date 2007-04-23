@@ -6,7 +6,7 @@ using namespace std;
 
 ProcessFader::ProcessFader() {
 	vol = 1.0;
-//	pthread_mutex_init(&fades_lock,NULL);
+	pthread_mutex_init(&nodes_lock,NULL);
 }
 
 ProcessFader::~ProcessFader() {
@@ -22,23 +22,29 @@ void ProcessFader::getAudio(AudioPacket* audioData) {
 	double av, bv;
 
 	// Set up an array of pointers to reduce access time to fade parameters
-//	pthread_mutex_lock(&fades_lock);
+	pthread_mutex_lock(&nodes_lock);
 	for (SAMPLE i = 0; i < FADER_STEPS; i++) {
 		smpl = audioData->getStart() + i*FADER_GRANULARITY;
 		i_a = i_b = nodes.lower_bound(smpl);
-		i_a--;
-		a = (*i_a).first;
-		b = (*i_b).first;
-		av = (*i_a).second;
-		bv = (*i_b).second;
-		vol = (smpl - a)*(bv - av)/(b - a) + av;
+		if (i_a != nodes.end()) {
+			i_a--;
+			a = (*i_a).first;
+			b = (*i_b).first;
+			av = (*i_a).second;
+			bv = (*i_b).second;
+			vol = (smpl - a)*(bv - av)/(b - a) + av;
+		}
+		else {
+			i_a--;
+			vol = (*i_a).second;
+		}
 
 		for (unsigned int k = 0; k < FADER_GRANULARITY; k++) {
 			mix[i*FADER_GRANULARITY + k] = 
 				static_cast<SAMPLEVAL>(mix[i*FADER_GRANULARITY + k] * vol);
 		}
 	}
-//	pthread_mutex_unlock(&fades_lock);
+	pthread_mutex_unlock(&nodes_lock);
 }
 
 void ProcessFader::receiveMessage(PORT inPort, MESSAGE message) {

@@ -43,6 +43,7 @@ void InputRaw::getAudio(AudioPacket* audioData) {
 
 	if (cacheSize - cacheFree < bytes) {
 		bytes = cacheSize - cacheFree;
+		audioData->setSize(bytes/4);
 	}
 	for (unsigned long i = 0; i < PACKET_BYTES; i++) {
         if (state == STATE_STOP || bytes == 0) {
@@ -111,28 +112,25 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
 		cout << "Error creating thread" << endl;
 		return;
 	}
-
+	
 	// Wait until the cache has been half filled
     while ( cacheSize < 2*cacheFree 
 			&& cacheSize - cacheFree < f_length_byte) {
         usleep(100);
     }
+
 }
 
 void InputRaw::play() {
-	cout << "InputRaw::play" << endl;
 	state = STATE_PLAY;
 	send(OUT0,PLAY);
 	updateStates(STATE_PLAY);
-	cout << "InputRaw::play END" << endl;
 }
 
 void InputRaw::stop() {
-	cout << "InputRaw::stop" << endl;
 	state = STATE_STOP;
 	send(OUT0,STOP);
 	updateStates(STATE_STOP);
-	cout << "InputRaw::stop END" << endl;
 }
 
 void InputRaw::pause() {
@@ -234,5 +232,6 @@ void InputRaw::threadExecute() {
 				cacheWrite = cacheStart;
 			}
 		}
+		threadTestKill();
 	}
 }

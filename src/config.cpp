@@ -97,6 +97,7 @@ config::config(string application) {
 
 config::~config() {
     if (C && C->is_open()) {
+		if (T) T->abort();
         C->Disconnect();
     }
     delete C;

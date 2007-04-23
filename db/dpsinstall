@@ -115,13 +115,15 @@ fi
 
 # create the database and check if we were successful
 printf "Creating ${DBNAME} database..."
-$PSQL -qc "CREATE DATABASE ${DBNAME};" template1
+createdb ${DBNAME} 1>/dev/null
+#$PSQL -qc "CREATE DATABASE ${DBNAME};" template1
 if [[ $? > 0 ]]; then
 	printf "Unable to create database ${DBNAME}.\n"
 	printf " -> Does this user have permission to create databases?\n"
 	printf "Installation Aborted.\n"
 	exit -1;
 fi
+createlang plpgsql ${DBNAME} 1>/dev/null 2>&1
 printf "done.\n"
 
 # create user for digiplay software as specified in config file, if it doesn't
@@ -135,24 +137,28 @@ printf "done.\n"
 # create all the relations, views, etc
 printf "Now generating database objects...\n"
 if [[ ! -f digiplay.sql ]]; then
-	if [[ ! -f digiplay.db2 ]]; then
-		printf " -> No database schema available!\n"
-		printf "Installation Aborted.\n"
-		exit -1
-	fi
-	printf " -> Processing DDL script..."
-	if [ ! -w . ]; then
-		printf " -> Cannot write to current directory needed for temp files.\n"
-		exit -1
-	fi
-	./db2tosql digiplay.db2 > digiplay.sql
-	printf "done.\n"
+	printf " -> No database schema available!\n"
+	printf "Installation Aborted.\n"
+	exit -1
+fi
+if [[ ! -f digiplay-views.sql ]]; then
+	printf " -> Missing database view specifications!\n"
+	printf "Installation Aborted.\n"
+	exit -1
 fi
 
 printf " -> Creating objects..."
-$PSQL -qf digiplay.sql $DBNAME 2>/dev/null
+$PSQL -qf digiplay.sql $DBNAME #2>/dev/null
 if [[ $? > 0 ]]; then
 	printf " -> Failed to generate database objects\n"
+	printf "Installation Aborted.\n"
+	exit -1
+fi
+printf "done.\n"
+printf " -> Creating views..."
+$PSQL -qf digiplay-views.sql $DBNAME 2>/dev/null
+if [[ $? > 0 ]]; then
+	printf " -> Failed to generate database views\n"
 	printf "Installation Aborted.\n"
 	exit -1
 fi
@@ -160,16 +166,13 @@ printf "done.\n"
 
 # grant permissions to the digiplay_user on everything (for now)
 printf "Granting database permissions..."
-SQL="SELECT relname FROM pg_class WHERE (relkind = 'r' OR relkind = 'S')
-AND relname !~ '^pg_' AND relname !~ '^sql_' ORDER BY relname"
+SQL="(SELECT relname AS name FROM pg_class WHERE (relkind = 'r' OR 
+relkind = 'S') AND relname !~ '^pg_' AND relname !~ '^sql_') UNION (SELECT
+viewname AS name FROM pg_views WHERE schemaname = 'public') ORDER BY name"
 OBJ=`$PSQL -t -c "${SQL}" $DBNAME`
 OBJ=`echo ${OBJ} | sed 's/ /, /g'`
 SQL="GRANT ALL ON ${OBJ} TO $DBUSER"
 $PSQL -qc "${SQL}" $DBNAME
 printf "done.\n"
 
-# import default data
-printf "Importing data..."
-$PSQL -qf data.sql $DBNAME
-printf "done.\n\n";
 printf "Installation Complete.\n\n";

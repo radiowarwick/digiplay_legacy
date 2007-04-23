@@ -1,6 +1,6 @@
 /**
- * @class Factory
- * @brief Provides a generic Factory class.
+ * @class AudioLib
+ * @brief Provides a generic Factory class pattern.
  *
  * Implements a generic class factory. Classes should register themselves with
  * the class factory immediately, so they are available for use in the main()

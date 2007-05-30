@@ -46,12 +46,15 @@
  */
 Showplan::Showplan(QWidget *parent, const char* name) 
         : QWidget(parent, name) {
-    conf = new config("digiplay");
+    conf = new Config("digiplay");
     activePoint = 0;
     //_parent = parent;
     draw();
-    confTrigger = new triggerThread(this,QString(conf->getDBConnectString()),1);
-    confTrigger->start();
+    triggerConfig = new DbTrigger("triggerConfig","trig_id1");
+    triggerConfig->start();
+    connect(triggerConfig, SIGNAL(trigger()),this,SLOT(processConfigUpdate()));
+//    confTrigger = new triggerThread(this,QString(conf->getDBConnectString()),1);
+//    confTrigger->start();
 }
 
 Showplan::~Showplan() {
@@ -116,7 +119,7 @@ void Showplan::resizeEvent(QResizeEvent *e) {
     // TODO: Replace this with proper resize code
 }
 
-void Showplan::customEvent(QCustomEvent *e) {
+/*void Showplan::customEvent(QCustomEvent *e) {
     char* routine = "Showplan::customEvent";
 
     if (e->type() == 30001) {
@@ -146,32 +149,32 @@ void Showplan::customEvent(QCustomEvent *e) {
         }
         L_INFO(LOG_DB,"Configuration refresh complete.");
     }
-}
+}*/
 
-void Showplan::addTrack(QString md5) {
+void Showplan::addTrack(QString id) {
     char *routine = "Showplan::addTrack";
-    L_INFO(LOG_SHOWPLAN,"Adding to showplan " + md5);
-    DpsShowTrack x(md5);
+    L_INFO(LOG_SHOWPLAN,"Adding to showplan " + id);
+    DpsShowTrack x(id);
     new ShowPlanAudio( lstShowPlan, lstShowPlan->lastItem(), x);
     L_INFO(LOG_DB,"Triggering update of next_on_showplan entry");
     updateNextTrack();
     L_INFO(LOG_DB,"Playlist add complete.");
 }
 
-void Showplan::addJingle(QString md5) {
+void Showplan::addJingle(QString id) {
     char *routine = "Showplan::addJingle";
-    L_INFO(LOG_SHOWPLAN,"Adding to showplan " + md5);
-    DpsShowJingle x(md5);
+    L_INFO(LOG_SHOWPLAN,"Adding to showplan " + id);
+    DpsShowJingle x(id);
     new ShowPlanAudio( lstShowPlan, lstShowPlan->lastItem(), x);
     L_INFO(LOG_DB,"Triggering update of next_on_showplan entry");
     updateNextTrack();
     L_INFO(LOG_DB,"Playlist add complete.");
 }
 
-void Showplan::addAdvert(QString md5) {
+void Showplan::addAdvert(QString id) {
     char *routine = "Showplan::addAdvert";
-    L_INFO(LOG_SHOWPLAN,"Adding to showplan " + md5);
-    DpsShowAdvert x(md5);
+    L_INFO(LOG_SHOWPLAN,"Adding to showplan " + id);
+    DpsShowAdvert x(id);
     new ShowPlanAudio( lstShowPlan, lstShowPlan->lastItem(), x);
     L_INFO(LOG_DB,"Triggering update of next_on_showplan entry");
     updateNextTrack();
@@ -305,6 +308,33 @@ void Showplan::selectionChanged(QListViewItem* x) {
     btnMoveUp->setEnabled(false);
     btnMoveTop->setEnabled(false);
     btnDelete->setEnabled(false);
+}
+
+void Showplan::processConfigUpdate() {
+    char* routine = "Showplan::processConfigUpdate";
+    conf->requery();
+    if (conf->getParam("next_on_showplan") == ""
+                        && lstShowPlan->childCount() > 0
+                        && activePoint != lstShowPlan->lastItem()) {
+        activePointLock.lock();
+        L_INFO(LOG_DB,"Processing track load event");
+        if (activePoint == 0) {
+            activePoint = (ShowPlanItem*)lstShowPlan->firstChild();
+        }
+        else {
+            activePoint->setState(SHOWPLAN_STATE_FINISHED);
+            activePoint = (ShowPlanItem*)activePoint->nextSibling();
+        }
+        activePoint->setState(SHOWPLAN_STATE_LOADED);
+        lstShowPlan->ensureItemVisible(activePoint);
+        if (lstShowPlan->selectedItem()) {
+            selectionChanged(lstShowPlan->selectedItem());
+        }
+        L_INFO(LOG_DB,"Triggering update of next_on_showplan entry");
+        activePointLock.unlock();
+        updateNextTrack();
+    }
+    L_INFO(LOG_DB,"Configuration refresh complete.");
 }
 
 void Showplan::updateNextTrack() {
@@ -634,14 +664,14 @@ ShowPlanAudio::ShowPlanAudio( QListView *parent, QListViewItem *after,
         DpsShowItem& t ) : ShowPlanItem(parent, after) {
     rootElement = false;
     setText(0,t["title"]);
-    setText(2,dps_prettyTime(atoi(t["end"].c_str()) 
-                             - atoi(t["start"].c_str())));
+    setText(2,dps_prettyTime(atoi(t["end_smpl"].c_str()) 
+                             - atoi(t["start_smpl"].c_str())));
     switch (t.getType()) {
         case DPS_SHOWTRACK:
             setText(1,t["artist"]);
             break;
         case DPS_SHOWJINGLE:
-            setText(1,t["package"]);
+            setText(1,t["pkg"]);
             break;
         case DPS_SHOWADVERT:
             setText(1,t["company"]);

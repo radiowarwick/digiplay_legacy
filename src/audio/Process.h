@@ -14,7 +14,7 @@ class Audio::Process : public Component {
 
         virtual void getAudio(AudioPacket* audioData) =0;
 
-        virtual void receiveMessage(PORT inPort, MESSAGE message);
+        virtual void receiveMessage(PORT inPort, MESSAGE message) = 0;
 
         virtual void threadExecute();
 

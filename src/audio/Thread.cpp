@@ -5,7 +5,9 @@ using namespace std;
 using Audio::Thread;
 
 Thread::Thread() {
+    init_flag = false;
     t_active = false;
+    pthread_mutex_init(&t_messages_mutex,NULL);
 }
 
 Thread::~Thread() {
@@ -28,6 +30,7 @@ int Thread::threadStart() {
     // The \c this pointer is passed to provide a reference to this instance
 	int code = pthread_create(&threadId, &threadAttr, Thread::threadEntry, 
 									(void*)this);
+    init_flag = true;
 	return code;
 }
 
@@ -100,7 +103,9 @@ void Thread::threadWait() {
  * the next 'cancellation point', set using \c threadTestKill
  */
 void Thread::threadKill() {
+    if (!init_flag) return;
 	pthread_cancel(threadId);
+    pthread_join(threadId,NULL);
 }
 
 /**

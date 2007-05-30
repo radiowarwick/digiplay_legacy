@@ -25,27 +25,22 @@
 #ifndef CLASS_TAB_PANEL_SEARCH
 #define CLASS_TAB_PANEL_SEARCH
 
-#include <qpushbutton.h>
-#include <qcheckbox.h>
-#include <qtable.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qtooltip.h>
-
-#include "frmStudioManage.h"
+//#include "frmStudioManage.h"
 
 #include "Showplan.h"
 #include "TabPanel.h"
-#include "config.h"
+#include "Config.h"
 #include "libsearch.h"
 #include "dlgWarn.h"
 
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h"
-using namespace pqxx;
-
 class QTabWidget;
+class QPushButton;
+class QListView;
+class QLineEdit;
+class QLabel;
+class QCheckBox;
+class QPixmap;
+
 class Auth;
 
 class TabPanelSearch : public TabPanel {
@@ -65,8 +60,7 @@ class TabPanelSearch : public TabPanel {
 		void draw();
 		void clear();
 	
-		config *conf;
-		Connection *C;
+		Config *conf;
 		vector<track> *SearchResults;
 		libsearch *library_engine;
 		QPushButton *btnLibrarySearch;

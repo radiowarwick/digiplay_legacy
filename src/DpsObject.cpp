@@ -26,7 +26,7 @@
 using namespace pqxx;
 
 #include "Logger.h"
-#include "config.h"
+#include "Config.h"
 
 #include "DpsObject.h"
 
@@ -67,7 +67,7 @@ void DpsObject::commit() {
 
 void DpsObject::dbConnect() {
     try {
-        config* conf = new config("digiplay");
+        Config* conf = new Config("digiplay");
         C = new Connection(conf->getDBConnectString());
         delete conf;
         T = new Transaction(*C,"");
@@ -172,22 +172,10 @@ void DpsShowplan::save() {
 void DpsShowplan::load(int id) {
     _id = id;
     string SQL;
-    SQL =   "SELECT showitems.position, audio.id as key, audio.md5 as md5, "
-                "'audio' as type, audiotypes.name as audiotype "
-            "FROM audio,audiotypes,showitems "
-            "WHERE showitems.audio = audio.id "
-                "AND audiotypes.id = audio.type "
-                "AND showitems.showplanid=" + dps_itoa(id) + " "
-            "UNION "
-            "SELECT showitems.position, scripts.id as key, "
-                "'' as md5, 'script' as type, '' as audiotype "
-            "FROM scripts, showitems " 
-            "WHERE showitems.script = scripts.id "
-                "AND showitems.showplanid=11 "
-            "ORDER BY position";
+    SQL =   "SELECT * FROM v_showplan WHERE id=" + dps_itoa(id);
     Result R = db()->exec(SQL);
     for (unsigned int i = 0; i < R.size(); i++) {
-        if (string(R[i]["type"].c_str()) == "audio") {
+        if (string(R[i]["itemtype"].c_str()) == "audio") {
             if (string(R[i]["audiotype"].c_str()) == "music")
                 new DpsShowTrack(*this,string(R[i]["md5"].c_str()));
             if (string(R[i]["audiotype"].c_str()) == "jingle")
@@ -195,10 +183,10 @@ void DpsShowplan::load(int id) {
             if (string(R[i]["audiotype"].c_str()) == "advert")
                 new DpsShowAdvert(*this,string(R[i]["md5"].c_str()));
         }
-        if (string(R[i]["type"].c_str()) == "script") {
+        if (string(R[i]["itemtype"].c_str()) == "script") {
             new DpsShowScript(*this,atoi(R[i]["key"].c_str()));
         }
-        if (string(R[i]["type"].c_str()) == "note") {
+        if (string(R[i]["itemtype"].c_str()) == "note") {
         }
     }
 }
@@ -346,22 +334,22 @@ void DpsShowItem::setData(string name, string value) {
  * =======================================================================
  */
 // ----- DpsShowTrack Constructors -----
-DpsShowTrack::DpsShowTrack(string md5)
+DpsShowTrack::DpsShowTrack(string id)
         : DpsShowItem() {
-    load(md5);
+    load(id);
     _type = DPS_SHOWTRACK;
 }
 
-DpsShowTrack::DpsShowTrack(const DpsShowplan& parent, string md5) 
+DpsShowTrack::DpsShowTrack(const DpsShowplan& parent, string id) 
         : DpsShowItem(parent) {
-    load(md5);
+    load(id);
     _type = DPS_SHOWTRACK;
 }
 
 DpsShowTrack::DpsShowTrack(const DpsShowplan& parent, const DpsShowItem& after,
-                            string md5)
+                            string id)
         : DpsShowItem(parent,after) {
-    load(md5);
+    load(id);
     _type = DPS_SHOWTRACK;
 }
 
@@ -372,31 +360,19 @@ DpsShowTrack::~DpsShowTrack() {
 // ----- DpsShowTrack Operators -----
 
 // ----- DpsShowTRack Member routines -----
-void DpsShowTrack::load(string md5) {
+void DpsShowTrack::load(string id) {
     char *routine = "DpsShowTrack::load";
     string SQL;
     Result R;
 
     try {
-        SQL = "SELECT audio.type AS type FROM audio WHERE md5='" + md5 + "'";
+        SQL = "SELECT type FROM audio WHERE id='" + id + "'";
         R = db()->exec(SQL);
-        if (R.size() == 0 || string(R[0]["type"].c_str()) != "0") {
-            L_ERROR(LOG_DB,"MD5: " + md5 + " is not a music track.");
+        if (R.size() == 0 || string(R[0]["type"].c_str()) != "1") {
+            L_ERROR(LOG_DB,"ID: " + id + " is not a music track.");
             throw DB_NO_SUCH_TRACK;
         }
-        SQL = "SELECT audio.id AS id, audio.md5 AS md5, audio.title AS title, "
-                    "artists.name AS artist, albums.name AS album, "
-                    "archives.name AS archive, audio.music_track AS track, "
-                    "audio.music_released AS released, "
-                    "audio.length_smpl AS length, audio.start_smpl AS start, "
-                    "audio.end_smpl AS end, audio.intro_smpl AS fade_in, "
-                    "audio.extro_smpl AS fade_out, audio.censor AS censor "
-                "FROM audio, audioartists, artists, albums, archives "
-                "WHERE audioartists.audio = audio.id "
-                    "AND audioartists.artist = artists.id "
-                "AND audio.archive = archives.id "
-                "AND audio.music_album = albums.id "
-                "AND audio.md5 = '" + md5 + "'";
+        SQL = "SELECT * FROM v_audio_track WHERE id='" + id + "'";
         R = db()->exec(SQL);
     }
     catch (int e) {
@@ -424,22 +400,21 @@ void DpsShowTrack::load(string md5) {
  * =======================================================================
  */
 // ----- DpsShowJingle Constructors -----
-DpsShowJingle::DpsShowJingle(string md5)
+DpsShowJingle::DpsShowJingle(string id)
         : DpsShowItem() {
-    load(md5);
+    load(id);
     _type = DPS_SHOWJINGLE;
 }
 
-DpsShowJingle::DpsShowJingle(const DpsShowplan& parent, string md5) 
+DpsShowJingle::DpsShowJingle(const DpsShowplan& parent, string id) 
         : DpsShowItem(parent) {
-    load(md5);
+    load(id);
     _type = DPS_SHOWJINGLE;
 }
 
-DpsShowJingle::DpsShowJingle(const DpsShowplan& parent, const DpsShowItem& after,
-                            string md5)
+DpsShowJingle::DpsShowJingle(const DpsShowplan& parent, const DpsShowItem& after, string id)
         : DpsShowItem(parent,after) {
-    load(md5);
+    load(id);
     _type = DPS_SHOWJINGLE;
 }
 
@@ -450,29 +425,19 @@ DpsShowJingle::~DpsShowJingle() {
 // ----- DpsShowJingle Operators -----
 
 // ----- DpsShowJingle Member routines -----
-void DpsShowJingle::load(string md5) {
+void DpsShowJingle::load(string id) {
     char *routine = "DpsShowJingle::load";
     string SQL;
     Result R;
 
     try {
-        SQL = "SELECT audio.type AS type FROM audio WHERE md5='" + md5 + "'";
+        SQL = "SELECT type FROM audio WHERE id='" + id + "'";
         R = db()->exec(SQL);
-        if (R.size() == 0 || string(R[0]["type"].c_str()) != "1") {
-            L_ERROR(LOG_DB,"MD5: " + md5 + " is not a jingle.");
+        if (R.size() == 0 || string(R[0]["type"].c_str()) != "2") {
+            L_ERROR(LOG_DB,"ID: " + id + " is not a jingle.");
             throw DB_NO_SUCH_TRACK;
         }
-        SQL = "SELECT audio.id AS id, audio.md5 AS md5, audio.title AS title, "
-                    "jinglepkgs.name AS package, "
-                    "archives.name AS archive, "
-                    "audio.length_smpl AS length, audio.start_smpl AS start, "
-                    "audio.end_smpl AS end, audio.intro_smpl AS fade_in, "
-                    "audio.extro_smpl AS fade_out, audio.censor AS censor "
-                "FROM audio, audiojinglepkgs, jinglepkgs, archives "
-                "WHERE audiojinglepkgs.audio = audio.id "
-                    "AND audiojinglepkgs.jinglepkg = jinglepkgs.id "
-                "AND audio.archive = archives.id "
-                "AND audio.md5 = '" + md5 + "'";
+        SQL = "SELECT * FROM v_audio_jingles WHERE id='" + id + "'";
         R = db()->exec(SQL);
     }
     catch (int e) {
@@ -501,20 +466,20 @@ void DpsShowJingle::load(string md5) {
  * =======================================================================
  */
 // ----- DpsShowAdvert Constructors -----
-DpsShowAdvert::DpsShowAdvert(string md5)
+DpsShowAdvert::DpsShowAdvert(string id)
         : DpsShowItem() {
-    load(md5);
+    load(id);
     _type = DPS_SHOWADVERT;
 }
 
-DpsShowAdvert::DpsShowAdvert(const DpsShowplan& parent, string md5) 
+DpsShowAdvert::DpsShowAdvert(const DpsShowplan& parent, string id) 
         : DpsShowItem(parent) {
-    load(md5);
+    load(id);
     _type = DPS_SHOWADVERT;
 }
 
-DpsShowAdvert::DpsShowAdvert(const DpsShowplan& parent, const DpsShowItem& after, string md5) : DpsShowItem(parent,after) {
-    load(md5);
+DpsShowAdvert::DpsShowAdvert(const DpsShowplan& parent, const DpsShowItem& after, string id) : DpsShowItem(parent,after) {
+    load(id);
     _type = DPS_SHOWADVERT;
 }
 
@@ -525,31 +490,19 @@ DpsShowAdvert::~DpsShowAdvert() {
 // ----- DpsShowAdvert Operators -----
 
 // ----- DpsShowAdvert Member routines -----
-void DpsShowAdvert::load(string md5) {
+void DpsShowAdvert::load(string id) {
     char *routine = "DpsShowAdvert::load";
     string SQL;
     Result R;
 
     try {
-        SQL = "SELECT audio.type AS type FROM audio WHERE md5='" + md5 + "'";
+        SQL = "SELECT type FROM audio WHERE id='" + id + "'";
         R = db()->exec(SQL);
-        if (R.size() == 0 || string(R[0]["type"].c_str()) != "2") {
-            L_ERROR(LOG_DB,"MD5: " + md5 + " is not an advert.");
+        if (R.size() == 0 || string(R[0]["type"].c_str()) != "3") {
+            L_ERROR(LOG_DB,"ID: " + id + " is not an advert.");
             throw DB_NO_SUCH_TRACK;
         }
-        SQL = "SELECT audio.id AS id, audio.md5 AS md5, audio.title AS title, "
-                    "artists.name AS artist, albums.name AS album, "
-                    "archives.name AS archive, audio.music_track AS track, "
-                    "audio.music_released AS released, "
-                    "audio.length_smpl AS length, audio.start_smpl AS start, "
-                    "audio.end_smpl AS end, audio.intro_smpl AS fade_in, "
-                    "audio.extro_smpl AS fade_out, audio.censor AS censor "
-                "FROM audio, audioartists, artists, albums, archives "
-                "WHERE audioartists.audio = audio.id "
-                    "AND audioartists.artist = artists.id "
-                "AND audio.archive = archives.id "
-                "AND audio.music_album = albums.id "
-                "AND audio.md5 = '" + md5 + "'";
+        SQL = "SELECT * FROM v_audio_adverts WHERE id='" + id + "'";
         R = db()->exec(SQL);
     }
     catch (int e) {
@@ -608,11 +561,7 @@ void DpsShowScript::load(unsigned int id) {
     Result R;
 
     try {
-        SQL =   "SELECT scripts.name, scripts.contents, scripts.length, "
-                    "users.username AS creator "
-                "FROM scripts, users "
-                "WHERE scripts.creator=users.id "
-                    "AND scripts.id = " + dps_itoa(id);
+        SQL = "SELECT * FROM v_scripts WHERE id=" + dps_itoa(id);
         R = db()->exec(SQL);
     }
     catch (int e) {

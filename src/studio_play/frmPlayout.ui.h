@@ -21,85 +21,77 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include <qapplication.h>
+
+#include "Config.h"
+#include "DbTrigger.h"
+#include "AudioPlayer.h"
+#include "AudioWall.h"
+#include "AudioWallDriver.h"
+#include "AudioWallManager.h"
+#include "dps.h"
 #include "remoteStartThread.h"
 
+DbTrigger* triggerConfig;
+AudioPlayer* audioPlayer1;
+AudioPlayer* audioPlayer2;
+AudioPlayer* audioPlayer3;
+AudioWall* stnAudioWall;
+AudioWall* usrAudioWall;
+AudioWallDriver* audioWallOutput;
+AudioWallManager* stnAudioWallMan;
+AudioWallManager* usrAudioWallMan;
+Config *conf;
+
 void frmPlayout::init() {
-	path = qApp->applicationDirPath();
-	pixPlay = new QPixmap(path + "/images/play.png");
-	pixPause = new QPixmap(path + "/images/pause.png");
-	pixStop = new QPixmap(path + "/images/stop.png");
-	pixSeekback = new QPixmap(path + "/images/fastbackward.png");
-	pixSeekforward = new QPixmap(path + "/images/fastforward.png");
-	pixReset = new QPixmap(path + "/images/reset.png");
-	
-	// Set up button images
-	btnPlay1->setPixmap(*pixPlay);
-	btnPlay2->setPixmap(*pixPlay);
-	btnPlay3->setPixmap(*pixPlay);
-	btnStop1->setPixmap(*pixStop);
-	btnStop2->setPixmap(*pixStop);
-	btnStop3->setPixmap(*pixStop);
-	btnSeekBack1->setPixmap(*pixSeekback);
-	btnSeekBack2->setPixmap(*pixSeekback);
-	btnSeekBack3->setPixmap(*pixSeekback);
-	btnSeekForward1->setPixmap(*pixSeekforward);
-	btnSeekForward2->setPixmap(*pixSeekforward);
-	btnSeekForward3->setPixmap(*pixSeekforward);
-	btnReset1->setPixmap(*pixReset);
-	btnReset2->setPixmap(*pixReset);
-	btnReset3->setPixmap(*pixReset);
+    audioPlayer1 = new AudioPlayer(this,"audioPlayer1",1);
+    audioPlayer1->setGeometry(10,10,540,240);
+    audioPlayer2 = new AudioPlayer(this,"audioPlayer2",2);
+    audioPlayer2->setGeometry(10,260,540,240);
+    audioPlayer3 = new AudioPlayer(this,"audioPlayer3",3);
+    audioPlayer3->setGeometry(10,510,540,240);
 
-    cout << "Connecting to database..." << endl;
-    conf = new config("digiplay");
-	C = new Connection(conf->getDBConnectString());
-	cout << " -> Connected." << endl;
+    triggerConfig = new DbTrigger("triggerConfig","trig_id1");
+    triggerConfig->start();
+    connect(triggerConfig, SIGNAL(trigger()),
+                                audioPlayer1, SLOT(processConfigUpdate()));
+    connect(triggerConfig, SIGNAL(trigger()),
+                                audioPlayer2, SLOT(processConfigUpdate()));
+    connect(triggerConfig, SIGNAL(trigger()),
+                                audioPlayer3, SLOT(processConfigUpdate()));
 
-	cout << "Initialising Digital Playout Hardware..." << endl;
-	player1 = new playerThread(this, 1);
-	player2 = new playerThread(this, 2);	
-	player3 = new playerThread(this, 3);
-	remoteStartThread *remotes = new remoteStartThread(this);
-	player1->start();
-	usleep(100000);
-	player2->start();
-	usleep(100000);
-	player3->start();
-	usleep(100000);
-	cout << " -> Hardware initialisation complete." << endl;
+    conf = new Config("digiplay");
+//	remoteStartThread *remotes = new remoteStartThread(this);
 
-	QCustomEvent *config_refresh = new QCustomEvent(30001);
-	QApplication::postEvent(this, config_refresh);
-
-	cout << "Creating trigger on configuration settings..." << endl;
-	dbTrigger = new triggerThread(this, QString(conf->getDBConnectString()), 1);
-	cout << " -> Created trigger thread" << endl;
-	dbTrigger->start();
-	cout << " -> Trigger active." << endl;
-
-	AudioWall *stnAudioWall = new AudioWall(this,"stnAudioWall",4,3,4);
+	stnAudioWall = new AudioWall(this,"stnAudioWall",4,3);
 	stnAudioWall->setGeometry(560,0,460,373);
-	stnAudioWallMan = new AudioWallManager(stnAudioWall,C);
+	stnAudioWallMan = new AudioWallManager(stnAudioWall);
 	stnAudioWallMan->load(atoi(conf->getParam("station_cartset").c_str()));
 	
-	AudioWall *usrAudioWall = new AudioWall(this,"usrAudioWall",4,3,stnAudioWall);
+	usrAudioWall = new AudioWall(this,"usrAudioWall",4,3);
 	usrAudioWall->setGeometry(560,373,460,373);
-	usrAudioWallMan = new AudioWallManager(usrAudioWall,C);
+	usrAudioWallMan = new AudioWallManager(usrAudioWall);
 	usrAudioWallMan->load(atoi(conf->getParam("user_cartset").c_str()));
 
+    audioWallOutput = new AudioWallDriver(4);
+    audioWallOutput->addAudioWall(stnAudioWall);
+    audioWallOutput->addAudioWall(usrAudioWall);
+
+    delete conf;
 	usleep(500000);
-	remotes->start();
+//	remotes->start();
 
 	cout << "Finished init" << endl;
 }
 
 void frmPlayout::destroy() {
-	delete conf;
+
 }
 
 // START Events ======================================================
 void frmPlayout::customEvent(QCustomEvent *event) {
 	switch (event->type()) {
-		case 20001:	{
+/*		case 20001:	{
 			eventData *e_data = (eventData*)event->data();
 			switch (e_data->t) {
 				case EVENT_TYPE_STOP: {
@@ -350,13 +342,13 @@ void frmPlayout::customEvent(QCustomEvent *event) {
 		}
 		break;
 	}
-	default: {
+*/	default: {
 			qWarning("Unknown event type: %d", event->type());
 			break;
 		}
 	}
 }
-
+/*
 void frmPlayout::Player1_Load() {
 	btnLoadPlaylist1->setEnabled(false);
 	if (conf->getParam("next_on_showplan") == "") {
@@ -597,4 +589,4 @@ QString frmPlayout::getTime( long smpl ) {
     if (mil < 10) S += "0";
 	S += QString::number(mil);
 	return S;
-}
+}*/

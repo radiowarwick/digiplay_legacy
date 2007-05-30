@@ -30,26 +30,26 @@
 #include <qheader.h>
 #include <qapplication.h>
 #include <qobject.h>
+#include <qlabel.h>
+#include <qlineedit.h>
+#include <qtextedit.h>
+#include <qpushbutton.h>
 
 #include "Auth.h"
 #include "Logger.h"
+#include "DataAccess.h"
 #include "dps.h"
 
 #include "TabPanelScript.h"
 
 TabPanelScript::TabPanelScript(QTabWidget *parent, string text)
             : TabPanel(parent,text) {
-        config *conf = new config("digiplay");
-	C = new Connection(conf->getDBConnectString());
-	delete conf;
+    DB = new DataAccess();
 }
 
 // clean up stuff
 TabPanelScript::~TabPanelScript() {
-	if (C && C->is_open()) {
-		C->Disconnect();
-	}
-	delete C;
+    delete DB;
 }
 
 // this is called whenever the application reconfigures itself,

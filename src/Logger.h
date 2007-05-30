@@ -67,6 +67,15 @@ enum MESSAGE_LEVEL {CRITICAL,GENERAL,ERROR,WARNING,INFO};
 #define L_INFO(x,y)
 #endif
 
+/**
+ * Provides a centralised logging system for DPS applications.
+ * This class provides static functions allowing any class to log events into a
+ * log file. The log file is named based on the application name, which should
+ * be set before the class is used.
+ *
+ * Log levels for file and display logs may be specified so only appropriate
+ * messages are sent to each output location.
+ */
 class Logger {
 	public:
 		static void log(LOG_TYPE type, char* routine, string message,

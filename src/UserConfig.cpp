@@ -23,12 +23,12 @@
 #include "UserConfig.h"
 
 #include "Auth.h"
-#include "config.h"
+#include "Config.h"
 #include "Logger.h"
 
 UserConfig::UserConfig(Auth *authModule) {
     _userInfo.clear();
-    config *conf = new config("digiplay");
+    Config *conf = new Config("digiplay");
     C = new Connection(conf->getDBConnectString());
     delete conf;
 

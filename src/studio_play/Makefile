@@ -16,16 +16,16 @@ QT_ENABLED 	=	yes
 
 # .cpp modules from which to create output
 MODS		=	main
-QT_MODS		=	frmPlayout AudioWall AudioWallManager
-SHARED_MODS	=	config audioplayer audiomixer audiochannel \
-				playerThread triggerThread \
-				Logger dps remoteStartThread
+QT_MODS		=	frmPlayout AudioWall AudioWallItem AudioWallManager \
+				AudioPlayer AudioWallDriver
+SHARED_MODS	=	Config Logger dps remoteStartThread DataAccess
+SHARED_QT_MODS	= DbTrigger
 
 # Global header files on which dependance exists
 HDRS		=
 
 # Compiler and linker options
-LIBS		=	-lpq /usr/lib/libpqxx.a -lm -lpthread
+LIBS		=	-lpq /usr/lib/libpqxx.a -lm -lpthread -lFLAC++ -ldpsaudio
 
 POSTCOMPILE	=	if [ ! -e $(ROOT)/bin/images ]; \
 					then mkdir $(ROOT)/bin/images; fi; \

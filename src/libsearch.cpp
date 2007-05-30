@@ -26,17 +26,17 @@
 libsearch::libsearch() {
  
     /* Read in configuration for database connection */
-    config *conf = new config("digiplay");
+//    config *conf = new config("digiplay");
 
     /* Create the new connection */
-    C = new Connection( conf->getDBConnectString() );
+//    C = new Connection( conf->getDBConnectString() );
 }
 
 libsearch::~libsearch() {
-    if (C && C->is_open()) {
-        C->Disconnect();
-    }
-    delete C;
+//    if (C && C->is_open()) {
+//        C->Disconnect();
+//    }
+//    delete C;
 }
 
 /* 
@@ -55,19 +55,18 @@ vector<track>* libsearch::query(string search_string) {
  lastQuery_string = search_string;
 
  vector<track>* Q = new vector<track>;
- T = new Transaction(*C, "");
  
- SQL = "SELECT audio.md5 AS md5, "
+ SQL = "SELECT audio.id AS id, audio.md5 AS md5, "
   "artists.name AS artist, "
   "audio.title, "
   "albums.name AS album "
   "FROM artists, audioartists, audio, albums, audiodir "
-  "WHERE audioartists.audio=audio.id "
-  "AND audioartists.artist=artists.id "
+  "WHERE audioartists.audioid=audio.id "
+  "AND audioartists.artistid=artists.id "
   "AND albums.id=audio.music_album "
   "AND audio.censor='f' "
-  "AND audiodir.audio = audio.id "
-  "AND audiodir.directory = 1";
+  "AND audiodir.audioid = audio.id "
+  "AND audiodir.dirid = 2";
 
  if (searchArtist_flag == false &&
      searchTitle_flag == false && 
@@ -107,9 +106,8 @@ vector<track>* libsearch::query(string search_string) {
   S << searchLimit_value;
   SQL += " LIMIT " + S.str();
  }
- Result R = T->exec(SQL);
- T->abort();
- delete T;
+ Result R = DB->exec(SQL);
+ DB->abort();
 
  Q->resize(R.size());
  for (unsigned int i = 0; i < R.size(); i++) {
@@ -117,6 +115,7 @@ vector<track>* libsearch::query(string search_string) {
 	Q->at(i).artist = R[i]["artist"].c_str();
 	Q->at(i).album = R[i]["album"].c_str();
 	Q->at(i).md5 = R[i]["md5"].c_str();
+    Q->at(i).id = R[i]["id"].c_str();
  }
  return Q;
 }

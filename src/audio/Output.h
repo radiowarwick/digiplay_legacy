@@ -12,9 +12,9 @@ class Audio::Output : public Audio::Component {
 		virtual void getAudio(AudioPacket* audioData) {return;}
 
 	protected:
-		virtual void receiveMessage(PORT inPort, MESSAGE message);
-		virtual void onConnect(PORT localPort) {}
-		virtual void onDisconnect(PORT localPort) {}
+		virtual void receiveMessage(PORT inPort, MESSAGE message) = 0;
+		virtual void onConnect(PORT localPort) = 0;
+		virtual void onDisconnect(PORT localPort) = 0;
 		virtual void threadExecute();
 
 	private:

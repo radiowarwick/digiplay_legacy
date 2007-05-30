@@ -1,9 +1,9 @@
 /*
- * Studio manage main app
- * main.cpp
- * Main application code for studio management application
+ * Audiowall Driver Widget
+ * AudioWallDriver.h
+ * Provides an output driver for multiple audio wall widget
  *
- * Copyright (c) 2004-2006 Chris Cantwell
+ * Copyright (c) 2006 Chris Cantwell
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,18 +20,35 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#include <qapplication.h>
-#include "frmStudioManage.h"
-#include "clockThread.h"
+#ifndef CLASS_AUDIO_WALL_DRIVER
+#define CLASS_AUDIO_WALL_DRIVER
+
+#include <vector>
+using namespace std;
+
+#include <qwidget.h>
+
+#include "audio/Audio.h"
+#include "audio/ProcessMixer.h"
+#include "audio/OutputDsp.h"
+
 #include "dps.h"
 
-int main( int argc, char ** argv )
-{
-//	dropPrivilage();
+class AudioWall;
 
-    QApplication a( argc, argv );
-	frmStudioManage w;
-    w.show();
-    a.connect( &a, SIGNAL( lastWindowClosed() ), &a, SLOT( quit() ) );
-    return a.exec();
-}
+class AudioWallDriver : public QObject {
+    Q_OBJECT
+
+    public:
+       AudioWallDriver(unsigned short playerId);
+       ~AudioWallDriver();
+
+       void addAudioWall(AudioWall* A);
+
+    private:
+       Audio::ProcessMixer* mixer;
+       Audio::OutputDsp* player;
+       unsigned short count;
+};
+
+#endif

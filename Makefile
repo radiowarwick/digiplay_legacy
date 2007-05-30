@@ -48,6 +48,9 @@ manual: doc/manual/dpsmanual.tex
 	@cd doc/manual; pdflatex dpsmanual.tex; \
 		mv dpsmanual.pdf ../../; cd ../../
 
+doxygen:
+	doxygen doc/doxygen.conf
+
 tar: manual
 	@make -s clean
 	@echo "Generating tarball..."

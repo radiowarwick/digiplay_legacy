@@ -22,8 +22,12 @@
  *
  */
 
+#include <iostream>
+using std::cout;
+using std::endl;
+
 #include "FileBrowser.h"
-#include "config.h"
+#include "Config.h"
 #include "dps.h"
 
 #include <qdir.h>
@@ -124,158 +128,47 @@ void Directory::setOpen( bool o )
         Transaction T(*C,"");
         string SQL;
         try {
-            SQL =   "SELECT dir.id, dir.name, dir.notes "
-                    "FROM dir, dirusers "
-                    "WHERE dir.id = dirusers.directory "
-                        "AND (dirusers.permissions='r' "
-                            "OR dirusers.permissions='rw' "
-                            "OR dirusers.permissions='o') "
-                        "AND dir.parent=" + dps_itoa(id) + " "
-                        "AND dirusers.userid=" + _uid + " "
-                    "UNION "
-                    "SELECT dir.id, dir.name, dir.notes "
-                    "FROM dir, dirgroups, groups, groupmembers "
-                    "WHERE dir.id = dirgroups.directory "
-                        "AND (dirgroups.permissions='r' "
-                            "OR dirgroups.permissions='rw' "
-                            "OR dirgroups.permissions='o') "
-                        "AND dir.parent=" + dps_itoa(id) + " "
-                        "AND dirgroups.groupid = groups.id "
-                        "AND groupmembers.groupid = groups.id "
-                        "AND groupmembers.userid = " + _uid;
-            Result R_dir = T.exec(SQL);
-            SQL =   "SELECT audio.id, audio.title, audio.md5, "
-                        "audiotypes.name as type "
-                    "FROM audio, audiodir, audiotypes, audiousers "
-                    "WHERE audio.type = audiotypes.id "
-                        "AND audio.id = audiodir.audio "
-                        "AND (audiousers.permissions='r' "
-                            "OR audiousers.permissions='rw' "
-                            "OR audiousers.permissions='o') "
-                        "AND audiodir.directory = " + dps_itoa(id) + " "
-                        "AND audiousers.userid=" + _uid + " "
-                    "UNION "
-                    "SELECT audio.id, audio.title, audio.md5, "
-                        "audiotypes.name as type "
-                    "FROM audio, audiodir, audiotypes, audiogroups, groups, "
-                        "groupmembers "
-                    "WHERE audio.type = audiotypes.id "
-                        "AND audio.id = audiodir.audio "
-                        "AND (audiogroups.permissions='r' "
-                            "OR audiogroups.permissions='rw' "
-                            "OR audiogroups.permissions='o') "
-                        "AND audiodir.directory = " + dps_itoa(id) + " "
-                        "AND audiogroups.groupid = groups.id "
-                        "AND groupmembers.groupid = groups.id "
-                        "AND groupmembers.userid = " + _uid;
-            Result R_audio = T.exec(SQL);
-            SQL =   "SELECT cartsets.id,cartsets.name "
-                    "FROM cartsets,cartsetsdir,cartsetsusers "
-                    "WHERE cartsets.id = cartsetsdir.cartsetid "
-                        "AND (cartsetsusers.permissions='r' "
-                            "OR cartsetsusers.permissions='rw' "
-                            "OR cartsetsusers.permissions='o') "
-                        "AND cartsetsdir.dir = " + dps_itoa(id) + " "
-                        "AND cartsetsusers.userid=" + _uid + " "
-                    "UNION "
-                    "SELECT cartsets.id, cartsets.name "
-                    "FROM cartsets, cartsetsdir, cartsetsgroups, groups, "
-                        "groupmembers "
-                    "WHERE cartsets.id = cartsetsdir.cartsetid "
-                        "AND (cartsetsgroups.permissions='r' "
-                            "OR cartsetsgroups.permissions='rw' "
-                            "OR cartsetsgroups.permissions='o') "
-                        "AND cartsetsdir.dir = " + dps_itoa(id) + " "
-                        "AND cartsetsgroups.groupid = groups.id "
-                        "AND groupmembers.groupid = groups.id "
-                        "AND groupmembers.userid = " + _uid;
-            Result R_cartset = T.exec(SQL);
-            SQL =   "SELECT scripts.id, scripts.name "
-                    "FROM scripts,scriptsdir,scriptusers "
-                    "WHERE scripts.id = scriptsdir.scriptid "
-                        "AND (scriptusers.permissions='r' "
-                            "OR scriptusers.permissions='rw' "
-                            "OR scriptusers.permissions='o') "
-                        "AND scriptsdir.dir = " + dps_itoa(id) + " "
-                        "AND scriptusers.userid = " + _uid + " "
-                    "UNION "
-                    "SELECT scripts.id, scripts.name "
-                    "FROM scripts, scriptsdir, scriptgroups, groups, "
-                        "groupmembers "
-                    "WHERE scripts.id = scriptsdir.scriptid "
-                        "AND (scriptgroups.permissions='r' "
-                            "OR scriptgroups.permissions='rw' "
-                            "OR scriptgroups.permissions='o') "
-                        "AND scriptsdir.dir = " + dps_itoa(id) + " "
-                        "AND scriptgroups.groupid = groups.id "
-                        "AND groupmembers.groupid = groups.id "
-                        "AND groupmembers.userid = " + _uid;
-            Result R_script = T.exec(SQL);
-            SQL =   "SELECT showplans.id,showplans.name "
-                    "FROM showplans,showplandir,showplanusers "
-                    "WHERE showplans.id = showplandir.showplanid "
-                        "AND (showplanusers.permissions='r' "
-                            "OR showplanusers.permissions='rw' "
-                            "OR showplanusers.permissions='o') "
-                        "AND showplandir.dir = " + dps_itoa(id) + " "
-                        "AND showplanusers.userid = " + _uid + " "
-                    "UNION "
-                    "SELECT showplans.id, showplans.name "
-                    "FROM showplans,showplandir,showplangroups,groups, "
-                        "groupmembers "
-                    "WHERE showplans.id = showplandir.showplanid "
-                        "AND (showplangroups.permissions = 'r' "
-                            "OR showplangroups.permissions = 'rw' "
-                            "OR showplangroups.permissions = 'o') "
-                        "AND showplandir.dir = " + dps_itoa(id) + " "
-                        "AND showplangroups.groupid = groups.id "
-                        "AND groupmembers.groupid = groups.id "
-                        "AND groupmembers.userid = " + _uid;
-            Result R_showplan = T.exec(SQL);
+            SQL =   "SELECT * FROM v_tree WHERE parent=" + dps_itoa(id)
+                        + " AND userid=" + _uid;
+            Result R = T.exec(SQL);
             T.abort();
             Directory *D;
             FileItem *F;
-            for (unsigned int i = 0; i < R_dir.size(); i++) {
-                D = new Directory(this,atoi(R_dir[i]["id"].c_str()),
-                                        R_dir[i]["name"].c_str(),C);
-                D->setUid(_uid);
-                D->setPixmap( folderClosed );
-            }
-            for (unsigned int i = 0; i < R_audio.size(); i++) {
-                if (string(R_audio[i]["type"].c_str()) == "jingle") {
-                    F = new FileItem(this,R_audio[i]["title"].c_str(),
-                                    "Audio Ident");
-                    F->setPixmap( fileJingle );
+            for (unsigned int i = 0; i < R.size(); i++) {
+                std::string type = R[i]["itemtype"].c_str();
+                std::string id = R[i]["id"].c_str();
+                std::string name = R[i]["name"].c_str();
+                if (type == "dir") {
+                    D = new Directory(this,atoi(id.c_str()),name,C);
+                    D->setUid(_uid);
+                    D->setPixmap( folderClosed );
                 }
-                else if (string(R_audio[i]["type"].c_str()) == "advert") {
-                    F = new FileItem(this,R_audio[i]["title"].c_str(),
-                                    "Audio Advert");
-                    F->setPixmap( fileAdvert );
-                }
-                else {
-                    F = new FileItem(this,R_audio[i]["title"].c_str(),
-                                    "Audio File");
+                else if (type == "music") {
+                    F = new FileItem(this,name,"Audio File");
                     F->setPixmap( fileAudio );
                 }
-                F->setText(2, R_audio[i]["md5"].c_str());
-            }
-            for (unsigned int i = 0; i < R_cartset.size(); i++) {
-                F = new FileItem(this,R_cartset[i]["name"].c_str(),
-                                    "Cartset");
-                F->setPixmap( fileCartset );
-                F->setText(2, R_cartset[i]["id"].c_str());
-            }
-            for (unsigned int i = 0; i < R_script.size(); i++) {
-                F = new FileItem(this,R_script[i]["name"].c_str(),
-                                    "Script");
-                F->setPixmap( fileScript );
-                F->setText(2, R_script[i]["id"].c_str());
-            }
-            for (unsigned int i = 0; i < R_showplan.size(); i++) {
-                F = new FileItem(this,R_showplan[i]["name"].c_str(),
-                                    "Showplan");
-                F->setPixmap( fileShowplan );
-                F->setText(2, R_showplan[i]["id"].c_str());
+                else if (type == "jingle") {
+                    F = new FileItem(this,name,"Audio Ident");
+                    F->setPixmap( fileJingle );
+                }
+                else if (type == "advert") {
+                    F = new FileItem(this,name,"Audio Advert");
+                    F->setPixmap( fileAdvert );
+                }
+                else if (type == "cartset") {
+                    F = new FileItem(this,name,"Cartset");
+                    F->setPixmap( fileCartset );
+                }
+                else if (type == "script") {
+                    F = new FileItem(this,name,"Script");
+                    F->setPixmap( fileScript );
+                }
+                else if (type == "showplan") {
+                    F = new FileItem(this,name,"Showplan");
+                    F->setPixmap( fileShowplan );
+                }
+                if (F) F->setText(2,id);
+                F = 0;
             }
         }
         catch (...) {
@@ -325,10 +218,10 @@ DirectoryView::DirectoryView( QWidget *parent, const char *name, bool sdo )
     : QListView( parent, name ), dirsOnly( sdo ), oldCurrent( 0 ),
       dropItem( 0 ), mousePressed( FALSE )
 {
-    config *conf = new config("digiplay");
+    Config *conf = new Config("digiplay");
     C = new Connection(conf->getDBConnectString());
     delete conf;
-    _uid = "-1";
+    _uid = "2";
 
     if ( !folderLocked ) {
         QString path = qApp->applicationDirPath();
@@ -365,14 +258,14 @@ void DirectoryView::populate() {
     Directory *D;
     Transaction T(*C,"");
     try {
-        Result R = T.exec("SELECT id,name,notes FROM dir WHERE parent=-1");
+        Result R = T.exec("SELECT * FROM v_tree WHERE parent<0 "
+                            "AND userid = " + _uid);
         T.abort();
         for (unsigned int i = 0; i < R.size(); i++) {
             D = new Directory(this,atoi(R[i]["id"].c_str()),
                             R[i]["name"].c_str(),C);
             D->setUid(_uid);
             D->setPixmap(folderTopClosed);
-            D->setOpen(true);
         }
     }
     catch (...) {
@@ -382,7 +275,7 @@ void DirectoryView::populate() {
 
 void DirectoryView::setUser(string username) {
     if (username == "") {
-        _uid = "-1";
+        _uid = "2";
         populate();
         return;
     }
@@ -393,7 +286,7 @@ void DirectoryView::setUser(string username) {
         _uid = R[0]["id"].c_str();
     }
     else {
-        _uid = "-1";
+        _uid = "2";
     }
     populate();
 }

@@ -44,6 +44,9 @@ enum DpsObjectType {
     DPS_SHOWSCRIPT, DPS_CARTSET
 };
 
+/**
+ * Base class for the Dps class hierarchy.
+ */
 class DpsObject {
     public:
         DpsObject();
@@ -65,7 +68,17 @@ class DpsObject {
         static Transaction *T;
 };
 
+// Forward declare DpsShowItem for DpsShowplan class
 class DpsShowItem;
+
+/**
+ * Represent a show plan.
+ * This class stores the items of a showplan, along with its database id and
+ * name. An object of this type may load an existing showplan from the database
+ * using the \a load routine, and save to the database using the \a save
+ * routine. Standard operators are provided to allow access to individual
+ * \a DpsShowItem.
+ */
 class DpsShowplan : public DpsObject {
     friend class DpsShowItem;
     public:
@@ -101,7 +114,11 @@ class DpsShowplan : public DpsObject {
         vector<DpsShowItem*> _items;
 };
 
-
+/**
+ * Base class representing a single showplan item.
+ * This base class is used to derive individual items for each type of showplan
+ * entry.
+ */
 class DpsShowItem : public DpsObject {
     public:
         DpsShowItem();
@@ -130,7 +147,9 @@ class DpsShowItem : public DpsObject {
         DpsShowplan* _parent;
 };
 
-
+/**
+ * Showplan item representing an audio track.
+ */
 class DpsShowTrack : public DpsShowItem {
     public:
         DpsShowTrack(string md5);
@@ -144,7 +163,9 @@ class DpsShowTrack : public DpsShowItem {
         void load(string md5);
 };
 
-
+/**
+ * Showplan item representing a jingle.
+ */
 class DpsShowJingle : public DpsShowItem {
     public:
         DpsShowJingle(string md5);
@@ -157,7 +178,9 @@ class DpsShowJingle : public DpsShowItem {
         void load(string md5);
 };
 
-
+/**
+ * Showplan item representing an advert.
+ */
 class DpsShowAdvert : public DpsShowItem {
     public:
         DpsShowAdvert(string md5);
@@ -170,7 +193,9 @@ class DpsShowAdvert : public DpsShowItem {
         void load(string md5);
 };
 
-
+/**
+ * Showplan item representing a script.
+ */
 class DpsShowScript: public DpsShowItem {
     public:
         DpsShowScript(unsigned int id);
@@ -183,7 +208,9 @@ class DpsShowScript: public DpsShowItem {
         void load(unsigned int id);
 };
 
-
+/**
+ * Showplan item representing a note or comment
+ */
 class DpsShowNote : public DpsShowItem {
     public:
         DpsShowNote(DpsShowplan* parent);
@@ -192,7 +219,10 @@ class DpsShowNote : public DpsShowItem {
     private:
 };
 
-
+/**
+ * Representation of a cartset.
+ * \todo implement.
+ */
 class DpsCartset : public DpsObject {
     private:
         DpsCartset();

@@ -30,9 +30,13 @@
 #include <qheader.h>
 #include <qapplication.h>
 #include <qobject.h>
+#include <qpixmap.h>
+#include <qlistview.h>
 
 #include "Auth.h"
 #include "Logger.h"
+#include "DataAccess.h"
+#include "DbTrigger.h"
 #include "dps.h"
 
 #include "TabPanelPlaylist.h"
@@ -40,23 +44,21 @@
 TabPanelPlaylist::TabPanelPlaylist(QTabWidget *parent, string text)
 		: TabPanel(parent,text) {
 	panelTag = "TabPlaylist";
-		
-	config *conf = new config("digiplay");
-	C = new Connection(conf->getDBConnectString());
-	delete conf;
+	DB = new DataAccess();	
+    
+    triggerPlaylist = new DbTrigger("triggerPlaylist","trig_id5");
+    triggerPlaylist->start();
+    connect(triggerPlaylist, SIGNAL(trigger()), 
+                                    this, SLOT(processPlaylistUpdate()));
 
-	playlistTrigger = new triggerThread(this, 
-		QString(conf->getDBConnectString()), 5);
-	playlistTrigger->start();
 	draw();
 }
 
 // clean up stuff
 TabPanelPlaylist::~TabPanelPlaylist() {
-	if (C && C->is_open()) {
-		C->Disconnect();
-	}
-	delete C;
+    triggerPlaylist->stop();
+    delete triggerPlaylist;
+    delete DB;
 }
 
 // this is called whenever the application reconfigures itself,
@@ -123,15 +125,13 @@ void TabPanelPlaylist::getPlaylist(){
 	QListViewItem *new_playlist = 0, *new_track = 0, *last_track = 0;
 	string SQL = "SELECT id,name FROM playlists ORDER BY name DESC";
 
-	Transaction *T = new Transaction(*C,"");
 	Result Playlists;
 	try {
-		Playlists = T->exec(SQL);
+		Playlists = DB->exec(SQL);
 	}
 	catch (...) {
 		L_ERROR(LOG_TABPLAYLIST,"Failed to get list of playlists");
-		T->abort();
-		delete T;
+		DB->abort();
 		return;
 	}
 
@@ -145,7 +145,7 @@ void TabPanelPlaylist::getPlaylist(){
 				+ string(Playlists[j]["id"].c_str());
 		Result R;
 		try {
-			R = T->exec(SQL);
+			R = DB->exec(SQL);
 			for (unsigned int i = 0; i < R.size(); i++) {
 				new_track = new QListViewItem(new_playlist,last_track,
 							R[i]["artist"].c_str(),
@@ -161,24 +161,7 @@ void TabPanelPlaylist::getPlaylist(){
 			L_ERROR(LOG_TABPLAYLIST,"Failed to get playlist '"+playlist+"'");
 		}
 	}
-	T->abort();
-	delete T;
-}
-
-void TabPanelPlaylist::customEvent(QCustomEvent *event) {
-	char *routine = "TabPanelPlaylist::customEvent";
-	switch (event->type()) {
-		case 30005: {
-			L_INFO(LOG_TABPLAYLIST,"Playlist table updated.");
-			getPlaylist();
-			break;
-		}
-		default: {
-			L_WARNING(LOG_TABPLAYLIST,"Unknown event " 
-											+ dps_itoa(event->type()));
-			break;
-		}
-	}
+	DB->abort();
 }
 
 void TabPanelPlaylist::playlistAdd(QListViewItem *current) {
@@ -191,6 +174,12 @@ void TabPanelPlaylist::clear() {
 	delete lstPlaylist;
 	delete pixAList;
 	delete pixBList;
+}
+
+void TabPanelPlaylist::processPlaylistUpdate() {
+    char* routine = "TabPanelPlaylist::processPlaylistUpdate";
+    L_INFO(LOG_TABPLAYLIST,"Playlist table updated.");
+    getPlaylist();
 }
 
 void TabPanelPlaylist::listExpanded(QListViewItem *x) {

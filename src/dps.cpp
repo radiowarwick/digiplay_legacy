@@ -161,7 +161,7 @@ string& dps_strTrim(string& s) {
 }
 
 string& dps_strLcase(string& s) {
-	for (unsigned int i = 0; i < s.length() - 1; i++) {
+	for (unsigned int i = 0; i < s.length(); i++) {
 		if (s[i] >= 'A' && s[i] <= 'Z') s[i] = s[i] + 32;
 	}
 	return s;

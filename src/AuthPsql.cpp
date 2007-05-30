@@ -21,12 +21,12 @@
  *
  */
 #include "Logger.h"
-#include "config.h"
+#include "Config.h"
 
 #include "AuthPsql.h"
 
 AuthPsql::AuthPsql() {
-	config* conf = new config("digiplay");
+	Config* conf = new Config("digiplay");
 	C = new Connection(conf->getDBConnectString());
 	delete conf;
 }

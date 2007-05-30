@@ -30,6 +30,12 @@
 #include <qheader.h>
 #include <qapplication.h>
 #include <qobject.h>
+#include <qpushbutton.h>
+#include <qcheckbox.h>
+#include <qtable.h>
+#include <qlabel.h>
+#include <qlineedit.h>
+#include <qtooltip.h>
 
 #include "Auth.h"
 #include "Logger.h"
@@ -41,17 +47,12 @@ TabPanelSearch::TabPanelSearch(QTabWidget *parent, string text)
 	panelTag = "TabSearch";
     path = qApp->applicationDirPath();
     pixAudio = new QPixmap(path + "/images/music16.png");
-	conf = new config("digiplay");
-	C = new Connection(conf->getDBConnectString());
+	conf = new Config("digiplay");
 	draw();
 }
 
 // clean up stuff
 TabPanelSearch::~TabPanelSearch() {
-	if (C && C->is_open()) {
-		C->Disconnect();
-	}
-	delete C;
 	delete conf;
 }
 
@@ -202,7 +203,7 @@ void TabPanelSearch::Library_Search() {
                             SearchResults->at(i).title,
                             SearchResults->at(i).artist,
                             SearchResults->at(i).album,
-                            SearchResults->at(i).md5 
+                            SearchResults->at(i).id 
                          );
         x->setPixmap(0,*pixAudio);
 	}

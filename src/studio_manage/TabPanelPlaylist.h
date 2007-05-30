@@ -26,23 +26,16 @@
 #ifndef CLASS_TAB_PANEL_PLAYLIST
 #define CLASS_TAB_PANEL_PLAYLIST
 
-#include <qpixmap.h>
-#include <qstring.h>
-#include <qlistview.h>
-
 #include "TabPanel.h"
-#include "triggerThread.h"
-#include "config.h"
-
-#include "frmStudioManage.h"
-
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h"
-using namespace pqxx;
 
 class QTabWidget;
+class QPixmap;
+class QListView;
+class QListViewItem;
+
 class Auth;
+class DataAccess;
+class DbTrigger;
 
 class TabPanelPlaylist : public TabPanel {
 	Q_OBJECT
@@ -50,12 +43,12 @@ class TabPanelPlaylist : public TabPanel {
 		TabPanelPlaylist(QTabWidget *parent, string text);
 		~TabPanelPlaylist();
 		void configure(Auth *authModule);
-		void customEvent(QCustomEvent *event);
 
     signals:
         void itemSelected( QString md5 );
 
 	private slots:
+        void processPlaylistUpdate();
 		virtual void playlistAdd(QListViewItem *current);
 		virtual void listExpanded(QListViewItem *x);
 		virtual void listCollapsed(QListViewItem *x);
@@ -63,9 +56,10 @@ class TabPanelPlaylist : public TabPanel {
 	private:
 		void draw();
 		void clear();
-		void getPlaylist();		
-		Connection *C;
-		triggerThread *playlistTrigger;
+		void getPlaylist();	
+
+        DataAccess* DB;
+        DbTrigger* triggerPlaylist;
 		QListView *lstPlaylist;
 		QPixmap *pixAList, *pixBList;
 		QPixmap *pixExpanded, *pixCollapsed, *pixTrack;

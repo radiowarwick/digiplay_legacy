@@ -64,6 +64,7 @@ struct archive {
 };
 
 struct track {
+    string id;
     bool isNull;
     unsigned short bin;
     unsigned int index;

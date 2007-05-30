@@ -26,31 +26,35 @@
 #include <vector>
 using namespace std;
 
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h"
-using namespace pqxx;
-
 #include <qobject.h>
 #include <qstring.h>
 #include <qfont.h>
 #include <qcolor.h>
 
-#include "AudioWall.h"
+class DataAccess;
+class AudioWall;
+struct AudioWallItemSpec;
+
+struct Page {
+    QString title;  
+    QString description;
+    vector<AudioWallItemSpec*> items;
+    unsigned short index;
+};
 
 class AudioWallManager : public QObject {
 	Q_OBJECT
 	public:
-		AudioWallManager( AudioWall *A, Connection *C );
+		AudioWallManager( AudioWall *A );
 		~AudioWallManager();
 		void load(unsigned int cartset);
 		int getCartset() {return _cartset;}
 
 	private:
 		AudioWall *_A;
-		Connection *_C;
+        DataAccess *DB;
 		QString _username;
-		vector<AudioWallPage*> _pages;
+		vector<Page*> _pages;
 		int _cartset;
 };
 

@@ -25,22 +25,17 @@
 #ifndef CLASS_TAB_PANEL_LOGGING
 #define CLASS_TAB_PANEL_LOGGING
 
-#include <qlistview.h>
-#include <qlineedit.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-
 #include "TabPanel.h"
-#include "config.h"
-
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h"
-using namespace pqxx;
 
 class QTabWidget;
+class QListView;
+class QLineEdit;
+class QLabel;
+class QPushButton;
+
 class Auth;
-class triggerThread;
+class DataAccess;
+class DbTrigger;
 
 class TabPanelLogging : public TabPanel {
 	Q_OBJECT
@@ -48,19 +43,19 @@ class TabPanelLogging : public TabPanel {
 		TabPanelLogging(QTabWidget *parent, string text);
 		~TabPanelLogging();
 		void configure(Auth *authModule);
-        void customEvent(QCustomEvent *event);
 
 	public slots:
 		virtual void buttonPressed();		
 	
 	private:
+        void processLogUpdate();
 		void draw();
 		void clear();
 		int logRecord(string artist, string title);
 		void getRecentlyLogged();
 		
-		Connection *C;
-        triggerThread *loggerTrigger;
+        DataAccess* DB;
+        DbTrigger* triggerLog;
 		int location, userid;
 		QListView *lstRecentlyLogged;
 		QLineEdit *txtArtist, *txtTitle, *txtReclibID;

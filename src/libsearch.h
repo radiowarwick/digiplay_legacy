@@ -36,7 +36,7 @@ using namespace std;
 using namespace pqxx;
 
 #include "dps.h"
-#include "config.h"
+#include "DataAccess.h"
 
 class libsearch {
     public:
@@ -54,14 +54,14 @@ class libsearch {
 		string lastQuery();
 
 	private:
-		Connection* C;
-		Transaction* T;
+//		Connection* C;
+//		Transaction* T;
+        DataAccess* DB;
 		bool searchTitle_flag;
 		bool searchArtist_flag;
 		bool searchAlbum_flag;
 		int searchLimit_value;
 		string lastQuery_string;
-
 };			
 
 #endif

@@ -33,8 +33,9 @@ using namespace std;
 #include <qmutex.h>
 
 #include "DpsObject.h"
-#include "config.h"
-#include "triggerThread.h"
+#include "DbTrigger.h"
+#include "Config.h"
+//#include "triggerThread.h"
 
 class QGroupBox;
 class QListView;
@@ -62,7 +63,7 @@ class Showplan : public QWidget {
 
         void setGeometry (const QRect& r);
 		void resizeEvent (QResizeEvent *e);
-        void customEvent (QCustomEvent *e);
+//        void customEvent (QCustomEvent *e);
 
     public slots:
         void loadShowplan(DpsShowplan& S);
@@ -78,6 +79,7 @@ class Showplan : public QWidget {
         void moveBottom();
 
     private slots:
+        void processConfigUpdate();
         void selectionChanged(QListViewItem* x);
         void updateNextTrack();
 
@@ -85,8 +87,9 @@ class Showplan : public QWidget {
         void draw();
 		void clean();
 
-        config* conf;
-        triggerThread* confTrigger;
+        Config* conf;
+        DbTrigger* triggerConfig;
+        //triggerThread* confTrigger;
 
         QWidget* _parent;
 		QGroupBox* grpFrame;

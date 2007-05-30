@@ -24,12 +24,15 @@
 using namespace std;
 
 #include "dps.h"
+#include "DataAccess.h"
+#include "AudioWall.h"
 
 #include "AudioWallManager.h"
 
-AudioWallManager::AudioWallManager( AudioWall *A,  Connection *C ) {
+AudioWallManager::AudioWallManager( AudioWall *A ) {
 	_A = A;
-	_C = C;
+    DB = new DataAccess();
+    cout << "Completed AudioWallManager constructor" << endl;
 }
 
 AudioWallManager::~AudioWallManager() {
@@ -37,6 +40,7 @@ AudioWallManager::~AudioWallManager() {
 }
 
 void AudioWallManager::load(unsigned int cartset) {
+    cout << "AudioWallManager:: Loading cartset " << cartset << endl;
 	_cartset = cartset;
 	for (unsigned int i = 0; i < _pages.size(); i++) {
 		for (unsigned int j = 0; j < _A->getSize(); j++) {
@@ -46,42 +50,19 @@ void AudioWallManager::load(unsigned int cartset) {
 	}
 	_pages.resize(0);
 	
-	Transaction T(*_C,"");
-	short pagecount = atoi(T.exec("SELECT max(cartwalls.page) "
+	short pagecount = atoi(DB->exec("SELECT max(cartwalls.page) "
                              "FROM cartwalls,cartsets "
-                             "WHERE cartwalls.cartset = " 
+                             "WHERE cartwalls.cartsetid = " 
 							 	+ dps_itoa(cartset))[0][0].c_str()) + 1;
 	for (int i = 0; i < pagecount; i++) {
-		_pages.push_back(new AudioWallPage);
+		_pages.push_back(new Page);
 		for (int j = 0; j < _A->getSize(); j++) {
-			_pages[i]->items.push_back(new AudioWallItem);
+			_pages[i]->items.push_back(new AudioWallItemSpec);
 		}
 	}
-	Result R = T.exec("SELECT audio.md5 AS md5, audio.start_smpl AS start, "
-           "audio.end_smpl AS end, cartsaudio.cart AS cart, "
-           "cartsaudio.text AS text, cartwalls.name AS name, "
-           "cartwalls.description AS desc, cartsets.name AS cartset, "
-           "cartwalls.page AS page, "
-           "cartsets.description AS cartset_desc, "
-		   "cartsetsusers.userid AS userid, "
-           "cartsetsdir.dir AS dir, cartproperties.id AS property, "
-           "cartstyleprops.value AS prop_value, archives.localpath AS path, "
-           "configuration.val AS cartset "
-           "FROM audio, cartsaudio, cartwalls, cartsets, "
-		   "cartsetsdir, cartsetsusers, cartstyle, "
-           "cartstyleprops, cartproperties, archives, configuration "
-           "WHERE cartsaudio.audio = audio.id "
-           "AND cartsaudio.cartwall = cartwalls.id "
-           "AND cartwalls.cartset = cartsets.id "
-           "AND cartsaudio.style = cartstyle.id "
-           "AND cartstyleprops.style = cartstyle.id "
-           "AND cartstyleprops.property = cartproperties.id "
-           "AND audio.archive = archives.id "
-		   "AND cartsetsusers.cartsetid = cartsets.id "
-		   "AND cartsetsdir.cartsetid = cartsets.id "
-		   "AND cartsets.id = " + dps_itoa(cartset)
-           + "ORDER BY cartwalls.id, cartsaudio.cart, cartproperties.id;");
-	T.abort();
+    Result R = DB->exec("SELECT * FROM v_cartwalls WHERE cartset_id = "
+                        + dps_itoa(cartset) + " ORDER BY page, prop_name");
+	DB->abort();
 	
 	string file = "";
 	string md5 = "";
@@ -89,12 +70,11 @@ void AudioWallManager::load(unsigned int cartset) {
 	string title = "";
 	unsigned long start = 0;
 	unsigned long end = 0;
-	unsigned long length = 0;
-	QColor fgColor;
-	QColor bgColor;
+	QColor fgColour;
+	QColor bgColour;
 	short item = 0;
 	short page = 0;
-	short p = 0;
+	string p;
 	bool change;
 
 	unsigned int i = 0;
@@ -108,47 +88,45 @@ void AudioWallManager::load(unsigned int cartset) {
 		text = R[i]["text"].c_str();
 		start = atoi(R[i]["start"].c_str());
 		end = atoi(R[i]["end"].c_str());
-		title = R[i]["desc"].c_str();
-		if (_pages[page]->items[item]->file != file) change = true;
-		_pages[page]->items[item]->file = file;
-		if (_pages[page]->items[item]->start != start) change = true;
-		_pages[page]->items[item]->start = start;
-		if (_pages[page]->items[item]->end != end) change = true;
-		_pages[page]->items[item]->end = end;
-		if (_pages[page]->items[item]->text != text) change = true;
-		_pages[page]->items[item]->text = text;
+		title = R[i]["wall_desc"].c_str();
+
+        AudioWallItemSpec* I = _pages[page]->items[item];
+		if (I->file != file) change = true;
+		I->file = file;
+		if (I->start != start) change = true;
+		I->start = start;
+		if (I->end != end) change = true;
+		I->end = end;
+		if (I->text != text) change = true;
+		I->text = text;
+
 		if (_pages[page]->title != title) {
 			_pages[page]->title = title;
 			_A->setCaption(page,title);
 		}
+
 		while (i < R.size() && atoi(R[i]["page"].c_str()) == page
 							&& atoi(R[i]["cart"].c_str()) == item) {
-			p = atoi(R[i]["property"].c_str());
-			switch (p) {
-				case 0:
-					fgColor = QRgb(atoi(R[i]["prop_value"].c_str()));
-					if (_pages[page]->items[item]->fgColor != fgColor) 
-						change = true;
-					_pages[page]->items[item]->fgColor = fgColor;
-					break;
-				case 1:
-					bgColor = QRgb(atoi(R[i]["prop_value"].c_str()));
-					if (_pages[page]->items[item]->bgColor != bgColor)
-						change = true;
-					_pages[page]->items[item]->bgColor = bgColor;
-					break;
+			p = R[i]["prop_name"].c_str();
+            if (p == "ForeColourRGB") {
+				fgColour = QRgb(atoi(R[i]["prop_value"].c_str()));
+				if (I->fgColour != fgColour) 
+					change = true;
+				I->fgColour = fgColour;
+            }
+            else if (p == "BackColourRGB") {
+				bgColour = QRgb(atoi(R[i]["prop_value"].c_str()));
+				if (I->bgColour != bgColour)
+					change = true;
+				I->bgColour = bgColour;
 			}
 			i++;
 		}
 		if (change) {
-			_pages[page]->items[item]->state = AUDIO_STATE_STOPPED;
-			_pages[page]->items[item]->pos = 0;
-			_pages[page]->items[item]->index = item;
-
+            cout << "Detected a change on page " << page << " item " << item
+                << endl;
+            _A->setButton(page,item,*I);
 		}
 	}
-	for (unsigned int page = 0; page < _pages.size(); page++)
-		for (unsigned int item = 0; item < _A->getSize(); item++)
-			_A->setButton(page,item,*(_pages[page]->items[item]));
 }
 

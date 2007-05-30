@@ -26,22 +26,24 @@ endif
 # Generate object list from the modules provided
 # Note: addsuffix might not be portable
 # shared objects are those located directly in the src tree
+APP_OBJ		=	$(addsuffix .o,$(MODS))
+APP_QTOBJS	=	$(addsuffix .o,$(QT_MODS))
 SHARED_OBJS	=	$(addsuffix .o,$(SHARED_MODS))
-SHARED_HDRS =	$(addsuffix .h,$(SHARED_MODS))
+SHARED_QTOBJS = $(addsuffix .o,$(SHARED_QT_MODS))
 
-OBJS        =   $(addsuffix .o,$(MODS)) \
-				$(addsuffix .o,$(QT_MODS)) \
-				$(addprefix $(ROOT)/src/,$(SHARED_OBJS))
+OBJS        =   $(APP_OBJ) $(APP_QTOBJS) \
+				$(addprefix $(ROOT)/src/,$(SHARED_OBJS)) \
+				$(addprefix $(ROOT)/src/,$(SHARED_QTOBJS))
 HDRS		:=	$(addsuffix .h,$(MODS)) \
 				$(addsuffix .h,$(QT_MODS)) \
-				$(addprefix $(ROOT)/src/,$(SHARED_HDRS))
+				$(addprefix $(ROOT)/src/,$(addsuffix .h,$(SHARED_MODS)))
 QT_OBJS		=
 QT_HDRS		=
 
 # Define compiler and linker flags depending on whether we're
 # compiling a standard executable or a shared library
 CCINC		:=	-I$(ROOT)/src -I$(ROOT)/components -I/usr/include/postgresql -DDEBUG=4
-CCFLAGS		:=	$(DPSFLAGS) -Wall -O3 
+CCFLAGS		:=	$(DPSFLAGS) -Wall -O3 -D_THREAD_SAFE 
 LDFLAGS		:=	-L$(ROOT)/lib -o $(DEST)/$(OUTPUT) 
 # if QT is enabled, we need to include the necessary compiler and 
 # linker options. We also need to make a few more objects and generate
@@ -51,7 +53,8 @@ ifeq ($(QT_ENABLED),yes)
 	CCFLAGS	+=	-pipe -W -D_REENTRANT -DQT_NO_DEBUG -DQT_THREAD_SUPPORT \
 				-DQT_SHARED
 	LIBS	+=	-L/usr/share/qt3/lib -L/usr/X11R6/lib -lqt-mt -lXext -lX11
-	QT_OBJS	=	$(addprefix moc_,$(addsuffix .o,$(QT_MODS)))
+	QT_OBJS	=	$(addprefix moc_,$(APP_QTOBJS)) \
+				$(addprefix $(ROOT)/src/moc_,$(SHARED_QTOBJS))
 #	QT_OBJS	=	$(addprefix moc_,$(patsubst %.ui,%.o,$(wildcard *.ui)))
 #	QT_HDRS	=	$(patsubst %.ui,%.h,$(wildcard *.ui)) 
 endif

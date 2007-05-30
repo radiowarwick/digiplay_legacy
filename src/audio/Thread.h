@@ -59,6 +59,8 @@ class Audio::Thread {
 		pthread_t threadId;
 		// Stores thread attributes for the thread
 		pthread_attr_t threadAttr;
+
+        bool init_flag;
 		
 		// Storage for inter-thread messages
 		vector<int> t_messages;

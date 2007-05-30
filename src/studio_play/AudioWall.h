@@ -28,10 +28,12 @@ using namespace std;
 
 #include <qwidget.h>
 
-#include "audiochannel.h"
-#include "audiomixer.h"
-#include "audioplayer.h"
 #include "dps.h"
+
+#include "audio/Audio.h"
+#include "audio/ProcessMixer.h"
+
+#include "AudioWallItem.h"
 
 #define AUDIOWALL_BUTTON_OUT_OF_RANGE 12000
 
@@ -39,31 +41,7 @@ class QGroupBox;
 class QPushButton;
 class QLabel;
 
-class AudioWall;
-
-enum AUDIO_STATE {
-	AUDIO_STATE_STOPPED,
-	AUDIO_STATE_PLAYING,
-	AUDIO_STATE_PAUSED
-};
-
-struct AudioWallPage;
-
-struct AudioWallItem {
-	QString text;
-	QColor bgColor;
-	QColor fgColor;
-	QFont font;
-	QString file;
-	unsigned long start;
-	unsigned long end;
-	enum AUDIO_STATE state;
-	unsigned long pos;
-	audiochannel *ch;
-	AudioWall *parent;
-	AudioWallPage *page;
-	unsigned short index;
-};
+class ProcessMixer;
 
 struct AudioWallPage {
 	QString title;
@@ -72,52 +50,51 @@ struct AudioWallPage {
 	unsigned short index;
 };
 
-class AudioWall : public QWidget {
+struct AudioWallItemSpec {
+    QString file;
+    unsigned long start;
+    unsigned long end;
+    QString text;
+    QColor fgColour;
+    QColor bgColour;
+};
+
+class AudioWall :   public QWidget,
+                    public Audio::ProcessMixer {
 	Q_OBJECT
 
 	public:
 		AudioWall(QWidget *parent, const char* name, unsigned short rows, 
-						unsigned short cols, unsigned short playerId);
-		AudioWall(QWidget *parent, const char* name, unsigned short rows,
-						unsigned short cols, AudioWall* A);
+						unsigned short cols);
 		~AudioWall();
 		void resizeEvent (QResizeEvent *e);
 		void setButton(unsigned short page, unsigned short index, 
-						AudioWallItem item);
+						AudioWallItemSpec item);
 		void setCaption(unsigned short page, QString text);
 		void setMultipage(bool mp);
 		bool isMultipage();
 		unsigned short getSize() {return _rows*_cols;}
 		bool isPlaying(unsigned short index);
-		AudioWallItem* getActiveItem();
-		static void callbackCounter(long smpl, void *obj);
-		void customEvent(QCustomEvent *event);
-
-//		void run();
-//		void stop();
-
-	public slots:
-		void play(unsigned short page, unsigned short index);
-		void play(unsigned short index);
-		void stop();
 
 	private slots:
-		void play();
 		void nextPage();
 		void prevPage();
 	
 	private:
-		void drawCreate();
-		void drawResize();
-		void configureButton(unsigned short index);
+        void addPage();
+        void deletePage(unsigned int index);
+        void displayPage(unsigned int index);
+        void resizePage(unsigned int index);
 		void configurePageList();
 		void configurePageNav();
+
+		void drawCreate();
+		void drawResize();
+
 		void clean();
 
-		audioplayer *_audioPlayer;
-		audiomixer *_audioMixer;
-//		AudioWall *_AMaster;
-		vector<AudioWall*> _siblingWalls;
+        OutputDsp *_audioPlayer;
+        ProcessMixer *_audioMixer;
 
 		unsigned short _rows;
 		unsigned short _cols;
@@ -127,12 +104,18 @@ class AudioWall : public QWidget {
 		unsigned short _activeIndex;
 		vector<AudioWallPage*> _pages;
 		
+        // Geometry parameters
+        int border;
+        int wFrame;
+        int hFrame;
+        int wCell;
+        int hCell;
+
 		QGroupBox *grpFrame;
 		QPushButton *btnPageNext;
 		QPushButton *btnPagePrev;
 		QLabel *lblPageNum;
 		QLabel *lblCounter;
-		vector<QPushButton*> btnAudio;
 
 		bool _running;
 //		QMutex _mutRunning;

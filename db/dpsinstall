@@ -146,6 +146,41 @@ if [[ ! -f digiplay-views.sql ]]; then
 	printf "Installation Aborted.\n"
 	exit -1
 fi
+if [[ ! -f digiplay-triggers.sql ]]; then
+	printf " -> Missing database trigger specifications!\n"
+	printf "Installation Aborted.\n"
+	exit -1
+fi
+
+printf " -> Creating objects..."
+$PSQL -qf digiplay.sql $DBNAME #2>/dev/null
+if [[ $? > 0 ]]; then
+	printf " -> Failed to generate database objects\n"
+	printf "Installation Aborted.\n"
+	exit -1
+fi
+printf "done.\n"
+printf " -> Creating views..."
+$PSQL -qf digiplay-views.sql $DBNAME 2>/dev/null
+if [[ $? > 0 ]]; then
+	printf " -> Failed to generate database views\n"
+	printf "Installation Aborted.\n"
+	exit -1
+fi
+printf "done.\n"
+
+# grant permissions to the digiplay_user on everything (for now)
+printf "Granting database permissions..."
+SQL="(SELECT relname AS name FROM pg_class WHERE (relkind = 'r' OR 
+relkind = 'S') AND relname !~ '^pg_' AND relname !~ '^sql_') UNION (SELECT
+viewname AS name FROM pg_views WHERE schemaname = 'public') ORDER BY name"
+OBJ=`$PSQL -t -c "${SQL}" $DBNAME`
+OBJ=`echo ${OBJ} | sed 's/ /, /g'`
+SQL="GRANT ALL ON ${OBJ} TO $DBUSER"
+$PSQL -qc "${SQL}" $DBNAME
+printf "done.\n"
+
+printf "Installation Complete.\n\n";
 
 printf " -> Creating objects..."
 $PSQL -qf digiplay.sql $DBNAME #2>/dev/null

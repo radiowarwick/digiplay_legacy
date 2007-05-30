@@ -1,6 +1,6 @@
 /*
  * System configuration module
- * config.h
+ * Config.h
  * Manages the system configuration information in the database
  *
  * Copyright (c) 2005-2006 Chris Cantwell
@@ -24,24 +24,25 @@
 #define CLASS_CONFIG
     
 #include <string>
-#include <iostream>
-#include <fstream>
 #include <vector>
 #include <map>
 using namespace std;
 
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h"
-using namespace pqxx;
-
 #include "dirent.h"
 #include "sys/types.h"
 
-class config {
+class DataAccess;
+
+/**
+ * Manages access and modification to system configuration parameters.
+ * Initially parses the application .conf file to determine database parameters
+ * and then connects to the database and retrieves those configuration
+ * parameters for the particular \c location specified in the config file.
+ */
+class Config {
 	public:
-		config(string filename);
-		~config();
+		Config(string filename);
+		~Config();
 		string getDBConnectString();
 		string getParam(string name);
 		void setParam(string name, string value);
@@ -55,10 +56,9 @@ class config {
 		map<string,string> _file;
 		map<string,string> _db;
 		bool setFlag;
-		Connection *C;
-		Transaction *T;
 		string DB_CONNECT;
 		string LOCATION;
+        DataAccess *DB;
 };
 
 #endif

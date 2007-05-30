@@ -47,7 +47,7 @@
 #endif
 
 #include "clockThread.h"
-#include "config.h"
+#include "Config.h"
 #include "dps.h"
 
 Auth *authModule;
@@ -61,7 +61,7 @@ TabPanelPlaylist *tabPanelPlaylist;
 TabPanelLogging *tabPanelLogging;
 TabPanelScript *tabPanelScript;
 
-config *conf;
+Config *conf;
 clockThread *ck;
 
 void frmStudioManage::init() {
@@ -72,7 +72,7 @@ void frmStudioManage::init() {
     
 	// Connect to database
 	cout << "Connecting to database..." << endl;
-	conf = new config("digiplay");
+	conf = new Config("digiplay");
     DpsObject::dbInit();
 	cout << "Connected." << endl;
 

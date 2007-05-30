@@ -25,15 +25,15 @@
 #ifndef CLASS_TAB_PANEL_FILEBROWSER
 #define CLASS_TAB_PANEL_FILEBROWSER
 
-#include "DpsObject.h"
 #include "TabPanel.h"
-#include "triggerThread.h"
-#include "FileBrowser.h"
-
-#include <qlistview.h>
+#include "DpsObject.h"
 
 class QTabWidget;
+class QListViewItem;
+
 class Auth;
+class DirectoryView;
+class Directory;
 
 class TabPanelFileBrowser : public TabPanel {
 	Q_OBJECT

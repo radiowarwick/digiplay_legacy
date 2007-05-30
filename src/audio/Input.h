@@ -14,8 +14,8 @@ class Audio::Input : public Audio::Component {
 		virtual void stop() = 0;
 		virtual void pause() = 0;
 		virtual void seek(long sample) = 0;
-		virtual void onConnect(PORT localPort) {}
-		virtual void onDisconnect(PORT localPort) {}
+		virtual void onConnect(PORT localPort) = 0;
+		virtual void onDisconnect(PORT localPort) = 0;
 
 	protected:
 		virtual void receiveMessage(PORT inPort, MESSAGE message);

@@ -84,7 +84,7 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
 	if (filename == "") return;
 	state = STATE_STOP;
 	updateStates(STATE_STOP);
-	threadWait();
+	threadKill();
 
 	f.close();
 	f.clear();
@@ -129,8 +129,10 @@ void InputRaw::play() {
 
 void InputRaw::stop() {
 	state = STATE_STOP;
+    threadKill();
 	send(OUT0,STOP);
 	updateStates(STATE_STOP);
+    load(f_filename, f_start_byte/4, f_end_byte/4);
 }
 
 void InputRaw::pause() {
@@ -158,6 +160,9 @@ void InputRaw::addCounter(Audio::Counter *counter) {
 		= find(countersList.begin(), countersList.end(), counter);
 	if (i == countersList.end()) {
 		countersList.push_back(counter);
+        counter->setSample(0);
+        counter->setTotalSamples(f_length_byte/4);
+        counter->setState(state);
 	}
 }
 

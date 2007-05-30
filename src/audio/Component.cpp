@@ -127,7 +127,7 @@ void Component::send(PORT outPort, MESSAGE message) {
  * @param message Specifies the message received.
  */
 void Component::receive(PORT inPort, MESSAGE message) {
-//    cout << "Component::receive" << endl;
+    //cout << "Component::receive" << endl;
     for (unsigned int i = 0; i < portMap.size(); i++) {
         if (portMap.at(i).port == inPort) {
             switch (message) {

@@ -26,6 +26,10 @@ void OutputDsp::receiveMessage(PORT inPort, MESSAGE message) {
             audioState = STATE_PLAY;
             if (!isThreadActive()) threadStart();
             break;
+        case PAUSE:
+            audioState = STATE_PAUSE;
+            cout << "PAUSE STATE!" << endl;
+            break;
         default:
             break;
     }
@@ -39,7 +43,11 @@ void OutputDsp::threadExecute() {
     char* d = (char*)(buffer->getData());
 	Component *C = connectedDevice(IN0);
 
-	while (audioState == STATE_PLAY) {
+	while (audioState != STATE_STOP) {
+        if (audioState == STATE_PAUSE) {
+            usleep(100);
+            continue;
+        }
 		C->getAudio(buffer);
 		for (unsigned int i = 0; i < PACKET_MULTIPLIER; i++) {
 			if (write (audio, d+(i*AUDIO_BUFFER), AUDIO_BUFFER) 
@@ -47,6 +55,7 @@ void OutputDsp::threadExecute() {
 				cout << "Failed to write all of buffer" << endl;
 				abort();
 			}
+            if (deviceName == "/dev/null") usleep(50);
 		}
 	}
 	delete buffer;
@@ -54,6 +63,7 @@ void OutputDsp::threadExecute() {
 
 void OutputDsp::initialise(string device) {
     // Open audio device
+    deviceName = device;
 	audio = open(device.c_str(), O_WRONLY, 0);
 	if (audio == -1) {
 		cout << "FAILED: unable to open " << device << endl;

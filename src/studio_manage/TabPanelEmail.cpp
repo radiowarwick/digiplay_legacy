@@ -38,14 +38,16 @@
 #include "dps.h"
 #include "Auth.h"
 #include "Logger.h"
-#include "config.h"
-#include "triggerThread.h"
+#include "Config.h"
+#include "DataAccess.h"
+#include "DbTrigger.h"
 
 #include "TabPanelEmail.h"
 
 TabPanelEmail::TabPanelEmail(QTabWidget *parent, string text) 
         : TabPanel(parent,text) {
     panelTag = "TabEmail";
+    DB = new DataAccess();
 
     // Initislise object pointers
     lstEmail = 0;
@@ -55,25 +57,17 @@ TabPanelEmail::TabPanelEmail(QTabWidget *parent, string text)
     // Create GUI objects and configure
     draw();
 
-    // Connect to database
-    config *conf = new config("digiplay");
-    C = new Connection(conf->getDBConnectString());
-    delete conf;
-
-    // Create a trigger on database for trig_id2
-    emailTrigger = new triggerThread(this, 
-                        QString(conf->getDBConnectString()), 2);
-    emailTrigger->start();
-
+    triggerEmail = new DbTrigger("triggerEmail","trig_id2");
+    triggerEmail->start();
+    connect(triggerEmail, SIGNAL(triggered()),
+                            this, SLOT(processEmailUpdate()));
 }
 
 // clean up stuff
 TabPanelEmail::~TabPanelEmail() {
-    emailTrigger->stop();
-    if (C && C->is_open()) {
-        C->Disconnect();
-    }
-    delete C;
+    triggerEmail->stop();
+    delete triggerEmail;
+    delete DB;
 
     delete pixEmailNew;
     delete pixEmailOld;
@@ -154,7 +148,6 @@ void TabPanelEmail::getEmail(){
     char *routine = "TabPanelEmail::getEmail";
     L_INFO(LOG_TABEMAIL,"Getting emails.");
     
-    Transaction *T = new Transaction(*C,"");
     email e;
     tm *dte = 0;
     char date[30];
@@ -168,7 +161,7 @@ void TabPanelEmail::getEmail(){
     //Extract the most recent 20 emails
     string SQL = "SELECT * FROM email ORDER BY datetime DESC LIMIT 20;";
     try {
-        Result R = T->exec(SQL);
+        Result R = DB->exec(SQL);
         string flag;
         // If there aren't any, we're done, but warn anyway
         if (R.size() == 0) {
@@ -214,22 +207,19 @@ void TabPanelEmail::getEmail(){
     catch (...) {
         L_ERROR(LOG_TABEMAIL,"Failed to get new e-mails.");
     }
-    T->abort();
+    DB->abort();
     L_INFO(LOG_TABEMAIL,"Emails retrieved successfully.");
-    delete T;
-
 }
 
 void TabPanelEmail::getEmailBody(QListViewItem *current) {
     char *routine = "TabPanelEmail::getEmailBody";
     L_INFO(LOG_TABEMAIL,"Get email body for id " + current->text(4));
 
-    Transaction *T = new Transaction(*C,"");
     string id = current->text(4).ascii();
     string SQL = "SELECT * FROM email WHERE id = " + id;
     try {
-        Result R = T->exec(SQL);
-        T->abort();
+        Result R = DB->exec(SQL);
+        DB->abort();
         txtEmailBody->setCurrentFont(fntBody);
         txtEmailBody->setPointSize(pointSize);
         txtEmailBody->setText(R[0]["body"].c_str());
@@ -243,49 +233,37 @@ void TabPanelEmail::getEmailBody(QListViewItem *current) {
     catch (...) {
         L_ERROR(LOG_TABEMAIL,"Failed to get email body for id "
                                     + current->text(4));
-        T->abort();
+        DB->abort();
     }
     L_INFO(LOG_TABEMAIL,"Email body for id " + current->text(4) 
                             + " retrieved successfully.");
-    delete T;
+}
+
+void TabPanelEmail::processEmailUpdate() {
+    char* routine = "TabPanelEmail::processEmailUpdate";
+    L_INFO(LOG_TABEMAIL,"A change to the email relation has occured.");
+    if (!flagUpdateDisabled)
+        getEmail();
+    else
+        flagUpdateDisabled=FALSE;
+    L_INFO(LOG_TABEMAIL,"Change to email relation processed.");
 }
 
 void TabPanelEmail::markRead(string id) {
     char *routine = "TabPanelEmail::markRead";
     L_INFO(LOG_TABEMAIL,"Marking email id " + id + " as read.");
 
-    Transaction *T = new Transaction(*C,"");
     flagUpdateDisabled = TRUE;
     string SQL = "UPDATE email SET new_flag='f' WHERE id=" + id;
     try {
-        T->exec(SQL);
-        T->commit();
+        DB->exec(SQL);
+        DB->commit();
     }
     catch (...) {
         L_ERROR(LOG_TABEMAIL,"Failed to set e-mail as read.");
-    	T->abort();
+    	DB->abort();
     }
     L_INFO(LOG_TABEMAIL,"Email id " + id + " now marked as read.");
-    delete T;
-}
-
-void TabPanelEmail::customEvent(QCustomEvent *event) {
-    char *routine = "TabPanelEmail::customEvent";
-    switch (event->type()) {
-        case 30002: {
-            L_INFO(LOG_TABEMAIL,"A change to the email relation has occured.");
-            if (!flagUpdateDisabled)
-                getEmail();
-            else
-                flagUpdateDisabled=FALSE;
-            L_INFO(LOG_TABEMAIL,"Change to email relation processed.");
-            break;
-        }
-        default: {
-            L_WARNING(LOG_TABEMAIL,"Unknown event " + dps_itoa(event->type()));
-            break;
-        }
-    }
 }
 
 void TabPanelEmail::clear() {

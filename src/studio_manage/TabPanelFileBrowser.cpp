@@ -27,10 +27,12 @@
 #include <qapplication.h>
 #include <qobject.h>
 #include <string.h>
+#include <qlistview.h>
 
 #include "Auth.h"
 #include "Logger.h"
 #include "dps.h"
+#include "FileBrowser.h"
 
 #include "TabPanelFileBrowser.h"
 

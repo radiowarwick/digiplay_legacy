@@ -4,7 +4,7 @@
 ROOT		=	../..
 
 # Base name for output (executable name, library basename) and version
-OUT_BASE	=	audio
+OUT_BASE	=	dpsaudio
 VERSION		=	1
 
 # Create a library and whether it should be a static library

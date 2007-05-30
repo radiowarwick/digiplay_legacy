@@ -20,13 +20,18 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include <fstream>
+#include <iostream>
+
 #include "dps.h"
 #include "Logger.h"
+#include "DataAccess.h"
 
-#include "config.h"
+#include "Config.h"
 
-config::config(string application) {
+Config::Config(string application) {
 	char* routine = "config::config";
+    DB = new DataAccess();
 	setFlag = false;
 	string f = "/etc/" + application + ".conf";
 	L_INFO(LOG_CONFIG,"Processing config file " + f);
@@ -80,7 +85,7 @@ config::config(string application) {
 		exit(-1);
 	}
 	
-	try {
+/*	try {
 		C = new Connection(DB_CONNECT);
 		T = new Transaction(*C,"");
 	}
@@ -92,28 +97,30 @@ config::config(string application) {
 		L_ERROR(LOG_CONFIG,"Failed to connect to database.");
 		exit(-1);
 	}
-	requery();
+*/	requery();
 }
 
-config::~config() {
-    if (C && C->is_open()) {
+Config::~Config() {
+/*    if (C && C->is_open()) {
 		if (T) T->abort();
         C->Disconnect();
     }
     delete C;
+*/
+    delete DB;
 }
 
-string config::getDBConnectString() {
+string Config::getDBConnectString() {
 	return DB_CONNECT;
 }
 
-string config::getParam(string name) {
+string Config::getParam(string name) {
 	dps_strLcase(name);
 	if (isDefined(name)) return _db[name];
     return "";
 }
 
-void config::setParam(string name, string value) {
+void Config::setParam(string name, string value) {
 	char* routine = "config::setParam";
 	if (isDefined(name)) {
 		string SQL = "UPDATE configuration SET val='" + value 
@@ -121,10 +128,8 @@ void config::setParam(string name, string value) {
 					+ "' AND location=" + LOCATION ;
 		try {
 			setFlag = true;
-			T->exec(SQL);
-			T->commit();
-			delete T;
-			T = new Transaction(*C,"");
+            DB->exec(SQL);
+            DB->commit();
 			_db[name] = value;
 		}
 		catch (...) {
@@ -136,7 +141,7 @@ void config::setParam(string name, string value) {
 	}
 }
 
-void config::requery() {
+void Config::requery() {
 	char* routine = "conf::requery";
 	if (setFlag) {
 		setFlag = false;
@@ -145,7 +150,7 @@ void config::requery() {
 	_db.clear();
 	_db = _file;
 	try {
-		Result R = T->exec("SELECT * FROM configuration WHERE "
+		Result R = DB->exec("SELECT * FROM configuration WHERE "
 							"location=" + LOCATION + " OR location=-1");
 		for (unsigned int i = 0; i < R.size(); i++) {
 			_db[R[i]["parameter"].c_str()] = R[i]["val"].c_str();
@@ -158,7 +163,7 @@ void config::requery() {
 }
 
 // ====== PRIVATE =======
-bool config::isDefined(string name) {
+bool Config::isDefined(string name) {
 	dps_strLcase(name);
 	if (_db.find(name) != _db.end()) {
 		return true;

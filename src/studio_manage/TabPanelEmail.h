@@ -27,11 +27,6 @@
 #ifndef CLASS_TAB_PANEL_EMAIL
 #define CLASS_TAB_PANEL_EMAIL
 
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h"
-using namespace pqxx;
-
 #include <qfont.h>
 
 #include "TabPanel.h"
@@ -42,7 +37,9 @@ class QListView;
 class QListViewItem;
 class QIconSet;
 class Auth;
-class triggerThread;
+
+class DataAccess;
+class DbTrigger;
 
 class TabPanelEmail : public TabPanel {
 	Q_OBJECT
@@ -50,20 +47,22 @@ class TabPanelEmail : public TabPanel {
 		TabPanelEmail(QTabWidget *parent, string text);
 		~TabPanelEmail();
 		void configure(Auth *authModule);
-		void customEvent(QCustomEvent *event);
 
 	public slots:
 		virtual void getEmailBody(QListViewItem *current);		
 	
+    private slots:
+        void processEmailUpdate();
+
 	private:
 		void markRead(string id);
 		void draw();
 		void clear();
 		void getEmail();
 		
-		Connection *C;
 		bool flagUpdateDisabled;
-		triggerThread *emailTrigger;
+        DataAccess* DB;
+		DbTrigger* triggerEmail;
 		QListView *lstEmail;
 		QTextBrowser *txtEmailBody;
 		QPixmap *pixEmailNew, *pixEmailOld;

@@ -25,36 +25,37 @@
 #include <qlistview.h>
 #include <qstring.h>
 #include <qheader.h>
+#include <qlabel.h>
+#include <qlineedit.h>
 #include <qobject.h>
+#include <qpushbutton.h>
 
 #include "Auth.h"
 #include "Logger.h"
 #include "dps.h"
-#include "triggerThread.h"
+#include "DbTrigger.h"
+#include "Config.h"
+#include "DataAccess.h"
 
 #include "TabPanelLogging.h"
 
 TabPanelLogging::TabPanelLogging(QTabWidget *parent, string text)
         : TabPanel(parent,text) {
     panelTag = "TabLogging";
-    config *conf = new config("digiplay");
-    C = new Connection(conf->getDBConnectString());
+    Config *conf = new Config("digiplay");
+		DB = new DataAccess();
     location = atoi( conf->getParam("LOCATION").c_str() );
     delete conf;
 
-    loggerTrigger = new triggerThread(this,
-                        QString(conf->getDBConnectString()),4);
-    loggerTrigger->start();
+		triggerLog = new DbTrigger("triggerLog","trig_id4");
+	  triggerLog->start();
 
     draw();
 }
 
 // clean up stuff
 TabPanelLogging::~TabPanelLogging() {
-    if (C && C->is_open()) {
-        C->Disconnect();
-    }
-    delete C;
+    delete DB;
     delete lstRecentlyLogged;
     delete txtArtist;
     delete txtTitle;
@@ -65,30 +66,22 @@ TabPanelLogging::~TabPanelLogging() {
 // this is called whenever the application reconfigures itself,
 // usually due to a change in authentication status (login, logoff)
 void TabPanelLogging::configure(Auth *authModule) {
-    string usrnme;
-    char *routine = "TabPanelLogging::configure";
+		string usrnme = authModule->getUser();
+		char *routine = "TabPanelLogging::configure";
 
-    usrnme = authModule->getUser();
-    if (usrnme == "")
-    	usrnme = "guest";
-    string SQL = "SELECT id FROM users WHERE username = '" 
+		if (usrnme=="")
+				usrnme = "Guest";
+	  string SQL = "SELECT id FROM users WHERE username = '" 
                         + usrnme + "' LIMIT 1";
-    Transaction *T = new Transaction(*C, "");
-    Result R;
-    try {
-        R = T->exec(SQL);
-        delete T;
-    }
-    catch(...) {
-        L_ERROR(LOG_TABLOGGING,"Failed to find username");
-        if (T) {
-            T->abort();
-            delete T;
-        }
-    }
+    Result R = DB->exec(SQL);
+    
     if (R.size() != 0) {
         userid=atoi(R[0]["id"].c_str());
     }
+	  else {
+			L_ERROR(LOG_TABLOGGING,"Oh no! No user ID matching "
+											  + usrnme + ".  What screwed up?");
+	  }
     getRecentlyLogged();
     TabPanel::configure(authModule);
 }
@@ -178,6 +171,9 @@ void TabPanelLogging::draw() {
                 this, SLOT( buttonPressed() ) );
     connect( txtTitle, SIGNAL( returnPressed() ), 
                 this, SLOT( buttonPressed() ) );
+    connect(triggerLog, SIGNAL(trigger()),
+		                                this, SLOT(processLogUpdate()));
+
 }
 
 int TabPanelLogging::logRecord(string artist, string title){
@@ -193,46 +189,29 @@ int TabPanelLogging::logRecord(string artist, string title){
                 "(userid, datetime, track_title, track_artist, location) "
                 "VALUES (" + dps_itoa(userid) + ", " + dps_itoa(now) + ", '"
                 + title + "', '" + artist + "', " + dps_itoa(location) + ");";
-    try {
-        Transaction T(*C,"");
-        T.exec(SQL);
-        T.commit();
-    }
-    catch (...) {
-        cout << "ERROR: Failed to log record." << endl;
-        cout << " -> " << SQL << endl;
-        return 1;
-    }
-    return 0;
+    DB->exec(SQL);
+		return 0;
 }
 
 void TabPanelLogging::getRecentlyLogged() {
-    Transaction *T = new Transaction(*C,"");
     QString artist, title, datestr;
     tm *dte;
     char date[30];
 
     string SQL = "SELECT * FROM log ORDER BY datetime DESC LIMIT 50;";
     lstRecentlyLogged->clear();
-    try {
-        Result R = T->exec(SQL);
-        for (unsigned int i = 0; i < R.size(); i++) {
-            time_t thetime(atoi(R[i]["datetime"].c_str()));
-            dte = localtime(&thetime);
-            strftime(date, 30, "%Ex %H:%M", dte);
-            artist = R[i]["track_artist"].c_str();
-            title = R[i]["track_title"].c_str();
-            lstRecentlyLogged->insertItem(
-                    new QListViewItem(  lstRecentlyLogged, 
-                                        lstRecentlyLogged->lastItem(), 
-                                        date, artist, title
-                                        ));
+    Result R = DB->exec(SQL);
+    for (unsigned int i = 0; i < R.size(); i++) {
+        time_t thetime(atoi(R[i]["datetime"].c_str()));
+        dte = localtime(&thetime);
+        strftime(date, 30, "%Ex %H:%M", dte);
+        artist = R[i]["track_artist"].c_str();
+        title = R[i]["track_title"].c_str();
+        lstRecentlyLogged->insertItem(
+                new QListViewItem(  lstRecentlyLogged, 
+                                    lstRecentlyLogged->lastItem(), 
+                                    date, artist, title   ));
         }
-    }
-    catch (...) {
-        cout << " -> ERROR: Failed to get recently logged records." << endl;
-    }
-    delete T;
 }
 
 void TabPanelLogging::buttonPressed() {
@@ -248,19 +227,13 @@ void TabPanelLogging::buttonPressed() {
     getRecentlyLogged();
 }
 
-void TabPanelLogging::customEvent(QCustomEvent *event) {
-    char *routine = "TabPanelLogging::customEvent";
-    switch (event->type()) {
-        case 30004:
-            L_INFO(LOG_TABLOGGING,"A change to the log relation has occured.");
-            getRecentlyLogged();
-            L_INFO(LOG_TABLOGGING,"Change to log relation processed.");
-            break;
-        default:
-            L_WARNING(LOG_TABLOGGING,"Unknown event " 
-                                            + dps_itoa(event->type()));
-            break;
-    }
+void TabPanelLogging::processLogUpdate() {
+    char *routine = "TabPanelLogging::processLogUpdate";
+
+    L_INFO(LOG_TABLOGGING,"A change to the log relation has occured.");
+    getRecentlyLogged();
+    L_INFO(LOG_TABLOGGING,"Change to log relation processed.");
+    
 }
 
 void TabPanelLogging::clear() {

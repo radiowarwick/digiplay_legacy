@@ -46,16 +46,16 @@ class TabPanelLogging : public TabPanel {
 
 	public slots:
 		virtual void buttonPressed();		
-	
+	  void processLogUpdate();
+
 	private:
-        void processLogUpdate();
-		void draw();
+	  void draw();
 		void clear();
 		int logRecord(string artist, string title);
 		void getRecentlyLogged();
 		
-        DataAccess* DB;
-        DbTrigger* triggerLog;
+    DataAccess* DB;
+    DbTrigger* triggerLog;
 		int location, userid;
 		QListView *lstRecentlyLogged;
 		QLineEdit *txtArtist, *txtTitle, *txtReclibID;

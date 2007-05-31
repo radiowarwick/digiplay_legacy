@@ -51,7 +51,7 @@ class TabPanelEmail : public TabPanel {
 	public slots:
 		virtual void getEmailBody(QListViewItem *current);		
 	
-    private slots:
+  public slots:
         void processEmailUpdate();
 
 	private:

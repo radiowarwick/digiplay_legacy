@@ -59,7 +59,7 @@ TabPanelEmail::TabPanelEmail(QTabWidget *parent, string text)
 
     triggerEmail = new DbTrigger("triggerEmail","trig_id2");
     triggerEmail->start();
-    connect(triggerEmail, SIGNAL(triggered()),
+    connect(triggerEmail, SIGNAL(trigger()),
                             this, SLOT(processEmailUpdate()));
 }
 

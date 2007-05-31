@@ -186,6 +186,7 @@ int TabPanelLogging::logRecord(string artist, string title){
                 "VALUES (" + dps_itoa(userid) + ", " + dps_itoa(now) + ", '"
                 + title + "', '" + artist + "', " + dps_itoa(location) + ");";
     DB->exec(SQL);
+		DB->commit();
 		return 0;
 }
 

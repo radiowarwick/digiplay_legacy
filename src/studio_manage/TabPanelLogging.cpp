@@ -66,21 +66,17 @@ TabPanelLogging::~TabPanelLogging() {
 // this is called whenever the application reconfigures itself,
 // usually due to a change in authentication status (login, logoff)
 void TabPanelLogging::configure(Auth *authModule) {
-		string usrnme = authModule->getUser();
 		char *routine = "TabPanelLogging::configure";
 
-		if (usrnme=="")
-				usrnme = "Guest";
 	  string SQL = "SELECT id FROM users WHERE username = '" 
-                        + usrnme + "' LIMIT 1";
+                        + authModule->getUser() + "' LIMIT 1";
     Result R = DB->exec(SQL);
     
     if (R.size() != 0) {
         userid=atoi(R[0]["id"].c_str());
     }
 	  else {
-			L_ERROR(LOG_TABLOGGING,"Oh no! No user ID matching "
-											  + usrnme + ".  What screwed up?");
+			L_ERROR(LOG_TABLOGGING,"No user ID matching username.");
 	  }
     getRecentlyLogged();
     TabPanel::configure(authModule);

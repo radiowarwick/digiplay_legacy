@@ -51,7 +51,7 @@ bool Auth::isAuthenticated() {
 }
 
 string Auth::getUser() {
-	if (_userInfo.size() == 0) return "";
+	if (_userInfo.size() == 0) return "Guest";
 	return _userInfo["username"];
 }
 

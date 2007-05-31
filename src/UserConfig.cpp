@@ -32,12 +32,7 @@ UserConfig::UserConfig(Auth *authModule) {
     C = new Connection(conf->getDBConnectString());
     delete conf;
 
-    if (!authModule->isAuthenticated()) {
-        _username = "guest";
-    }
-    else {	
-        _username = authModule->getUser();
-    }
+    _username = authModule->getUser();
     retrieveConfig();
 }
 

@@ -83,9 +83,35 @@ void AudioPlayer::load() {
     lblArtist->setText(R[0]["artist"].c_str());
     btnPlay->setEnabled(true);
     btnStop->setEnabled(true);
+		btnLog->setEnabled(true);
     //btnSeekBack1->setEnabled(true);
     //btnSeekForward1->setEnabled(true);
     sldSeek->setEnabled(true);
+}
+
+void AudioPlayer::log() {
+	  btnLog->setEnabled(false);
+
+		// Get current time
+    int now = (int)time(NULL);
+
+    // Escape the artist and title
+    string artist = sqlesc(lblArtist->text().ascii());
+    string title = sqlesc(lblTitle->text().ascii());
+
+		/**************
+		*Major Bodge!*
+		**************/
+		int userid = 2;
+		int location = 0;
+
+    // Try and insert into database
+    string SQL = "INSERT INTO log "
+                "(userid, datetime, track_title, track_artist, location) "
+                "VALUES (" + dps_itoa(userid) + ", " + dps_itoa(now) + ", '"
+                + title + "', '" + artist + "', " + dps_itoa(location) + ");";
+    DB->exec(SQL);
+    DB->commit();
 }
 
 void AudioPlayer::play() {
@@ -151,7 +177,7 @@ void AudioPlayer::onSetSample() {
 }
 
 void AudioPlayer::onSetState() {
-    cout << "SEtting state" << endl;
+    cout << "Setting state" << endl;
     switch (_state) {
         case STATE_PLAY:
             {
@@ -243,6 +269,15 @@ void AudioPlayer::drawCreate() {
     lblCounter->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft )  );
     lblCounter->setText( tr( "00:00.00" ) );
 
+    btnLog = new QPushButton( grpFrame, "btnLog" );
+    btnLog->setGeometry( QRect( 390, 10, 140, 50 ) );
+    QFont btnLog_font(  btnLog->font() );
+    btnLog_font.setPointSize( 18 );
+    btnLog->setFont( btnLog_font );
+    btnLog->setText( tr( "Log this!" ) );
+    btnLog->setEnabled(false);
+    connect(btnLog,SIGNAL(pressed()),this,SLOT(log()));
+
     btnLoad = new QPushButton( grpFrame, "btnLoad" );
     btnLoad->setGeometry( QRect( 390, 60, 140, 50 ) );
     QFont btnLoad_font(  btnLoad->font() );
@@ -298,7 +333,7 @@ void AudioPlayer::drawCreate() {
     lblTitleLabel->setText( tr( "Title: ") );
 
     lblTitle = new QLabel( grpFrame, "lblTitle" );
-    lblTitle->setGeometry( QRect( 80, 40, 450, 20 ) );
+    lblTitle->setGeometry( QRect( 80, 40, 300, 20 ) );
     QFont lblTitle_font(  lblTitle->font() );
     lblTitle_font.setPointSize( 14 );
     lblTitle->setFont( lblTitle_font );
@@ -311,7 +346,7 @@ void AudioPlayer::drawCreate() {
     lblArtistLabel->setText( tr( "Artist: " ) );
 
     lblArtist = new QLabel( grpFrame, "lblArtist" );
-    lblArtist->setGeometry( QRect( 80, 20, 450, 20 ) );
+    lblArtist->setGeometry( QRect( 80, 20, 300, 20 ) );
     QFont lblArtist_font(  lblArtist->font() );
     lblArtist_font.setPointSize( 14 );
     lblArtist->setFont( lblArtist_font );

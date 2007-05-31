@@ -38,7 +38,7 @@ using namespace pqxx;
 #include "sys/types.h"
 
 #include "dps.h"
-#include "config.h"
+#include "Config.h"
 
 class archivemanager {
 	public:

@@ -34,7 +34,7 @@ using namespace std;
 using namespace pqxx;
 
 #include "dps.h"
-#include "config.h"
+#include "Config.h"
 #include "archivemanager.h"
 
 class systemmanager {

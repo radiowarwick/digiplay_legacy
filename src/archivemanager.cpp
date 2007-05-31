@@ -48,7 +48,7 @@ void archivemanager::load() {
 
     try {
         /* Get configuration and connect to database*/
-    	config *Conf = new config("digiplay");
+    	Config *Conf = new Config("digiplay");
 		C = new Connection(Conf->getDBConnectString());
         delete Conf;
 

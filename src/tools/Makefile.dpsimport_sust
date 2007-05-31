@@ -17,8 +17,8 @@ QT_ENABLED 	=	yes
 # .cpp modules from which to create output
 MODS		=	dpsimport_sust
 QT_MODS		=
-SHARED_MODS	=	systemmanager archivemanager config xmlDocument xmlElement \
-				dps Logger
+SHARED_MODS	=	systemmanager archivemanager Config xmlDocument xmlElement \
+				dps Logger DataAccess
 
 # Global header files on which dependance exists
 HDRS		=

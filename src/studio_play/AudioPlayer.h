@@ -52,6 +52,7 @@ class AudioPlayer:  public QWidget,
 
     public slots:
         void load();
+        void log();
         void play();
         void stop();
         void seek(unsigned long sample);
@@ -80,6 +81,7 @@ class AudioPlayer:  public QWidget,
         QPushButton* btnTimeMode;
         QLabel* lblCounter;
         QPushButton* btnLoad;
+        QPushButton* btnLog;
         QPushButton* btnStop;
         QPushButton* btnPlay;
         QPushButton* btnReset;

@@ -21,6 +21,7 @@
  *
  */
 #include "Logger.h"
+#include "DataAccess.h"
 
 #include "AuthLdap.h"
 
@@ -43,6 +44,7 @@ AuthLdap::AuthLdap(string host, unsigned int port, string baseDn) {
 	_host = host;
 	_port = port;
 	_baseDn = baseDn;
+	DB = new DataAccess();
 
 	L_INFO(LOG_AUTH,"Creating connection to LDAP server...");
 	L_INFO(LOG_AUTH," -> server: " + host);
@@ -82,7 +84,45 @@ void AuthLdap::authSession(string username, string password) {
 	string retText = ldap_err2string(ret);
 
 	if (retText == "Success") {
-		L_INFO(LOG_AUTH," -> Success.");
+		L_INFO(LOG_AUTH," -> Success.  Checking for username in database.");
+
+    string SQL = "SELECT id FROM users WHERE username = '"
+                        + username + "' LIMIT 1";
+		Result R;
+		try {
+    	R = DB->exec(SQL);
+			DB->abort();
+		}
+		catch (...) {
+			L_ERROR(LOG_AUTH,"Failed to check for user in database."); 
+		}
+    if (R.size() == 0) {
+      L_INFO(LOG_AUTH,"No user ID matching username. Adding to database.");
+		    SQL = "INSERT INTO users (username, password, enabled) "
+       		           "VALUES ('" + username + "', '', 't'); ";
+		    try {
+    		  DB->exec(SQL);
+		      DB->commit();
+	     		SQL = "SELECT id FROM users WHERE username = '"
+                              + username + "' LIMIT 1";
+													    Result R = DB->exec(SQL);
+					DB->exec(SQL);
+					DB->abort();
+					SQL = "INSERT INTO usersgroups (userid, groupid) "
+											 "VALUES (" + string(R[0]["id"].c_str()) + ", 1);";
+    		  DB->exec(SQL);
+		      DB->commit();
+    		}
+		    catch (...) {
+    		  L_ERROR(LOG_AUTH,"Failed to insert user " + username +
+		                " into the database.");
+   		 }
+
+
+    }
+		else {
+			L_INFO(LOG_AUTH,"Username " + username + " already in the database so not adding.");
+		}
 		Auth::authSession(username,password);
 	}
 	else if (retText == "Invalid credentials") {

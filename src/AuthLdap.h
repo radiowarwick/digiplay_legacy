@@ -41,6 +41,7 @@ class AuthLdap : public Auth {
 
 	private:
 		string _host;
+		DataAccess *DB;
 		unsigned int _port;
 		string _baseDn;
 		LDAP *_myLdap;

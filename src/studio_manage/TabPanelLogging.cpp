@@ -70,8 +70,14 @@ void TabPanelLogging::configure(Auth *authModule) {
 
 	  string SQL = "SELECT id FROM users WHERE username = '" 
                         + authModule->getUser() + "' LIMIT 1";
-    Result R = DB->exec(SQL);
-    
+    Result R; 
+		try {
+			R = DB->exec(SQL);
+			DB->abort();
+		}
+		catch (...) {
+			L_ERROR(LOG_TABLOGGING,"Failed to query user ID in database.");
+		}
     if (R.size() != 0) {
         userid=atoi(R[0]["id"].c_str());
     }
@@ -173,7 +179,8 @@ void TabPanelLogging::draw() {
 }
 
 int TabPanelLogging::logRecord(string artist, string title){
-    // Get current time
+		char *routine="TabPanelLogging::logRecord";
+		// Get current time
     int now = (int)time(NULL);
 
     // Escape the artist and title
@@ -185,19 +192,33 @@ int TabPanelLogging::logRecord(string artist, string title){
                 "(userid, datetime, track_title, track_artist, location) "
                 "VALUES (" + dps_itoa(userid) + ", " + dps_itoa(now) + ", '"
                 + title + "', '" + artist + "', " + dps_itoa(location) + ");";
-    DB->exec(SQL);
-		DB->commit();
+		try {
+			DB->exec(SQL);
+			DB->commit();
+		}
+		catch (...) {
+			L_ERROR(LOG_TABLOGGING,"Failed to insert record " + artist +
+								" - " + title + ".");
+		}
 		return 0;
 }
 
 void TabPanelLogging::getRecentlyLogged() {
-    QString artist, title, datestr;
+		char *routine="TabPanelLogging::getRecentlyLogged";
+		QString artist, title, datestr;
     tm *dte;
     char date[30];
 
     string SQL = "SELECT * FROM log ORDER BY datetime DESC LIMIT 50;";
     lstRecentlyLogged->clear();
-    Result R = DB->exec(SQL);
+    Result R;
+		try {
+			R=DB->exec(SQL);
+			DB->abort();
+		}
+		catch (...) {
+			L_ERROR(LOG_TABLOGGING,"Couldn't get logged records from DB.");
+		}
     for (unsigned int i = 0; i < R.size(); i++) {
         time_t thetime(atoi(R[i]["datetime"].c_str()));
         dte = localtime(&thetime);

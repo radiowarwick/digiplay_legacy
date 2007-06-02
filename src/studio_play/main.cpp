@@ -22,15 +22,28 @@
 #include <qapplication.h>
 #include <qstring.h>
 #include "frmPlayout.h"
-#include "dps.h"
+
+#include "Logger.h"
+#include "Config.h"
+#include "Security.h"
 
 int main( int argc, char ** argv )
 {
-	showPrivilage();
-//	dropPrivilage();
+    // Configure logging
+    Logger::setAppName("studio_play");
+    Logger::setLogLevel(5);
+    Logger::setDisplayLevel(0);
 
+    // Look up normal user in config and drop privilages
+    Config *conf = new Config("digiplay");
+    dropPrivilage(conf->getParam("user"));
+    delete conf;
+
+	// Create application and main window
     QApplication a( argc, argv );
     frmPlayout w;
+
+	// Show main window and run application
     w.show();
     a.connect( &a, SIGNAL( lastWindowClosed() ), &a, SLOT( quit() ) );
     return a.exec();

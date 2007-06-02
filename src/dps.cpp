@@ -26,10 +26,10 @@
 #include <sstream>
 using namespace std;
 
-#include <sys/types.h>
-#include <pwd.h>
-#include <unistd.h>
-#include <stdlib.h>
+//#include <sys/types.h>
+//#include <pwd.h>
+//#include <unistd.h>
+//#include <stdlib.h>
 
 track dps_getTrack(Connection *C, string md5) {
     track t;
@@ -250,7 +250,7 @@ string dps_prettyTime(long samples) {
 long dps_current_time() {
 	    return (long)time(NULL) - 946080000;
 }
-
+/*
 unsigned int getDigiplayUser() {
 	struct passwd *digiplay_user;
 	digiplay_user = getpwnam("digiplay");
@@ -294,4 +294,4 @@ void showPrivilage() {
 	cout << "Real User: " << z->pw_name << endl;
 	z = getpwuid(y);
 	cout << "Effe User: " << z->pw_name << endl;
-}
+}*/

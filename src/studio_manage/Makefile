@@ -23,7 +23,7 @@ QT_MODS		=	frmStudioManage dlgLogin dlgWarn\
 				TabPanelScript TabPanelFileBrowser\
 				FileBrowser Showplan
 SHARED_MODS	=	Config libsearch dps clockThread \
-				Auth Logger UserConfig DpsObject DataAccess
+				Auth Logger UserConfig DpsObject DataAccess Security
 SHARED_QT_MODS = DbTrigger
 
 # Global header files on which dependance exists

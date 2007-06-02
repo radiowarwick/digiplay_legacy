@@ -65,11 +65,6 @@ Config *conf;
 clockThread *ck;
 
 void frmStudioManage::init() {
-    // Configure logging
-    Logger::setAppName("studio_manage");
-    Logger::setLogLevel(5);
-    Logger::setDisplayLevel(0);
-    
 	// Connect to database
 	cout << "Connecting to database..." << endl;
 	conf = new Config("digiplay");

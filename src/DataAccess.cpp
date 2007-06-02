@@ -14,17 +14,17 @@ unsigned int DataAccess::instanceCount = 0;
 DataAccess::DataAccess() {
 	// For each instance increment counter. We can only close the connection
 	// when the last instance is destroyed.
-    instanceCount++;
+    DataAccess::instanceCount++;
 
 	// If this is the first instance create the connection to database
-    if (instanceCount == 1) {
+    if (DataAccess::instanceCount == 1) {
         try {
 			// Create connection
-            C = new Connection( getConnectionString() );
+			C = new Connection( getConnectionString() );
 			// Init the transaction mutex
             t_trans_mutex = new pthread_mutex_t;
             pthread_mutex_init(t_trans_mutex,NULL);
-			// T = 0;
+			T = 0;
         }
         catch (...) {
 			// Whoops! We can't connect to the DB
@@ -37,9 +37,9 @@ DataAccess::DataAccess() {
 
 DataAccess::~DataAccess() {
 	// Decrement the instance count
-    instanceCount--;
+    DataAccess::instanceCount--;
     // Close connection on destruction of last instance
-    if (instanceCount == 0) {
+    if (DataAccess::instanceCount == 0) {
         delete T;
         delete C;
     }
@@ -65,17 +65,17 @@ Result DataAccess::exec(std::string query) {
     }
 
 	// Perform the query
-    try {
+//    try {
         R = T->exec(query);
-    }
-    catch (...) {
+//    }
+/*    catch (...) {
         pthread_mutex_unlock(t_trans_mutex);
         cout << "DataAccess::";
         cout << "Error occured in query: " << endl;
         cout << query << endl;
         throw;
     }
-
+*/
 	// Unlock the mutex and return data
     pthread_mutex_unlock(t_trans_mutex);
     return R;

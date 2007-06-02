@@ -18,7 +18,7 @@ QT_ENABLED 	=	yes
 MODS		=	main
 QT_MODS		=	frmPlayout AudioWall AudioWallItem AudioWallManager \
 				AudioPlayer AudioWallDriver
-SHARED_MODS	=	Config Logger dps remoteStartThread DataAccess
+SHARED_MODS	=	Config Logger dps remoteStartThread DataAccess Security
 SHARED_QT_MODS	= DbTrigger
 
 # Global header files on which dependance exists

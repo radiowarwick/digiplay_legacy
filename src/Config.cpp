@@ -88,29 +88,11 @@ Config::Config(string application) {
 		L_CRITICAL(LOG_CONFIG,"'LOCATION' not specificed in " + f);
 		exit(-1);
 	}
-	
-/*	try {
-		C = new Connection(DB_CONNECT);
-		T = new Transaction(*C,"");
-	}
-	catch (...) {
-        if (C && C->is_open()) {
-            C->Disconnect();
-        }
-        delete C;
-		L_ERROR(LOG_CONFIG,"Failed to connect to database.");
-		exit(-1);
-	}
-*/	requery();
+
+	requery();
 }
 
 Config::~Config() {
-/*    if (C && C->is_open()) {
-		if (T) T->abort();
-        C->Disconnect();
-    }
-    delete C;
-*/
     delete DB;
 }
 
@@ -153,17 +135,17 @@ void Config::requery() {
 	}
 	_db.clear();
 	_db = _file;
-	try {
+//	try {
 		Result R = DB->exec("SELECT * FROM configuration WHERE "
 							"location=" + LOCATION + " OR location=-1");
 		for (unsigned int i = 0; i < R.size(); i++) {
 			_db[R[i]["parameter"].c_str()] = R[i]["val"].c_str();
 		}
-	}
-	catch (...) {
-		L_CRITICAL(LOG_CONFIG,"Failed to retrieve configuration data.");
-		exit(-1);
-	}
+//	}
+//	catch (...) {
+//		L_CRITICAL(LOG_CONFIG,"Failed to retrieve configuration data.");
+//		exit(-1);
+//	}
 }
 
 // ====== PRIVATE =======

@@ -149,10 +149,11 @@ string dps_strPcase(string *Str);
 string dps_strNum(long num, unsigned int digits);
 string dps_prettyTime(long samples);
 long dps_current_time();
-
+/*
 static int ruid = -1,euid = -1;
 unsigned int getDigiplayUser();
 void dropPrivilage();
 void gainPrivilage();
 void showPrivilage();
+*/
 #endif

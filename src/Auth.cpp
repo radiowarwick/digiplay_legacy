@@ -30,6 +30,7 @@ using namespace std;
 
 Auth::Auth() {
     closeSession();
+	DB = new DataAccess();
 }
 
 Auth::~Auth() {
@@ -60,18 +61,77 @@ void Auth::authSession(string username, string password) {
     if (password == "") {
         L_INFO(LOG_AUTH,"Note user " + username + " supplied blank password");
     }
-	_privilages.clear();
-	_userInfo.clear();
-	addUserInfo("username",username);
+    string SQL = "SELECT id FROM users WHERE username = '"
+                        + username + "' LIMIT 1";
+    Result R;
+    try {
+      R = DB->exec(SQL);
+      DB->abort();
+    }
+    catch (...) {
+      L_ERROR(LOG_AUTH,"Failed to find user in database.");
+    }
+		if (R.size()!=0) {
+			string userid = string(R[0]["id"].c_str());
+			SQL = "SELECT DISTINCT id FROM dir WHERE name='Users' AND parent=ANY ("
+  	      	"SELECT DISTINCT id FROM dir WHERE name='Digiplay' AND parent=-1)";
+   	  try {
+     		R = DB->exec(SQL);
+      	DB->abort();
+    	}
+      catch (...) {
+         L_ERROR(LOG_AUTH,"Failed to find Users folder in database.");
+      }
+			string parent;
+	    if (R.size()!=0) {
+		    parent=string(R[0]["id"].c_str());
+		  }
+		  else {
+			   parent=7;			//rough guess
+			   L_ERROR(LOG_AUTH,"Failed to find Users folder in database.");
+		  }		   
+			SQL = "SELECT id FROM dir WHERE name='" + username + "' AND parent = " + parent + ";";
+      try {
+         R = DB->exec(SQL);
+         DB->abort();
+      }
+      catch (...) {
+        L_ERROR(LOG_AUTH,"Failed to find user's folder in database.");
+      }
+			if (R.size()==0) {
+				SQL = "INSERT INTO dir (name, parent, notes) VALUES "
+							"('" + username + "', " + parent + ", '" + username + "\\'s home directory'); "
+							"INSERT INTO dirusers (dirid, userid, permissions) VALUES "
+							"((SELECT id FROM dir WHERE name='" + username + "' AND parent=" + parent + "),"
+							" " + userid + ", '11000000');";
+				try {
+				  R = DB->exec(SQL);
+    	 		DB->commit();
+				}
+ 	  	 	catch (...) {
+ 		     	L_ERROR(LOG_AUTH,"Failed to add user's folder to database.");
+    		}
+			}
+			else {
+				L_INFO(LOG_AUTH,"User already has a folder.");
+			}
+		}
+		else {
+			L_ERROR(LOG_AUTH,"Failed to find user in database.");
+		}
+
+		_privilages.clear();
+		_userInfo.clear();
+		addUserInfo("username",username);
     
-	// bodge --cc
-	addPrivilage("TabInfo");
-	addPrivilage("TabSearch");
-	addPrivilage("TabPlaylist");
-	addPrivilage("TabFileBrowser");
-	addPrivilage("TabEmail");
-	addPrivilage("TabLogging");
-//	addPrivilage("TabScripts");
+		// bodge --cc
+		addPrivilage("TabInfo");
+		addPrivilage("TabSearch");
+		addPrivilage("TabPlaylist");
+		addPrivilage("TabFileBrowser");
+		addPrivilage("TabEmail");
+		addPrivilage("TabLogging");
+		//addPrivilage("TabScripts");
 }
 
 void Auth::closeSession() {

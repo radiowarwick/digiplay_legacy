@@ -29,6 +29,8 @@
 #include <map>
 using namespace std;
 
+#include "DataAccess.h"
+
 #define AUTH_FAILED					10000
 #define AUTH_INVALID_CREDENTIALS 	10001
 
@@ -49,7 +51,7 @@ class Auth {
 
 	private:
 		Auth(Auth &A);
-
+		DataAccess *DB;
 		vector<string> _privilages;
 		map<string,string> _userInfo;
 };	

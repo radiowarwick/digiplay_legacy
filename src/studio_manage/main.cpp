@@ -38,10 +38,12 @@ int main( int argc, char ** argv )
     Logger::setLogLevel(5);
     Logger::setDisplayLevel(0);
 
-	// Look up normal user in config and drop privilages
-	Config *conf = new Config("digiplay");
-	dropPrivilage(conf->getParam("user"));
-	delete conf;
+	if (isRoot()) {
+		// Look up normal user in config and drop privilages
+		Config *conf = new Config("digiplay");
+		dropPrivilage(conf->getParam("user"));
+		delete conf;
+	}
 
 	// Create new application and main window
     QApplication a( argc, argv );

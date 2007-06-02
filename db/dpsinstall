@@ -61,6 +61,8 @@ else
 	DBPORT=`cat /etc/digiplay.conf | grep DB_PORT | cut -d "=" -f 2`
     DBUSER=`cat /etc/digiplay.conf | grep DB_USER | cut -d "=" -f 2`
 fi
+WWWUSER=www
+
 # display the values which will be used
 printf "Database: $DBNAME\n"
 printf "Host:     $DBHOST\n"
@@ -132,6 +134,9 @@ printf "Creating digiplay database users..."
 if [ ! `$PSQL -tqc "select usename from pg_user where usename='$DBUSER';" template1` ]; then
 	$PSQL -qc "CREATE USER $DBUSER;" template1
 fi
+if [ ! `$PSQL -tqc "select usename from pg_user where usename='$WWWUSER';" template1` ]; then
+	$PSQL -qc "CREATE USER $WWWUSER;" template1
+fi
 printf "done.\n"
 
 # create all the relations, views, etc
@@ -156,7 +161,7 @@ printf " -> Creating objects..."
 $PSQL -qf digiplay.sql $DBNAME #2>/dev/null
 if [[ $? > 0 ]]; then
 	printf " -> Failed to generate database objects\n"
-	printf "Installation Aborted.\n"
+	printf "Installation Aborted. Empty database remains.\n"
 	exit -1
 fi
 printf "done.\n"
@@ -164,7 +169,14 @@ printf " -> Creating views..."
 $PSQL -qf digiplay-views.sql $DBNAME 2>/dev/null
 if [[ $? > 0 ]]; then
 	printf " -> Failed to generate database views\n"
-	printf "Installation Aborted.\n"
+	printf "Installation Aborted. Mess remains.\n"
+	exit -1
+fi
+printf " -> Creating triggers..."
+$PSQL -qf digiplay-triggers.sql $DBNAME 2>/dev/null
+if [[ $? > 0 ]]; then
+	printf " -> Failed to generate database triggers\n"
+	printf "Installation Aborted. Mess remains.\n"
 	exit -1
 fi
 printf "done.\n"
@@ -177,6 +189,8 @@ viewname AS name FROM pg_views WHERE schemaname = 'public') ORDER BY name"
 OBJ=`$PSQL -t -c "${SQL}" $DBNAME`
 OBJ=`echo ${OBJ} | sed 's/ /, /g'`
 SQL="GRANT ALL ON ${OBJ} TO $DBUSER"
+$PSQL -qc "${SQL}" $DBNAME
+SQL="GRANT ALL ON ${OBJ} TO $WWWUSER"
 $PSQL -qc "${SQL}" $DBNAME
 printf "done.\n"
 

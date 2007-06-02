@@ -3,26 +3,42 @@
 
 #include <string>
 
-//#include "pqxx/connection.h"
+#include "pqxx/connection.h"
 #include "pqxx/trigger.h"
+using namespace pqxx;
 
 #include <qthread.h>
 #include <qobject.h>
 #include <qapplication.h>
 
-#include "DataAccess.h"
+/**
+ * This is a helper class, which implements the actual trigger. This should not
+ * be used directly, instead use DbTrigger class which is a wrapper designed to
+ * set up the database connection as well. Use this class with a different
+ * database connection at your own risk.
+ */
+class DbPqxxTrigger:    public QObject,
+                        public pqxx::trigger {
+    Q_OBJECT
+
+    public:
+        DbPqxxTrigger(const char* name, Connection *C, std::string trigger);
+        ~DbPqxxTrigger() throw();
+        void operator()(int be_pid);
+        
+    signals:
+        void trigger();
+};
 
 /**
  * Creates a database trigger on the digiplay database which responds to the
  * specified trigger name registered in the database, emitting the trigger()
  * signal.
  *
- * The trigger is registered on the static database connection used by the
- * DataAccess class from which this class is derived. Thus, a caveat of this is
- * that the trigger will not be activated during transactions. It is therefore
- * imperative that good database practice is ensured and each batch of activity
- * on the database is finished with a commit() or abort() command to close the
- * transaction and allow the processing of any trigger events.
+ * The trigger is registered on a separate static database connection created
+ * by this class. This ensures that the connection is always available to
+ * register notifications immediately and not be held up by transactions from
+ * elsewhere being open.
  *
  * To use the trigger, create an instance of this class, specifying the name of
  * the trigger on which to act. Then call the QThread start() routine to begin
@@ -30,9 +46,7 @@
  * should be processed upon this event.
  */
 class DbTrigger:    public QObject,
-                    public QThread, 
-                    public pqxx::trigger,
-                    public DataAccess {
+                    public QThread { 
     Q_OBJECT
 
     public:
@@ -40,16 +54,24 @@ class DbTrigger:    public QObject,
         //DbTrigger(QWidget* parent, const char* name, std::string trigger);
         DbTrigger(const char* name, std::string trigger);
         ~DbTrigger() throw();
-        void operator()(int be_pid);
         void run();
         void stop();
+
+    private slots:
+        void triggered();
 
     signals:
         // Signal emitted when the database trigger is triggered.
         void trigger();
 
     private:
+        DbPqxxTrigger* Trig;
+        std::string trigname;
         bool enabled;
+        static Connection* Ctrig;
+        static bool init;
 };
+
+
 
 #endif

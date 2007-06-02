@@ -31,7 +31,7 @@
  */
 scheduler::scheduler() {
 	// Read configuration from the /etc/digiplay config file
-	config *Conf = new config("digiplay");
+	Config *Conf = new Config("digiplay");
 	try {
 	    C = new Connection( Conf->getDBConnectString() );
 	}

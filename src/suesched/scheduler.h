@@ -37,7 +37,7 @@ using namespace std;
 using namespace pqxx;
 
 #include "schedule.h"
-#include "config.h"
+#include "Config.h"
 
 #define BIN1_SQL "SELECT * from v_audio_track WHERE sustainer='t' ORDER BY title"
 #define BIN2_SQL "SELECT * from v_audio_track WHERE sustainer='t' ORDER BY title"

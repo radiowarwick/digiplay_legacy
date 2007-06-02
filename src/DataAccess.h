@@ -36,9 +36,10 @@ class DataAccess {
         /// Abort the open transaction rolling back any changes made in the
         /// open transaction.
         void abort();
+        /// Returns the connection string used to connect to database
+        static std::string getConnectionString();
 
     protected:
-        std::string getConnectionString();
         static bool init;
         static Connection* C;
         static Transaction* T;

@@ -39,7 +39,7 @@ using namespace pqxx;
 #include "audio/CounterTrigger.h"
 using namespace Audio;
 
-#include "config.h"
+#include "Config.h"
 
 #define min(a,b) (((a)<(b))?(a):(b))
 
@@ -53,7 +53,7 @@ int main(int argc, char *argv) {
 	Result R;
 	
 	cout << " -> Reading configuration file" << endl;
-    config *Conf = new config("digiplay");
+    Config *Conf = new Config("digiplay");
 
 	cout << " -> Connecting to Database..." << flush;
 	Connection *C;

@@ -67,8 +67,12 @@ Config::Config(string application) {
 			DB_CONNECT += "port=" + getParam("DB_PORT") + " ";
 		if (isDefined("DB_NAME"))
 	        DB_CONNECT += "dbname=" + getParam("DB_NAME") + " ";
+		else
+			DB_CONNECT += "dbname=digiplay ";
 	    if (isDefined("DB_USER"))
 	        DB_CONNECT += "user=" + getParam("DB_USER") + " ";
+		else
+			DB_CONNECT += "user=digiplay_user ";
 		if (isDefined("DB_PASS"))
 			DB_CONNECT += "password=" + getParam("DB_PASS") + " ";
 		if (isDefined("LOCATION"))

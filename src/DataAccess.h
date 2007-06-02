@@ -40,7 +40,6 @@ class DataAccess {
         static std::string getConnectionString();
 
     protected:
-        static bool init;
         static Connection* C;
         static Transaction* T;
         static pthread_mutex_t* t_trans_mutex;

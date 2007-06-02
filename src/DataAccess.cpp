@@ -6,24 +6,28 @@
 
 #include "DataAccess.h"
 
-bool DataAccess::init = false;
 Connection* DataAccess::C = 0;
 Transaction* DataAccess::T = 0;
 pthread_mutex_t* DataAccess::t_trans_mutex = 0;
 unsigned int DataAccess::instanceCount = 0;
 
 DataAccess::DataAccess() {
+	// For each instance increment counter. We can only close the connection
+	// when the last instance is destroyed.
     instanceCount++;
-    if (!init) {
-        try {
-            C = new Connection( getConnectionString() );
 
+	// If this is the first instance create the connection to database
+    if (instanceCount == 1) {
+        try {
+			// Create connection
+            C = new Connection( getConnectionString() );
+			// Init the transaction mutex
             t_trans_mutex = new pthread_mutex_t;
             pthread_mutex_init(t_trans_mutex,NULL);
-            T = 0;
-            init = true;
+			// T = 0;
         }
         catch (...) {
+			// Whoops! We can't connect to the DB
             cout << "DataAccess::";
             cout << "An error occured while trying to connect to DB" << endl;
             throw;
@@ -32,6 +36,7 @@ DataAccess::DataAccess() {
 }
 
 DataAccess::~DataAccess() {
+	// Decrement the instance count
     instanceCount--;
     // Close connection on destruction of last instance
     if (instanceCount == 0) {
@@ -41,20 +46,25 @@ DataAccess::~DataAccess() {
 }
 
 Result DataAccess::exec(std::string query) {
+	// Lock mutex to prevent multiple queries simultaneously
     pthread_mutex_lock(t_trans_mutex);
     Result R;
+
+	// If there isn't an active an active transaction, create one
     try {
         if (!T) {
             T = new Transaction(*C,"DataAccess");
         }
     }
     catch (...) {
+		// Whoops! We can't have a transaction. This is bad.
         pthread_mutex_unlock(t_trans_mutex);
         cout << "DataAccess::";
         cout << "Failed to create transaction!" << endl;
         throw;
     }
 
+	// Perform the query
     try {
         R = T->exec(query);
     }
@@ -65,13 +75,18 @@ Result DataAccess::exec(std::string query) {
         cout << query << endl;
         throw;
     }
+
+	// Unlock the mutex and return data
     pthread_mutex_unlock(t_trans_mutex);
-    cout << "Data access: finished query" << endl;
     return R;
 }
 
 void DataAccess::commit() {
+	// We shouldn't try to commit when we've not done anything. Stupid.
     if (!T) throw;
+
+	// Lock the mutex, commit the changes, delete the transaction and unlock
+	// the mutex again.
     pthread_mutex_lock(t_trans_mutex);
     T->commit();
     delete T;
@@ -80,7 +95,11 @@ void DataAccess::commit() {
 }
 
 void DataAccess::abort() {
-    if (!T) throw;
+	// We're kind, so we'll let it pass if someone tries to abort a transaction
+	// which doesn't exist.
+    if (!T) return;
+
+	// Lock mutex, abort transaction, delete transaction and unlock mutex
     pthread_mutex_lock(t_trans_mutex);
     T->abort();
     delete T;
@@ -125,8 +144,12 @@ std::string DataAccess::getConnectionString() {
             DB_CONNECT += "port=" + _file["db_port"] + " ";
         if (_file.count("db_name"))
             DB_CONNECT += "dbname=" + _file["db_name"] + " ";
+		else
+			DB_CONNECT += "dbname=digiplay ";
         if (_file.count("db_user")) 
             DB_CONNECT += "user=" + _file["db_user"] + " ";
+		else
+			DB_CONNECT += "user=digiplay_user ";
         if (_file.count("db_pass"))
             DB_CONNECT += "password=" + _file["db_pass"] + " ";
     }

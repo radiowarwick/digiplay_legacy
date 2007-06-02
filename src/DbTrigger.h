@@ -67,9 +67,9 @@ class DbTrigger:    public QObject,
     private:
         DbPqxxTrigger* Trig;
         std::string trigname;
-        bool enabled;
+		bool enabled;
+        static unsigned int instanceCount;
         static Connection* Ctrig;
-        static bool init;
 };
 
 

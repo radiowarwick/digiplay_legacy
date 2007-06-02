@@ -2,13 +2,13 @@
 #include "DataAccess.h"
 
 Connection* DbTrigger::Ctrig = 0;
-bool DbTrigger::init = false;
+unsigned int DbTrigger::instanceCount = 0;
 
 DbTrigger::DbTrigger(const char* name, std::string trigger){ 
-    if (!init) {
+	++(DbTrigger::instanceCount);
+    if (DbTrigger::instanceCount == 1) {
         try {
             Ctrig = new Connection( DataAccess::getConnectionString() );
-            init = true;
         }
         catch (...) {
             cout << "DbTrigger::";
@@ -23,6 +23,10 @@ DbTrigger::DbTrigger(const char* name, std::string trigger){
 
 DbTrigger::~DbTrigger() throw() {
     stop();
+	--(DbTrigger::instanceCount);
+	if (DbTrigger::instanceCount == 0) {
+		delete Ctrig;
+	}
 }
 
 void DbTrigger::triggered() {
@@ -31,7 +35,6 @@ void DbTrigger::triggered() {
 }
 
 void DbTrigger::run() {
-    cout << "Running trigger" << endl;
     enabled = true;
     while (enabled) {
         usleep(100000);

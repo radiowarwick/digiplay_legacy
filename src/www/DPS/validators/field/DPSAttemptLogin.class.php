@@ -45,7 +45,7 @@ class AttemptLogin extends ValidatorRule {
 		    $group = array();
 		    $group['groupid'] = $cfg['Auth']['defaultNewUserGroup'];
 		    $group['userid'] = $userID;
-		    $db->insert('groupmembers',$group, true);
+		    $db->insert('usersgroups',$group, true);
 		  }
 		  $auth->attemptLogin();
 		    BasicLogger::logMessage("new user created for for '$user'", self::module, 'debug');

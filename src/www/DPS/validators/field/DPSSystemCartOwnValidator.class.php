@@ -25,14 +25,14 @@ class DPSSystemCartOwnValidator extends ValidatorRule {
     $flag = false;
 
     $sql = "select count(*) from cartsetsusers, cartwalls, cartsaudio where cartsetsusers.userid = " . $cfg['DPS']['systemUserID'] . " 
-            AND cartsetsusers.cartsetid = cartwalls.cartset AND cartwalls.id = cartsaudio.cartwall and cartsaudio.id = $cartID 
+            AND cartsetsusers.cartsetid = cartwalls.cartsetid AND cartwalls.id = cartsaudio.cartwallid and cartsaudio.id = $cartID 
 	    AND (cartsetsusers.permissions = 'o')";
     $check = $db->getOne($sql);
     if($check > 0) {
       $flag = true;
     } else {
-      $sql = "select count(*) from cartsetsgroups, cartwalls, cartsaudio, groupmembers where cartsetsgroups.groupid = groupmembers.groupid
-	      AND groupmembers.userid = " . $cfg['DPS']['systemUserID'] . " AND cartsetsgroups.cartsetid = cartwalls.cartset AND cartwalls.id = cartsaudio.cartwall and cartsaudio.id = $cartID 
+      $sql = "select count(*) from cartsetsgroups, cartwalls, cartsaudio, usersgroups where cartsetsgroups.groupid = usersgroups.groupid
+	      AND usersgroups.userid = " . $cfg['DPS']['systemUserID'] . " AND cartsetsgroups.cartsetid = cartwalls.cartsetid AND cartwalls.id = cartsaudio.cartwallid and cartsaudio.id = $cartID 
 	      AND (cartsetsgroups.permissions = 'o')";
       $check = $db->getOne($sql);
       if($check > 0) {

@@ -26,13 +26,13 @@ class DPSUserAudioOwnValidator extends ValidatorRule {
     $auth = Auth::getInstance();
     $userID = $auth->getUserID();
 
-    $sql = "select count(*) from audiousers where userid = $userID AND audio = $audioID AND  permissions = 'o'";
+    $sql = "select count(*) from audiousers where userid = $userID AND audioid = $audioID AND  permissions = 'o'";
     $check = $db->getOne($sql);
     if($check > 0) {
       $flag = true;
     } else {
-      $sql = "select count(*) from audiogroups, groupmembers where audiogroups.groupid = groupmembers.groupid
-	      AND groupmembers.userid = $userID AND audiogroups.audio = $audioID 
+      $sql = "select count(*) from audiogroups, usersgroups where audiogroups.groupid = usersgroups.groupid
+	      AND usersgroups.userid = $userID AND audiogroups.audioid = $audioID 
 	      AND (audiogroups.permissions = 'o')";
       $check = $db->getOne($sql);
       if($check > 0) {

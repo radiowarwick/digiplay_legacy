@@ -27,14 +27,14 @@ class DPSUserCartEditValidator extends ValidatorRule {
     $userID = $auth->getUserID();
 
     $sql = "select count(*) from cartsetsusers, cartwalls, cartsaudio where cartsetsusers.userid = $userID 
-            AND cartsetsusers.cartsetid = cartwalls.cartset AND cartwalls.id = cartsaudio.cartwall and cartsaudio.id = $cartID 
+            AND cartsetsusers.cartsetid = cartwalls.cartsetid AND cartwalls.id = cartsaudio.cartwallid and cartsaudio.id = $cartID 
 	    AND (cartsetsusers.permissions = 'o' or cartsetsusers.permissions = 'w' or cartsetsusers.permissions = 'rw')";
     $check = $db->getOne($sql);
     if($check > 0) {
       $flag = true;
     } else {
-      $sql = "select count(*) from cartsetsgroups, cartwalls, cartsaudio, groupmembers where cartsetsgroups.groupid = groupmembers.groupid
-	      AND groupmembers.userid = $userID AND cartsetsgroups.cartsetid = cartwalls.cartset AND cartwalls.id = cartsaudio.cartwall and cartsaudio.id = $cartID 
+      $sql = "select count(*) from cartsetsgroups, cartwalls, cartsaudio, usersgroups where cartsetsgroups.groupid = usersgroups.groupid
+	      AND usersgroups.userid = $userID AND cartsetsgroups.cartsetid = cartwalls.cartsetid AND cartwalls.id = cartsaudio.cartwallid and cartsaudio.id = $cartID 
 	      AND (cartsetsgroups.permissions = 'o' or cartsetsgroups.permissions = 'w' or cartsetsgroups.permissions = 'rw')";
       $check = $db->getOne($sql);
       if($check > 0) {

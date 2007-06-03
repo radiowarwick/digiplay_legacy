@@ -26,9 +26,9 @@ class DPSUserDirWriteValidator extends ValidatorRule {
     $auth = Auth::getInstance();
     $userID = pg_escape_string($auth->getUserID());
 
-		$sql = "select sum(num) from ((select count(*) as num from dirusers where userid = " . $userID . " and directory = " . $dirID . " 
-						and permissions & B'01000000' = '01000000') UNION (select count(*) as num from dirgroups, groupmembers where groupmembers.userid = " . $userID . " and  
-						groupmembers.groupid = dirgroups.groupid and directory = " . $dirID . " 
+		$sql = "select sum(num) from ((select count(*) as num from dirusers where userid = " . $userID . " and dirid = " . $dirID . " 
+						and permissions & B'01000000' = '01000000') UNION (select count(*) as num from dirgroups, usersgroups where usersgroups.userid = " . $userID . " and  
+						usersgroups.groupid = dirgroups.groupid and dirid = " . $dirID . " 
 						and dirgroups.permissions & B'01000000' = '01000000')) as Q1";
     $check = $db->getOne($sql);
     if($check > 0) {

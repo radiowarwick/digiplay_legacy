@@ -33,8 +33,8 @@ class DPSUserCartsetReadValidator extends ValidatorRule {
     if($check > 0) {
       $flag = true;
     } else {
-      $sql = "select count(*) from cartsetsgroups, groupmembers where cartsetsgroups.groupid = groupmembers.groupid
-	      AND groupmembers.userid = $userID AND cartsetsgroups.cartsetid = $cartID 
+      $sql = "select count(*) from cartsetsgroups, usersgroups where cartsetsgroups.groupid = usersgroups.groupid
+	      AND usersgroups.userid = $userID AND cartsetsgroups.cartsetid = $cartID 
 	      AND (cartsetsgroups.permissions = 'o' or cartsetsgroups.permissions = 'r' or cartsetsgroups.permissions = 'rw')";
       $check = $db->getOne($sql);
       if($check > 0) {

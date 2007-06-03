@@ -26,9 +26,9 @@ class DPSUserDirDelValidator extends ValidatorRule {
     $auth = Auth::getInstance();
     $userID = pg_escape_string($auth->getUserID());
 
-		$sql = "select sum(num) from (select count(*) as num from dirusers where userid = " . $userID . " and directory = " . $dirID . " 
-						and permissions & B'00100000' = '00100000') UNION (select count(*) as num from dirgroups, groupmembers where groupmembers.userid = " . $userID . " and  
-						groupmembers.groupid = dirgroups.groupid and directory = " . $dirID . " 
+		$sql = "select sum(num) from (select count(*) as num from dirusers where userid = " . $userID . " and dirid = " . $dirID . " 
+						and permissions & B'00100000' = '00100000') UNION (select count(*) as num from dirgroups, usersgroups where usersgroups.userid = " . $userID . " and  
+						usersgroups.groupid = dirgroups.groupid and dirid = " . $dirID . " 
 						and dirgroups.permissions & B'00100000' = '00100000') as Q1";
     $check = $db->getOne($sql);
     if($check > 0) {
@@ -44,22 +44,22 @@ class DPSUserDirDelValidator extends ValidatorRule {
 			$flag = false;
 		}
 		
-		$sql = "select count(*) from audiodir where directory = " . $dirID;
+		$sql = "select count(*) from audiodir where dirid = " . $dirID;
 		$count = $db->getOne($sql);
 		if($count > 0) {
 			$flag = false;
 		}
-		$sql = "select count(*) from scriptsdir where dir = " . $dirID;
+		$sql = "select count(*) from scriptsdir where dirid = " . $dirID;
 		$count = $db->getOne($sql);
 		if($count > 0) {
 			$flag = false;
 		}
-		$sql = "select count(*) from cartsetsdir where dir = " . $dirID;
+		$sql = "select count(*) from cartsetsdir where dirid = " . $dirID;
 		$count = $db->getOne($sql);
 		if($count > 0) {
 			$flag = false;
 		}
-		$sql = "select count(*) from showplandir where dir = " . $dirID;
+		$sql = "select count(*) from showplandir where dirid = " . $dirID;
 		$count = $db->getOne($sql);
 		if($count > 0) {
 			$flag = false;

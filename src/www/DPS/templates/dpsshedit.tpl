@@ -28,17 +28,19 @@
 	  <img src="DPS/images/showUnfinished.png" alt="Uninished"> Unfinished<br>
 	  <img src="DPS/images/showReady.png" alt="Ready"> Finished & ready<br>
 	</div>
-	<div class="rightLinks">{templateLink id="81" text="<< Back to your shows"}</div>
+	<div class="rightLinks">{templateLink id="54" text="<< Back to your shows"}</div>
 	<br style="&7b;clear:both;&7c;" />
 	<hr>
+	{if $VIEWER.write == "t"}
 	{if $VIEWER.show.completed == 't'}
 	<div class="showLinks">{templateLink id=$VIEWER.templateID text="<img src='DPS/images/showUnfinished.png' alt='Finished'>Declare show not finished" _formName="dpsUserUnCompleteShow" _moduleName="DPS" _showID=$VIEWER.show.id}</div>
 	{else}
 	<div class="showLinks"><img src="DPS/images/showUnfinished.png" alt="Add"> {templateLink id=$VIEWER.templateID text="Add Element" _formName="dpsUserAddShowItem" _moduleName="DPS" _showID=$VIEWER.show.id}</div>
 	<div class="showLinks">
-		{templateLink id="83" text="<img src='DPS/images/showUnfinished.png' alt='Order'> Change Order" _showID=$VIEWER.show.id}
+		{templateLink id="56" text="<img src='DPS/images/showUnfinished.png' alt='Order'> Change Order" _showID=$VIEWER.show.id}
 	</div>
 	<div class="showLinks">{templateLink id=$VIEWER.templateID text="<img src='DPS/images/showUnfinished.png' alt='Unfinish'>Declare show finished" _formName="dpsUserCompleteShow" _moduleName="DPS" _showID=$VIEWER.show.id}</div>
+	{/if}
 	{/if}
 <!--	<div class="showWarning">Show has 01:40:35 unlabelled</div>-->
 	<br style="&7b;clear:both;&7c;" />
@@ -68,8 +70,8 @@
 				{else}
 				Other
 				{/if}
-				{if $item.script != ''}
-				+<br />{templateLink id="" text="Script"}
+				{if $item.scriptid != ''}
+				+<br />{templateLink id="45" _scriptID=$item.scriptid text=$item.scriptName}
 				{/if}
 			</td>
 			<td>
@@ -80,7 +82,7 @@
 			</td>
 			{if $VIEWER.done != 't' && $VIEWER.show.completed != 't'}
 			<td>
-				{templateLink id="85" text="Edit" _itemID=$item.id}<br>{templateLink id=$VIEWER.templateID text="Erase" _itemID=$item.id _formName="dpsUserDelShowItem" _moduleName="DPS" _showID=$VIEWER.show.id}
+				{templateLink id="58" text="Edit" _itemID=$item.id}<br>{templateLink id=$VIEWER.templateID text="Erase" _itemID=$item.id _formName="dpsUserDelShowItem" _moduleName="DPS" _showID=$VIEWER.show.id}
 			</td>
 			{/if}
 		</tr>

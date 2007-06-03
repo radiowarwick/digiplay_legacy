@@ -20,22 +20,22 @@ class DPSShowPlanSelectMusicViewer extends Viewer {
     $userID = $auth->getUserID();
     $date = time();
 		if(is_numeric($itemID) && isset($itemID)) {	
-			$show_query = "SELECT count(*) FROM showplanusers, showitems where 
+			$show_query = "SELECT bit_or(permissions) FROM (SELECT showplanusers.permissions FROM showplanusers, showitems where 
 										showitems.showplanid = showplanusers.showplanid AND 
 										showplanusers.userid = " . $userID . " AND
-										showitems.id = " . $itemID . " AND 
-										(showplanusers.permissions = 'o' OR showplanusers.permissions = 'rw')";
-    	$checkShows = $db->getOne($show_query);
-			if($checkShows == 0) {
-				$show_query = "SELECT count(*) FROM showplangroups, groupmembers, showitems where 
+										showitems.id = " . $itemID . "  
+										UNION(SELECT showplangroups.permissions FROM showplangroups, groupmembers, showitems where 
 										showplangroups.groupid = groupmembers.groupid and 
 										showplangroups.showplanid = showitems.showplanid and 
 										showitems.id = $itemID and 
-										groupmembers.userid = $userID and 
-										(showplangroups.permissions = 'o' OR showplangroups.permissions = 'rw')";
-				$checkShows = $db->getOne($show_query);
-			}
-			if($checkShows > 0) {
+										groupmembers.userid = $userID)) as Q1";
+			$checkShows = $db->getOne($show_query);
+			if(substr($checkShows,0,1) == "1") {
+				if(substr($checkShows,1,1) == "1") {
+					$this->assign('write', 't');
+				} else {
+					$this->assign('write', 'f');
+				}
 				$show_sql = "SELECT showplans.* FROM showplans, showitems where showitems.showplanid = showplans.id AND showitems.id = " . $itemID;
 				$show = $db->getRow($show_sql);
       	$show['niceAirDate'] = date("d/m/y",$show['showdate']);
@@ -84,71 +84,6 @@ class DPSShowPlanSelectMusicViewer extends Viewer {
 
     $this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
   }
-
-	function treeSetup($dirID,$userid) {
-  	global $cfg;
-		$db = Database::getInstance($cfg['DPS']['dsn']);
-    $sql = "SELECT DISTINCT dir.id, dir.parent, dir.name, dir.notes 
-						FROM dir, users, dirusers 
-						WHERE 
-    					dir.id = dirusers.directory AND 
-							(dirusers.permissions = 'r' OR 
-								dirusers.permissions = 'w' OR 
-								dirusers.permissions = 'rw' OR 
-								dirusers.permissions = 'o') AND 
-							dirusers.userid = $userid AND 
-							dir.parent = " . pg_escape_string($dirID) . " 
-							ORDER BY dir.name asc";
-    $users = $db->getAll($sql);
-    $sql = "SELECT DISTINCT dir.id, dir.parent, dir.name, dir.notes 
-						FROM dir, dirgroups, groups, groupmembers, users 
-						WHERE
-            	dir.id = dirgroups.directory AND 
-							(dirgroups.permissions= 'r' OR 
-								dirgroups.permissions = 'w' OR 
-								dirgroups.permissions = 'rw' OR 
-								dirgroups.permissions = 'o') AND 
-							dirgroups.groupid = groups.id AND
-            	groups.id = groupmembers.groupid AND 
-							groupmembers.userid = $userid AND 
-							dir.parent = " . pg_escape_string($dirID) . " 
-							ORDER BY dir.name asc";
-    $groups = $db->getAll($sql);
-  	$total = 0;
-  	$done[0] = -1;
-   	foreach($users as $user) {
-     	if($user != false) {
-       	$total++;
-				$list = $list . '<item text="' . htmlspecialchars($user['name']) . '" id="dir' . $user['id'] . '" im0="folderClosed.gif">';
-      	$list = $list . $this->treeSetup($user['id'],$userid);
-				$list = $list . '</item>';
-			}
-			$done[$total] = $user['id'];
-    }
-  	foreach($groups as $group) {
-    	if(!array_search($group['id'],$done)) {
-    		$total++;
-				$list = $list . '<item text="' . htmlspecialchars($group['name']) . '" id="dir' . $group['id'] . '" im0="folderClosed.gif">';
-      	$list = $list . $this->treeSetup($group['id'],$userid);
-				$list = $list . '</item>';
-   		}
-  	}
-		  //#######
-			//JINGLES
-			//Add groups
-			//#######
-			$sql = "SELECT audiodir.id, audio.title, audio.id FROM audiodir, audio, audiotypes WHERE
-			        audio.id = audiodir.audio AND directory = " . pg_escape_string($dirID) . " AND
-					    audio.type = audiotypes.id AND (audiotypes.name = 'music')
-					    order by audio.title asc";
-			$files = pg_query($sql);
-			$total=0;
-			while($file = pg_fetch_array($files)) {
-				$total++;
-			  $list = $list . '<item text="' . htmlspecialchars($file[1]) . '" id="jgl' . $file[2] . '"/>';
-			}
-  	return $list;
-	}
 
   function musicSearch() {
     global $cfg;

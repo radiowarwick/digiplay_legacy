@@ -15,15 +15,10 @@
 	  <i>{$VIEWER.show.niceAirDate} - {$VIEWER.show.niceAirTime}</i>
 	</div>
 	<div class="rightLinks">
-		{templateLink id="82" text="<< Back to full show plan" _showID=$VIEWER.show.id}<br>
+		{templateLink id="55" text="<< Back to full show plan" _showID=$VIEWER.show.id}<br>
 		<div class="showSmall">only if you don't want to save changes!</div>
 	</div>
 	<br style="&7b;clear:both;&7c;" />
-	<form name="dpsUserEditShowItem" method="post" action="{$CONFIG.general.siteRoot}">
-	<input type="hidden" name="formName" value="dpsUserEditShowItem" />
-	<input type="hidden" name="moduleName" value="DPS" />
-	<input type="hidden" name="templateID" value="{$VIEWER.templateID}" />
-	<input type="hidden" name="itemID" value="{$VIEWER.item.id}" />
 	<table class="showItems" width=100%>
 		<tr>
 			<th>Time</th><th>Element</th><th>Nature</th><th>Length</th><th>Note</th>
@@ -48,8 +43,8 @@
 				{else}
 				Other
 				{/if}
-				{if $VIEWER.item.script != ''}
-				+</a><br />{templateLink id="" text="Script"}
+				{if $VIEWER.item.scriptid != ''}
+				+<br />{templateLink id="45" _scriptID=$VIEWER.item.scriptid text=$VIEWER.item.scriptName}
 				{/if}
 			</td>
 			<td>
@@ -60,6 +55,13 @@
 			</td>
 		</tr>
 	</table>
+
+	{if $VIEWER.write == "t"}
+	<form name="dpsUserEditShowItem" method="post" action="{$CONFIG.general.siteRoot}">
+	<input type="hidden" name="formName" value="dpsUserEditShowItem" />
+	<input type="hidden" name="moduleName" value="DPS" />
+	<input type="hidden" name="templateID" value="{$VIEWER.templateID}" />
+	<input type="hidden" name="itemID" value="{$VIEWER.item.id}" />
 	<div class="bigTitle">Edit Element</div>
 	<div class="subTitle">You MUST save changes by clicking "Submit"</div>
 
@@ -92,19 +94,19 @@
 				{if $VIEWER.item.audioTitle != ''}
 				{$VIEWER.item.audioTitle} - {$VIEWER.item.niceAudioLength} ({templateLink id=$VIEWER.templateID text="Remove" _formName="dpsUserDelAudioShow" _moduleName="DPS" _itemID=$VIEWER.item.id})
 				{else}
-				None (Add: <a href="javascript:NewWindow('?templateID=92&itemID={$VIEWER.item.id}','DPS Music','640','580');">Music</a>,
-				<a href="javascript:NewWindow('?templateID=90&itemID={$VIEWER.item.id}','DPS Jingle',640,580);">Jingle</a>,
-				<a href="javascript:NewWindow('?templateID=91&itemID={$VIEWER.item.id}','DPS Advert','640','580');">Advert</a>)
+				None (Add: <a href="javascript:NewWindow('?templateID=43&itemID={$VIEWER.item.id}','DPS Music','640','580');">Music</a>,
+				<a href="javascript:NewWindow('?templateID=41&itemID={$VIEWER.item.id}','DPS Jingle',640,580);">Jingle</a>,
+				<a href="javascript:NewWindow('?templateID=42&itemID={$VIEWER.item.id}','DPS Advert','640','580');">Advert</a>)
 				{/if}
 			</td>
 		</tr>
 		<tr>
 			<th>Associated script</th>
 			<td>
-				{if $VIEWER.item.script != ''}
-				{templateLink id="" text=$VIEWER.item.scriptName} - {$VIEWER.item.niceScriptLength} ({templateLink id=$VIEWER.templateID text="Remove" _formName="dpsUserDelScriptShow" _moduleName="DPS" _itemID=$VIEWER.item.id})
+				{if $VIEWER.item.scriptid != ''}
+				{templateLink id="94" _scriptID=$VIEWER.item.scriptid text=$VIEWER.item.scriptName} - {$VIEWER.item.niceScriptLength} ({templateLink id=$VIEWER.templateID text="Remove" _formName="dpsUserDelScriptShow" _moduleName="DPS" _itemID=$VIEWER.item.id})
 				{else}
-				None (Add: <a href="javascript:NewWindow('?templateID=95&itemID={$VIEWER.item.id}','DPS - Script','640','580');">Script</a>)
+				None (Add: <a href="javascript:NewWindow('?templateID=46&itemID={$VIEWER.item.id}','DPS - Script','640','580');">Script</a>)
 				{/if}
 			</td>
 		</tr>
@@ -129,4 +131,5 @@
 		</tr>
 	</table>
 	</form>
+	{/if}
 {include file="rfile:dpsshowbottomframe.tpl" Admin=$VIEWER.Admin}

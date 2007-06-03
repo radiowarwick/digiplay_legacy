@@ -7,7 +7,7 @@
 				{/if}
 				{foreach from=$VIEWER.scripts item=script}
 	      <img src="DPS/images/showScript.png" alt="Show Script">
-				{templateLink id="94" text=$script.text _scriptID=$script.id}<br>
+				{templateLink id="45" text=$script.text _scriptID=$script.id}<br>
 	      <div class="showPlanInteract">{templateLink id=$VIEWER.templateID text="Delete Script" _formName="dpsUserDelScript" _moduleName="DPS" _scriptID=$script.id}</div>
 				{/foreach}
 	     	<br>

@@ -129,7 +129,7 @@ class GroupModel extends Model {
 		$db = Database::getInstance($cfg['Auth']['dsn']);
 		
 		$db->delete('realmgrouplink', "groupid = $gid");
-		$db->delete('groupmembers', "groupid = $gid");
+		$db->delete('usersgroups', "groupid = $gid");
 		$db->delete('groups', "id = $gid");
 		unset($this->groupToEdit);
 		unset($this->fieldData['groupToEdit']);

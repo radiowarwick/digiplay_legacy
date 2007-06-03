@@ -83,10 +83,8 @@ class Auth extends AuthBase {
 			$ldapbind = @ldap_bind($ds, $ldapUser, $password);
 			ldap_close($ds);
 			if($ldapbind) {
-				//BasicLogger::logMessage($username . " has successfully authenticated password",self::module,"debug");
 				return true;
 			} else {
-				//BasicLogger::logMessage($username . " has failed authenticated password",self::module,"debug");
 				return false;
 			}
 		} else {

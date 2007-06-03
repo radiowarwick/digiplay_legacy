@@ -16,7 +16,7 @@
 			{$VIEWER.show.name}</div>
 	  <i>{$VIEWER.show.niceAirDate} - {$VIEWER.show.niceAirTime}</i><br>
 	</div>
-	<div class="rightLinks">{templateLink id="82" text="<< Back to full show plan" _showID=$VIEWER.show.id}</div>
+	<div class="rightLinks">{templateLink id="55" text="<< Back to full show plan" _showID=$VIEWER.show.id}</div>
 	<br style="&7b;clear:both;&7c;" />
 	<hr>
 	<div class="bigTitle">Show Order</div>
@@ -61,7 +61,7 @@
 			</td>
 			{/if}
 			<td>
-				{templateLink id="85" text="Edit" _itemID=$item.id}<br>{templateLink id=$VIEWER.templateID text="Erase" _itemID=$item.id _formName="dpsUserDelShowItem" _moduleName="DPS" _showID=$VIEWER.show.id}
+				{templateLink id="58" text="Edit" _itemID=$item.id}<br>{templateLink id=$VIEWER.templateID text="Erase" _itemID=$item.id _formName="dpsUserDelShowItem" _moduleName="DPS" _showID=$VIEWER.show.id}
 			</td>
 		</tr>
 		{/foreach}

@@ -14,7 +14,7 @@ class DPSUserDelScriptShowModel extends Model {
     global $cfg;
     $db = Database::getInstance($cfg['DPS']['dsn']);
 		$where = "id = " . pg_escape_string($this->fieldData['itemID']);
-		$show['script'] = null;
+		$show['scriptid'] = null;
 		$db->update('showitems',$show,$where,true);
   }
 	

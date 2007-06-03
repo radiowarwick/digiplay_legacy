@@ -26,29 +26,22 @@ class DPSUserScriptDelValidator extends ValidatorRule {
     $auth = Auth::getInstance();
     $userID = $auth->getUserID();
 
-    $sql = "select count(*) from scriptusers where userid = $userID AND scriptid = $scriptID AND  permissions = 'o'";
+    $sql = "select bit_or(permissions) from (select permissions from scriptsusers 
+													where userid = $userID 
+													AND scriptid = $scriptID 
+													UNION (select scriptsgroups.permissions from scriptsgroups, usersgroups 
+													where scriptsgroups.groupid = usersgroups.groupid AND 
+													usersgroups.userid = $userID AND 
+													scriptsgroups.scriptid = $scriptID)) AS Q1";
     $check = $db->getOne($sql);
-    if($check > 0) {
+    if(substr($check,1,1) == "1") {
       $flag = true;
-    } else {
-      $sql = "select count(*) from scriptgroups, groupmembers where scriptgroups.groupid = groupmembers.groupid
-	      AND groupmembers.userid = $userID AND scriptgroups.scriptid = $scriptID 
-	      AND (scriptgroups.permissions = 'o')";
-      $check = $db->getOne($sql);
-      if($check > 0) {
-				$flag = true;
-      }
-    }
+    } 
 
     if(!$flag) {
-     return "You do not own that showplan";
+     return "You do not have write permission to that script";
     }
 
-		$sql = "select count(*) from showitems where script = $scriptID";
-		$check = $db->getOne($sql);
-		if($check > 0) {
-			return "That script is still being used inside a showplan";
-		}
     return $flag;
   }
 	

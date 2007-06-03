@@ -8,19 +8,14 @@
 		{literal}
 		<script language="javascript" type="text/javascript">
 			var tree;
-			var xml1="{/literal}{$VIEWER.treeData}{literal}";
-			var browserType;
-
-			if (document.layers) {browserType = "nn4"}
-			if (document.all) {browserType = "ie"}
-			if (window.navigator.userAgent.toLowerCase().match("gecko")) {browserType= "gecko"}
 
 			function loadTree(){
 				tree=new dhtmlXTreeObject(document.getElementById('toc_tree'),"100%","100%",0);
+				tree.setXMLAutoLoading("{/literal}{$CONFIG.general.toolkitRootURL}{literal}?templateID=65&treeType={/literal}{$VIEWER.treeType}{literal}");
 				tree.setImagePath("DPS/scripts/dhtmlxTree/imgs/");
 				tree.setOnClickHandler(doOnClick);
 				tree.enableTreeLines(false);
-				tree.loadXMLString(xml1);
+				tree.loadXML("{/literal}{$CONFIG.general.toolkitRootURL}{literal}?templateID=65&treeType={/literal}{$VIEWER.treeType}{literal}&id=dir1");
 			}
 
 			function doOnClick(id){
@@ -37,28 +32,36 @@
       {$VIEWER.error}
     {else}
     <div class='alignleft'>
-    <div class='bigTitle'>Select Advert</div>
-		<div class='subTitle'>Showplan: {$VIEWER.show.name}, Item: {$VIEWER.item.position} 
-    <hr>
-    <div class=''>
-      <form name="dpsUserAudioShow" method="post" action="{$CONFIG.general.siteRoot}">
-      	<input type="hidden" name="formName" value="dpsUserAudioShow" />
-      	<input type="hidden" name="moduleName" value="DPS" />
-      	<input type="hidden" name="templateID" value="70" />
-      	<input type="hidden" name="itemID" value="{$VIEWER.item.id}" />
-				<input type="hidden" id="audioID" name="audioID" value="{$VIEWER.item.audio}" />
-      	<input type="text" id="niceName" name="niceName" readonly value="{$VIEWER.item.audioTitle}" />
-				<input type="Submit" name="Submit" value="Submit" />
-      </form>
-    </div>
-		<hr>
-		<div id="toc_tree" class="fileselect">
-	  	<script>
-				loadTree();
-			</script>
-			<noscript>
-				A filebrowser will display here if you have javascript enabled
-			</noscript>
+			{if $VIEWER.write == 't'}
+    	<div class='bigTitle'>Select Advert</div>
+			<div class='subTitle'>Showplan: {$VIEWER.show.name}, Item: {$VIEWER.item.position}</div>
+    	<hr>
+    	<div class=''>
+      	<form name="dpsUserAudioShow" method="post" action="{$CONFIG.general.siteRoot}">
+      		<input type="hidden" name="formName" value="dpsUserAudioShow" />
+      		<input type="hidden" name="moduleName" value="DPS" />
+      		<input type="hidden" name="templateID" value="22" />
+      		<input type="hidden" name="itemID" value="{$VIEWER.item.id}" />
+					<input type="hidden" id="audioID" name="audioID" value="{$VIEWER.item.audio}" />
+      		<input type="text" id="niceName" name="niceName" readonly value="{$VIEWER.item.audioTitle}" />
+					<input type="Submit" name="Submit" value="Submit" />
+      	</form>
+    	</div>
+			<hr>
+			<div id="toc_tree" class="fileselect">
+	  		<script>
+					loadTree();
+				</script>
+				<noscript>
+					A filebrowser will display here if you have javascript enabled
+				</noscript>
+			</div>
+			{else}
+			<div class='bigTitle'>Select Advert</div>
+			<div class='subTitle'>Showplan: {$VIEWER.show.name}, Item: {$VIEWER.item.position}</div>
+			<hr>
+			<b>{$VIEWER.item.audioTitle}</b>
+			{/if}
 		</div>
     {/if}
   </body>

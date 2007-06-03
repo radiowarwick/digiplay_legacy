@@ -1,12 +1,9 @@
-{include file="rfile:dpsfiletopframe.tpl" title="RaW Digiplay Manager" studio=$VIEWER.studioAccess access_playlist=$VIEWER.access_playlist}
-	<div class="bigTitle">User File System {$DATA.rootDir}</div>
-	<div class="subTitle">Please click on a file or folder for options</div>
 	{if $ERRORS.rootdir}
 	<div class="fileError">{$ERRORS.rootdir}</div>
 	{elseif $ERRORS.dirtext}
 	<div class="fileError">Please enter a directory Name</div>
 	{/if}
-	
+	{if $bar == 't'}
 	<div id="folderBar" class="folderBar">
 		<div id="dircCreate" class="fileLink">
 			<img src="DPS/images/dirNew.png" alt="Create Folder"> 
@@ -91,7 +88,7 @@
 			</a>
 		</div>
 	</div>
-
+	{/if}
 	<div id="toc_tree" class="filebrowser">
 		<script>
 			loadTree();		
@@ -100,6 +97,3 @@
 			A filebrowser will display here if you have javascript enabled
 		</noscript>
 	</div>
-  </body>
-</html>
-{include file="rfile:dpsstudiobottomframe.tpl" Admin=$VIEWER.Admin}

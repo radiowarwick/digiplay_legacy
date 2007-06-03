@@ -303,10 +303,21 @@ class Database {
 					throw new LoggedException($id->getMessage(), $id->getCode(), self::module);
 				}
 			}
-			$arValueList[] = $this->conn->quoteSmart($value);
+			$bin = false;
+			if(strtolower(substr($value,0,1)) == "b" && strtolower(substr($value,strlen($value)-1,1)) == "b") {
+				if(Database::binaryCheck(substr($value,1,strlen($value)-2))) {
+					$bin = true;
+				} else {
+						$bin = false;
+				}
+			}
+			if($bin) {
+				$arValueList[] = "B'" . substr($value,1,strlen($value)-2) . "'";
+			} else {
+				$arValueList[] = $this->conn->quoteSmart($value);
+			}
 		}
 		$sValueList = implode(', ', $arValueList);
-		
 		//make sure the table name is properly escaped
 		$tableName = $this->conn->quoteIdentifier($tableName);
 		
@@ -331,7 +342,14 @@ class Database {
 		//return the ID, if there was one, or the number of rows affected
 		return $id ? $id : $this->conn->affectedRows();
 	}
-	
+	private static function binaryCheck($var) {
+		for($i=0;$i<strlen($var);$i++) {
+			if(substr($str,$i,1) != "1" && substr($str,$i,1) != "0") {
+				return false;
+			}
+		}
+		return true;
+	}
 	public function delete($tableName, $sWhere = null){
 		$sql = "DELETE FROM $tableName";
 		

@@ -26,19 +26,17 @@ class DPSUserScriptEditValidator extends ValidatorRule {
     $auth = Auth::getInstance();
     $userID = $auth->getUserID();
 
-    $sql = "select count(*) from scriptusers where userid = $userID AND scriptid = $scriptID AND  (permissions = 'o' or permissions = 'rw' or permissions = 'w')";
+    $sql = "select bit_or(permissions) from (select permissions from scriptsusers 
+													where userid = $userID 
+													AND scriptid = $scriptID 
+													UNION (select scriptsgroups.permissions from scriptsgroups, usersgroups 
+													where scriptsgroups.groupid = usersgroups.groupid AND 
+													usersgroups.userid = $userID AND 
+													scriptsgroups.scriptid = $scriptID)) AS Q1";
     $check = $db->getOne($sql);
-    if($check > 0) {
+    if(substr($check,1,1) == "1") {
       $flag = true;
-    } else {
-      $sql = "select count(*) from scriptgroups, groupmembers where scriptgroups.groupid = groupmembers.groupid
-	      AND groupmembers.userid = $userID AND scriptgroups.scriptid = $scriptID 
-	      AND (scriptgroups.permissions = 'o' or scriptgroups.permissions = 'rw' or scriptgroups.permissions = 'w')";
-      $check = $db->getOne($sql);
-      if($check > 0) {
-				$flag = true;
-      }
-    }
+    } 
 
     if(!$flag) {
      return "You do not have write permission to that script";

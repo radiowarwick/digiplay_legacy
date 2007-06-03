@@ -64,19 +64,17 @@ class AuthBase {
 	 * @param string $user The username to login
 	 * @param string $password The password (in clear text) to be verrified
 	 */
-	private function __construct(){
+	protected function __construct(){
 		//$this->user = $user;
 		//$this->password = $password;
 		Session::getInstance();
 		//See if the user is logged on through their session
 		$sesLoggedIn = $this->isSessionLoggedIn();
-		BasicLogger::logMessage("Checking session for valid login(Auth)", self::module, 'debug');
 		if($sesLoggedIn !== false){
-			BasicLogger::logMessage("Valid session found, user '$sesLoggedIn' now logged in", self::module, 'debug');
 			$this->loggedIn = true;
 			$this->setUser($sesLoggedIn);
 		} else {
-		  BasicLogger::logMessage("No valid session found, user '$sesLoggedIn' now logged in", self::module, 'debug');
+		  //BasicLogger::logMessage("No valid session found, user '$sesLoggedIn' now logged in", self::module, 'debug');
 		}
 	}
 	
@@ -139,7 +137,6 @@ class AuthBase {
 		
 		//If this is the anon user then login without checking
 		if($this->user == $cfg['Auth']['anonuser']){
-			
 			$sess->setValue('auth_user', $cfg['Auth']['anonuser']);
 			$this->loggedIn = true;
 			//Set login_time session value
@@ -148,16 +145,12 @@ class AuthBase {
 		}else{
 			//Dont both trying to login if user or pass is not passed set
 			if(!is_null($this->user) && !is_null($this->password)){
-
 				if($this->checkUserPass($this->user, $this->password)){
-					BasicLogger::logMessage("Setting session vars for user '{$this->user}'", self::module, 'debug');
 					//Set auth_user session value
 					if($sess->keyExists('auth_user')) {
-						BasicLogger::logMessage($sess->getValue('auth_user'),self::module,"debug");	
 					}
 					$sess->setValue('auth_user', $this->user);
 					if($sess->keyExists('auth_user')) {
-						BasicLogger::logMessage($sess->getValue('auth_user'),self::module,"debug");	
 					}
 					//Set login_time session value
 					$sess->setValue('auth_lastRequestTime', gmmktime());
@@ -182,7 +175,6 @@ class AuthBase {
 				$this->failureReason = 2;
 			//Check to see if user has been previous authenticated during session
 			}elseif($this->isSessionLoggedIn()){
-				BasicLogger::logMessage("Logging in based on session data - {$sess->getValue('auth_user')}",self::module,"debug");
 				//Store username to class variable for other methods to use
 				$this->setUser($sess->getValue('auth_user'));
 				$sess->setValue('auth_lastRequestTime', gmmktime());

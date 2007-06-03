@@ -18,8 +18,8 @@ class DPSUserDeleteScriptModel extends Model {
 		if(is_numeric($scriptID)) {
 			$where = "scriptid = " . $scriptID;
 			$db->delete('scriptsdir',$where,true);
-			$db->delete('scriptusers',$where,true);
-			$db->delete('scriptgroups',$where,true);
+			$db->delete('scriptsusers',$where,true);
+			$db->delete('scriptsgroups',$where,true);
 			$where = "id = " . $scriptID;
 			$db->delete('scripts',$where,true);
 		}

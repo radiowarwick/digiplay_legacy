@@ -20,22 +20,22 @@ class DPSShowPlanEditItemViewer extends Viewer {
     $userID = $auth->getUserID();
     $date = time();
 		if(is_numeric($itemID)) {
-			$show_query = "SELECT count(*) FROM showplanusers, showitems where 
+			$show_query = "select bit_or(permissions) from (SELECT showplanusers.permissions FROM showplanusers, showitems where 
 										showitems.showplanid = showplanusers.showplanid AND 
-										showplanusers.userid = " . $userID . " AND
-										showitems.id = " . $itemID . " AND 
-										(showplanusers.permissions = 'o' OR showplanusers.permissions = 'rw')";
-    	$checkShows = $db->getOne($show_query);
-			if($checkShows == 0) {
-				$show_query = "SELECT count(*) FROM showplangroups, groupmembers, showitems where 
-										showplangroups.groupid = groupmembers.groupid and 
+										showplanusers.userid = $userID AND
+										showitems.id = $itemID 
+										union(SELECT permissions FROM showplangroups, usersgroups, showitems where 
+										showplangroups.groupid = usersgroups.groupid and 
 										showplangroups.showplanid = showitems.showplanid and 
 										showitems.id = $itemID and 
-										groupmembers.userid = $userID and 
-										(showplangroups.permissions = 'o' OR showplangroups.permissions = 'rw')";
-				$checkShows = $db->getOne($show_query);
-			}
-			if($checkShows > 0) {
+										usersgroups.userid = $userID)) as Q1";
+			$checkShows = $db->getOne($show_query);
+			if(substr($checkShows,0,1) == "1") {
+				if(substr($checkShows,1,1) == "1") {
+					$this->assign('write', 't');
+				} else {
+					$this->assign('write', 'f');
+				}
 				$show_sql = "SELECT showplans.* FROM showplans, showitems where showitems.showplanid = showplans.id AND showitems.id = " . $itemID;
 				$show = $db->getRow($show_sql);
       	$show['niceAirDate'] = date("d/m/y",$show['showdate']);
@@ -53,9 +53,9 @@ class DPSShowPlanEditItemViewer extends Viewer {
 						$item['m'] = (String)((int)($item['length'] / 60));
 						$item['s'] = (String)($item['length'] - ($item['m'])*60);
 						$item['niceLength'] = ((int)($item['length'] / 60)) . ":" . ($item['length'] - (((int)($item['length'] / 60))*60));
-						if($item['audio'] != '') {
+						if($item['audioid'] != '') {
 							$sql = "select audio.title as title, audiotypes.name as type, audio.length_smpl as len from audio, audiotypes  where 
-										audio.type = audiotypes.id and audio.id = " . $item['audio'];
+										audio.type = audiotypes.id and audio.id = " . $item['audioid'];
 							$stuff = $db->getRow($sql);
 							$item['audioTitle'] = $stuff['title'];
 							$item['nature'] = $stuff['type'];
@@ -64,8 +64,8 @@ class DPSShowPlanEditItemViewer extends Viewer {
 						} else {
 							$item['nature'] = 'unknown';
 						}
-						if($item['script'] != '') {
-							$sql = "select name, length from scripts where id = " . $item['script'];
+						if($item['scriptid'] != '') {
+							$sql = "select name, length from scripts where id = " . $item['scriptid'];
 							$stuff = $db->getRow($sql);
 							$item['scriptName'] = $stuff['name'];
 							$item['sm'] = (String)((int)($stuff['length'] / 60));

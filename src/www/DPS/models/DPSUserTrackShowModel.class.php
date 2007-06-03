@@ -14,7 +14,7 @@ class DPSUserTrackShowModel extends Model {
     global $cfg;
     $db = Database::getInstance($cfg['DPS']['dsn']);
 		$where = "id = " . pg_escape_string($this->fieldData['itemID']);
-		$show['audio'] = pg_escape_string($this->fieldData['audioID']);
+		$show['audioid'] = pg_escape_string($this->fieldData['audioID']);
 		$db->update('showitems',$show,$where,true);
   }
 	

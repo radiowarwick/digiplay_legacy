@@ -8,8 +8,8 @@
 				{else}
 	      <img src="DPS/images/showUnfinished.png" alt="Unfinished">
 				{/if}
-				{templateLink id="82" text=$show.text _showID=$show.id}<br>
-	      <div class="showPlanInteract">{templateLink id=$VIEWER.templateID text="Delete Show" _formName="dpsUserDelShow" _moduleName="DPS" _showID=$show.id}&nbsp;&nbsp; {templateLink id="89" text="Edit Name and Time" _showID=$show.id}</div>
+				{templateLink id="55" text=$show.text _showID=$show.id}<br>
+	      <div class="showPlanInteract">{templateLink id=$VIEWER.templateID text="Delete Show" _formName="dpsUserDelShow" _moduleName="DPS" _showID=$show.id}&nbsp;&nbsp; {templateLink id="57" text="Edit Name and Time" _showID=$show.id}</div>
 				{/foreach}
 	     	<br>
 	      
@@ -17,8 +17,8 @@
 	      <div class="subTitle">You have {$VIEWER.dShowCount} old program(s)</div>
 				{foreach from=$VIEWER.doneShows item=show}
 	      <img src="DPS/images/showFinished.png" alt="Unfinished">
-				{templateLink id="82" text=$show.text _showID=$show.id}<br>
-	      <div class="showPlanInteract">{templateLink id=$VIEWER.templateID text="Delete Show" _formName="dpsUserDelShow" _moduleName="DPS" _showID=$show.id}&nbsp;&nbsp; {templateLink id="89" text="Edit Name and Time" _showID=$show.id}</div>
+				{templateLink id="55" text=$show.text _showID=$show.id}<br>
+	      <div class="showPlanInteract">{templateLink id=$VIEWER.templateID text="Delete Show" _formName="dpsUserDelShow" _moduleName="DPS" _showID=$show.id}&nbsp;&nbsp; {templateLink id="57" text="Edit Name and Time" _showID=$show.id}</div>
 				{/foreach}
 	    </div>
 	    <div class="showPlanHelp">

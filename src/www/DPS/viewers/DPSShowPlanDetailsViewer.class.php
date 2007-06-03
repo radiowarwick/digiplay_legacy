@@ -20,20 +20,25 @@ class DPSShowPlanDetailsViewer extends Viewer {
     $userID = $auth->getUserID();
     $date = time();
 		if(is_numeric($showID)) {
-			$show_query = "SELECT count(*) FROM showplanusers where 
-										showplanusers.userid = " . $userID . " AND
-										showplanusers.showplanid = " . $showID . " AND 
-										(showplanusers.permissions = 'o' OR showplanusers.permissions = 'rw')";
-    	$checkShows = $db->getOne($show_query);
-			if($checkShows == 0) {
-				$show_query = "SELECT count(*) FROM showplangroups, groupmembers where 
-										showplangroups.groupid = groupmembers.groupid and 
+			$show_query = "SELECT bit_or(permissions) FROM(SELECT showplanusers.permissions FROM showplanusers where 
+										showplanusers.showplanid =  $showID and  
+										showplanusers.userid = $userID 
+										UNION (SELECT showplangroups.permissions FROM showplangroups, usersgroups where 
+										showplangroups.groupid = usersgroups.groupid and 
 										showplangroups.showplanid = $showID  and 
-										groupmembers.userid =  $userID and 
-										(showplangroups.permissions = 'o' OR showplangroups.permissions = 'rw')";
-				$checkShows = $db->getOne($show_query);
-			}
-			if($checkShows > 0) {
+										usersgroups.userid =  $userID)) as Q1"; 
+			$checkShows = $db->getOne($show_query);
+			if(substr($checkShows,0,1) == "1") { //READ PERM
+				if(substr($checkShows,1,1) == "1") {
+					$this->assign('write','t');
+				} else {
+					$this->assign('write','f');
+				}
+				if(substr($checkShows,2,1) == "1") {
+					$this->assign('perms','t');
+				} else {
+					$this->assign('perms','f');
+				}
 				$show_sql = "SELECT * FROM showplans where id = " . $showID;
 				$show = $db->getRow($show_sql);
       	$show['D'] = date("j",$show['showdate']);

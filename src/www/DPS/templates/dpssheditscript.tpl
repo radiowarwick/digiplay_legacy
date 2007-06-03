@@ -3,10 +3,11 @@
 	{$VIEWER.error}
 {else}
 	<div class="showPlanList">
-	<div class="rightLinks">{templateLink id="93" text="<< Back to your scripts"}</div>
+	<div class="rightLinks">{templateLink id="44" text="<< Back to your scripts"}</div>
 		<div class="bigTitle">
 			{$VIEWER.script.name}
 		</div>
+		{if $VIEWER.write == 't'}
 		<b>New Details</b><br />
 		<form name="dpsUserEditScript" method="post" action="{$CONFIG.general.siteRoot}">
 		<input type="hidden" name="formName" value="dpsUserEditScript" />
@@ -26,10 +27,15 @@
 			{$ERRORS.dpsUserEditScript.secs}<br />
 		{/if}
 		Length (mm:ss): <input type=text name="mins" maxlength=2 size=2 value="{$VIEWER.script.m}" />:<input type=text name="secs" maxlength=2 size=2 value="{$VIEWER.script.s}" /><br />
-		<b>Producer: </b> {$VIEWER.script.niceProducer}<br />
+		Producer: {$VIEWER.script.niceProducer}<br />
 		<hr>
 		<textarea name="content" cols=70 rows=20>{$VIEWER.script.contents}</textarea><br />
 		<input type="Submit" name="Submit" value="Submit" />
+		{else}
+		Name: {$VIEWER.script.name}<br />
+		Length (mm:ss): {$VIEWER.script.m}:{$VIEWER.script.s}<br />
+		Producer: {$VIEWER.script.niceProducer}<br />
+		{/if}
 	</div>
 	<br style="&7b;clear:both;&7c;" />
 {/if}

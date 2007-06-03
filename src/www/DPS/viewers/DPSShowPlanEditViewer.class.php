@@ -2,7 +2,8 @@
 /**
  * @package FrontEnds
  * @subpackage MVC
- */
+  */
+//ToDo: Update line 53 so that it uses a view 
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 include_once($cfg['Auth']['dir']['root'] . '/AuthUtil.class.php');
 class DPSShowPlanEditViewer extends Viewer {
@@ -21,20 +22,20 @@ class DPSShowPlanEditViewer extends Viewer {
     $date = time();
 		if(is_numeric($showID)) {
 			
-			$show_query = "SELECT count(*) FROM showplanusers where 
-										showplanusers.userid = " . $userID . " AND
-										showplanusers.showplanid = " . $showID . " AND 
-										(showplanusers.permissions = 'o' OR showplanusers.permissions = 'rw')";
-    	$checkShows = $db->getOne($show_query);
-			if($checkShows == 0) {
-				$show_query = "SELECT count(*) FROM showplangroups, groupmembers where 
-										showplangroups.groupid = groupmembers.groupid and 
+			$show_query = "select bit_or(permissions) from (SELECT permissions FROM showplanusers where 
+										showplanusers.userid = $userID AND 
+										showplanusers.showplanid =  $showID 
+				UNION( SELECT permissions FROM showplangroups, usersgroups where 
+										showplangroups.groupid = usersgroups.groupid and 
 										showplangroups.showplanid = $showID  and 
-										groupmembers.userid =  $userID and 
-										(showplangroups.permissions = 'o' OR showplangroups.permissions = 'rw')";
-				$checkShows = $db->getOne($show_query);
-			}
-			if($checkShows > 0) {
+										usersgroups.userid =  $userID)) as Q1";
+			$checkShows = $db->getOne($show_query);
+			if(substr($checkShows,0,1) == "1") {
+				if(substr($checkShows,1,1) == "1") {
+					$this->assign('write', 't');
+				} else {
+					$this->assign('write', 'f');
+				}
 				$show_sql = "SELECT * FROM showplans where id = " . $showID;
 				$show = $db->getRow($show_sql);
       	$show['niceAirDate'] = date("d/m/y",$show['showdate']);
@@ -49,19 +50,23 @@ class DPSShowPlanEditViewer extends Viewer {
 					$item['niceTime'] = date("H:i:s",$item['time']);
 					$item['niceLength'] = ((int)($item['length'] / 60)) . ":" . ($item['length'] - (((int)($item['length'] / 60))*60));
 					$time = $time + $item['length'];
-					if($item['audio'] != '') {
+					if($item['audioid'] != '') {
 						$sql = "select audio.title as title, audiotypes.name as type from audio, audiotypes  where 
-										audio.type = audiotypes.id and audio.id = " . $item['audio'];
+										audio.type = audiotypes.id and audio.id = " . $item['audioid'];
 						$stuff = $db->getRow($sql);
 						$item['audioTitle'] = $stuff['title'];
 						$item['nature'] = $stuff['type'];
 					} else {
 						$item['nature'] = 'unknown';
 					}
+					if($item['scriptid'] != '') {
+						$sql = "select name from scripts where id = " . $item['scriptid'];
+						$item['scriptName'] = $db->getOne($sql);
+					}
 				}
 				$time = $time - $show['showdate'];
 				$show['niceLength'] = (int)($time / 60) . "mins " . ($time - ((int)($time / 60)*60)) . "s";
-				$show['niceProducer'] = AuthUtil::getUsername($show['creator']);
+				$show['niceProducer'] = AuthUtil::getUsername($show['userid']);
 				if($show['showdate'] > $date) {
 					$this->assign('done', 'f');
 				} else {

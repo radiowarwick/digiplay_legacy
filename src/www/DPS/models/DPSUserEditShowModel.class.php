@@ -14,7 +14,7 @@ class DPSUserEditShowModel extends Model {
     global $cfg;
     $db = Database::getInstance($cfg['DPS']['dsn']);
 		$where = "id = " . pg_escape_string($this->fieldData['showID']);
-		$show['name'] = pg_escape_string($this->fieldData['name']);
+		$show['name'] = $this->fieldData['name'];
 		$show['showdate'] = mktime($this->fieldData['hours'],$this->fieldData['mins'],0,$this->fieldData['month'],$this->fieldData['day'],$this->fieldData['year']);
 		$db->update('showplans',$show,$where,true);
   }

@@ -468,10 +468,10 @@ public static function getDetailedUserrealmAccess($realmPath, $user){
 			return $cache[$realmid . '_' . $uid];
 		}
 		
-		$sql = "SELECT allow FROM realmgrouplink, groupmembers WHERE
-		        realmgrouplink.groupid = groupmembers.groupid AND
+		$sql = "SELECT allow FROM realmgrouplink, usersgroups WHERE
+		        realmgrouplink.groupid = usergroups.groupid AND
 		        realmgrouplink.realmid = '$realmid' AND
-		        groupmembers.userid = '{$uid}'";
+		        usersgroups.userid = '{$uid}'";
 		$db = Database::getInstance($cfg['Auth']['dsn']);
 		$allow = $db->getColumn($sql);
 		
@@ -528,7 +528,7 @@ public static function getDetailedUserrealmAccess($realmPath, $user){
 		static $groups = array();
 		if(!isset($groups[$user])){
 			$userid = eval("return " . $cfg['Auth']['authUtilClassModule'] . "::getUserID($user);");
-			$sql = "SELECT groupid FROM groupmembers WHERE userid = {$userid}";
+			$sql = "SELECT groupid FROM usersgroups WHERE userid = {$userid}";
 			//echo $sql;
 			$db = Database::getInstance();
 			$groups[$user] = $db->getColumn($sql);
@@ -613,15 +613,15 @@ public static function getDetailedUserrealmAccess($realmPath, $user){
 		$where = "userid = '$userid' AND groupid = '$groupid'";
 		
 		if($add){
-			$csql = "SELECT COUNT(*) FROM groupmembers WHERE $where";
+			$csql = "SELECT COUNT(*) FROM usersgroups WHERE $where";
 			$count = $db->getOne($csql);
 			if($count == 0){
 				$inserts['userid'] = $userid;
 				$inserts['groupid'] = $groupid;
-				$db->insert('groupmembers', $inserts);
+				$db->insert('usersgroups', $inserts);
 			}
 		}else{
-			$db->delete('groupmembers', $where);
+			$db->delete('usergroups', $where);
 		}
 	}
 	

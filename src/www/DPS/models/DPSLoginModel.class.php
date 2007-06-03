@@ -13,22 +13,36 @@ class DPSLoginModel extends Model {
     $db = Database::getInstance($cfg['Auth']['dsn']);
     $auth = Auth::getInstance();
     $userID = $auth->getUserID();
-    $sql = "SELECT usersconfigs.val, usersconfigs.id from configs, usersconfigs where configs.id = usersconfigs.configoption and configs.name = 'user_curlogin' and usersconfigs.userid = " . $userID;
+		$userName = $auth->getUser();
+    $sql = "SELECT usersconfigs.val, usersconfigs.id from configs, usersconfigs where configs.id = usersconfigs.configid and configs.name = 'user_curlogin' and usersconfigs.userid = " . $userID;
     $usercurlogin = $db->getRow($sql);
-    $sql = "SELECT usersconfigs.val, usersconfigs.id from configs, usersconfigs where configs.id = usersconfigs.configoption and configs.name = 'user_lastlogin' and usersconfigs.userid = " . $userID;
+    $sql = "SELECT usersconfigs.val, usersconfigs.id from configs, usersconfigs where configs.id = usersconfigs.configid and configs.name = 'user_lastlogin' and usersconfigs.userid = " . $userID;
     $userlastlogin = $db->getRow($sql);
-
+		
+    $sql = "select id from dir where parent = " . $cfg['DPS']['userDirectoryID'] . " AND name = '" . $userName . "'";
+    $dirID = $db->getOne($sql);
+		if($dirID == '') {
+			$newdir['name'] = $userName;
+			$newdir['parent'] = $cfg['DPS']['userDirectoryID'];
+			$newdir['id'] = '#id#';
+			$newdir['notes'] = $userName . "'s home directory";
+			$dirID = $db->insert('dir',$newdir,true);
+			$newperm['dirid'] = $dirID;
+			$newperm['userid'] = $userID;
+			$newperm['permissions'] = 'B11000000B'; //read write
+			$db->insert('dirusers',$newperm,false); //for binary insert
+		}
     if(is_null($userlastlogin) && !is_null($usercurlogin)){
       $cartset = array();
       $sql = "SELECT id from configs where configs.name = 'user_lastlogin'";
-      $cartset['configoption'] = $db->getOne($sql);
+      $cartset['configid'] = $db->getOne($sql);
       $cartset['val'] = $usercurlogin['val'];
       $cartset['userid'] = $userID;
       $db->insert('usersconfigs', $cartset, true);
     }elseif(is_null($userlastlogin) && is_null($usercurlogin)){
       $cartset = array();
       $sql = "SELECT id from configs where configs.name = 'user_lastlogin'";
-      $cartset['configoption'] = $db->getOne($sql);
+      $cartset['configid'] = $db->getOne($sql);
       $cartset['val'] = time();
       $cartset['userid'] = $userID;
       $db->insert('usersconfigs', $cartset, true);
@@ -47,7 +61,7 @@ class DPSLoginModel extends Model {
     if(is_null($usercurlogin)){
       $cartset = array();
       $sql = "SELECT id from configs where configs.name = 'user_curlogin'";
-      $cartset['configoption'] = $db->getOne($sql);
+      $cartset['configid'] = $db->getOne($sql);
       $cartset['val'] = time();
       $cartset['userid'] = $userID;
       $db->insert('usersconfigs', $cartset, true);

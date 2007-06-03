@@ -26,14 +26,19 @@ class DPSUserShowEditValidator extends ValidatorRule {
     $auth = Auth::getInstance();
     $userID = $auth->getUserID();
 
-    $sql = "select count(*) from showplanusers where userid = $userID AND showplanid = $showID AND (permissions = 'o' OR permissions = 'rw' OR permissions = 'w')";
+    $sql = "select count(*) from showplanusers where 
+						userid = $userID AND 
+						showplanid = $showID AND 
+						permissions & B'" . $cfg['DPS']['fileW'] . "' = '" . $cfg['DPS']['fileW'] . "'";
     $check = $db->getOne($sql);
     if($check > 0) {
       $flag = true;
     } else {
-      $sql = "select count(*) from showplangroups, groupmembers where showplangroups.groupid = groupmembers.groupid
-	      AND groupmembers.userid = $userID AND showplangroups.showplanid = $showID 
-	      AND (showplangroups.permissions = 'o' OR showplangroups.permissions = 'w' OR showplangroups.permissions = 'rw')";
+      $sql = "select count(*) from showplangroups, usersgroups where 
+							showplangroups.groupid = usersgroups.groupid AND 
+							usersgroups.userid = $userID AND 
+							showplangroups.showplanid = $showID AND 
+							showplangroups.permissions & B'" . $cfg['DPS']['fileW'] . "' = '" . $cfg['DPS']['fileW'] . "'";
       $check = $db->getOne($sql);
       if($check > 0) {
 	$flag = true;

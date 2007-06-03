@@ -40,10 +40,10 @@ class DPSHomeViewer extends Viewer {
     $sueLength = $days . "days " . $hours . "h " . $mins . "m";
 
     //Sue playing now/next
-    $query = "SELECT audio.title AS title, audio.id AS id FROM sustschedule, audio WHERE sustschedule.audio = audio.id order by sustschedule.id asc limit 2";
+    $query = "SELECT audio.title AS title, audio.id AS id FROM sustschedule, audio WHERE sustschedule.audioid = audio.id order by sustschedule.id asc limit 2";
     $suePlaying = $db->getAll($query);
     foreach($suePlaying as $key => &$track) {
-      $sql = "SELECT DISTINCT artists.name as name FROM artists, audioartists WHERE audioartists.audio = " . $track['id'] . " AND audioartists.artist = artists.id";
+      $sql = "SELECT DISTINCT artists.name as name FROM artists, audioartists WHERE audioartists.audioid = " . $track['id'] . " AND audioartists.artistid = artists.id";
       $artists = $db->getAll($sql);
       foreach($artists as $artist) {
 	$track['artist'] = $track['artist'] . $artist['name'] . " & ";
@@ -79,7 +79,7 @@ class DPSHomeViewer extends Viewer {
     
     $auth = Auth::getInstance();
     $userID = $auth->getUserID();
-    $sql = "SELECT usersconfigs.val from configs, usersconfigs where configs.id = usersconfigs.configoption and configs.name = 'user_lastlogin' and usersconfigs.userid = " . $userID;
+    $sql = "SELECT usersconfigs.val from configs, usersconfigs where configs.id = usersconfigs.configid and configs.name = 'user_lastlogin' and usersconfigs.userid = " . $userID;
     $userlogin = $db->getOne($sql);
     if(is_null($userlogin)) {
       $userLastLog = "Not available";

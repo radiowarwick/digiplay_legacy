@@ -15,45 +15,68 @@ class DPSUserFileViewer extends Viewer {
     parent::setupTemplate();
 		$auth = Auth::getInstance();
     $userID = $auth->getUserID();
-		$treeInfo = $this->treeSetup(0,$userID);
+		$treeInfo = $this->singleTreeSetup(0,$userID);
 		$treeInfo = '<tree id=\"0\">' . str_replace('"','\"',$treeInfo) . '</tree>';
 		$this->assign('activeNode', $this->activeNode);
     $this->assign('treeData', $treeInfo);
 		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
-  }
+	}
 
-function treeSetup($dirID,$userid) {
+function singleTreeSetup($dirID,$userid) {
   	global $cfg;
 		$db = Database::getInstance($cfg['DPS']['dsn']);
-    $sql = "SELECT dir.id, dir.parent, dir.name, dir.notes 
+    $sql = "SELECT min(id) as id, min(parent) as parent, min(name) as name, min(notes) as notes, bit_or(permissions) as permissions FROM 
+						(SELECT min(dir.id) as id, min(dir.parent) as parent, min(dir.name) as name, min(dir.notes) as notes, bit_or(dirusers.permissions) as permissions 
 						FROM dir, users, dirusers 
 						WHERE 
     					dir.id = dirusers.directory AND 
-							(dirusers.permissions = 'r' OR 
-								dirusers.permissions = 'w' OR 
-								dirusers.permissions = 'rw' OR 
-								dirusers.permissions = 'o') AND 
+							dirusers.permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "' AND 
 							dirusers.userid = $userid AND 
 							dir.parent = " . pg_escape_string($dirID) . " 
-						UNION (SELECT dir.id, dir.parent, dir.name, dir.notes 
+						GROUP BY dir.id 
+						UNION (SELECT min(dir.id) as id, min(dir.parent) as parent, min(dir.name) as name, min(dir.notes) as notes, bit_or(dirgroups.permissions) as permissions 
 						FROM dir, dirgroups, groups, groupmembers, users 
 						WHERE
             	dir.id = dirgroups.directory AND 
-							(dirgroups.permissions= 'r' OR 
-								dirgroups.permissions = 'w' OR 
-								dirgroups.permissions = 'rw' OR 
-								dirgroups.permissions = 'o') AND 
+							dirgroups.permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "' AND 
 							dirgroups.groupid = groups.id AND
             	groups.id = groupmembers.groupid AND 
 							groupmembers.userid = $userid AND 
-							dir.parent = " . pg_escape_string($dirID) . ") 
+							dir.parent = " . pg_escape_string($dirID) . "
+						GROUP BY dir.id)) as Q1
+						GROUP BY Q1.id 
 						ORDER BY name asc";
     $users = $db->getAll($sql);
 
    	foreach($users as $user) {
      	if($user != false) {
-				$list = $list . '<item text="' . htmlspecialchars($user['name']) . '" id="dir' . $user['id'] . '" im0="folderClosed.gif">';
-      	$list = $list . $this->treeSetup($user['id'],$userid);
+    		$sql = "SELECT count(*) as childCount FROM 
+						(SELECT min(dir.id) as id 
+						FROM dir, users, dirusers 
+						WHERE 
+    					dir.id = dirusers.directory AND 
+							dirusers.permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "' AND 
+							dirusers.userid = $userid AND 
+							dir.parent = " . pg_escape_string($user['id']) . " 
+						GROUP BY dir.id 
+						UNION (SELECT min(dir.id) as id 
+						FROM dir, dirgroups, groups, groupmembers, users 
+						WHERE
+            	dir.id = dirgroups.directory AND 
+							dirgroups.permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "' AND 
+							dirgroups.groupid = groups.id AND
+            	groups.id = groupmembers.groupid AND 
+							groupmembers.userid = $userid AND 
+							dir.parent = " . pg_escape_string($user['id']) . "
+						GROUP BY dir.id)) as Q1";
+    		$childCount = $db->getOne($sql);
+				if($childCount > 0) {
+					$list = $list . '<item text="' . htmlspecialchars($user['name']) . '" id="dir' . $user['id'] . '" im0="folderClosed.gif" child="1" >';
+				} else {
+					$list = $list . '<item text="' . htmlspecialchars($user['name']) . '" id="dir' . $user['id'] . '" im0="folderClosed.gif" child="0" >';
+				}
+				$list = $list . '<userdata name="perm">' . $user['permissions'] . '</userdata>';
+      	//$list = $list . $this->treeSetup($user['id'],$userid);
 				$list = $list . '</item>';
 			}
     }
@@ -65,7 +88,7 @@ function treeSetup($dirID,$userid) {
 						WHERE audio.id = audiodir.audio AND 
 							directory = " . pg_escape_string($dirID) . " AND
 							audio.id = audiogroups.audio AND 
-							(audiogroups.permissions = 'o' OR audiogroups.permissions = 'r' OR audiogroups.permissions = 'rw') AND 
+							audiogroups.permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "' AND 
 							audiogroups.groupid = groupmembers.groupid AND 
 							groupmembers.userid = $userid AND 
 				    	audio.type = audiotypes.id AND (audiotypes.name = 'jingle')
@@ -74,7 +97,7 @@ function treeSetup($dirID,$userid) {
 							WHERE audio.id = audiodir.audio AND 
 								directory = " . pg_escape_string($dirID) . " AND
 								audio.id = audiousers.audio AND 
-								(audiousers.permissions = 'o' OR audiousers.permissions = 'r' OR audiousers.permissions = 'rw') AND 
+								audiousers.permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "' AND 
 								audiousers.userid = $userid AND 
 				    		audio.type = audiotypes.id AND (audiotypes.name = 'jingle')
 				    order by title asc";
@@ -90,7 +113,7 @@ function treeSetup($dirID,$userid) {
 						WHERE audio.id = audiodir.audio AND 
 							directory = " . pg_escape_string($dirID) . " AND
 							audio.id = audiogroups.audio AND 
-							(audiogroups.permissions = 'o' OR audiogroups.permissions = 'r' OR audiogroups.permissions = 'rw') AND 
+							audiogroups.permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "' AND 
 							audiogroups.groupid = groupmembers.groupid AND 
 							groupmembers.userid = $userid AND 
 				    	audio.type = audiotypes.id AND (audiotypes.name = 'advert')
@@ -99,7 +122,7 @@ function treeSetup($dirID,$userid) {
 							WHERE audio.id = audiodir.audio AND 
 								directory = " . pg_escape_string($dirID) . " AND
 								audio.id = audiousers.audio AND 
-								(audiousers.permissions = 'o' OR audiousers.permissions = 'r' OR audiousers.permissions = 'rw') AND 
+								audiousers.permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "' AND 
 								audiousers.userid = $userid AND 
 				    		audio.type = audiotypes.id AND (audiotypes.name = 'advert')
 				    order by title asc";
@@ -116,9 +139,7 @@ function treeSetup($dirID,$userid) {
 								cartsetsdir.cartsetid = cartsets.id AND 
 								cartsetsusers.cartsetid = cartsets.id AND 
 								cartsetsusers.userid = $userid AND 
-								(cartsetsusers.permissions = 'o' OR 
-									cartsetsusers.permissions = 'r' OR 
-									cartsetsusers.permissions = 'rw') 
+								cartsetsusers.permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "'  
 						UNION (SELECT cartsetsdir.dir as dir, cartsets.name as title, cartsets.id as cartset 
 							FROM cartsets, cartsetsdir, cartsetsgroups, groupmembers 
 							WHERE cartsetsdir.dir = " . pg_escape_string($dirID) . " AND 
@@ -126,9 +147,7 @@ function treeSetup($dirID,$userid) {
 								cartsetsgroups.cartsetid = cartsets.id AND 
 								cartsetsgroups.groupid = groupmembers.groupid AND 
 								groupmembers.userid = $userid AND 
-								(cartsetsgroups.permissions = 'o' OR 
-									cartsetsgroups.permissions = 'r' OR 
-									cartsetsgroups.permissions = 'rw')) 
+								cartsetsgroups.permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "') 
 						order by title asc";
 		$files = $db->getAll($sql);
 		foreach($files as $file) {
@@ -143,7 +162,7 @@ function treeSetup($dirID,$userid) {
 								scriptsdir.scriptid = scripts.id AND 
 								scriptusers.scriptid = scripts.id AND 
 								scriptusers.userid = $userid AND 
-								(scriptusers.permissions = 'o' OR scriptusers.permissions = 'r' OR scriptusers.permissions = 'rw') 
+								scriptusers.permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "'  
 						UNION (SELECT scriptsdir.dir as dir, scripts.name as title, scripts.id as script 
 							FROM scripts, scriptsdir, scriptgroups, groupmembers 
 							WHERE scriptsdir.dir = " . pg_escape_string($dirID) . " AND 
@@ -151,7 +170,7 @@ function treeSetup($dirID,$userid) {
 								scriptgroups.scriptid = scripts.id AND 
 								scriptgroups.groupid = groupmembers.groupid AND 
 								groupmembers.userid = $userid AND 
-								(scriptgroups.permissions = 'o' OR scriptgroups.permissions = 'r' OR scriptgroups.permissions = 'rw')) 
+								scriptgroups.permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "') 
 						order by title asc";
 		$files = $db->getAll($sql);
 		foreach($files as $file) {

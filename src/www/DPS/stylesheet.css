@@ -1418,20 +1418,20 @@ div.fileError {
 }
 
 div.folderBar {
-	visibility:	hidden;
-	height:	1px;
+	display:	none;
+	height:	32px;
 	font-size:	0px;
 	overflow:	hidden;
 }
 
 div.jingleBar {
-	visibility:	hidden;
-	height:	0px;
+	display:	none;
+	height:	32px;
 	overflow:	hidden;
 }
 div.cartsetBar {
-	visibility:	hidden;
-	height:	0px;
+	display:	block;
+	height:	32px;
 	overflow:	hidden;
 }
 div.filebrowser {

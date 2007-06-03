@@ -27,7 +27,7 @@
       <input type="hidden" name="formName" value="dpsloginForm" />
       <input type="hidden" name="moduleName" value="DPS" />
       
-      <div class="login_passwordError">{$ERRORS.authPassword}</div>
+      <div class="login_passwordError">DO NOT USE THIS SITE{$ERRORS.authPassword}</div>
       Username: <input type="text" name="authUser" id="authUser" value="{$DATA.authUser}"/><br>
       Password: <input type="password" name="authPassword" id="authPassword"/><br>
       <input type="submit" value="Login" name="Submit"/>

@@ -85,7 +85,6 @@ class Session {
 	 */
 	private function __construct(){
 		$this->cookie = $_COOKIE;
-		BasicLogger::logMessage('session constructor called ' . print_r($_COOKIE,true), self::module, 'debug');
 		if(!isset($_SERVER['HTTP_USER_AGENT']) || !isset($_SERVER['REMOTE_ADDR'])){
 			throw new LoggedException('The values $_SERVER[\'HTTP_USER_AGENT\'] and/or $_SERVER[\'REMOTE_ADDR\'] were not set', 0, self::module, 'error');
 		}
@@ -94,15 +93,14 @@ class Session {
 		if(!$this->exists()){
 			$this->sessionIsNew = true;
 			$this->sessionID = $this->create();
-			BasicLogger::logMessage('session created with id ' . $this->sessionID, self::module, 'debug');
 		}else{
 			if($this->isValid()){
 				$this->sessionID = $this->cookie['key1'];
-				$this->update();
-				BasicLogger::logMessage("session {$this->sessionID} updated", self::module, 'debug');
+				if($cfg['Session']['keypersession'] == 't') {
+					$this->update();
+				}
 			}else{
 				$this->destroy();
-				BasicLogger::logMessage("session {$this->sessionID} destroyed", self::module, 'debug');
 				$this->sessionIsNew = true;
 				$this->sessionID = $this->create();
 			}
@@ -127,16 +125,12 @@ class Session {
 		//remember to do ip check also
 		$correctHash = $this->getHash($dbsession['sessionid'], $dbsession['useragent'], $dbsession['rndidentifier']);
 		if($dbsession['useragent'] != $this->useragent){
-			BasicLogger::logMessage("Session failed on user agent", self::module, 'debug');
 			$valid = false;
 		}elseif($dbsession['rndidentifier'] != $this->cookie['key3']){
-			BasicLogger::logMessage("Session failed on rndidentifier", self::module, 'debug');
 			$valid = false;
 		}elseif($correctHash != $this->cookie['key2']){
-			BasicLogger::logMessage("Session failed on hash", self::module, 'debug');
 			$valid = false;
 		}elseif(!$this->checkIP($dbsession['ip'], $this->ip)){
-			BasicLogger::logMessage("Session failed on IP check", self::module, 'debug');
 			$valid = false;
 		}
 		return $valid;
@@ -216,7 +210,6 @@ class Session {
 	 * @return boolean True if session has been passed in cookie data, false if not.
 	 */
 	private function exists(){
-	      BasicLogger::logMessage("Session key 1:{$this->cookie['key1']}, Session key 2{$this->cookie['key2']}", self::module, 'debug');
 		return isset($this->cookie['key1']) && isset($this->cookie['key2']);
 	}
 	
@@ -250,7 +243,6 @@ class Session {
 	 */
 	private function create(){
 		global $cfg;
-		BasicLogger::logMessage("Creating session values", self::module, 'debug');	
 		//Insert into DB
 		$db = Database::getInstance($cfg['Session']['dsn']);
 		$rndidentifier = $this->getRandomString();
@@ -291,7 +283,6 @@ class Session {
 			}
 		}
 
-		BasicLogger::logMessage("Cookie being destroyed." . $thing, self::module, 'debug');;
 		setcookie('key1', false);
 		setcookie('key2', false);
 		setcookie('key3', false);
@@ -332,7 +323,6 @@ class Session {
 		global $cfg;
 		$db = Database::getInstance($cfg['Session']['dsn']);
 		$this->removeValue($key);
-		BasicLogger::logMessage("Settinig session value, details: sessionid={$this->sessionID}, skey=$key, value=$value", self::module, 'debug');
 		//Phil change for pgsql changed from ''valueid' => '#id''
 		//also added settype to force the quotes (this stops binary stuff from woring)
 		settype($value,"string");

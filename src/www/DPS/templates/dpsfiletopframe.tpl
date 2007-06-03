@@ -5,6 +5,7 @@
 		<link rel="STYLESHEET" type="text/css" href="DPS/scripts/dhtmlxTree/css/dhtmlXTree.css">
 		<script src="DPS/scripts/dhtmlxTree/js/dhtmlXCommon.js"></script>
 		<script src="DPS/scripts/dhtmlxTree/js/dhtmlXTree.js"></script>	
+		<script src="DPS/scripts/dpsfile.js"></script>
 		{literal}
 		<script language="javascript" type="text/javascript">
 			var tree;
@@ -38,6 +39,8 @@
 
 			function loadTree(){
 				tree=new dhtmlXTreeObject(document.getElementById('toc_tree'),"100%","100%",0);
+				//tree.setXMLAutoLoading("{/literal}{$CONFIG.general.siteRoot}{literal}?templateID=102");
+				tree.setXMLAutoLoading("https://www.radio.warwick.ac.uk/dps-dev/index.php?templateID=102");
 				tree.setImagePath("DPS/scripts/dhtmlxTree/imgs/");
 				tree.setOnClickHandler(doOnClick);
 				tree.enableTreeLines(false);
@@ -122,14 +125,10 @@
 				}
 				val = id;
 				if((String(id).substring(0,3)) == "jgl") {
-					document.cartsetLayer.style.height = "1px";	
-					document.cartsetLayer.style.visibility = "hidden";
-					document.folderLayer.style.height = "1px";
-					document.folderLayer.style.visibility = "hidden";
-					document.scriptLayer.style.height = "1px";
-					document.scriptLayer.style.visibility = "hidden";
-					document.jingleLayer.style.height = "32px";
-					document.jingleLayer.style.visibility = "visible";
+					document.folderLayer.style.display = "none";
+					document.cartsetLayer.style.display = "none";
+					document.scriptLayer.style.display = "none";
+					document.jingleLayer.style.display = "block";
 					//Link to jingle editing
 					document.getElementById('jingleEdit').href = "{/literal}{$CONFIG.general.siteRoot}{literal}?templateID=87&trackID=" + String(id).substring(3,String(id).length);
 					//Delete Jingle Model
@@ -137,44 +136,36 @@
 					//Open Move window
 					//javascript:moveAudio();
 				} else if ((String(id).substring(0,3)) == "dir") {
-					document.cartsetLayer.style.height = "1px";
-					document.cartsetLayer.style.visibility = "hidden";
-					document.jingleLayer.style.height = "1px";
-					document.jingleLayer.style.visibility = "hidden";
-					document.scriptLayer.style.height = "1px";
-					document.scriptLayer.style.visibility = "hidden";
-					document.folderLayer.style.height = "32px";
-					document.folderLayer.style.visibility = "visible";
+					document.folderLayer.style.display = "block";
+					document.cartsetLayer.style.display = "none";
+					document.scriptLayer.style.display = "none";
+					document.jingleLayer.style.display = "none";
+					nodePerm = tree.getUserData(id,"perm");
+					if (tree.getParentId(id) == 0) {
+						pNodePerm = "00000000";
+					} else {
+						pNodePerm = tree.getUserData(tree.getParentId(id),"perm");
+					}
+
+					doDir(nodePerm,pNodePerm);
 					document.getElementById('dirrtext').value = tree.getItemText(id);
-					//Create a sub directory
-					document.getElementById('dirCreate').href = "{/literal}{$CONFIG.general.siteRoot}{literal}?templateID=86&formName=dpsdiradd&moduleName=DPS&rootdir=" + String(val).substring(3,String(val).length) + "&dirtext=New Folder";
-					//Rename a directory
 					document.getElementById('dirRename').href = "{/literal}{$CONFIG.general.siteRoot}{literal}?templateID=86&formName=dpsdirrename&moduleName=DPS&rootdir=" + String(val).substring(3,String(val).length);
-					//Delete a directory
 					document.getElementById('dirDel').href = "{/literal}{$CONFIG.general.siteRoot}{literal}?templateID=86&formName=dpsdirdel&moduleName=DPS&rootdir=" + String(val).substring(3,String(val).length);
 				} else if ((String(id).substring(0,3)) == "crt") {
-					document.folderLayer.style.height = "1px";
-					document.folderLayer.style.visibility = "hidden";
-					document.jingleLayer.style.height = "1px";
-					document.jingleLayer.style.visibility = "hidden";
-					document.scriptLayer.style.height = "1px";
-					document.scriptLayer.style.visibility = "hidden";
-					document.cartsetLayer.style.height = "32px";
-					document.cartsetLayer.style.visibility = "visible";
+					document.folderLayer.style.display = "none";
+					document.cartsetLayer.style.display = "none";
+					document.scriptLayer.style.display = "block";
+					document.jingleLayer.style.display = "none";
 					//edit a cartset
 					document.getElementById('cartsetEdit').href = "{/literal}{$CONFIG.general.siteRoot}{literal}?templateID=68&cartset=" + String(id).substring(3,String(id).length);
 					//delete a cartset
 					document.getElementById('cartsetDel').href = "{/literal}{$CONFIG.general.siteRoot}{literal}?templateID=86&formName=dpsUserCartsetDelForm&moduleName=DPS&cartset=" + String(val).substring(3,String(val).length);
 					//move a cartset
 				} else if ((String(id).substring(0,3)) == "scr") {
-					document.cartsetLayer.style.height = "1px";
-					document.cartsetLayer.style.visibility = "hidden";
-					document.folderLayer.style.height = "1px";
-					document.folderLayer.style.visibility = "hidden";
-					document.jingleLayer.style.height = "1px";
-					document.jingleLayer.style.visibility = "hidden";
-					document.scriptLayer.style.height = "32px";
-					document.scriptLayer.style.visibility = "visible";
+					document.folderLayer.style.display = "none";
+					document.cartsetLayer.style.display = "none";
+					document.scriptLayer.style.display = "block";
+					document.jingleLayer.style.display = "none";
 					//Edit link
 					document.getElementById('scriptEdit').href = "{/literal}{$CONFIG.general.siteRoot}{literal}?templateID=94&scriptID=" + String(id).substring(3,String(id).length);
 					//Delete Script Model

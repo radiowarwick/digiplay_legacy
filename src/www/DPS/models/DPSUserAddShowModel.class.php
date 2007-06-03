@@ -22,25 +22,27 @@ class DPSUserAddShowModel extends Model {
 			$newdir['name'] = $userName;
 			$newdir['parent'] = $cfg['DPS']['userDirectoryID'];
 			$newdir['id'] = '#id#';
+			$newdir['notes'] = $userName . "'s home directory";
 			$dirID = $db->insert('dir',$newdir,true);
-			$newperm['directory'] = $dirID;
+			$newperm['dirid'] = $dirID;
 			$newperm['userid'] = $userID;
-			$newperm['permissions'] = 'o';
-			$db->insert('dirusers',$newperm,true);
+			$newperm['permissions'] = 'B11000000B'; //write+read binary
+			$db->insert('dirusers',$newperm,false); //for binary
 		}
 		
 		$newshow['name'] = "New Show";
-		$newshow['creator'] = $userID;
+		$newshow['userid'] = $userID;
 		$newshow['creationdate'] = time();
 		$newshow['showdate'] = time() + 604800;
+		$newshow['completed'] = 'f';
 		$newshow['id'] = '#id#';
 		$showID = $db->insert('showplans',$newshow,true);
 		$newsperm['showplanid'] = $showID;
 		$newsperm['userid'] = $userID;
-		$newsperm['permissions'] = 'o';
-		$db->insert('showplanusers',$newsperm,true);
+		$newsperm['permissions'] = 'B11100000B';
+		$db->insert('showplanusers',$newsperm,false); //for binary
 		$showdir['showplanid'] = $showID;
-		$showdir['dir'] = $dirID;
+		$showdir['dirid'] = $dirID;
 		$showdir['linktype'] = 0;
 		$db->insert('showplandir',$showdir,true);
   }

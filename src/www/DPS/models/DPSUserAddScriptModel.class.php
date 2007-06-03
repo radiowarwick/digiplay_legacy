@@ -22,25 +22,26 @@ class DPSUserAddScriptModel extends Model {
 			$newdir['name'] = $userName;
 			$newdir['parent'] = $cfg['DPS']['userDirectoryID'];
 			$newdir['id'] = '#id#';
+			$newdir['notes'] = $userName . "'s home directory";
 			$dirID = $db->insert('dir',$newdir,true);
-			$newperm['directory'] = $dirID;
+			$newperm['dirid'] = $dirID;
 			$newperm['userid'] = $userID;
-			$newperm['permissions'] = 'o';
-			$db->insert('dirusers',$newperm,true);
+			$newperm['permissions'] = 'B11000000B'; //read write
+			$db->insert('dirusers',$newperm,false); //for binary insert
 		}
 		
 		$newscript['name'] = "New Script";
-		$newscript['creator'] = $userID;
+		$newscript['userid'] = $userID;
 		$newscript['creationdate'] = time();
 		$newscript['id'] = '#id#';
 		$newscript['length'] = 0;
 		$scriptID = $db->insert('scripts',$newscript,true);
 		$newsperm['scriptid'] = $scriptID;
 		$newsperm['userid'] = $userID;
-		$newsperm['permissions'] = 'o';
-		$db->insert('scriptusers',$newsperm,true);
+		$newsperm['permissions'] = 'B11100000B'; //own
+		$db->insert('scriptsusers',$newsperm,false); //for binary insert
 		$scriptdir['scriptid'] = $scriptID;
-		$scriptdir['dir'] = $dirID;
+		$scriptdir['dirid'] = $dirID;
 		$scriptdir['linktype'] = 0;
 		$db->insert('scriptsdir',$scriptdir,true);
   }

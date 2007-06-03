@@ -26,20 +26,17 @@ class DPSUserDirDelValidator extends ValidatorRule {
     $auth = Auth::getInstance();
     $userID = pg_escape_string($auth->getUserID());
 
-		$sql = "select count(*) from dirusers where userid = " . $userID . " and directory = " . $dirID . " 
-						and (permissions = 'o' or permissions = 'rw' or permissions = 'w')";
+		$sql = "select sum(num) from (select count(*) as num from dirusers where userid = " . $userID . " and directory = " . $dirID . " 
+						and permissions & B'00100000' = '00100000') UNION (select count(*) as num from dirgroups, groupmembers where groupmembers.userid = " . $userID . " and  
+						groupmembers.groupid = dirgroups.groupid and directory = " . $dirID . " 
+						and dirgroups.permissions & B'00100000' = '00100000') as Q1";
     $check = $db->getOne($sql);
     if($check > 0) {
       $flag = true;
     } else {
-			$sql = "select count(*) from dirgroups, groupmembers where groupmembers.userid = " . $userID . " and  
-						groupmembers.groupid = dirgroups.groupid and directory = " . $dirID . " 
-						and (dirgroups.permissions = 'o' or dirgroups.permissions = 'rw' or dirgroups.permissions = 'w')";
-      $check = $db->getOne($sql);
-      if($check > 0) {
-				$flag = true;
-      }
-    }
+			$flag = "You do not have permission to delete that directory";
+			return $flag;
+		}
 
 		$sql = "select count(*) from dir where parent = " . $dirID;
 		$count = $db->getOne($sql);

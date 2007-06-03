@@ -16,7 +16,7 @@ class DPSMusicFrontViewer extends Viewer {
 
     $auth = Auth::getInstance();
     $userID = $auth->getUserID();
-    $this->assign('RequestTrack',AuthUtil::getDetailedUserrealmAccess(array(58,59,63), $userID));
+    $this->assign('RequestTrack',AuthUtil::getDetailedUserrealmAccess(array(3,21,29), $userID));
     $this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
     
   }

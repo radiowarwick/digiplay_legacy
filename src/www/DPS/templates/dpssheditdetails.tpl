@@ -16,6 +16,7 @@
 			{$VIEWER.show.name}
 		</div>
 		<b>New Details</b><br />
+		{if $VIEWER.write == 't'}
 		<form name="dpsUserEditShow" method="post" action="{$CONFIG.general.siteRoot}">
 		<input type="hidden" name="formName" value="dpsUserEditShow" />
 		<input type="hidden" name="moduleName" value="DPS" />
@@ -41,17 +42,25 @@
 			{$ERRORS.dpsUserEditShow.mins}<br />
 		{/if}
 		Airing Time(24h): <input type=text name="hours" maxlength=2 size=2 value="{$VIEWER.show.h}" />:<input type=text name="mins" maxlength=2 size=2 value="{$VIEWER.show.m}" /><br />
-		<b>Producer: </b> {$VIEWER.show.niceProducer}<br />
+		Producer: {$VIEWER.show.niceProducer}<br />
 		<!--<b>Participants: </b> People, Many many people<br />
 		<a href="">Edit details and participants</a>-->
 		<input type="Submit" name="Submit" value="Submit" />
+		</form>
+		{else}
+		Name: {$VIEWER.show.name}<br />
+		Airing Date: {$VIEWER.show.D}/{$VIEWER.show.M}/{$VIEWER.show.Y} <br />
+		Airing Time(24h): {$VIEWER.show.h}:{$VIEWER.show.m}<br />
+		Producer: {$VIEWER.show.niceProducer}<br />
+		{/if}
+
 	</div>
 	<div class="showPlanHelp">
 		<img src="DPS/images/showFinished.png" alt="Finished"> Already broadcast<br>
 	  <img src="DPS/images/showUnfinished.png" alt="Uninished"> Unfinished<br>
 	  <img src="DPS/images/showReady.png" alt="Ready"> Finished & ready<br>
 	</div>
-	<div class="rightLinks">{templateLink id="81" text="<< Back to your shows"}</div>
+	<div class="rightLinks">{templateLink id="54" text="<< Back to your shows"}</div>
 	<br style="&7b;clear:both;&7c;" />
 {/if}
 {include file="rfile:dpsshowbottomframe.tpl" Admin=$VIEWER.Admin}

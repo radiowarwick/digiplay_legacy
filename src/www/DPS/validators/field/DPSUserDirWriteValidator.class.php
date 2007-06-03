@@ -19,31 +19,25 @@ class DPSUserDirWriteValidator extends ValidatorRule {
     global $cfg;
     $db = Database::getInstance($cfg['DPS']['dsn']);
     $dirID = pg_escape_string($data);
-		if(!is_numeric($dirID)) {
-			return "Not a valid directory ID " . $dirID;
-		}
+    if(!is_numeric($dirID)) {
+			return "Not a valid directory ID";
+    }
     $flag = false;
     $auth = Auth::getInstance();
     $userID = pg_escape_string($auth->getUserID());
 
-		$sql = "select count(*) from dirusers where userid = " . $userID . " and directory = " . pg_escape_string($dirID) . " 
-						and (permissions = 'o' or permissions = 'rw' or permissions = 'w')";
+		$sql = "select sum(num) from ((select count(*) as num from dirusers where userid = " . $userID . " and directory = " . $dirID . " 
+						and permissions & B'01000000' = '01000000') UNION (select count(*) as num from dirgroups, groupmembers where groupmembers.userid = " . $userID . " and  
+						groupmembers.groupid = dirgroups.groupid and directory = " . $dirID . " 
+						and dirgroups.permissions & B'01000000' = '01000000')) as Q1";
     $check = $db->getOne($sql);
     if($check > 0) {
       $flag = true;
     } else {
-			$sql = "select count(*) from dirgroups, groupmembers where groupmembers.userid = " . $userID . " and  
-						groupmembers.groupid = dirgroups.groupid and directory = " . pg_escape_string($dirID) . " 
-						and (dirgroups.permissions = 'o' or dirgroups.permissions = 'rw' or dirgroups.permissions = 'w')";
-      $check = $db->getOne($sql);
-      if($check > 0) {
-				$flag = true;
-      }
-    }
+			$flag = "You do not have permission to write to that directory";
+			return $flag;
+		}
 
-    if(!$flag) {
-      $flag = "You do not have access to modify that directory";
-    }
     return $flag;
   }
 	

@@ -26,14 +26,21 @@ class DPSUserShowitemEditValidator extends ValidatorRule {
     $auth = Auth::getInstance();
     $userID = $auth->getUserID();
 
-    $sql = "select count(*) from showplanusers, showitems where showplanusers.userid = $userID AND showplanusers.showplanid = showitems.showplanid AND showitems.id = $itemID AND (showplanusers.permissions = 'o' OR showplanusers.permissions = 'rw' OR showplanusers.permissions = 'w')";
+    $sql = "select count(*) from showplanusers, showitems 
+						where showplanusers.userid = $userID AND 
+						showplanusers.showplanid = showitems.showplanid AND 
+						showitems.id = $itemID AND 
+						showplanusers.permissions & B'" . $cfg['DPS']['fileW'] . "' = '" . $cfg['DPS']['fileW'] . "'";
     $check = $db->getOne($sql);
     if($check > 0) {
       $flag = true;
     } else {
-      $sql = "select count(*) from showplangroups, groupmembers, showitems where showplangroups.groupid = groupmembers.groupid
-	      AND groupmembers.userid = $userID AND showplangroups.showplanid = showitems.showplanid AND showitems.id = $itemID 
-	      AND (showplangroups.permissions = 'o' OR showplangroups.permissions = 'rw' OR showplangroups.permissions = 'w')";
+      $sql = "select count(*) from showplangroups, usersgroups, showitems 
+							where showplangroups.groupid = usersgroups.groupid AND 
+							usersgroups.userid = $userID AND 
+							showplangroups.showplanid = showitems.showplanid 
+							AND showitems.id = $itemID AND 
+							showplangroups.permissions & B'" . $cfg['DPS']['fileW'] . "' = '" . $cfg['DPS']['fileW'] . "'";
       $check = $db->getOne($sql);
       if($check > 0) {
 	$flag = true;

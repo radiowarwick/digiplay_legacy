@@ -232,7 +232,7 @@ string dps_prettyTime(long samples) {
 		}
 		result += dps_itoa(mins) + "m ";
 	}
-	samples -= mins*2656000;
+	samples -= mins*2646000;
 	int secs = (int)(samples / 44100);
 	if (secs < 10) {
 		result += "0";

@@ -156,9 +156,14 @@ if [[ ! -f digiplay-triggers.sql ]]; then
 	printf "Installation Aborted.\n"
 	exit -1
 fi
+if [[ ! -f digiplay-data.sql ]]; then
+	printf " -> Missing database default data!\n"
+	printf "Installation Aborted.\n"
+	exit -1
+fi
 
 printf " -> Creating objects..."
-$PSQL -qf digiplay.sql $DBNAME #2>/dev/null
+$PSQL -qf digiplay.sql $DBNAME 2>/dev/null
 if [[ $? > 0 ]]; then
 	printf " -> Failed to generate database objects\n"
 	printf "Installation Aborted. Empty database remains.\n"
@@ -172,10 +177,19 @@ if [[ $? > 0 ]]; then
 	printf "Installation Aborted. Mess remains.\n"
 	exit -1
 fi
+printf "done.\n"
 printf " -> Creating triggers..."
 $PSQL -qf digiplay-triggers.sql $DBNAME 2>/dev/null
 if [[ $? > 0 ]]; then
 	printf " -> Failed to generate database triggers\n"
+	printf "Installation Aborted. Mess remains.\n"
+	exit -1
+fi
+printf "done.\n"
+printf " -> Inserting default data..."
+$PSQL -qf digiplay-data.sql $DBNAME 2>/dev/null
+if [[ $? > 0 ]]; then
+	printf " -> Failed to insert default data\n"
 	printf "Installation Aborted. Mess remains.\n"
 	exit -1
 fi

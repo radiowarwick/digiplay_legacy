@@ -9,7 +9,7 @@
 --                      See http://tedia2sql.tigris.org/AUTHORS.html for tedia2sql author information
 -- 
 --   Target Database:   postgres
---   Generated at:      Wed May 30 18:06:51 2007
+--   Generated at:      Sun Jun  3 13:52:09 2007
 --   Input Files:       usersgroupsdir.dia cartsets.dia audio.dia scripts.dia showplans.dia sustainer.dia website.dia digiplay.dia
 -- 
 -- ================================================================================
@@ -486,6 +486,7 @@ create table showplans (
   userid                    integer not null,
   creationdate              integer not null,
   showdate                  integer,
+  completed                 boolean not null,
   constraint pk_Showplans primary key (id)
 ) ;
 
@@ -634,7 +635,7 @@ create table realmgrouplink (
   groupid                   integer not null,
   realmid                   integer not null,
   allow                     character(1),
-  constraint pk_Realmgrouplink primary key (groupid)
+  constraint pk_Realmgrouplink primary key (groupid,realmid)
 ) ;
 
 -- realms
@@ -653,7 +654,7 @@ create table realmuserlink (
   userid                    serial not null,
   realmid                   integer not null,
   allow                     character(1),
-  constraint pk_Realmuserlink primary key (userid)
+  constraint pk_Realmuserlink primary key (userid,realmid)
 ) ;
 
 -- sessions
@@ -683,15 +684,6 @@ create table templates (
   realmid                   integer default 0 not null,
   modulename                character varying(16) default ''::character varying not null,
   constraint pk_Templates primary key (templateid)
-) ;
-
--- validationrules
-create table validationrules (
-  ruleid                    serial not null,
-  vrclassname               character varying(45) default ''::character varying not null,
-  description               text not null,
-  modulename                character varying(16) default ''::character varying not null,
-  constraint pk_Validationrules primary key (ruleid)
 ) ;
 
 -- audioext
@@ -863,33 +855,9 @@ create table patches (
 
 
 
-
 -- Generated SQL Views
 -- --------------------------------------------------------------------
 
-
--- v_cartwalls
-create view v_cartwalls as
-  select audio.md5 AS md5, archives.localpath AS path, audio.start_smpl AS start, audio.end_smpl AS end, cartsaudio.cart AS cart, cartsaudio.text AS text, cartwalls.name AS wall_name, cartwalls.description AS wall_desc, cartwalls.page AS page, cartsets.id AS cartset_id, cartsets.name AS cartset, cartsets.description AS cartset_desc, cartproperties.name AS prop_name, cartstyleprops.value AS prop_value
-  FROM audio,
-    cartsaudio,
-    cartwalls,
-    cartsets,
-    cartstyles,
-    cartstyleprops,
-    cartproperties,
-    archives
-  WHERE (cartsaudio.audioid = audio.id)
-    AND (cartsaudio.cartwallid = cartwalls.id)
-    AND (cartwalls.cartsetid = cartsets.id)
-    AND (cartsaudio.cartstyleid = cartstyles.id)
-    AND (cartstyleprops.cartstyleid = cartstyles.id)
-    AND (cartstyleprops.cartpropertyid = cartproperties.id)
-    AND (audio.archive = archives.id)
-  ORDER BY cartwalls.id,
-    cartsaudio.cart,
-    cartproperties.id
-;
 
 
 -- Special statements for postgres:post databases
@@ -905,186 +873,6 @@ END transaction;
 -- Generated SQL Insert statements
 -- --------------------------------------------------------------------
 
-
--- inserts for dir(parent,name,notes)
-insert into dir(parent,name,notes) values ( -1,'Digiplay','Root node of virtual directory system.' ) ;
-insert into dir(parent,name,notes) values ( -2,'Music','Root node of music library.' ) ;
-insert into dir(parent,name,notes) values ( -3,'Bin','Root node for audio items to be removed.' ) ;
-insert into dir(parent,name,notes) values ( 1,'Adverts','Radio station advertisements.' ) ;
-insert into dir(parent,name,notes) values ( 1,'Departments','Department audio files.' ) ;
-insert into dir(parent,name,notes) values ( 1,'Jingles','Radio station ident clips.' ) ;
-insert into dir(parent,name,notes) values ( 1,'Users','User home directories.' ) ;
-
--- inserts for users(username)
-insert into users(username) values ( 'System' ) ;
-insert into users(username) values ( 'Guest' ) ;
-
--- inserts for groups(name,description)
-insert into groups(name,description) values ( 'Everyone','All users on the system belong to this group' ) ;
-insert into groups(name,description) values ( 'Administrators','Users who can administer the system' ) ;
-
--- inserts for configs(name,description)
-insert into configs(name,description) values ( 'default_cartset','The cartset to be loaded when the user logs in' ) ;
-insert into configs(name,description) values ( 'user_lastlogin','The users last login time on the website' ) ;
-insert into configs(name,description) values ( 'user_curlogin','The time of the users current login' ) ;
-
--- inserts for dirgroups(dirid,groupid,permissions)
-insert into dirgroups(dirid,groupid,permissions) values ( 1,1,'10000000' ) ;
-insert into dirgroups(dirid,groupid,permissions) values ( 1,2,'11000000' ) ;
-insert into dirgroups(dirid,groupid,permissions) values ( 2,1,'10000000' ) ;
-insert into dirgroups(dirid,groupid,permissions) values ( 3,2,'10000000' ) ;
-insert into dirgroups(dirid,groupid,permissions) values ( 4,1,'10000000' ) ;
-insert into dirgroups(dirid,groupid,permissions) values ( 4,2,'11000000' ) ;
-insert into dirgroups(dirid,groupid,permissions) values ( 5,1,'10000000' ) ;
-insert into dirgroups(dirid,groupid,permissions) values ( 5,2,'11000000' ) ;
-insert into dirgroups(dirid,groupid,permissions) values ( 6,1,'10000000' ) ;
-insert into dirgroups(dirid,groupid,permissions) values ( 6,2,'11000000' ) ;
-insert into dirgroups(dirid,groupid,permissions) values ( 7,1,'10000000' ) ;
-insert into dirgroups(dirid,groupid,permissions) values ( 7,2,'11000000' ) ;
-
--- inserts for usersgroups(groupid,userid)
-insert into usersgroups(groupid,userid) values ( 1,1 ) ;
-insert into usersgroups(groupid,userid) values ( 2,1 ) ;
-
--- inserts for cartproperties(name,note)
-insert into cartproperties(name,note) values ( 'ForeColourRGB','Button text colour.' ) ;
-insert into cartproperties(name,note) values ( 'BackColourRGB','Button background colour.' ) ;
-insert into cartproperties(name,note) values ( 'Font','Text font.' ) ;
-insert into cartproperties(name,note) values ( 'FontSize','Text font size.' ) ;
-insert into cartproperties(name,note) values ( 'FontBold','Bold text.' ) ;
-insert into cartproperties(name,note) values ( 'FontItalic','Italic text.' ) ;
-
--- inserts for cartstyles(name,description)
-insert into cartstyles(name,description) values ( 'Blue','Blue background with black text.' ) ;
-insert into cartstyles(name,description) values ( 'RaW Purple','RaW design.' ) ;
-insert into cartstyles(name,description) values ( 'Cool Green','Bluish-green background with black text.' ) ;
-insert into cartstyles(name,description) values ( 'Bright Green','Green background with black text.' ) ;
-
--- inserts for cartstyleprops(cartstyleid,cartpropertyid,value)
-insert into cartstyleprops(cartstyleid,cartpropertyid,value) values ( 1,1,0 ) ;
-insert into cartstyleprops(cartstyleid,cartpropertyid,value) values ( 1,2,1214912 ) ;
-insert into cartstyleprops(cartstyleid,cartpropertyid,value) values ( 2,1,0 ) ;
-insert into cartstyleprops(cartstyleid,cartpropertyid,value) values ( 2,2,11731183 ) ;
-insert into cartstyleprops(cartstyleid,cartpropertyid,value) values ( 3,1,0 ) ;
-insert into cartstyleprops(cartstyleid,cartpropertyid,value) values ( 3,2,49245 ) ;
-insert into cartstyleprops(cartstyleid,cartpropertyid,value) values ( 4,1,0 ) ;
-insert into cartstyleprops(cartstyleid,cartpropertyid,value) values ( 4,2,8044544 ) ;
-
--- inserts for audiotypes(name,description)
-insert into audiotypes(name,description) values ( 'Music','Music tracks from the CD library or other sources.' ) ;
-insert into audiotypes(name,description) values ( 'Jingle','Station or show specific idents.' ) ;
-insert into audiotypes(name,description) values ( 'Advert','Advertisement audio clip.' ) ;
-
--- inserts for lifespans(name,data,description)
-insert into lifespans(name,data,description) values ( 'Permanent','-1','Audio files (e.g. music) which should remain on the system indefinitely.' ) ;
-insert into lifespans(name,data,description) values ( 'Week','604800','Files which may be removed after one week. e.g. one-off show feature.' ) ;
-insert into lifespans(name,data,description) values ( 'Month','2678400','Files which may be removed after 31 days. e.g. event preview clip.' ) ;
-insert into lifespans(name,data,description) values ( '6-month','15552000','Files which may be removed after 180 days. e.g. time-dependent advertisment.' ) ;
-insert into lifespans(name,data,description) values ( 'Year','31536000','Files which may be removed after 365 days.' ) ;
-
--- inserts for jingletypes(name,description)
-insert into jingletypes(name,description) values ( 'Generic','Unclassified' ) ;
-insert into jingletypes(name,description) values ( 'Idents','Station Identification' ) ;
-insert into jingletypes(name,description) values ( 'Contact','Contact Information' ) ;
-insert into jingletypes(name,description) values ( 'News','News Ident' ) ;
-insert into jingletypes(name,description) values ( 'Show','Show Identification' ) ;
-insert into jingletypes(name,description) values ( 'Event','Event Information' ) ;
-
--- inserts for albums(name)
-insert into albums(name) values ( '(none)' ) ;
-
--- inserts for realms(name,parentid,description,depth,realmpath)
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Administration',0,'Realm Administration',0,'01' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Site',0,'Public website',0,'02' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'DPS',0,'DPS Root Realm',0,'03' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Authentication',1,'Authentication configuration',1,'01.04' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Users',4,'User Administration',2,'01.04.05' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Groups',4,'Group Administration',2,'01.04.06' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Realms',4,'Realm Administration',2,'01.04.07' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Add',5,'',3,'01.04.05.08' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Modify',5,'',3,'01.04.05.09' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Delete',5,'',3,'01.04.05.10' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Add',6,'',3,'01.04.06.11' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Modify',6,'',3,'01.04.06.12' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Delete',6,'',3,'01.04.06.13' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Add',7,'',3,'01.04.07.14' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Modify',7,'',3,'01.04.07.15' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Delete',7,'',3,'01.04.07.16' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Templates',1,'',1,'01.16' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Public Site',2,'Public site for visitors',1,'02.17' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Private Site',2,'Viewable pages for all other users',1,'02,18' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Sue',3,'DPS Root Sue',1,'03.19' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Music Library',3,'DPS Root Music Library',1,'03.20' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Studio',3,'Alter Studio stuff',1,'03.21' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'CMS',3,'CMS Regions',1,'03.22' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Edit Sue Playlist',19,'DPS Edit Sue Track',2,'03.19.23' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'View Sue Statistics',19,'DPS View Sue stats',2,'03.19.24' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'View Sue Playlist',19,'DPS View Sue playlist',2,'03.19.25' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Edit Track',20,'DPS Edit Track',2,'03.20.26' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Search Track',20,'DPS Search Track',2,'03.20.27' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Request Track',20,'DPS Request Track',2,'03.20.28' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Censor Track',20,'DPS Censor track',2,'03.20.29' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Remove Track Request',20,'DPS Remove a track request',2,'03.20.30' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Delete Track',20,'Delete a track from the system',2,'03.20.31' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Playlist',20,'Playlist',2,'03.20.32' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Comment Track',20,'Comment on a track',2,'03.20.33' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Studio Cartwall',21,'Alter the studio cartwall',2,'03.21.34' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Edit Help',22,'Edit the help pages',2,'03.22.35' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Edit Music',22,'Edit the music page',2,'03.22.36' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Edit Sue',22,'Edit the sue page',2,'03.22.37' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Edit Studio',22,'Edit the studio page',2,'03.22.38' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Edit Show',22,'Edit the show page',2,'03.22.39' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Edit Logout',22,'Edit the logout page',2,'03.22.40' ) ;
-insert into realms(name,parentid,description,depth,realmpath) values ( 'Edit Home',22,'Edit the home page',2,'03.22.41' ) ;
-
--- inserts for fieldvalidators(vrclassname,description,modulename)
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'EmailValidator','Validate an email address','MVC' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'AttemptLogin','Attempt to login username/password (user taken from $fieldData)','Auth' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'UniqueUsername','Check that a username is unique','Auth' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'NoTemplatesInRealm','Check that a realm does not have any templates within it. This should be used before deletion','Auth' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'NoSubRealmsInRealm','Check that a realm does not contain any sub/child templates. This should be used before deletion','Auth' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'ValidUnusedTplFile','Check that a template file exists and is not in use','MVC' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'CMSContentValidator','Ensures that a user has only submitted HTML tags that are available on the toolbar shown','CMS' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'IntValidator','Ensures that the data represents an integer','' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'EmptyStringValidator','Ensures that a string is not empty','tkfecommon' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'StringValidator','Ensures that the data represents a string','tkfecommon' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'DPSMusicSearchTypeValidator','Checks if the field is set to (Both,Artist,Title)','DPS' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'DPSRequestTitleValidator','Checks that the field is a string and not set to Title','DPS' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'DPSRequestArtistValidator','Checks that the field is a string and not set to Artist','DPS' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'DPSSystemCartsetEditValidator','Checks the system can edit a cartset','DPS' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'DPSSystemCartwallEditValidator','Checks the system can edit a cartwall','DPS' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'DPSSystemCartEditValidator','Checks the system can edit a cart','DPS' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'DPSUserCartsetEditValidator','Checks user can edit a cartset','DPS' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'DPSUserCartwallEditValidator','Checks user can edit a cartwall','DPS' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'DPSUserCartEditValidator','Checks user can edit a cart','DPS' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'DPSSystemCartsetOwnValidator','Checks system owns a cartset','DPS' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'DPSSystemCartwallOwnValidator','Checks system owns a cartwall','DPS' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'DPSSystemCartOwnValidator','Checks system owns a cart','DPS' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'DPSUserCartsetOwnValidator','Checks user owns a cartset','DPS' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'DPSUserCartwallOwnValidator','Checks user owns a cartwall','DPS' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'DPSUserCartOwnValidator','Checks user owns a cart','DPS' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'DPSSystemCartsetReadValidator','Checks system can read a cartset','DPS' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'DPSUserCartsetReadValidator','Checks user can read a cartset','DPS' ) ;
-insert into fieldvalidators(vrclassname,description,modulename) values ( 'DPSJAAudioIDValidator','Checks that an audio id is a jingle or advert','DPS' ) ;
-
--- inserts for cmsregions(name,editrealm,viewrealm,inlinetoolbar,windowtoolbar)
-insert into cmsregions(name,editrealm,viewrealm,inlinetoolbar,windowtoolbar) values ( 'Help Page',35,18,'cms_simple','cms_safe' ) ;
-insert into cmsregions(name,editrealm,viewrealm,inlinetoolbar,windowtoolbar) values ( 'Music Page',36,18,'cms_simple','cms_safe' ) ;
-insert into cmsregions(name,editrealm,viewrealm,inlinetoolbar,windowtoolbar) values ( 'Sue Page',37,18,'cms_simple','cms_safe' ) ;
-insert into cmsregions(name,editrealm,viewrealm,inlinetoolbar,windowtoolbar) values ( 'Studio Page',38,18,'cms_simple','cms_safe' ) ;
-insert into cmsregions(name,editrealm,viewrealm,inlinetoolbar,windowtoolbar) values ( 'Show Page',39,18,'cms_simple','cms_safe' ) ;
-
--- inserts for configuration(location,parameter,val)
-insert into configuration(location,parameter,val) values ( 0,'channel_1','/dev/dsp' ) ;
-insert into configuration(location,parameter,val) values ( 0,'bin_weighting_1','5' ) ;
-insert into configuration(location,parameter,val) values ( 0,'bin_weighting_2','9' ) ;
-insert into configuration(location,parameter,val) values ( 0,'bin_weighting_3','12' ) ;
-insert into configuration(location,parameter,val) values ( 0,'bin_weighting_4','14' ) ;
-insert into configuration(location,parameter,val) values ( 0,'bin_weighting_5','15' ) ;
-
--- inserts for patches(branch,version)
-insert into patches(branch,version) values ( 'dps',0 ) ;
-insert into patches(branch,version) values ( 'web',0 ) ;
 
 
 -- Generated SQL Constraints
@@ -1341,7 +1129,7 @@ alter table cmscontent add constraint fk_cmscontent_userid
   references users (id)  ;
 alter table formfields add constraint fk_formfields_ruleid
   foreign key (ruleid)
-  references validationrules (ruleid)  ;
+  references fieldvalidators (ruleid)  ;
 alter table sessionvalues add constraint fk_sessionvalues_sessionid
   foreign key (sessionid)
   references sessions (sessionid)  ;

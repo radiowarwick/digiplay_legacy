@@ -2411,60 +2411,7 @@ END transaction;#</dia:string>
         </dia:composite>
       </dia:attribute>
     </dia:object>
-    <dia:object type="UML - Component" version="0" id="O15">
-      <dia:attribute name="obj_pos">
-        <dia:point val="2.9,-35.15"/>
-      </dia:attribute>
-      <dia:attribute name="obj_bb">
-        <dia:rectangle val="2.85,-35.2;19.45,-28.65"/>
-      </dia:attribute>
-      <dia:attribute name="elem_corner">
-        <dia:point val="2.9,-35.15"/>
-      </dia:attribute>
-      <dia:attribute name="elem_width">
-        <dia:real val="16.5"/>
-      </dia:attribute>
-      <dia:attribute name="elem_height">
-        <dia:real val="6.4500000000000002"/>
-      </dia:attribute>
-      <dia:attribute name="line_colour">
-        <dia:color val="#000000"/>
-      </dia:attribute>
-      <dia:attribute name="fill_colour">
-        <dia:color val="#96cdff"/>
-      </dia:attribute>
-      <dia:attribute name="stereotype">
-        <dia:string>#configuration(location,parameter,val)#</dia:string>
-      </dia:attribute>
-      <dia:attribute name="text">
-        <dia:composite type="text">
-          <dia:attribute name="string">
-            <dia:string>#0,'channel_1','/dev/dsp'
-0,'bin_weighting_1','5'
-0,'bin_weighting_2','9'
-0,'bin_weighting_3','12'
-0,'bin_weighting_4','14'
-0,'bin_weighting_5','15'#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
-          </dia:attribute>
-          <dia:attribute name="height">
-            <dia:real val="0.80000000000000004"/>
-          </dia:attribute>
-          <dia:attribute name="pos">
-            <dia:point val="5.3,-33.1"/>
-          </dia:attribute>
-          <dia:attribute name="color">
-            <dia:color val="#000000"/>
-          </dia:attribute>
-          <dia:attribute name="alignment">
-            <dia:enum val="0"/>
-          </dia:attribute>
-        </dia:composite>
-      </dia:attribute>
-    </dia:object>
-    <dia:object type="UML - Class" version="0" id="O16">
+    <dia:object type="UML - Class" version="0" id="O15">
       <dia:attribute name="obj_pos">
         <dia:point val="4.2,-19.45"/>
       </dia:attribute>
@@ -2514,7 +2461,7 @@ END transaction;#</dia:string>
         <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_line_length">
-        <dia:int val="17"/>
+        <dia:int val="40"/>
       </dia:attribute>
       <dia:attribute name="comment_tagging">
         <dia:boolean val="false"/>
@@ -2640,55 +2587,6 @@ END transaction;#</dia:string>
         <dia:boolean val="false"/>
       </dia:attribute>
       <dia:attribute name="templates"/>
-    </dia:object>
-    <dia:object type="UML - Component" version="0" id="O17">
-      <dia:attribute name="obj_pos">
-        <dia:point val="1.5,-13.05"/>
-      </dia:attribute>
-      <dia:attribute name="obj_bb">
-        <dia:rectangle val="1.45,-13.1;14.05,-8.7"/>
-      </dia:attribute>
-      <dia:attribute name="elem_corner">
-        <dia:point val="1.5,-13.05"/>
-      </dia:attribute>
-      <dia:attribute name="elem_width">
-        <dia:real val="12.5"/>
-      </dia:attribute>
-      <dia:attribute name="elem_height">
-        <dia:real val="4.2999999999999998"/>
-      </dia:attribute>
-      <dia:attribute name="line_colour">
-        <dia:color val="#000000"/>
-      </dia:attribute>
-      <dia:attribute name="fill_colour">
-        <dia:color val="#96cdff"/>
-      </dia:attribute>
-      <dia:attribute name="stereotype">
-        <dia:string>#patches(branch,version)#</dia:string>
-      </dia:attribute>
-      <dia:attribute name="text">
-        <dia:composite type="text">
-          <dia:attribute name="string">
-            <dia:string>#'dps',0
-'web',0#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
-          </dia:attribute>
-          <dia:attribute name="height">
-            <dia:real val="0.80000000000000004"/>
-          </dia:attribute>
-          <dia:attribute name="pos">
-            <dia:point val="3.9,-11"/>
-          </dia:attribute>
-          <dia:attribute name="color">
-            <dia:color val="#000000"/>
-          </dia:attribute>
-          <dia:attribute name="alignment">
-            <dia:enum val="0"/>
-          </dia:attribute>
-        </dia:composite>
-      </dia:attribute>
     </dia:object>
   </dia:layer>
 </dia:diagram>

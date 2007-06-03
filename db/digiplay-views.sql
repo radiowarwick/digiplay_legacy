@@ -771,3 +771,32 @@ AS
     FROM v_audio_adverts
 ORDER BY id;
 
+-- v_cartwalls
+CREATE OR REPLACE VIEW v_cartwalls
+AS
+	SELECT 	audio.md5 AS md5, 
+			archives.localpath AS path, 
+			audio.start_smpl AS start, 
+			audio.end_smpl AS end, 
+			cartsaudio.cart AS cart, 
+			cartsaudio.text AS text, 
+			cartwalls.name AS wall_name, 
+			cartwalls.description AS wall_desc, 
+			cartwalls.page AS page, 
+			cartsets.id AS cartset_id, 
+			cartsets.name AS cartset, 
+			cartsets.description AS cartset_desc, 
+			cartproperties.name AS prop_name, 
+			cartstyleprops.value AS prop_value
+	FROM 	audio, cartsaudio, cartwalls, cartsets, cartstyles,
+			cartstyleprops, cartproperties, archives
+	WHERE 	(cartsaudio.audioid = audio.id)
+    	AND (cartsaudio.cartwallid = cartwalls.id)
+    	AND (cartwalls.cartsetid = cartsets.id)
+    	AND (cartsaudio.cartstyleid = cartstyles.id)
+    	AND (cartstyleprops.cartstyleid = cartstyles.id)
+    	AND (cartstyleprops.cartpropertyid = cartproperties.id)
+    	AND (audio.archive = archives.id)
+	ORDER BY cartwalls.id, cartsaudio.cart, cartproperties.id
+;
+

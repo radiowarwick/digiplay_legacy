@@ -9,6 +9,9 @@ using std::endl;
 
 #include "Security.h"
 
+static int ruid = -1;
+static int euid = -1;
+
 unsigned int getDigiplayUser(std::string user) {
 	// Get the uid of the specified normal user account
     struct passwd *digiplay_user;

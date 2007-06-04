@@ -38,7 +38,7 @@
 	::FLAC__StreamDecoderWriteStatus FLACdecompress::write_callback(const::FLAC__Frame *frame, const FLAC__int32 *const 
 buffer[]) {
 
-		int i;
+		unsigned int i;
 		unsigned char j,k,l,m;
 		unsigned char *left=(unsigned char*)buffer[0];
 		unsigned char *right=(unsigned char*)buffer[1];

@@ -113,7 +113,7 @@ xmlAttribute xmlElement::add_attribute(xmlAttribute attr) {
  */
 xmlAttribute xmlElement::get_attribute(unsigned int index) {
 	char* routine = "xmlElement::get_attribute";
-	if (index >= 0 && index < attributes->size()) {
+	if (index < attributes->size()) {
 		return attributes->at(index);
 	}
 	else {
@@ -144,7 +144,7 @@ xmlAttribute xmlElement::get_attribute(string name) {
 
 void xmlElement::remove_attribute(unsigned int index) {
 	char* routine = "xmlElement::remove_attribute";
-	if (index >= 0 && index < attributes->size()) {
+	if (index < attributes->size()) {
 		attributes->erase(attributes->begin() + index);
 	}
 	else {
@@ -182,7 +182,7 @@ xmlElement *xmlElement::add_element(xmlElement *elem) {
 
 xmlElement *xmlElement::get_element(unsigned int index) {
 	char* routine = "xmlElement::get_element";
-	if (index >= 0 && index < elements->size())
+	if (index < elements->size())
 		return elements->at(index);
 	stringstream S;
 	S << "Element " << index << " out of range in " << name;
@@ -203,7 +203,7 @@ xmlElement *xmlElement::get_element(string name) {
 
 void xmlElement::remove_element(unsigned int index) {
 	char* routine = "xmlElement::remove_element";
-	if (index >= 0 && index < elements->size())
+	if (index < elements->size())
 		elements->erase(elements->begin() + index);
 	else {
 		stringstream S;

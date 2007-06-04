@@ -99,15 +99,26 @@ insert into albums values ( 1,'(none)' ) ;
 alter sequence albums_id_seq restart 2;
 
 -- inserts for configuration
-insert into configuration values ( 1,0,'ldap_host','localhost' ) ;
-insert into configuration values ( 2,0,'ldap_port','389' ) ;
-insert into configuration values ( 3,0,'ldap_dn','ou=People,dc=example,dc=com' ) ;
-insert into configuration values ( 4,0,'channel_1','/dev/dsp' ) ;
-insert into configuration values ( 5,0,'bin_weighting_1','5' ) ;
-insert into configuration values ( 6,0,'bin_weighting_2','9' ) ;
-insert into configuration values ( 7,0,'bin_weighting_3','12' ) ;
-insert into configuration values ( 8,0,'bin_weighting_4','14' ) ;
-insert into configuration values ( 9,0,'bin_weighting_5','15' ) ;
+insert into configuration values ( 1,'ldap_host','localhost',-1 ) ;
+insert into configuration values ( 2,'ldap_port','389',-1 ) ;
+insert into configuration values ( 3,'ldap_dn','ou=People,dc=example,dc=com',-1 ) ;
+insert into configuration values ( 4,'channel_1','/dev/dsp',0 ) ;
+insert into configuration values ( 5,'bin_weighting_1','5',0 ) ;
+insert into configuration values ( 6,'bin_weighting_2','9',0 ) ;
+insert into configuration values ( 7,'bin_weighting_3','12',0 ) ;
+insert into configuration values ( 8,'bin_weighting_4','14',0 ) ;
+insert into configuration values ( 9,'bin_weighting_5','15',0 ) ;
+insert into configuration values ( 10,'channel_1','/dev/dsp',1 ) ;
+insert into configuration values ( 11,'channel_2','/dev/dsp1',1 ) ;
+insert into configuration values ( 12,'channel_3','/dev/dsp2',1 ) ;
+insert into configuration values ( 13,'channel_4','/dev/dsp3',1 ) ;
+insert into configuration values ( 14,'next_on_showplan','',1 ) ;
+insert into configuration values ( 15,'station_cartset','0',1 ) ;
+insert into configuration values ( 16,'user_cartset','0',1 ) ;
+insert into configuration values ( 17,'userid','2',0 ) ;
+insert into configuration values ( 18,'player1_md5','',1 ) ;
+insert into configuration values ( 19,'player2_md5','',1 ) ;
+insert into configuration values ( 20,'player3_md5','',1 ) ;
 alter sequence configuration_id_seq restart 10;
 
 -- inserts for patches(branch,version)

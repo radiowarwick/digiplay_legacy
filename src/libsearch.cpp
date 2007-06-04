@@ -51,6 +51,14 @@ libsearch::~libsearch() {
 
 vector<track>* libsearch::query(string search_string) {
  string SQL;
+ // Convert to lowercase
+ std::transform(search_string.begin(), search_string.end(),
+                search_string.begin(), ::tolower);
+ // Remove "the" if it's at the start
+ if (search_string.substr(0,4) == "the ") {
+     search_string = search_string.substr(4,search_string.length() - 4);
+ }
+
  search_string = escape_binary(search_string);
  lastQuery_string = search_string;
 

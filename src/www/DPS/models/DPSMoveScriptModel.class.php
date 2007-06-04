@@ -15,7 +15,7 @@ class DPSMoveScriptModel extends Model {
     $db = Database::getInstance($cfg['DPS']['dsn']);
 		$script = $this->fieldData['scriptID'];
     if(is_numeric($script) && is_numeric($this->fieldData['newParent'])) {
-			$sql_insert['dir'] = $this->fieldData['newParent'];
+			$sql_insert['dirid'] = $this->fieldData['newParent'];
 			$sql_insert['scriptid'] = $script;
 			$sql_insert['linktype'] = 0;
 			$swhere = "scriptid = " . pg_escape_string($script);

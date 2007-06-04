@@ -46,18 +46,18 @@ class DPSEditTrackModel extends Model {
 	      $newID = $artist['id'];
 	    }
 	    if($i == $this->fieldData['artistnum']) {
-	      $aaValues['audio'] = $trackID;
-	      $aaValues['artist'] = $newID;
+	      $aaValues['audioid'] = $trackID;
+	      $aaValues['artistid'] = $newID;
 	      $db->insert('audioartists',$aaValues,true);
 	    } else {
 	      if($newID != $this->fieldData[$artistnumid] && is_numeric($this->fieldData[$artistnumid])) {
-		$aaValues['artist'] = $newID;
-		$aaWhere = "audio = " . $trackID . " AND artist = " . pg_escape_string($this->fieldData[$artistnumid]);
+		$aaValues['artistid'] = $newID;
+		$aaWhere = "audioid = " . $trackID . " AND artistid = " . pg_escape_string($this->fieldData[$artistnumid]);
 		$db->update('audioartists',$aaWhere, $aaValues, true);
 	      }
 	    }
 	  } elseif ($i != $this->fieldData['artistnum']) {
-	    $aaWhere = "audio = " . $trackID . " AND artist = " . pg_escape_string($this->fieldData[$artistnumid]);
+	    $aaWhere = "audioid = " . $trackID . " AND artistid = " . pg_escape_string($this->fieldData[$artistnumid]);
 	    $db->delete('audioartists',$aaWhere);
 	  }
 	}
@@ -83,18 +83,18 @@ class DPSEditTrackModel extends Model {
 	      $newID = $keyword['id'];
 	    }
 	    if($i == $this->fieldData['keywordnum']) {
-	      $akValues['track'] = $trackID;
-	      $akValues['keyword'] = $newID;
+	      $akValues['audioid'] = $trackID;
+	      $akValues['keywordid'] = $newID;
 	      $db->insert('audiokeywords',$akValues,true);
 	    } else {
 	      if($newID != $this->fieldData[$keywordnumid] && is_numeric($this->fieldData[$keywordnumid])) {
-		$akValues['keyword'] = $newID;
-		$akWhere = "track = " . $trackID . " AND keyword = " . pg_escape_string($this->fieldData[$keywordnumid]);
+		$akValues['keywordid'] = $newID;
+		$akWhere = "audioid = " . $trackID . " AND keywordid = " . pg_escape_string($this->fieldData[$keywordnumid]);
 		$db->update('audiokeywords',$akWhere, $akValues, true);
 	      }
 	    }
 	  } elseif ($i != $this->fieldData['keywordnum']) {
-		$akWhere = "track = " . $trackID . " AND keyword = " . pg_escape_string($this->fieldData[$keywordnumid]);
+		$akWhere = "audioid = " . $trackID . " AND keywordid = " . pg_escape_string($this->fieldData[$keywordnumid]);
 		$db->delete('audiokeywords',$akWhere);
 	  }
 	}
@@ -107,7 +107,7 @@ class DPSEditTrackModel extends Model {
 	}
 	$text = rtrim($text,"\n");
 	$trInsert['comment'] = $text;
-	$trInsert['audio'] = $trackID;
+	$trInsert['audioid'] = $trackID;
 	$auth = Auth::getInstance();
 	$trInsert['creationdate'] = time();
 	$trInsert['userid'] = $auth->getUserID();

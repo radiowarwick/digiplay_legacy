@@ -15,7 +15,7 @@ class DPSMoveCartsetModel extends Model {
     $db = Database::getInstance($cfg['DPS']['dsn']);
 		$cartset = $this->fieldData['cartsetID'];
     if(is_numeric($cartset) && is_numeric($this->fieldData['newParent'])) {
-			$sql_insert['dir'] = $this->fieldData['newParent'];
+			$sql_insert['dirid'] = $this->fieldData['newParent'];
 			$sql_insert['cartsetid'] = $cartset;
 			$sql_insert['linktype'] = 0;
 			$swhere = "cartsetid = " . pg_escape_string($cartset);

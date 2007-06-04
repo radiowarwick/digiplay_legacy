@@ -23,13 +23,13 @@ class DPSStationDeleteCartsetModel extends Model {
 	  $where = "id = " . $userset['id'];
 	  $db->update('configuration',$conf,$where,true);
 	}
-	$sql = "select id from cartwalls where cartset = " . $cartsetID;
+	$sql = "select id from cartwalls where cartsetid = " . $cartsetID;
 	$cartwalls = $db->getColumn($sql);
 	foreach($cartwalls as $wallID) {
-	  $where = "cartwall = " . $wallID;
+	  $where = "cartwallid = " . $wallID;
 	  $db->delete('cartsaudio',$where,true);
 	}
-	$where = "cartset = " . $cartsetID;
+	$where = "cartsetid = " . $cartsetID;
 	$db->delete('cartwalls',$where,true);
 	$where = "cartsetid = " . $cartsetID;
 	$db->delete('cartsetsusers',$where,true);

@@ -27,8 +27,8 @@ class DPSUserUpdateCartModel extends Model {
       if($text != '' && $cartID != '' && is_numeric($cartID)) {
         $cart = array();
         $cart['text'] = $text;
-        $cart['audio'] = $audio;
-        $cart['style'] = $style;
+        $cart['audioid'] = $audio;
+        $cart['cartstyleid'] = $style;
         $atWhere = "id = " . $cartID;
         $db->update('cartsaudio', $cart, $atWhere, true);
       }

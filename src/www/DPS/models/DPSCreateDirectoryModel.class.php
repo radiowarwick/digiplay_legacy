@@ -20,7 +20,7 @@ class DPSCreateDirectoryModel extends Model {
 			$sql_insert['name'] = $this->fieldData['dirtext'];
 			$sql_insert['id'] = "#id#";
       $id = $db->insert('dir',$sql_insert,true);
-			$sql_perm['directory'] = $id;
+			$sql_perm['dirid'] = $id;
 			$sql_perm['permissions'] = 'o';
 			$auth = Auth::getInstance();
 			$sql_perm['userid'] = $auth->getUserID();

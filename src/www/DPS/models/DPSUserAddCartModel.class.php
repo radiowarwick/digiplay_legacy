@@ -27,16 +27,16 @@ class DPSUserAddCartModel extends Model {
       $text = rtrim($text,"\n");
       if($text != '' && $audio != '' && is_numeric($audio)) {
 	$sql = "select count(*) from cartsaudio, cartwalls where 
-	      cartwalls.id = cartsaudio.cartwall
+	      cartwalls.id = cartsaudio.cartwallid
 	      AND cartwalls.id = " . pg_escape_string($cartwall) . " 
 	      AND cartsaudio.cart = " . pg_escape_string($cartPos);
 	$count = $db->getOne($sql);
 	if($count == 0) {
 	  $cart = array();
 	  $cart['text'] = $text;
-	  $cart['audio'] = $audio;
-	  $cart['style'] = $style;
-	  $cart['cartwall'] = $cartwall;
+	  $cart['audioid'] = $audio;
+	  $cart['cartstyleid'] = $style;
+	  $cart['cartwallid'] = $cartwall;
 	  $cart['cart'] = $cartPos;
 	  $db->insert('cartsaudio', $cart, true);
 	} else {

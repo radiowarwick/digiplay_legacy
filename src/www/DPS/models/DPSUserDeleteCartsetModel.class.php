@@ -18,21 +18,20 @@ class DPSUserDeleteCartsetModel extends Model {
     $userID = $auth->getUserID();
     $cartsetID = pg_escape_string($this->fieldData['cartset']);
     if($cartsetID != '' && is_numeric($cartsetID)) {
-	$sql = "SELECT usersconfigs.id from configs, usersconfigs where configs.id = usersconfigs.configoption and configs.name = 'default_cartset' and usersconfigs.val = " . $cartsetID;
+	$sql = "SELECT usersconfigs.id from configs, usersconfigs where configs.id = usersconfigs.configid and configs.name = 'default_cartset' and usersconfigs.val = " . $cartsetID;
 	$userset = $db->getColumn($sql);
 	foreach($userset as $configID) {
 	  $where = "id = " . $configID;
 	  $db->delete('usersconfigs',$where,true);
 	}
-	$sql = "select id from cartwalls where cartset = " . $cartsetID;
+	$sql = "select id from cartwalls where cartsetid = " . $cartsetID;
 	$cartwalls = $db->getColumn($sql);
 	foreach($cartwalls as $wallID) {
-	  $where = "cartwall = " . $wallID;
+	  $where = "cartwallid = " . $wallID;
 	  $db->delete('cartsaudio',$where,true);
 	}
-	$where = "cartset = " . $cartsetID;
-	$db->delete('cartwalls',$where,true);
 	$where = "cartsetid = " . $cartsetID;
+	$db->delete('cartwalls',$where,true);
 	$db->delete('cartsetsusers',$where,true);
 	$db->delete('cartsetsgroups',$where,true);
 	$where = "id = " . $cartsetID;

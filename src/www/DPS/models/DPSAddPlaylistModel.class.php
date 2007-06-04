@@ -21,11 +21,11 @@ class DPSAddPlaylistModel extends Model {
         $id = 'trackID_' . $i;
         $val = 'trackVal_' . $i;
         if($this->fieldData[$cb] == "on" && is_numeric(pg_escape_string($this->fieldData[$id])) && pg_escape_string($this->fieldData[$id] != "") && $this->fieldData[$val] != "on") {
-		  $trUpdate['audio'] = $this->fieldData[$id];
-		  $trUpdate['playlist'] = $dpsPlaylistID;
+		  $trUpdate['audioid'] = $this->fieldData[$id];
+		  $trUpdate['playlistid'] = $dpsPlaylistID;
 		  $db->insert('audioplaylists',$trUpdate, true);
         } elseif($this->fieldData[$cb] != "on" && is_numeric(pg_escape_string($this->fieldData[$id])) && pg_escape_string($this->fieldData[$id] != "" && $this->fieldData[$val] == "on")) {
-		  $trWhere = "audio = " . pg_escape_string($this->fieldData[$id]) . " and playlist = " . $dpsPlaylistID;
+		  $trWhere = "audioid = " . pg_escape_string($this->fieldData[$id]) . " and playlistid = " . $dpsPlaylistID;
 		  $db->delete('audioplaylists',$trWhere, true);
       	}	
       }	

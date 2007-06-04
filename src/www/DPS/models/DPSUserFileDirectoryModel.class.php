@@ -47,18 +47,18 @@ class DPSUserFileDirectoryModel extends Model {
 					$id = exec('webimport.pl ' . $fname);
 					if(is_numeric($id) && $id != '') {
 						//insert into db stuff
-						$audioDir['audio'] = $id;
-						$audioDir['directory'] = $this->fieldData['dirID'];
+						$audioDir['audioid'] = $id;
+						$audioDir['dirid'] = $this->fieldData['dirID'];
 						$audioDir['linktype'] = 0;
 
-						$audioUser['audio'] = $id;
+						$audioUser['audioid'] = $id;
 						$audioUser['userid'] = $userID;
 						$audioUser['permissions'] = 'o';
 
 						$where = "audio = " . $id;
 						$db->delete('audioDir',$where,true);
 						$db->insert('audioDir',$audioDir,true);
-						$db->insert('audioUser',$audioUser,true);
+						$db->insert('audioUsers',$audioUser,true);
 					} else {
 						//error
 						BasicLogger::logMessage("Error recieved when uploading file: '" . $id . "'", 'error');

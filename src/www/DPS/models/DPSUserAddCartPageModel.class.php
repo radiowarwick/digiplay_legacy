@@ -15,10 +15,10 @@ class DPSUserAddCartPageModel extends Model {
     $db = Database::getInstance($cfg['DPS']['dsn']);
 
     $cartsetID = pg_escape_string($this->fieldData['cartset']);
-      $sql = "select count(*) from cartwalls where cartset = $cartsetID";
+      $sql = "select count(*) from cartwalls where cartsetid = $cartsetID";
       $page = $db->getOne($sql);
     
-      $pageInfo['cartset'] = $cartsetID;
+      $pageInfo['cartsetid'] = $cartsetID;
       $pageInfo['name'] = "New Page";
       $pageInfo['description'] = "";
       $pageInfo['page'] = $page;

@@ -15,11 +15,11 @@ class DPSDeleteTrackModel extends Model {
     global $cfg;
     $db = Database::getInstance($cfg['DPS']['dsn']);
     if(is_numeric($this->fieldData['trackID'])) {
-      $where = "audio = " . pg_escape_string($this->fieldData['trackID']);
+      $where = "audioid = " . pg_escape_string($this->fieldData['trackID']);
       $db->delete('audiodir',$where,true);
       $dir = array();
-      $dir['audio'] = $this->fieldData['trackID'];
-      $dir['directory'] = $cfg['DPS']['binDirectoryID'];
+      $dir['audioid'] = $this->fieldData['trackID'];
+      $dir['dirid'] = $cfg['DPS']['binDirectoryID'];
       $dir['linktype'] = 0;
       $db->insert('audiodir',$dir,true);
       $audio['censor'] = 'f';

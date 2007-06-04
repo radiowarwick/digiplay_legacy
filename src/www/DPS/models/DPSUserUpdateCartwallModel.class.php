@@ -18,18 +18,18 @@ class DPSUserUpdateCartwallModel extends Model {
     $desc = pg_escape_string($this->fieldData['desc']);
     $cartwallID = pg_escape_string($this->fieldData['cartwallID']);
     if($this->fieldData['Submit'] == "Remove Page") {
-	$sql = "select cartset from cartwalls where id=" . $cartwallID;
+	$sql = "select cartsetid from cartwalls where id=" . $cartwallID;
 	$cartsetID = $db->getOne($sql);
-	$sql = "select count(*) from cartwalls where cartset=" . $cartsetID;
+	$sql = "select count(*) from cartwalls where cartsetid=" . $cartsetID;
 	$check = $db->getOne($sql);
 	//cant delete last page
 	if($check > 1) {
-	  $where = "cartwall = " . $cartwallID;
+	  $where = "cartwallid = " . $cartwallID;
 	  $db->delete('cartsaudio', $where, true);
 	  $where = "id = " . $cartwallID;
 	  $db->delete('cartwalls', $where, true);
 	  $page = pg_escape_string($this->fieldData['page']);
-	  $sql = "select * from cartwalls where cartset=" . $cartsetID . " AND page > $page order by page asc";
+	  $sql = "select * from cartwalls where cartsetid=" . $cartsetID . " AND page > $page order by page asc";
 	  $pages = $db->getAll($sql);
 	  foreach($pages as $p) {
 	    $update['page'] = ($p['page'] - 1);
@@ -47,16 +47,16 @@ class DPSUserUpdateCartwallModel extends Model {
       $auth = Auth::getInstance();
       $userID = $auth->getUserID();
       $sql = "select count(*) from cartsetsusers, cartwalls where cartsetsusers.userid = $userID 
-	      AND cartsetsusers.cartsetid = cartwalls.cartset AND cartwalls.ID = $cartwallID AND cartsetsusers.permissions = 'o'";
+	      AND cartsetsusers.cartsetid = cartwalls.cartsetid AND cartwalls.ID = $cartwallID AND cartsetsusers.permissions = 'o'";
       $check = $db->getOne($sql);
       if($check > 0) {
-	$sql = "select cartset from cartwalls where id = $cartwallID limit 1";
+	$sql = "select cartsetid from cartwalls where id = $cartwallID limit 1";
 	$cartsetID = $db->getOne($sql);
 	$where = "cartsetid = $cartsetID AND groupid = " . $cfg['DPS']['allusersgroupid'];
 	$db->delete('cartsetsgroups',$where,true);
-	$sql = "select count(*) from cartsaudio, cartwalls where cartsaudio.cartwall = cartwalls.id and cartwalls.cartset = " . $cartsetID;
+	$sql = "select count(*) from cartsaudio, cartwalls where cartsaudio.cartwallid = cartwalls.id and cartwalls.cartsetid = " . $cartsetID;
 	$cartcount = $db->getOne($sql);
-	$sql = "select count(*) from cartsaudio, cartwalls, audiodir, dirgroups where audiodir.directory = dirgroups.directory and (dirgroups.permissions = 'r' or dirgroups.permissions = 'rw') and dirgroups.groupid = " . $cfg['DPS']['allusersgroupid'] . " and cartsaudio.audio=audiodir.audio AND cartsaudio.cartwall = cartwalls.id and cartwalls.cartset = " . $cartsetID;
+	$sql = "select count(*) from cartsaudio, cartwalls, audiodir, dirgroups where audiodir.dirid = dirgroups.dirid and (dirgroups.permissions = 'r' or dirgroups.permissions = 'rw') and dirgroups.groupid = " . $cfg['DPS']['allusersgroupid'] . " and cartsaudio.audioid=audiodir.audioid AND cartsaudio.cartwallid = cartwalls.id and cartwalls.cartsetid = " . $cartsetID;
 	$permCount = $db->getOne($sql);
 	if($permCount >= $cartcount) {
 	  if($this->fieldData['readAll'] == "on" && $this->fieldData['writeAll'] == "on") {

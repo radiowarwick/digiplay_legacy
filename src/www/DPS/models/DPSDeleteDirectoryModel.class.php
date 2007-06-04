@@ -16,7 +16,7 @@ class DPSDeleteDirectoryModel extends Model {
     $db = Database::getInstance($cfg['DPS']['dsn']);
 		$dir = $this->fieldData['rootdir'];
     if(is_numeric($dir)) {
-			$where = "directory = " .  pg_escape_string($dir);
+			$where = "dirid = " .  pg_escape_string($dir);
 			$db->delete('dirusers',$where,true);
 			$db->delete('dirgroups',$where,true);
 			$where = "id = " .  pg_escape_string($dir);

@@ -17,12 +17,12 @@ class DPSUserUpdateActCartsetModel extends Model {
     
     $auth = Auth::getInstance();
     $userID = $auth->getUserID();
-    $sql = "SELECT usersconfigs.id from configs, usersconfigs where configs.id = usersconfigs.configoption and configs.name = 'default_cartset' and usersconfigs.userid = " . $userID;
+    $sql = "SELECT usersconfigs.id from configs, usersconfigs where configs.id = usersconfigs.configid and configs.name = 'default_cartset' and usersconfigs.userid = " . $userID;
     $userset = $db->getOne($sql);
     if(is_null($userset)){
       $cartset = array();
       $sql = "SELECT id from configs where configs.name = 'default_cartset'";
-      $cartset['configoption'] = $db->getOne($sql);
+      $cartset['configid'] = $db->getOne($sql);
       $cartset['val'] = $cartsetID;
       $cartset['userid'] = $userID;
       $db->insert('usersconfigs', $cartset, true);

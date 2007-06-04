@@ -15,10 +15,10 @@ class DPSMoveAudioModel extends Model {
     $db = Database::getInstance($cfg['DPS']['dsn']);
 		$audio = $this->fieldData['audioID'];
     if(is_numeric($audio) && is_numeric($this->fieldData['newParent'])) {
-			$sql_insert['directory'] = $this->fieldData['newParent'];
-			$sql_insert['audio'] = $audio;
+			$sql_insert['dirid'] = $this->fieldData['newParent'];
+			$sql_insert['audioid'] = $audio;
 			$sql_insert['linktype'] = 0;
-			$swhere = "audio = " . pg_escape_string($audio);
+			$swhere = "audioid = " . pg_escape_string($audio);
 			$db->delete('audiodir',$swhere,true);
       $db->insert('audiodir',$sql_insert,true);
     }

@@ -24,7 +24,7 @@ class DPSCommentTrackModel extends Model {
       }
       $text = rtrim($text,"\n");
       $trInsert['comment'] = $text;
-      $trInsert['audio'] = $audioID;
+      $trInsert['audioid'] = $audioID;
       $auth = Auth::getInstance();
       $trInsert['creationdate'] = time();
       $trInsert['userid'] = $auth->getUserID();

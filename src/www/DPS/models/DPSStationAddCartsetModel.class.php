@@ -29,7 +29,7 @@ class DPSStationAddCartsetModel extends Model {
       $db->insert('cartsetsusers',$perm,true);
       $cartwall = array();
       $cartwall['name'] = "New Page";
-      $cartwall['cartset'] = $cartsetID;
+      $cartwall['cartsetid'] = $cartsetID;
       $cartwall['page'] = 0;
       $db->insert('cartwalls',$cartwall,true);
     }

@@ -16,12 +16,12 @@ class DPSDeleteJingleModel extends Model {
     $db = Database::getInstance($cfg['DPS']['dsn']);
 		$audioID = $this->fieldData['audioID'];
     if(is_numeric($audioID)) {
-			$where = "audio = " .  pg_escape_string($audioID);
+			$where = "audioid = " .  pg_escape_string($audioID);
 			$db->delete('audiousers',$where,true);
 			$db->delete('audiogroups',$where,true);
-			$bin['directory'] = $cfg['DPS']['binDirectoryID'];
-			$where = "audio = " .  pg_escape_string($audioID);
-			$db->update('dir',$bin,$where,true);
+			$bin['dirid'] = $cfg['DPS']['binDirectoryID'];
+			$where = "audioid = " .  pg_escape_string($audioID);
+			$db->update('audiodir',$bin,$where,true);
     }
     
   }	

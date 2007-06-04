@@ -9,7 +9,7 @@
 --                      See http://tedia2sql.tigris.org/AUTHORS.html for tedia2sql author information
 -- 
 --   Target Database:   postgres
---   Generated at:      Sun Jun  3 13:52:09 2007
+--   Generated at:      Mon Jun  4 20:33:26 2007
 --   Input Files:       usersgroupsdir.dia cartsets.dia audio.dia scripts.dia showplans.dia sustainer.dia website.dia digiplay.dia
 -- 
 -- ================================================================================
@@ -145,7 +145,7 @@ create table cartsetsdir (
   id                        serial not null,
   cartsetid                 integer not null,
   dirid                     integer not null,
-  linktype                  smallint not null,
+  linktype                  smallint default 0 not null,
   constraint pk_Cartsetsdir primary key (id)
 ) ;
 
@@ -254,7 +254,7 @@ create table audio (
   creation_date             integer not null,
   import_date               integer not null,
   title                     character varying not null,
-  music_album               integer,
+  music_album               integer default 1 not null,
   music_track               smallint,
   music_released            smallint,
   advert_company            integer,
@@ -269,7 +269,7 @@ create table audio (
   param_speed               smallint,
   param_mood                smallint,
   param_endstyle            smallint,
-  lifespan                  integer not null,
+  lifespan                  integer default 1 not null,
   rip_result                character varying,
   filetype                  character varying default 'raw'::character varying not null,
   constraint pk_Audio primary key (id)
@@ -298,7 +298,7 @@ create table audiodir (
   id                        serial not null,
   audioid                   integer not null,
   dirid                     integer not null,
-  linktype                  smallint not null,
+  linktype                  smallint default 0 not null,
   constraint pk_Audiodir primary key (id)
 ) ;
 
@@ -435,7 +435,7 @@ create table scriptsdir (
   id                        serial not null,
   scriptid                  integer not null,
   dirid                     integer not null,
-  linktype                  smallint not null,
+  linktype                  smallint default 0 not null,
   constraint pk_Scriptsdir primary key (id)
 ) ;
 
@@ -466,7 +466,7 @@ create table showplandir (
   id                        serial not null,
   showplanid                integer not null,
   dirid                     integer not null,
-  linktype                  smallint not null,
+  linktype                  smallint default 0 not null,
   constraint pk_Showplandir primary key (id)
 ) ;
 
@@ -878,12 +878,16 @@ END transaction;
 -- Generated SQL Constraints
 -- --------------------------------------------------------------------
 
+create unique index idx_cartsetsdir_uniquelink on cartsetsdir  (cartsetid,linktype) ;
 create unique index idx_artists_name on artists using btree (name) ;
 create index idx_artists_alt_name on artists using btree (alt_name) ;
 create unique index idx_audio_md5 on audio using btree (md5) ;
 create index idx_audio_title on audio using btree (title) ;
 create index idx_audiodir_audio on audiodir using btree (audioid) ;
 create index idx_audiodir_dirid on audiodir using btree (dirid) ;
+create unique index idx_audiodir_uniquelink on audiodir  (audioid,linktype) ;
+create unique index idx_scriptsdir_uniquelink on scriptsdir  (scriptid,linktype) ;
+create unique index idx_showplans_uniquelink on showplandir  (showplanid,linktype) ;
 alter table usersgroups add constraint fk_usersgroups_userid
   foreign key (userid)
   references users (id)  ;

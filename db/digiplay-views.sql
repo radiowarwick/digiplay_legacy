@@ -41,6 +41,16 @@ CREATE OR REPLACE FUNCTION v_tree_getInherited(IN int8, IN int8) RETURNS bit(8) 
     END' LANGUAGE 'plpgsql';
 
 --
+-- array_accum
+--
+CREATE AGGREGATE array_accum (
+    sfunc = array_append,
+    basetype = anyelement,
+    stype = anyarray,
+    initcond = '{}'
+);
+
+--
 -- v_tree_dir_explicit
 -- Shows the explicit user or group permissions defined on directory objects
 --
@@ -659,7 +669,7 @@ AS
     SELECT  audio.id AS id, 
             audio.md5 AS md5, 
             audio.title AS title, 
-            artists.name AS artist, 
+            array_to_string(array_accum(artists.name),', ') AS artist, 
             albums.name AS album, 
             archives.id AS archiveid, 
             archives.name AS archive,
@@ -685,7 +695,13 @@ AS
         AND (audio.lifespan = lifespans.id)
         AND (audiodir.audioid = audio.id)
         AND (audiodir.dirid = dir.id)
+        AND (audiodir.linktype = 0)
         AND (audio.type = 1)
+    GROUP BY audio.id,  audio.md5, audio.title, albums.name, archives.id,
+            archives.name, archives.localpath, audio.music_track,
+            audio.music_released, audio.origin, audio.censor, audiodir.dirid,
+            audio.length_smpl, audio.start_smpl, audio.end_smpl, 
+            audio.intro_smpl, audio.extro_smpl, lifespans.data, audio.sustainer
     ORDER BY audio.md5;
 
 -- v_audio_jingles

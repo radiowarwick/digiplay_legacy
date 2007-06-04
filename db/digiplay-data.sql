@@ -119,7 +119,7 @@ insert into configuration values ( 17,'userid','2',0 ) ;
 insert into configuration values ( 18,'player1_md5','',1 ) ;
 insert into configuration values ( 19,'player2_md5','',1 ) ;
 insert into configuration values ( 20,'player3_md5','',1 ) ;
-alter sequence configuration_id_seq restart 10;
+alter sequence configuration_id_seq restart 21;
 
 -- inserts for patches(branch,version)
 insert into patches values ( 1,'dps',0 ) ;

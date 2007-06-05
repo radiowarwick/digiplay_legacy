@@ -115,7 +115,7 @@ insert into configuration values ( 13,'channel_4','/dev/dsp3',1 ) ;
 insert into configuration values ( 14,'next_on_showplan','',1 ) ;
 insert into configuration values ( 15,'station_cartset','0',1 ) ;
 insert into configuration values ( 16,'user_cartset','0',1 ) ;
-insert into configuration values ( 17,'userid','2',0 ) ;
+insert into configuration values ( 17,'userid','2',1 ) ;
 insert into configuration values ( 18,'player1_md5','',1 ) ;
 insert into configuration values ( 19,'player2_md5','',1 ) ;
 insert into configuration values ( 20,'player3_md5','',1 ) ;

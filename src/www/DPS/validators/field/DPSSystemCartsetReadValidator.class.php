@@ -1,52 +1,37 @@
 <?php
 /**
- * 
- * @package FrontEnds
- * @subpackage Auth
+ *
+ * @package DPS
  */
 
 include_once($cfg['MVC']['dir']['root'] . '/MVCUtils.class.php');
 MVCUtils::includeValidator('ValidatorRule', 'MVC');
 
 /**
- * Check that a string is a valid name
- * 
- * 
+ * Check that the system can read a cartset.
+ *
  */
 class DPSSystemCartsetReadValidator extends ValidatorRule {
 	
-  public function isValid(&$data) {
-    global $cfg;
-    $db = Database::getInstance($cfg['DPS']['dsn']);
-    if(!is_numeric($data)) {
-      return false;
-    }
-    $cartID = $data;
-    $flag = false;
-
-    $sql = "select count(*) from cartsetsusers where cartsetsusers.userid = " . $cfg['DPS']['systemUserID'] . " 
-            AND cartsetsusers.cartsetid = $cartID 
-	    AND (cartsetsusers.permissions = 'o' or cartsetsusers.permissions = 'r' or cartsetsusers.permissions = 'rw')";
-    $check = $db->getOne($sql);
-    if($check > 0) {
-      $flag = true;
-    } else {
-      $sql = "select count(*) from cartsetsgroups, usersgroups where cartsetsgroups.groupid = usersgroups.groupid
-	      AND usersgroups.userid = " . $cfg['DPS']['systemUserID'] . " AND cartsetsgroups.cartsetid = $cartID 
-	      AND (cartsetsgroups.permissions = 'o' or cartsetsgroups.permissions = 'r' or cartsetsgroups.permissions = 'rw')";
-      $check = $db->getOne($sql);
-      if($check > 0) {
-	$flag = true;
-      }
-    }
-
-    if(!$flag) {
-      $flag = "You do not have access to read that cartset";
-    }
-
-    return $flag;
-  }
+	public function isValid(&$data) {
+		global $cfg;
+		$db = Database::getInstance($cfg['DPS']['dsn']);
+		if(!is_numeric($data)) {
+			return false;
+		}
+		$cartID = $data;
 	
+		$sql = "SELECT COUNT(*) FROM v_tree_cartset
+				WHERE userid = " . $cfg['DPS']['systemUserID'] . "
+				AND id = $cartID
+				AND permissions & B '" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "'";
+		$check = $db->getOne($sql);
+		if($check > 0) {
+			return true;
+		} else {
+			return "You do not have access to read that cartset";
+		}
+	}
 }
 
 ?>

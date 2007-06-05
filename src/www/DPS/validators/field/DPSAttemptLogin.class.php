@@ -1,24 +1,23 @@
 <?php
 /**
- * 
- * @package FrontEnds
- * @subpackage Auth
+ *
+ * @package DPS
  */
- 
+
 include_once($cfg['MVC']['dir']['root'] . '/MVCUtils.class.php');
 MVCUtils::includeValidator('ValidatorRule', 'MVC');
 
 /**
  * Validate a users login information
- * 
+ *
  * This validator will validate a users login/password. If the validation 
  * succeeds the user will be logged in.
- * 
+ *
  * @todo Add some more checks
  */
 class AttemptLogin extends ValidatorRule {
 	/**
-	 * 
+	 *
 	 * The username to be logged in is taken from the $fieldData class 
 	 * variable
 	 */
@@ -30,7 +29,7 @@ class AttemptLogin extends ValidatorRule {
 		if($auth->attemptLogin($user, $password)){
 			BasicLogger::logMessage("successful login for '$user'", self::module, 'debug');
 			$flag = true;
-		}else{
+		} else {
 			BasicLogger::logMessage("failed login for '$user'", self::module, 'debug');
 			$flag = "Invalid username or password";
 		}

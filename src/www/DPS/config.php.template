@@ -31,4 +31,8 @@ $cfg['DPS']['playlistInfo'] = array(array('id' => 0,
 									'name' => 'B')
 									);
 $cfg['DPS']['HomeSite'] = "http://yourname.company.com/path/to/site";
+
+$cfg['DPS']['fileR'] = "10000000";
+$cfg['DPS']['fileW'] = "01000000";
+$cfg['DPS']['fileO'] = "00100000";
 ?>

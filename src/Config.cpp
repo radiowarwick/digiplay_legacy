@@ -101,9 +101,11 @@ string Config::getDBConnectString() {
 }
 
 string Config::getParam(string name) {
+	char* routine = "config::getParam";
 	dps_strLcase(name);
 	if (isDefined(name)) return _db[name];
-    return "";
+	L_ERROR(LOG_CONFIG,"Requested config paramater '" + name + "' does not exist.");
+	return "";
 }
 
 void Config::setParam(string name, string value) {

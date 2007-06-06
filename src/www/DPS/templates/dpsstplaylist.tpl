@@ -2,7 +2,7 @@
 	    <div class="bigTitle">Add to Playlist: {$VIEWER.playlist.name}</div>
 		<div class="studioPlaylists">Edit Playlist:
 		{foreach from=$VIEWER.playlists item="playlist"}
-		{templateLink id="80" text=$playlist.name _dpsPlaylistID=$playlist.id _dpsSearchLetter=$VIEWER.searchLetter _dpsSortType=$VIEWER.sortType _dpsSearchType=$VIEWER.searchType _dpsSearchVal=$VIEWER.searchValue} 
+		{templateLink id=$VIEWER.templateID text=$playlist.name _dpsPlaylistID=$playlist.id _dpsSearchLetter=$VIEWER.searchLetter _dpsSortType=$VIEWER.sortType _dpsSearchType=$VIEWER.searchType _dpsSearchVal=$VIEWER.searchValue} 
 		{/foreach}
 		</div>
 		<br style="&7b;clear:both;&7c;" />
@@ -72,13 +72,13 @@
 	      {if $VIEWER.sortType == "artist"}
 	      Sort by artist
 	      {else}
-	      {templateLink id="80" text="Sort by artist" _dpsSearchLetter=$VIEWER.searchLetter _dpsSortType="artist" _dpsSearchType=$VIEWER.searchType _dpsSearchVal=$VIEWER.searchValue}
+	      {templateLink id=$VIEWER.templateID text="Sort by artist" _dpsSearchLetter=$VIEWER.searchLetter _dpsSortType="artist" _dpsSearchType=$VIEWER.searchType _dpsSearchVal=$VIEWER.searchValue}
 	      {/if}
 	      | 
 	      {if $VIEWER.sortType == "title"}
 	      Sort by title
 	      {else}
-	      {templateLink id="80" text="Sort by title" _dpsSearchLetter=$VIEWER.searchLetter _dpsSortType="title" _dpsSearchType=$VIEWER.searchType _dpsSearchVal=$VIEWER.searchValue}
+	      {templateLink id=$VIEWER.templateID text="Sort by title" _dpsSearchLetter=$VIEWER.searchLetter _dpsSortType="title" _dpsSearchType=$VIEWER.searchType _dpsSearchVal=$VIEWER.searchValue}
 	      {/if}
 	    </div>
 	    <div class="sueplaylistInfo2">
@@ -106,7 +106,7 @@
 	      {foreach from=$VIEWER.searchResult item=track}
 	      <tr>
 		{if Access_EditTrack}
-		<th>{templateLink id="53" text="<img class='musicSearchTableTh' src='DPS/images/blackExpand.gif'>" _trackID=$track.id}</th>
+		<th>{templateLink id="37" text="<img class='musicSearchTableTh' src='DPS/images/blackExpand.gif'>" _trackID=$track.id}</th>
 		{/if}
 		<td>
 		  {if $track.playlist == 't'}
@@ -119,9 +119,9 @@
 		  <input type="hidden" name="trackID_{$track.searchNumber}" value="{$track.id}">
 		</td>
 		<td>{$track.artist}</td>
-		<td>{templateLink id="55" text=$track.title _trackID=$track.id}</td>
+		<td>{templateLink id="10" text=$track.title _trackID=$track.id}</td>
 		<td>{$track.length}</td>
-		<td>{templateLink id="57" text="Preview" _trackID=$track.id}</td>
+		<td>{templateLink id="18" text="Preview" _trackID=$track.id}</td>
 	      </tr>
 	      {/foreach}
 	    </table>

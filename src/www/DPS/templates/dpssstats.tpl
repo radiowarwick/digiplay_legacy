@@ -11,7 +11,7 @@
 	    <table class="suestats">
 	      <tr><th>Title</th><th>Artist</th></tr>
 	      {foreach from=$VIEWER.suePlaylist item=track}
-	      		<tr><td>{templateLink id="55" text=$track.title _trackID=$track.id}</td><td>{$track.artist}</td></tr>
+	      		<tr><td>{templateLink id="10" text=$track.title _trackID=$track.id}</td><td>{$track.artist}</td></tr>
 	      {/foreach}
 	    </table>
 {include file="rfile:dpsmusicbottomframe.tpl" Admin=$VIEWER.Admin}

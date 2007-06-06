@@ -18,7 +18,7 @@ The following error occurred while authorising your request:
   </li>
 </ul>
 <p>If you need to access the logon page you may do so 
-{templateLink name="dpslogin.tpl" text="here" _fwdtid=$VIEWER.templateID}</p>
+{templateLink id=11 text="here" _fwdtid=$VIEWER.templateID}</p>
 {else}
 An unspecified error has occured. Please contact the RaW webmaster.
 {/if}

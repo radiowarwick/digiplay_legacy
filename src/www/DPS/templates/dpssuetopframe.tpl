@@ -28,7 +28,7 @@
 	  <div class="frame_suesearchbox">
 	    {if $suesearchid == 40}
 	    Search for tracks on Sue
-	    {elseif $suesearchid == 35}
+	    {elseif $suesearchid ==v 35}
 	    Search for tracks to add
 	    {else}
 	    Search for tracks

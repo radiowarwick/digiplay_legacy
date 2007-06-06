@@ -3,9 +3,9 @@
   <br>
   <div class='FloatL'><div class='bigTitle'>View Cartwall</div></div>
   <div class='cartwallinfoR'>
-    {templateLink id="72" text="<<< return to cartwall profiles"} 
+    {templateLink id="27" text="<<< return to cartwall profiles"} 
     {if $VIEWER.editperm == 't'}
-    <br>{templateLink id="74" text="<<< edit cartwall" _cartset=$VIEWER.cartsetID _page=$VIEWER.cartwall.page} 
+    <br>{templateLink id="28" text="<<< edit cartwall" _cartset=$VIEWER.cartsetID _page=$VIEWER.cartwall.page} 
     {/if}
   </div>
   <br class='ClearLR'>
@@ -27,7 +27,7 @@
 	{if $pages.active == 't'}
 	  <b>{$pages.num}</b> 
 	{else}
-	  {templateLink id="75" text=$pages.num _cartset=$VIEWER.cartsetID _page=$pages.id} 
+	  {templateLink id=$VIEWER.templateID text=$pages.num _cartset=$VIEWER.cartsetID _page=$pages.id} 
 	{/if}
       {/foreach}
     </div>

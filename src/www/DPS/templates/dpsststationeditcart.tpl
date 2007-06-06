@@ -44,13 +44,13 @@
 	      <form name="dpsStationCartEditForm" method="post" action="{$CONFIG.general.siteRoot}">
 	  	    <input type="hidden" name="formName" value="dpsStationCartEditForm" />
   	  	  <input type="hidden" name="moduleName" value="DPS" />
-    	  	<input type="hidden" name="templateID" value="70" />
+    	  	<input type="hidden" name="templateID" value="22" />
 		      <input type="hidden" name="cartID" value="{$VIEWER.cartInfo.id}" />
 	      {else}
 	      <form name="dpsStationCartAddForm" method="post" action="{$CONFIG.general.siteRoot}">
 		      <input type="hidden" name="formName" value="dpsStationCartAddForm" />
 		      <input type="hidden" name="moduleName" value="DPS" />
-  		    <input type="hidden" name="templateID" value="70" />
+  		    <input type="hidden" name="templateID" value="22" />
     		  <input type="hidden" name="cartPos" value="{$VIEWER.cartPos}" />
       		<input type="hidden" name="cartwallID" value="{$VIEWER.cartwallID}" />
 	      {/if}
@@ -79,7 +79,7 @@
 	      	<form name="dpsStationCartDelForm" method="post" action="{$CONFIG.general.siteRoot}">
       			<input type="hidden" name="formName" value="dpsStationCartDelForm" />
       			<input type="hidden" name="moduleName" value="DPS" />
-    	  		<input type="hidden" name="templateID" value="70" />
+    	  		<input type="hidden" name="templateID" value="22" />
   	    		<input type="hidden" name="cartID" value="{$VIEWER.cartInfo.id}" />
 	      		<input type="Submit" name="Submit" value="Clear">
       		</form>

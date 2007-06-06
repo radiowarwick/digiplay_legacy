@@ -1,6 +1,6 @@
 {include file="rfile:dpsmusictopframe.tpl" title="RaW Digiplay Manager" RequestTrack=$VIEWER.RequestTrack}
 	    <div class="bigTitle">Track Details</div>
-	    <div class="rightLinks">{templateLink id=48 text="Go back to search screen"}</div>
+	    <div class="rightLinks">{templateLink id=20 text="Go back to search screen"}</div>
 	    {foreach from=$VIEWER.tracksDetails item=trackDetails}
 	    <hr style=&7b;clear:both;&7c;>
 	    <div class="musicTrackHolder">
@@ -67,7 +67,7 @@
 	      </div>
 	      <div class="musicTrackDetailsR">
 		{if $VIEWER.Access_EditTrack}
-		{templateLink id="53" text="Edit this track's details" _trackID=$trackDetails.id}<br>
+		{templateLink id="37" text="Edit this track's details" _trackID=$trackDetails.id}<br>
 		{/if}
 		{if $VIEWER.Access_CommentTrack == 't'}
 		<b>Write note about track</b>

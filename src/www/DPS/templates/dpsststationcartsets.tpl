@@ -11,11 +11,11 @@
 	{$cartset.name}
       </th>
       <td class="userTableOption">
-	{templateLink id="75" _cartset=$cartset.id text="view"}
+	{templateLink id="30" _cartset=$cartset.id text="view"}
       </td>
       <td class="userTableOption">
 	{if $cartset.permissions == 'o ' | $cartset.permissions == 'w ' | $cartset.permissions == 'rw'}
-	{templateLink id="74" _cartset=$cartset.id text="edit"}
+	{templateLink id="28" _cartset=$cartset.id text="edit"}
 	{/if}
       </td>
       <td class="userTableOption">

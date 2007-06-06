@@ -20,7 +20,7 @@
 					<tr>
 		  			<td>{$ftrack.artist}</td>
 		  			<td>{$ftrack.title}</td>
-		  			<td>{templateLink id="57" text="Preview" _trackID=$ftrack.id}</td>
+		  			<td>{templateLink id="18" text="Preview" _trackID=$ftrack.id}</td>
 		  			{if $VIEWER.CensorTrack == 't'}
 		  			<td>
 		    			<input type="checkbox" name="checkbox_{$ftrack.searchNumber}">
@@ -64,7 +64,7 @@
 					<tr>
 		  			<td>{$ctrack.artist}</td>
 		  			<td>{$ctrack.title}</td>
-		  			<td>{templateLink id="57" text="Preview" _trackID=$ctrack.id}</td>
+		  			<td>{templateLink id="18" text="Preview" _trackID=$ctrack.id}</td>
 		  			{if $VIEWER.CensorTrack == 't'}
 		  			<td>
 		    			<input type="checkbox" name="checkbox_{$ctrack.searchNumber}">

@@ -18,19 +18,19 @@
 		<div id="dircDel" class="fileLink">
 			<a id="dirDel" href="{$CONFIG.general.siteRoot}?templateID={$VIEWER.templateID}">
 				<img src="DPS/images/dirDel.png" alt="Delete Folder">
-				 Delete
+					Delete
 			</a>
 		</div>
 		<div id="dircMove" class="fileLink">
 			<a href="javascript:moveDir();">
 				<img src="DPS/images/dirMove.png" alt="Move">
-				 Move
+					Move
 			</a>
 		</div>
 		<div id="dircUpload" class="fileLink">
 			<a href="javascript:uploadDir();">
 				<img src="DPS/images/dirUpload.png" alt="Upload">
-				 Upload File
+					Upload File
 			</a>
 		</div>
 	</div>

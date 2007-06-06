@@ -16,9 +16,9 @@ class DPSStudioFrontViewer extends Viewer {
     $db = Database::getInstance($cfg['DPS']['dsn']);
     $auth = Auth::getInstance();
     $userID = $auth->getUserID();
-		$this->assign('access_playlist',AuthUtil::getDetailedUserrealmAccess(array(58,69,4), $userID));
+		$this->assign('access_playlist',AuthUtil::getDetailedUserrealmAccess(array(3,21,33), $userID));
     $this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
-    $this->assign('studioAccess',AuthUtil::getDetailedUserrealmAccess(array(58,69,70), $userID));
+    $this->assign('studioAccess',AuthUtil::getDetailedUserrealmAccess(array(3,21,34), $userID));
    }
 }
 

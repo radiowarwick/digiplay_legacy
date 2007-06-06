@@ -1,7 +1,7 @@
 <html>
-  <head>
-    <title>{$title}</title>
-    <link rel="stylesheet" type="text/css" href="DPS/stylesheet.css" />
+	<head>
+		<title>{$title}</title>
+		<link rel="stylesheet" type="text/css" href="DPS/stylesheet.css" />
 		<link rel="STYLESHEET" type="text/css" href="DPS/scripts/dhtmlxTree/css/dhtmlXTree.css">
 		<script src="DPS/scripts/dhtmlxTree/js/dhtmlXCommon.js"></script>
 		<script src="DPS/scripts/dhtmlxTree/js/dhtmlXTree.js"></script>	
@@ -175,21 +175,21 @@
 			}
 		</script>
 		{/literal}
-  </head>
-  <body>
-    <div class="centreContainer">
-      <div class="frame_bottom">
-	<div class="frame_showsidebar">
-	  <img class="frame_sidebarlogo" src="DPS/images/homenavshow.png" alt="Studio">
-	  <div class="frame_sidebarmusic">{templateLink id="76" text="Music Library"}</div>
-	  <div class="frame_sidebarsue">{templateLink id="77" text="Sue Stamp"}</div>
-	  <div class="frame_sidebarstudio">{templateLink id="78" text="Studio Cartwalls"}</div>
-	  <div class="frame_studiosidebarlinks">
-	    {templateLink id="79" text="Information"}<br />
-	    {templateLink id="81" text="My Showplans"}<br />
-	    {templateLink id="93" text="My Scripts"}<br />
-	    {templateLink id="86" text="My Files"}
-	  </div>
-        </div>
-        <div class="frame_rightside">
-          <div class="frame_content">
+	</head>
+	<body>
+		<div class="centreContainer">
+			<div class="frame_bottom">
+				<div class="frame_showsidebar">
+					<img class="frame_sidebarlogo" src="DPS/images/homenavshow.png" alt="Studio">
+					<div class="frame_sidebarmusic">{templateLink id="31" text="Music Library"}</div>
+					<div class="frame_sidebarsue">{templateLink id="32" text="Sue Stamp"}</div>
+					<div class="frame_sidebarstudio">{templateLink id="33" text="Studio Cartwalls"}</div>
+					<div class="frame_studiosidebarlinks">
+						{templateLink id="34" text="Information"}<br />
+						{templateLink id="54" text="My Showplans"}<br />
+						{templateLink id="44" text="My Scripts"}<br />
+						{templateLink id="51" text="My Files"}
+					</div>
+				</div>
+				<div class="frame_rightside">
+					<div class="frame_content">

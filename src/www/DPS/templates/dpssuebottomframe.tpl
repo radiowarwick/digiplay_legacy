@@ -12,7 +12,7 @@
 	  {templateLink id="60" text="<img src='../../DPS/images/titleExit.gif' alt='Exit'>"}
 	  {templateLink id="21" text="<img src='../../DPS/images/titleHelp.gif' alt='Help'>"}
 	  {if $Admin}
-	  {templateLink id="2" text="<img src='../../DPS/images/titleAdmin.gif' alt='Admin'>"}
+	  {templateLink id="1" text="<img src='../../DPS/images/titleAdmin.gif' alt='Admin'>"}
 	  {/if}
 	</div>
       </div>

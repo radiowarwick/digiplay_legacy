@@ -1,7 +1,7 @@
 {include file="rfile:dpsmusictopframe.tpl" title="RaW Digiplay Manager"  RequestTrack=$VIEWER.RequestTrack}
 	    <div class="musicTitle">Edit Track Details</div>
 	    {if $VIEWER.searchValue}
-	    <div class="musicTrackDetailsLinks">{templateLink id=48 text="Go back to the search screen" _dpsSearchVal=$VIEWER.searchValue _dpsSearchType=$VIEWER.searchType _dpsSearchPage=$VIEWER.page}</div>
+	    <div class="musicTrackDetailsLinks">{templateLink id=20 text="Go back to the search screen" _dpsSearchVal=$VIEWER.searchValue _dpsSearchType=$VIEWER.searchType _dpsSearchPage=$VIEWER.page}</div>
 	    {/if}
 	    <div class="musicTrackHolder">
 	      <form name="dpsEditTrackForm" method="post" action="{$CONFIG.general.siteRoot}">

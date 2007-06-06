@@ -12,19 +12,19 @@
 	      {if $VIEWER.sortType == "artist"}
 	      Sort by artist
 	      {else}
-	      {templateLink id="48" text="Sort by artist" _dpsSortType="artist" _dpsSearchType=$VIEWER.searchType _dpsSearchVal=$VIEWER.searchValue}
+	      {templateLink id=$VIEWER.templateID text="Sort by artist" _dpsSortType="artist" _dpsSearchType=$VIEWER.searchType _dpsSearchVal=$VIEWER.searchValue}
 	      {/if}
 	      | 
 	      {if $VIEWER.sortType == "title"}
 	      Sort by title
 	      {else}
-	      {templateLink id="48" text="Sort by title" _dpsSortType="title" _dpsSearchType=$VIEWER.searchType _dpsSearchVal=$VIEWER.searchValue}
+	      {templateLink id=$VIEWER.templateID text="Sort by title" _dpsSortType="title" _dpsSearchType=$VIEWER.searchType _dpsSearchVal=$VIEWER.searchValue}
 	      {/if}
 	    </div>
 	    <form name="dpsMusicSearchViewForm" method="post" action="{$CONFIG.general.siteRoot}">
 	      <input type="hidden" name="formName" value="dpsMusicSearchViewForm" />
 	      <input type="hidden" name="moduleName" value="DPS" />
-	      <input type="hidden" name="templateID" value="55" />
+	      <input type="hidden" name="templateID" value="10" />
 	      <table class="musicSearchTable" cellspacing=0>
 		<tr>
 		  {if $VIEWER.EditTrack == 't'}
@@ -44,11 +44,11 @@
 		{foreach from=$VIEWER.searchResult item=track}
 		<tr>
 		  {if $VIEWER.EditTrack}
-		  <th rowspan="2">{templateLink id="53" text="<img class='musicSearchTableTh' src='DPS/images/blackExpand.gif'>" _trackID=$track.id}</th>
+		  <th rowspan="2">{templateLink id="37" text="<img class='musicSearchTableTh' src='DPS/images/blackExpand.gif'>" _trackID=$track.id}</th>
 		  {/if}
 		  <td rowspan="2">{$track.artist}</td>
 		  <td>{$track.title}</td>
-		  <td>{templateLink id="57" text="Preview" _trackID=$track.id}</td>
+		  <td>{templateLink id="18" text="Preview" _trackID=$track.id}</td>
 			{if $VIEWER.DeleteTrack == 't'}
 		  <td>
 			{else}

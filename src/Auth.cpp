@@ -25,12 +25,16 @@
 using namespace std;
 
 #include "Logger.h"
+#include "Config.h"
 
 #include "Auth.h"
 
 Auth::Auth() {
-    closeSession();
 	DB = new DataAccess();
+	Config *conf = new Config("digiplay");
+	location = atoi( conf->getParam("LOCATION").c_str() );
+	delete conf;	
+    closeSession();
 }
 
 Auth::~Auth() {
@@ -63,78 +67,105 @@ void Auth::authSession(string username, string password) {
     }
     string SQL = "SELECT id FROM users WHERE username = '"
                         + username + "' LIMIT 1";
-    Result R;
+	Result R;
+	string userid;
     try {
-      R = DB->exec(SQL);
-      DB->abort();
+		R = DB->exec(SQL);
+     	DB->abort();
     }
     catch (...) {
-      L_ERROR(LOG_AUTH,"Failed to find user in database.");
+      	L_ERROR(LOG_AUTH,"Failed to find user in database.");
     }
-		if (R.size()!=0) {
-			string userid = string(R[0]["id"].c_str());
-			SQL = "SELECT DISTINCT id FROM dir WHERE name='Users' AND parent=ANY ("
-  	      	"SELECT DISTINCT id FROM dir WHERE name='Digiplay' AND parent=-1)";
-   	  try {
-     		R = DB->exec(SQL);
-      	DB->abort();
+	cout<<SQL<<endl;
+	if (R.size()!=0) {
+		userid = string(R[0]["id"].c_str());
+		cout << userid << endl;
+
+		SQL = "UPDATE configuration SET val='" + userid
+	    	  + "' WHERE parameter='userid' AND location=" + dps_itoa(location);
+		cout << SQL << endl;
+		try {
+			R = DB->exec(SQL);
+     		DB->commit();
+		}
+		catch (...) {
+			L_ERROR(LOG_AUTH,"Failed to change userid in the configuration table.");
+		}
+		SQL = "SELECT DISTINCT id FROM dir WHERE name='Users' AND parent=ANY ("
+  	     	"SELECT DISTINCT id FROM dir WHERE name='Digiplay' AND parent=-1)";
+	   	try {
+    		R = DB->exec(SQL);
+      		DB->abort();
     	}
-      catch (...) {
-         L_ERROR(LOG_AUTH,"Failed to find Users folder in database.");
-      }
-			string parent;
-	    if (R.size()!=0) {
-		    parent=string(R[0]["id"].c_str());
-		  }
-		  else {
-			   parent=7;			//rough guess
-			   L_ERROR(LOG_AUTH,"Failed to find Users folder in database.");
-		  }		   
-			SQL = "SELECT id FROM dir WHERE name='" + username + "' AND parent = " + parent + ";";
-      try {
-         R = DB->exec(SQL);
-         DB->abort();
-      }
-      catch (...) {
-        L_ERROR(LOG_AUTH,"Failed to find user's folder in database.");
-      }
-			if (R.size()==0) {
-				SQL = "INSERT INTO dir (name, parent, notes) VALUES "
-							"('" + username + "', " + parent + ", '" + username + "\\'s home directory'); "
-							"INSERT INTO dirusers (dirid, userid, permissions) VALUES "
-							"((SELECT id FROM dir WHERE name='" + username + "' AND parent=" + parent + "),"
-							" " + userid + ", '11000000');";
-				try {
-				  R = DB->exec(SQL);
-    	 		DB->commit();
-				}
- 	  	 	catch (...) {
- 		     	L_ERROR(LOG_AUTH,"Failed to add user's folder to database.");
-    		}
-			}
-			else {
-				L_INFO(LOG_AUTH,"User already has a folder.");
-			}
+    	catch (...) {
+        	L_ERROR(LOG_AUTH,"Failed to find Users folder in database.");
+    	}
+		string parent;
+		if (R.size()!=0) {
+	    	parent=string(R[0]["id"].c_str());
 		}
 		else {
-			L_ERROR(LOG_AUTH,"Failed to find user in database.");
+	   		parent=7;			//rough guess
+	   		L_ERROR(LOG_AUTH,"Failed to find Users folder in database.");
+		}		   
+	   		SQL = "SELECT id FROM dir WHERE name='" + username + "' AND parent = " + parent + ";";
+   	 	try {
+       		R = DB->exec(SQL);
+       		DB->abort();
+    	}
+    	catch (...) {
+        	L_ERROR(LOG_AUTH,"Failed to find user's folder in database.");
+    	}
+		if (R.size()==0) {
+			SQL = "INSERT INTO dir (name, parent, notes) VALUES "
+					"('" + username + "', " + parent + ", '" + username + "\\'s home directory'); "
+					"INSERT INTO dirusers (dirid, userid, permissions) VALUES "
+					"((SELECT id FROM dir WHERE name='" + username + "' AND parent=" + parent + "),"
+					" " + userid + ", '11000000');";
+			try {
+				R = DB->exec(SQL);
+    		  	DB->commit();
+			}
+ 	  		catch (...) {
+ 		    	L_ERROR(LOG_AUTH,"Failed to add user's folder to database.");
+    		}
 		}
+		else {
+			L_INFO(LOG_AUTH,"User already has a folder.");
+		}
+	}
+	else {
+		L_ERROR(LOG_AUTH,"Failed to find user in database.");
+	}
 
-		_privilages.clear();
-		_userInfo.clear();
-		addUserInfo("username",username);
-    
-		// bodge --cc
-		addPrivilage("TabInfo");
-		addPrivilage("TabSearch");
-		addPrivilage("TabPlaylist");
-		addPrivilage("TabFileBrowser");
-		addPrivilage("TabEmail");
-		addPrivilage("TabLogging");
-		//addPrivilage("TabScripts");
+
+	_privilages.clear();
+	_userInfo.clear();
+	addUserInfo("username",username);
+
+	// bodge --cc
+	addPrivilage("TabInfo");
+	addPrivilage("TabSearch");
+	addPrivilage("TabPlaylist");
+	addPrivilage("TabFileBrowser");
+	addPrivilage("TabEmail");
+	addPrivilage("TabLogging");
+	//addPrivilage("TabScripts");
 }
 
 void Auth::closeSession() {
+	char *routine = "Auth::closeSession";
+	string SQL = "UPDATE configuration SET val=("
+		  "SELECT id FROM users WHERE username='Guest'"
+	      ") WHERE parameter='userid' AND location=" + dps_itoa(location) + ";";
+	try {
+		Result R = DB->exec(SQL);
+   	 	DB->commit();
+	}
+	catch (...) {
+		L_ERROR(LOG_AUTH,"Failed to change userid in the configuration table.");
+	}
+
 	_privilages.clear();
 	_userInfo.clear();
 	addPrivilage("TabInfo");

@@ -52,6 +52,7 @@ class Auth {
 	private:
 		Auth(Auth &A);
 		DataAccess *DB;
+		int location;
 		vector<string> _privilages;
 		map<string,string> _userInfo;
 };	

@@ -70,6 +70,8 @@ class AudioPlayer:  public QWidget,
         void clean();
 
         string id;
+		int location;
+		int userid;
         Config* conf;
         DataAccess* DB;
         Audio::InputRaw* audioFilereader;

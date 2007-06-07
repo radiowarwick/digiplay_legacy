@@ -41,7 +41,7 @@ AudioPlayer::AudioPlayer(QWidget *parent, const char* name, unsigned short playe
     DB = new DataAccess();
     conf = new Config("digiplay");
     std::string device = conf->getParam("channel_" + id);
-
+	location = atoi( conf->getParam("LOCATION").c_str() );
     grpFrame = 0;
 
 
@@ -98,13 +98,7 @@ void AudioPlayer::log() {
     // Escape the artist and title
     string artist = sqlesc(lblArtist->text().ascii());
     string title = sqlesc(lblTitle->text().ascii());
-
-		/**************
-		*Major Bodge!*
-		**************/
-		int userid = 2;
-		int location = 0;
-
+				
     // Try and insert into database
     string SQL = "INSERT INTO log "
                 "(userid, datetime, track_title, track_artist, location) "
@@ -155,6 +149,7 @@ void AudioPlayer::processConfigUpdate() {
         cout << "Config updated: ENABLED LOAD" << endl;
         btnLoad->setEnabled(true);
     }
+	userid = atoi(conf->getParam("userid").c_str());
 }
 
 void AudioPlayer::onSetSample() {

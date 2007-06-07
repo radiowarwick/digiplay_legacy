@@ -134,10 +134,10 @@ void frmStudioManage::init() {
 	tabPanelLogging->configure(authModule);
 	cout << " success." << endl;
 
-//	cout << " -> Script panel..." << flush;
-//	tabPanelScript = new TabPanelScript(tabManage,"Script");
-//	tabPanelScript->configure(authModule);
-//	cout << " success." << endl;
+	cout << " -> Script panel..." << flush;
+	tabPanelScript = new TabPanelScript(tabManage,"Script");
+	tabPanelScript->configure(authModule);
+	cout << " success." << endl;
 
 	cout << " -> Showplan..." << flush;
 	sp = new Showplan(this,"sp");
@@ -262,6 +262,6 @@ void frmStudioManage::btnLoginClicked()
 	tabPanelPlaylist->configure(authModule);
 	tabPanelEmail->configure(authModule);
 	tabPanelLogging->configure(authModule);
-//	tabPanelScript->configure(authModule);
+	tabPanelScript->configure(authModule);
 	tabPanelFileBrowser->configure(authModule);
 }

@@ -79,11 +79,9 @@ void Auth::authSession(string username, string password) {
 	cout<<SQL<<endl;
 	if (R.size()!=0) {
 		userid = string(R[0]["id"].c_str());
-		cout << userid << endl;
-
+		
 		SQL = "UPDATE configuration SET val='" + userid
 	    	  + "' WHERE parameter='userid' AND location=" + dps_itoa(location);
-		cout << SQL << endl;
 		try {
 			R = DB->exec(SQL);
      		DB->commit();
@@ -92,7 +90,7 @@ void Auth::authSession(string username, string password) {
 			L_ERROR(LOG_AUTH,"Failed to change userid in the configuration table.");
 		}
 		SQL = "SELECT DISTINCT id FROM dir WHERE name='Users' AND parent=ANY ("
-  	     	"SELECT DISTINCT id FROM dir WHERE name='Digiplay' AND parent=-1)";
+  	     	  "SELECT DISTINCT id FROM dir WHERE name='Digiplay' AND parent=-1)";
 	   	try {
     		R = DB->exec(SQL);
       		DB->abort();
@@ -150,7 +148,7 @@ void Auth::authSession(string username, string password) {
 	addPrivilage("TabFileBrowser");
 	addPrivilage("TabEmail");
 	addPrivilage("TabLogging");
-	//addPrivilage("TabScripts");
+	addPrivilage("TabScript");
 }
 
 void Auth::closeSession() {

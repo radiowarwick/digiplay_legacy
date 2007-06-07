@@ -73,6 +73,7 @@ vector<track>* libsearch::query(string search_string) {
   "AND audioartists.artistid=artists.id "
   "AND albums.id=audio.music_album "
   "AND audio.censor='f' "
+  "AND audio.flagged='f' "
   "AND audiodir.audioid = audio.id "
   "AND audiodir.dirid = 2";
 

@@ -77,6 +77,7 @@ void TabPanelScript::draw() {
 
     txtScriptBody = new QTextEdit( getPanel(), "txtScriptBody" );
     txtScriptBody->setGeometry( QRect( 9, 68, 490, 560 ) );
+	txtScriptBody->setReadOnly(true);
 
     lblScriptDuration = new QLabel( getPanel(), "lblScriptDuration" );
     lblScriptDuration->setGeometry( QRect( 240, 11, 60, 16 ) );
@@ -87,22 +88,48 @@ void TabPanelScript::draw() {
     lblScriptDuration->setAlignment( int( QLabel::AlignVCenter 
                                             | QLabel::AlignLeft ) );
 
-    btnScriptSave = new QPushButton( getPanel(), "btnScriptSave" );
-    btnScriptSave->setGeometry( QRect( 330, 26, 171, 30 ) );
-    QFont btnScriptSave_font(  btnScriptSave->font() );
-    btnScriptSave_font.setPointSize( 12 );
-    btnScriptSave_font.setBold( FALSE );
-    btnScriptSave->setFont( btnScriptSave_font );
+    btnScriptDone = new QPushButton( getPanel(), "btnScriptDone" );
+    btnScriptDone->setGeometry( QRect( 330, 26, 171, 30 ) );
+    QFont btnScriptDone_font(  btnScriptDone->font() );
+    btnScriptDone_font.setPointSize( 12 );
+    btnScriptDone_font.setBold( FALSE );
+    btnScriptDone->setFont( btnScriptDone_font );
 
     txtScriptName = new QLineEdit( getPanel(), "txtScriptName" );
     txtScriptName->setGeometry( QRect( 10, 30, 220, 21 ) );
+	txtScriptName->setReadOnly(true);
 
     txtScriptDuration = new QLineEdit( getPanel(), "txtScriptDuration" );
     txtScriptDuration->setGeometry( QRect( 238, 30, 70, 21 ) );
+	txtScriptDuration->setReadOnly(true);
 
     lblScriptName->setText( tr( "Item Name:" ) );
     lblScriptDuration->setText( tr( "Duration:" ) );
-    btnScriptSave->setText( tr( "Save Changes" ) );
+    btnScriptDone->setText( tr( "Finished" ) );
+}
+
+void TabPanelScript::loadScript( int id ) {
+	//gets the id of a script when clicked on in the 
+	//showplan and shoul then load it.
+	string SQL = "SELECT name, contents, length FROM scripts " 
+				 "WHERE id=" + dps_itoa(id) +" LIMIT 1;";
+	Result R;
+	try {
+		R = DB->exec(SQL);
+		DB->abort();
+	}
+	catch(...) {
+		//Fuck up put an error hwerw!
+	}
+	if ( R.size() != 0 ) {
+		txtScriptBody->setText( R[0]["contents"].c_str() );
+		txtScriptName->setText( R[0]["name"].c_str() );
+		txtScriptDuration->setText( R[0]["length"].c_str() );
+	}
+	else {
+		//toss wank.  Something fucked up good.
+	}
+//	cout << "loading id: " << s->getId() << endl;
 }
 
 void TabPanelScript::clear() {
@@ -111,5 +138,5 @@ void TabPanelScript::clear() {
 	delete txtScriptName;
 	delete txtScriptDuration;
 	delete txtScriptBody;
-	delete btnScriptSave;
+	delete btnScriptDone;
 }

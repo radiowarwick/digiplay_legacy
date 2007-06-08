@@ -78,6 +78,9 @@ class Showplan : public QWidget {
         void moveTop();
         void moveBottom();
 
+	signals:
+		void scriptSelected( int );
+
     private slots:
         void processConfigUpdate();
         void selectionChanged(QListViewItem* x);

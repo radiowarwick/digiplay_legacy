@@ -301,8 +301,15 @@ void Showplan::selectionChanged(QListViewItem* x) {
             btnMoveDown->setEnabled(true);
         }
         btnDelete->setEnabled(true);
+		if (y->getType() == 1) {
+			//Script!!
+			ShowPlanScript *s = (ShowPlanScript*)y;
+			emit scriptSelected( s->getScript().getId() );
+		}
         return;
     }
+
+
     btnMoveBottom->setEnabled(false);
     btnMoveDown->setEnabled(false);
     btnMoveUp->setEnabled(false);

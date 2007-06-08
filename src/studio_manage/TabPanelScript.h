@@ -25,6 +25,7 @@
 #define CLASS_TAB_PANEL_SCRIPT
 
 #include "TabPanel.h"
+#include "Showplan.h"
 
 class QTabWidget;
 class QLabel;
@@ -42,6 +43,9 @@ class TabPanelScript : public TabPanel {
 		~TabPanelScript();
 		void configure(Auth *authModule);
 
+	public slots:
+		void loadScript( int id );
+
 	private:
 		void draw();
 		void clear();
@@ -51,7 +55,7 @@ class TabPanelScript : public TabPanel {
 	    QLabel *lblScriptName, *lblScriptDuration;
 	    QLineEdit *txtScriptName, *txtScriptDuration;
 		QTextEdit *txtScriptBody;
-        QPushButton *btnScriptSave;
+        QPushButton *btnScriptDone;
 };
 
 #endif

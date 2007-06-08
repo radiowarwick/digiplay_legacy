@@ -162,6 +162,8 @@ void frmStudioManage::init() {
                 sp, SLOT( loadShowplan( DpsShowplan& ) ) );
     connect ( tabPanelFileBrowser, SIGNAL( cartsetSelected( QString ) ),
                 this, SLOT( updateCartset( QString ) ) );
+    connect ( sp, SIGNAL( scriptSelected( int ) ),
+                tabPanelScript, SLOT( loadScript( int ) ) );
 
 	cout << "Interface initialisation complete." << endl;
 }

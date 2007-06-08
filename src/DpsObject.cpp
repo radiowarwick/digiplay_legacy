@@ -372,7 +372,7 @@ void DpsShowTrack::load(string id) {
             L_ERROR(LOG_DB,"ID: " + id + " is not a music track.");
             throw DB_NO_SUCH_TRACK;
         }
-        SQL = "SELECT * FROM v_audio_track WHERE id='" + id + "'";
+        SQL = "SELECT * FROM v_audio_music WHERE id='" + id + "'";
         R = db()->exec(SQL);
     }
     catch (int e) {

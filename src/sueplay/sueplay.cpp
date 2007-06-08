@@ -68,7 +68,7 @@ int main(int argc, char *argv) {
 		cout << "Failed to connect to database" << endl;
 		exit(-1);
 	}
-	SQL_Item = "SELECT archives.localpath AS path, audio.md5 AS md5, audio.title AS title, audio.length_smpl AS length_smpl, sustschedule.id AS id, sustschedule.trim_start_smpl AS start, sustschedule.trim_end_smpl AS end, sustschedule.fade_in AS fade_in, sustschedule.fade_out AS fade_out, v_audio_track.artist FROM sustschedule, audio, archives, v_audio_track WHERE sustschedule.audioid = audio.id AND archives.id = audio.archive AND audio.id = v_audio_track.id ORDER BY sustschedule.id LIMIT 1";
+	SQL_Item = "SELECT archives.localpath AS path, audio.md5 AS md5, audio.title AS title, audio.length_smpl AS length_smpl, sustschedule.id AS id, sustschedule.trim_start_smpl AS start, sustschedule.trim_end_smpl AS end, sustschedule.fade_in AS fade_in, sustschedule.fade_out AS fade_out, v_audio_music.artist FROM sustschedule, audio, archives, v_audio_music WHERE sustschedule.audioid = audio.id AND archives.id = audio.archive AND audio.id = v_audio_music.id ORDER BY sustschedule.id LIMIT 1";
 	cout << "done." << endl;
 
 	// Create components

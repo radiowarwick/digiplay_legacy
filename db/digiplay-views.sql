@@ -664,7 +664,7 @@ AS
     ORDER BY position;
 
 -- v_audio_track
-CREATE OR REPLACE VIEW v_audio_track
+CREATE OR REPLACE VIEW v_audio_music
 AS
     SELECT  audio.id AS id, 
             audio.md5 AS md5, 
@@ -767,23 +767,25 @@ AS
 
 -- v_audio
 CREATE OR REPLACE VIEW v_audio
-    (id,md5,title,artist,album,archiveid,archive,path,track,released,
+    (audiotype,id,md5,title,artist,album,archiveid,archive,path,track,released,
         length_smpl,start_smpl,end_smpl,intro_smpl,extro_smpl,lifespan,
         sustainer)
 AS
-    SELECT id,md5,title,artist,album,archiveid,archive,path,track,released,
-            length_smpl,start_smpl,end_smpl,intro_smpl,extro_smpl,lifespan,
-            sustainer
-    FROM v_audio_track
+    SELECT 'Music'::character varying,id,md5,title,artist,album,archiveid,
+			archive,path,track,released,length_smpl,start_smpl,end_smpl,
+			intro_smpl,extro_smpl,lifespan,sustainer
+    FROM v_audio_music
     UNION
-    SELECT id,md5,title,'' AS artist,pkg AS album,archiveid,archive,path,
-            '0' AS track,'0' AS released,length_smpl,start_smpl,end_smpl,
-            intro_smpl,extro_smpl,lifespan,enabled AS sustainer
+    SELECT 'Jingle'::character varying,id,md5,title,'' AS artist,pkg AS album,
+			archiveid,archive,path,'0' AS track,'0' AS released,length_smpl,
+			start_smpl,end_smpl,intro_smpl,extro_smpl,lifespan,
+			enabled AS sustainer
     FROM v_audio_jingles
     UNION
-    SELECT id,md5,title,'' AS artist,company AS album,archiveid,archive,
-            path,'0' AS track,'0' AS released,length_smpl,start_smpl,
-            end_smpl,intro_smpl,extro_smpl,lifespan,sustainer
+    SELECT 'Advert'::character varying,id,md5,title,'' AS artist,
+			company AS album,archiveid,archive,path,'0' AS track,
+			'0' AS released,length_smpl,start_smpl,end_smpl,intro_smpl,
+			extro_smpl,lifespan,sustainer
     FROM v_audio_adverts
 ORDER BY id;
 

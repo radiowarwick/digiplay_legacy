@@ -142,7 +142,6 @@ int main(int argc, char *argv) {
 			cout << " -> End: " << end << endl;
 			// Try and load the track
 			try {
-				cout << "Loading " << path << md5 << endl;
 				ch[active]->load( path + md5, start, end );
 				break;
 			}
@@ -193,7 +192,6 @@ int main(int argc, char *argv) {
 			ch[active]->play();
 		}
 
-		cout << " -------> Logging " << artist << " - " << title << endl;
 		char *routine = "sueplay::main";
 		int now = (int)time(NULL);
 		artist = sqlesc(artist);

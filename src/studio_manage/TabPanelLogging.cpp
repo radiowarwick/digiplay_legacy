@@ -209,7 +209,8 @@ void TabPanelLogging::getRecentlyLogged() {
     tm *dte;
     char date[30];
 
-    string SQL = "SELECT * FROM log ORDER BY datetime DESC LIMIT 50;";
+    //TODO - Change the 1 in this SQL query to the System Define
+    string SQL = "SELECT * FROM log WHERE userid != 1 ORDER BY datetime DESC LIMIT 50;";
     lstRecentlyLogged->clear();
     Result R;
 		try {

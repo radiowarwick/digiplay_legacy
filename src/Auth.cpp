@@ -76,7 +76,6 @@ void Auth::authSession(string username, string password) {
     catch (...) {
       	L_ERROR(LOG_AUTH,"Failed to find user in database.");
     }
-	cout<<SQL<<endl;
 	if (R.size()!=0) {
 		userid = string(R[0]["id"].c_str());
 		

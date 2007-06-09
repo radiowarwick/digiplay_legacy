@@ -63,7 +63,7 @@ vector<track>* libsearch::query(string search_string) {
  lastQuery_string = search_string;
 
  vector<track>* Q = new vector<track>;
- 
+/* 
  SQL = "SELECT audio.id AS id, audio.md5 AS md5, "
   "artists.name AS artist, "
   "audio.title, "
@@ -75,6 +75,9 @@ vector<track>* libsearch::query(string search_string) {
   "AND audio.censor='f' "
   "AND audiodir.audioid = audio.id "
   "AND audiodir.dirid = 2";
+*/
+ SQL = "SELECT id, md5, artist, title, album FROM v_audio_music "
+ 		"WHERE censor='f' AND dir = 2";
 
  if (searchArtist_flag == false &&
      searchTitle_flag == false && 
@@ -84,29 +87,29 @@ vector<track>* libsearch::query(string search_string) {
  }
  else if (searchTitle_flag == true)
  {
-   SQL += " AND (audio.title ILIKE '%" + search_string + "%'";
+   SQL += " AND (title ILIKE '%" + search_string + "%'";
      
    if (searchArtist_flag == true) {
-     SQL += " OR artists.name ILIKE '%" + search_string + "%'";
+     SQL += " OR artist ILIKE '%" + search_string + "%'";
    }
    
    if (searchAlbum_flag == true) {
-     SQL += " OR albums.name ILIKE '%" + search_string + "%'";
+     SQL += " OR album ILIKE '%" + search_string + "%'";
    }
    
-   SQL += ") ORDER BY audio.title";
+   SQL += ") ORDER BY title";
  }
  else if (searchArtist_flag == true)
  {
-   SQL += " AND (artists.name ILIKE '%" + search_string + "%'";
+   SQL += " AND (artist ILIKE '%" + search_string + "%'";
    if (searchAlbum_flag == true) {
-     SQL += " OR albums.name ILIKE '%" + search_string + "%'";
+     SQL += " OR album ILIKE '%" + search_string + "%'";
    }
-   SQL += ") ORDER BY audio.title";      
+   SQL += ") ORDER BY title";      
   }
  else 
  { 
-   SQL += " AND (albums.name ILIKE '%" + search_string + "%') ORDER BY audio.title";
+   SQL += " AND (album ILIKE '%" + search_string + "%') ORDER BY title";
  }
 
  if (searchLimit_value > 0) {

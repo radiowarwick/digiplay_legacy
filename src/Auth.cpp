@@ -30,10 +30,11 @@ using namespace std;
 #include "Auth.h"
 
 Auth::Auth() {
+	isAuthenticatedFlag = false;
 	DB = new DataAccess();
 	Config *conf = new Config("digiplay");
 	location = atoi( conf->getParam("LOCATION").c_str() );
-	delete conf;	
+	delete conf;
     closeSession();
 }
 
@@ -51,8 +52,9 @@ bool Auth::isPermitted(string privilage) {
 }
 
 bool Auth::isAuthenticated() {
-	if (_userInfo.size() == 0) return false;
-	return true;
+//	if (_userInfo.size() == 0) return false;
+//	return true;
+	return isAuthenticatedFlag;
 }
 
 string Auth::getUser() {
@@ -78,7 +80,8 @@ void Auth::authSession(string username, string password) {
     }
 	if (R.size()!=0) {
 		userid = string(R[0]["id"].c_str());
-		
+		isAuthenticatedFlag = true;
+
 		SQL = "UPDATE configuration SET val='" + userid
 	    	  + "' WHERE parameter='userid' AND location=" + dps_itoa(location);
 		try {
@@ -163,6 +166,7 @@ void Auth::closeSession() {
 		L_ERROR(LOG_AUTH,"Failed to change userid in the configuration table.");
 	}
 
+	isAuthenticatedFlag = false;
 	_privilages.clear();
 	_userInfo.clear();
 	addPrivilage("TabInfo");

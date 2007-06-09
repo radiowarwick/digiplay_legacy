@@ -55,5 +55,6 @@ class Auth {
 		int location;
 		vector<string> _privilages;
 		map<string,string> _userInfo;
+		bool isAuthenticatedFlag;
 };	
 #endif

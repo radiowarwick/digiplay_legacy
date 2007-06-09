@@ -45,6 +45,13 @@ class TabPanelScript : public TabPanel {
 
 	public slots:
 		void loadScript( int id );
+		void clearScript();
+	
+	signals:
+		void scriptDone();
+
+	private slots:
+		void btnScriptDoneClicked();
 
 	private:
 		void draw();

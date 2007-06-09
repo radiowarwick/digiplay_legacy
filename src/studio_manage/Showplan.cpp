@@ -48,6 +48,7 @@ Showplan::Showplan(QWidget *parent, const char* name)
         : QWidget(parent, name) {
     conf = new Config("digiplay");
     activePoint = 0;
+	selectedItem = 0;
     //_parent = parent;
     draw();
     triggerConfig = new DbTrigger("triggerConfig","trig_id1");
@@ -282,6 +283,11 @@ void Showplan::moveBottom() {
 
 void Showplan::selectionChanged(QListViewItem* x) {
     ShowPlanItem *y = (ShowPlanItem*)x;
+	if ( selectedItem && selectedItem->getType() == 1 &&
+		 	selectedItem->getState() == SHOWPLAN_STATE_LOADED ) {
+		emit scriptDeselected();
+		selectedItem->setState(SHOWPLAN_STATE_UNLOADED);
+	}
     if ( y && y->getState() == SHOWPLAN_STATE_UNLOADED ) {
         ShowPlanItem *z = (ShowPlanItem*)y->itemAbove();
         if ( z && z->getState() == SHOWPLAN_STATE_UNLOADED) {
@@ -304,17 +310,28 @@ void Showplan::selectionChanged(QListViewItem* x) {
 		if (y->getType() == 1) {
 			//Script!!
 			ShowPlanScript *s = (ShowPlanScript*)y;
+			y->setState( SHOWPLAN_STATE_LOADED );
 			emit scriptSelected( s->getScript().getId() );
 		}
+		selectedItem = y;
         return;
     }
 
 
+	selectedItem = y;
     btnMoveBottom->setEnabled(false);
     btnMoveDown->setEnabled(false);
     btnMoveUp->setEnabled(false);
     btnMoveTop->setEnabled(false);
     btnDelete->setEnabled(false);
+}
+
+void Showplan::scriptDone() {
+	if ( selectedItem && selectedItem->getType() == 1 &&
+		 	selectedItem->getState() == SHOWPLAN_STATE_LOADED ) {
+		emit scriptDeselected();
+		selectedItem->setState(SHOWPLAN_STATE_FINISHED);
+	}
 }
 
 void Showplan::processConfigUpdate() {

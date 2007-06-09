@@ -71,6 +71,7 @@ class Showplan : public QWidget {
         void addJingle(QString md5);
         void addAdvert(QString md5);
         void addScript(DpsShowScript& S);
+        void scriptDone();
         void clear();
         void remove();
         void moveUp();
@@ -80,6 +81,7 @@ class Showplan : public QWidget {
 
 	signals:
 		void scriptSelected( int );
+		void scriptDeselected();
 
     private slots:
         void processConfigUpdate();
@@ -106,6 +108,7 @@ class Showplan : public QWidget {
 
         QMutex activePointLock;
         ShowPlanItem* activePoint;
+        ShowPlanItem* selectedItem;
 };
 
 

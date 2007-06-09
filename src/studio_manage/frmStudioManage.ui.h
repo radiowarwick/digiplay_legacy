@@ -164,6 +164,10 @@ void frmStudioManage::init() {
                 this, SLOT( updateCartset( QString ) ) );
     connect ( sp, SIGNAL( scriptSelected( int ) ),
                 tabPanelScript, SLOT( loadScript( int ) ) );
+    connect ( sp, SIGNAL( scriptDeselected() ),
+                tabPanelScript, SLOT( clearScript() ) );
+    connect ( tabPanelScript, SIGNAL( scriptDone() ),
+                sp, SLOT( scriptDone() ) );
 
 	cout << "Interface initialisation complete." << endl;
 }

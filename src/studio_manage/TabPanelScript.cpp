@@ -106,6 +106,8 @@ void TabPanelScript::draw() {
     lblScriptName->setText( tr( "Item Name:" ) );
     lblScriptDuration->setText( tr( "Duration:" ) );
     btnScriptDone->setText( tr( "Finished" ) );
+	connect( btnScriptDone, SIGNAL( clicked() ), 
+	         this, SLOT( btnScriptDoneClicked() ) );
 }
 
 void TabPanelScript::loadScript( int id ) {
@@ -119,17 +121,30 @@ void TabPanelScript::loadScript( int id ) {
 		DB->abort();
 	}
 	catch(...) {
-		//Fuck up put an error hwerw!
+		//Fuck up put an error here!
 	}
 	if ( R.size() != 0 ) {
 		txtScriptBody->setText( R[0]["contents"].c_str() );
 		txtScriptName->setText( R[0]["name"].c_str() );
 		txtScriptDuration->setText( R[0]["length"].c_str() );
+		btnScriptDone->setEnabled( true );
 	}
 	else {
 		//toss wank.  Something fucked up good.
 	}
 //	cout << "loading id: " << s->getId() << endl;
+}
+
+void TabPanelScript::clearScript() {
+        txtScriptBody->setText( "" );
+		txtScriptName->setText( "" );
+		txtScriptDuration->setText( "" );
+		btnScriptDone->setEnabled( false );
+
+}
+
+void TabPanelScript::btnScriptDoneClicked() {
+	emit scriptDone();
 }
 
 void TabPanelScript::clear() {

@@ -22,6 +22,7 @@
  */
 #include "Logger.h"
 #include "DataAccess.h"
+#include "DbDefine.h"
 
 #include "AuthLdap.h"
 
@@ -76,52 +77,58 @@ void AuthLdap::authSession(string username, string password) {
 	string dn = "uid=" + username + "," + _baseDn;
 	L_INFO(LOG_AUTH," -> bind DN is '" + dn + "'");
 
+    // Bind to LDAP as user
 	int ret = 0;
 	int version = LDAP_VERSION3;
 	ldap_set_option(_myLdap, LDAP_OPT_PROTOCOL_VERSION, &version);
-
 	ret = ldap_simple_bind_s(_myLdap, dn.c_str(), password.c_str());
 	string retText = ldap_err2string(ret);
 
+    // If successful it will return the word "Success"
 	if (retText == "Success") {
 		L_INFO(LOG_AUTH," -> Success.  Checking for username in database.");
 
-    string SQL = "SELECT id FROM users WHERE username = '"
+        // Check whether user exists in the database.
+        // Since we're using LDAP authentication, they may not.
+        string SQL = "SELECT id FROM users WHERE username = '"
                         + username + "' LIMIT 1";
 		Result R;
 		try {
-    	R = DB->exec(SQL);
+        	R = DB->exec(SQL);
 			DB->abort();
 		}
 		catch (...) {
 			L_ERROR(LOG_AUTH,"Failed to check for user in database."); 
 		}
-    if (R.size() == 0) {
-      L_INFO(LOG_AUTH,"No user ID matching username. Adding to database.");
-		    SQL = "INSERT INTO users (username, password, enabled) "
-       		           "VALUES ('" + username + "', '', 't'); ";
+
+        if (R.size() == 0) {
+            L_INFO(LOG_AUTH,"No user ID matching username. "
+                            "Adding to database.");
 		    try {
-    		  DB->exec(SQL);
-		      DB->commit();
+                // Add the user
+		        SQL = "INSERT INTO users (username, password, enabled) "
+       		           "VALUES ('" + username + "', '', 't'); ";
+                DB->exec(SQL);
+                // Get their new user id
 	     		SQL = "SELECT id FROM users WHERE username = '"
                               + username + "' LIMIT 1";
-													    Result R = DB->exec(SQL);
-					DB->exec(SQL);
-					DB->abort();
-					SQL = "INSERT INTO usersgroups (userid, groupid) "
-											 "VALUES (" + string(R[0]["id"].c_str()) + ", 1);";
-    		  DB->exec(SQL);
-		      DB->commit();
+                Result R = DB->exec(SQL);
+                DB->exec(SQL);
+                // Add them to the everyone group
+                SQL = "INSERT INTO usersgroups (userid, groupid) "
+						 "VALUES (" + string(R[0]["id"].c_str()) + "," 
+                         + GROUP_EVERYONE + ")";
+    		    DB->exec(SQL);
+		        DB->commit();
     		}
 		    catch (...) {
-    		  L_ERROR(LOG_AUTH,"Failed to insert user " + username +
+                L_ERROR(LOG_AUTH,"Failed to insert user " + username +
 		                " into the database.");
-   		 }
-
-
-    }
+   		    }
+        }
 		else {
-			L_INFO(LOG_AUTH,"Username " + username + " already in the database so not adding.");
+			L_INFO(LOG_AUTH,"Username " + username 
+                            + " already in the database so not adding.");
 		}
 		Auth::authSession(username,password);
 	}

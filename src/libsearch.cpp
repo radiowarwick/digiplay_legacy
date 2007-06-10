@@ -23,14 +23,10 @@
  */
 #include "libsearch.h"
 
-//define the times to show and hide censored tracks 24hr clock
-#define CENSOR_START 5
-#define CENSOR_END 21
-
 libsearch::libsearch() {
  
     /* Read in configuration for database connection */
-//    config *conf = new config("digiplay");
+      conf = new Config("digiplay");
 
     /* Create the new connection */
 //    C = new Connection( conf->getDBConnectString() );
@@ -83,17 +79,21 @@ vector<track>* libsearch::query(string search_string) {
  SQL = "SELECT id, md5, artist, title, album, censor FROM v_audio_music "
  		"WHERE dir = 2";
 
+ int censor_start = atoi(conf->getParam("censor_start").c_str());
+ cout << "censor_start = " << censor_start << endl;
+ int censor_end   = atoi(conf->getParam("censor_end").c_str());
+ cout << "censor_end = " << censor_end << endl;
  time_t tim=time(NULL);
  tm *now=localtime(&tim);
 // now->tm_hour, now->tm_min);
 
- if (CENSOR_START < CENSOR_END) {
+ if (censor_start < censor_end) {
 	//showing PM & hiding AM
-	if (now->tm_hour < CENSOR_END && now->tm_hour > CENSOR_START) {
+	if (now->tm_hour < censor_end && now->tm_hour > censor_start) {
 		SQL += " AND censor = 'f'";
 	}
  } else {
-	if (now->tm_hour < CENSOR_END || now->tm_hour > CENSOR_START) {
+	if (now->tm_hour < censor_end || now->tm_hour > censor_start) {
 		SQL += " AND censor = 'f'";
 	}
  }

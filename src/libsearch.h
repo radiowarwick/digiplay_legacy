@@ -37,6 +37,7 @@ using namespace pqxx;
 
 #include "dps.h"
 #include "DataAccess.h"
+#include "Config.h"
 
 class libsearch {
     public:
@@ -56,7 +57,8 @@ class libsearch {
 	private:
 //		Connection* C;
 //		Transaction* T;
-        DataAccess* DB;
+		Config *conf;
+	        DataAccess* DB;
 		bool searchTitle_flag;
 		bool searchArtist_flag;
 		bool searchAlbum_flag;

@@ -23,6 +23,10 @@
  */
 #include "libsearch.h"
 
+//define the times to show and hide censored tracks 24hr clock
+#define CENSOR_START 5
+#define CENSOR_END 21
+
 libsearch::libsearch() {
  
     /* Read in configuration for database connection */
@@ -76,8 +80,23 @@ vector<track>* libsearch::query(string search_string) {
   "AND audiodir.audioid = audio.id "
   "AND audiodir.dirid = 2";
 */
- SQL = "SELECT id, md5, artist, title, album FROM v_audio_music "
- 		"WHERE censor='f' AND dir = 2";
+ SQL = "SELECT id, md5, artist, title, album, censor FROM v_audio_music "
+ 		"WHERE dir = 2";
+
+ time_t tim=time(NULL);
+ tm *now=localtime(&tim);
+// now->tm_hour, now->tm_min);
+
+ if (CENSOR_START < CENSOR_END) {
+	//showing PM & hiding AM
+	if (now->tm_hour < CENSOR_END && now->tm_hour > CENSOR_START) {
+		SQL += " AND censor = 'f'";
+	}
+ } else {
+	if (now->tm_hour < CENSOR_END || now->tm_hour > CENSOR_START) {
+		SQL += " AND censor = 'f'";
+	}
+ }
 
  if (searchArtist_flag == false &&
      searchTitle_flag == false && 
@@ -126,7 +145,12 @@ vector<track>* libsearch::query(string search_string) {
 	Q->at(i).artist = R[i]["artist"].c_str();
 	Q->at(i).album = R[i]["album"].c_str();
 	Q->at(i).md5 = R[i]["md5"].c_str();
-    Q->at(i).id = R[i]["id"].c_str();
+	Q->at(i).id = R[i]["id"].c_str();
+	if (string(R[i]["censor"].c_str()) == "f") {
+		Q->at(i).censor = false;
+	} else {
+		Q->at(i).censor = true;
+	}
  }
  return Q;
 }

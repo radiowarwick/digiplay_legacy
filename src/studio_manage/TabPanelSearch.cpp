@@ -47,6 +47,7 @@ TabPanelSearch::TabPanelSearch(QTabWidget *parent, string text)
 	panelTag = "TabSearch";
     path = qApp->applicationDirPath();
     pixAudio = new QPixmap(path + "/images/music16.png");
+    pixCensored = new QPixmap(path + "/images/censoredmusic16.png");
 	conf = new Config("digiplay");
 	draw();
 }
@@ -197,15 +198,19 @@ void TabPanelSearch::Library_Search() {
 	}
 	lstSearchResults->setUpdatesEnabled(false);
 	lstSearchResults->setEnabled(true);
-    QListViewItem *x;
+	QListViewItem *x;
 	for (unsigned int i = 0; i < SearchResults->size(); i++) {
-        x = new QListViewItem(  lstSearchResults, lstSearchResults->lastItem(),
-                            SearchResults->at(i).title,
-                            SearchResults->at(i).artist,
-                            SearchResults->at(i).album,
-                            SearchResults->at(i).id 
+		x = new QListViewItem(  lstSearchResults, lstSearchResults->lastItem(),
+			SearchResults->at(i).title,
+			SearchResults->at(i).artist,
+			SearchResults->at(i).album,
+			SearchResults->at(i).id 
                          );
-        x->setPixmap(0,*pixAudio);
+		if (SearchResults->at(i).censor) {
+			x->setPixmap(0,*pixCensored);
+		} else {
+			x->setPixmap(0,*pixAudio);
+		}
 	}
 	lstSearchResults->setUpdatesEnabled(true);
 	lstSearchResults->repaint();
@@ -219,7 +224,7 @@ void TabPanelSearch::playlistAdd(QListViewItem* x) {
 
 void TabPanelSearch::clear() {
 	delete btnLibrarySearch;
-    delete lstSearchResults;
+	delete lstSearchResults;
 	delete txtLibrarySearchText;
 	delete Searchlable;
 	delete ArtistCheckBox;

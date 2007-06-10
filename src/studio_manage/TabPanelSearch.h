@@ -71,8 +71,9 @@ class TabPanelSearch : public TabPanel {
 		QCheckBox *ArtistCheckBox;
 		QCheckBox *AlbumCheckBox;
 		QCheckBox *TitleCheckBox;
-        QString path;
-        QPixmap *pixAudio;
+		QString path;
+		QPixmap *pixAudio;
+		QPixmap *pixCensored;
 };
 
 #endif

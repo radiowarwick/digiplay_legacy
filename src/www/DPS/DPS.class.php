@@ -1,21 +1,21 @@
 <?php
 /**
- * 
- * @package DPS
- */
- 
+* 
+* @package DPS
+*/
+
 class DPS extends Module  {
-	
+
 	const module = 'DPS';
-	
+
 	/**
-	 * Initialise the object
-	 * 
-	 */
+	* Initialise the object
+	*
+	*/
 	function __construct($fieldData, $templateID){
 		parent::__construct(NULL, $fieldData, $templateID);
 	}
-	
+
 	/*$type [j][a][c][s]
 	* j - show jingles
 	* a - show adverts
@@ -28,7 +28,7 @@ class DPS extends Module  {
 		global $cfg;
 		$db = Database::getInstance($cfg['DPS']['dsn']);
 		$dirID = pg_escape_string($dirID);
-		$userID = pg_ecape_string($userID);
+		$userID = pg_escape_string($userID);
 		$readPerm = $cfg['DPS']['fileR'];
 
 		//#######
@@ -38,11 +38,11 @@ class DPS extends Module  {
 		WHERE
 			parent = $dirID AND 
 			permissions & B'$readPerm' = '$readPerm' AND 
-			userid = $userid 
+			userid = $userID 
 		ORDER BY name asc";
 		$dirs = $db->getAll($sql);
-   	foreach($dirs as $dir) {
-     	if($dir != false) {
+		foreach($dirs as $dir) {
+			if($dir != false) {
 				$sql = "SELECT count(*) from v_tree 
 				WHERE
 					parent = " . $dir['id'] . " AND 
@@ -74,7 +74,7 @@ class DPS extends Module  {
 				$list = $list . '<userdata name="perm">' . $dir['permissions'] . '</userdata>';
 				$list = $list . '</item>';
 			}
-    }
+		}
 
 		//#######
 		//JINGLES
@@ -88,7 +88,9 @@ class DPS extends Module  {
 			ORDER BY name asc";
 			$files = $db->getAll($sql);
 			foreach($files as $file) {
-		  	$list = $list . '<item text="' . htmlspecialchars($file['name']) . '" id="jgl' . $file['id'] . '" im0="jingle16.png"/>';
+				$list = $list . '<item text="' . htmlspecialchars($file['name']) . '" id="jgl' . $file['id'] . '" im0="jingle16.png">';
+				$list = $list . '<userdata name="perm">' . $file['permissions'] . '</userdata>';
+				$list = $list . '</item>';
 			}
 		}
 
@@ -104,7 +106,9 @@ class DPS extends Module  {
 			ORDER BY name asc";
 			$files = $db->getAll($sql);
 			foreach($files as $file) {
-		  	$list = $list . '<item text="' . htmlspecialchars($file['name']) . '" id="adv' . $file['id'] . '" im0="jingle16.png"/>';
+				$list = $list . '<item text="' . htmlspecialchars($file['name']) . '" id="adv' . $file['id'] . '" im0="jingle16.png">';
+				$list = $list . '<userdata name="perm">' . $file['permissions'] . '</userdata>';
+				$list = $list . '</item>';
 			}
 		}
 
@@ -120,7 +124,9 @@ class DPS extends Module  {
 			ORDER BY name asc";
 			$files = $db->getAll($sql);
 			foreach($files as $file) {
-		  	$list = $list . '<item text="' . htmlspecialchars($file['name']) . '" id="crt' . $file['id'] . '" im0="cartset16.png"/>';
+				$list = $list . '<item text="' . htmlspecialchars($file['name']) . '" id="crt' . $file['id'] . '" im0="cartset16.png">';
+				$list = $list . '<userdata name="perm">' . $file['permissions'] . '</userdata>';
+				$list = $list . '</item>';
 			}
 		}
 
@@ -137,7 +143,9 @@ class DPS extends Module  {
 			$files = $db->getAll($sql);
 			foreach($files as $file) {
 				$list = $list . '<item text="' . htmlspecialchars($file['name']) . '" 
-				id="scr' . $file['id'] . '" im0="script16.png"/>';
+				id="scr' . $file['id'] . '" im0="script16.png">';
+				$list = $list . '<userdata name="perm">' . $file['permissions'] . '</userdata>';
+				$list = $list . '</item>';
 			}
 		}
 
@@ -154,13 +162,191 @@ class DPS extends Module  {
 			$files = $db->getAll($sql);
 			foreach($files as $file) {
 				$list = $list . '<item text="' . htmlspecialchars($file['name']) . '"  
-				id="mus' . $file['id'] . '" im0="music16.png"/>';
+				id="mus' . $file['id'] . '" im0="music16.png">';
+				$list = $list . '<userdata name="perm">' . $file['permissions'] . '</userdata>';
+				$list = $list . '</item>';
 			}
 		}
 		return $list;
 	}
-	
-  public static function searchAudio($searchValue,$searchType,$sortType,$offset,$sust) {
+
+	/*$type [j][a][c][s]
+	* j - show jingles
+	* a - show adverts
+	* c - show cartsets
+	* s - show scripts
+	* p - show show plan
+	* m - show music
+	*/
+	public static function singleGroupTreeSetup($dirID,$groupID,$type) {
+		global $cfg;
+		$db = Database::getInstance($cfg['DPS']['dsn']);
+		$dirID = pg_escape_string($dirID);
+		$groupID = pg_escape_string($groupID);
+		$readPerm = $cfg['DPS']['fileR'];
+
+		//#######
+		//DIRS
+		//#######
+		$sql = "SELECT * from dir, dirgroups 
+		WHERE
+			dir.parent = $dirID AND 
+			dir.id = dirgroups.dirid AND 
+			dirgroups.permissions & B'$readPerm' = '$readPerm' AND 
+			dirgroups.groupid = $groupID 
+		ORDER BY dir.name asc";
+		$dirs = $db->getAll($sql);
+		foreach($dirs as $dir) {
+			if($dir != false) {
+				$sql = "SELECT count(*) from dir, dirgroups 
+				WHERE
+					dir.parent = " . $dir['id'] . " AND 
+					dir.id = dirgroups.dirid AND 
+					dirgroups.permissions & B'$readPerm' = '$readPerm' AND 
+					dirgroups.groupid = $groupID";
+				if(strpos($type,'c') !== false) {
+					$sql = $sql . " OR itemtype = 'cartset' ";
+				}
+				if(strpos($type,'s') !== false) {
+					$sql = $sql . " OR itemtype = 'script' ";
+				}
+				if(strpos($type,'m') !== false) {
+					$sql = $sql . " OR itemtype = 'music' ";
+				}
+				if(strpos($type,'j') !== false) {
+					$sql = $sql . " OR itemtype = 'jingle' ";
+				}
+				if(strpos($type,'a') !== false) {
+					$sql = $sql . " OR itemtype = 'advert' ";
+				}
+				$sql = $sql . ")";
+				$childCount = $db->getOne($sql);
+				if($childCount > 0) {
+					$list = $list . '<item text="' . htmlspecialchars($dir['name']) . '" id="dir' . $dir['id'] . '" im0="folderClosed.gif" child="1" >';
+				} else {
+					$list = $list . '<item text="' . htmlspecialchars($dir['name']) . '" id="dir' . $dir['id'] . '" im0="folderClosed.gif" child="0" >';
+				}
+				$list = $list . '<userdata name="perm">' . $dir['permissions'] . '</userdata>';
+				$list = $list . '</item>';
+			}
+		}
+
+		//#######
+		//JINGLES
+		//#######
+		if(strpos($type,'j') !== false) {
+			$sql = "SELECT audio.title AS name, audio.id AS id 
+			FROM audio, audiodir, audiogroups, audiotypes 
+			WHERE
+				audiodir.dirid = $dirID AND 
+				audiodir.audioid = audio.id AND 
+				audiogroups.audioid = audio.id AND 
+				audiogroups.permissions & B'$readPerm' = '$readPerm' AND 
+				audiogroups.groupid = $groupID AND
+				audio.type = audiotypes.id AND 
+				audiotypes.name = " . $cfg['DPS']['JingleType'] . " 
+			ORDER BY name asc";
+			$files = $db->getAll($sql);
+			foreach($files as $file) {
+				$list = $list . '<item text="' . htmlspecialchars($file['name']) . '" id="jgl' . $file['id'] . '" im0="jingle16.png">';
+				$list = $list . '<userdata name="perm">' . $file['permissions'] . '</userdata>';
+				$list = $list . '</item>';
+			}
+		}
+
+		//#######
+		//ADVERTS
+		//#######
+		if(strpos($type,'a') !== false) {
+			$sql = "SELECT audio.title AS name, audio.id AS id 
+			FROM audio, audiodir, audiogroups, audiotypes 
+			WHERE
+				audiodir.dirid = $dirID AND 
+				audiodir.audioid = audio.id AND 
+				audiogroups.audioid = audio.id AND 
+				audiogroups.permissions & B'$readPerm' = '$readPerm' AND 
+				audiogroups.groupid = $groupID AND
+				audio.type = audiotypes.id AND 
+				audiotypes.name = " . $cfg['DPS']['AdvertType'] . " 
+			ORDER BY name asc";
+			$files = $db->getAll($sql);
+			foreach($files as $file) {
+				$list = $list . '<item text="' . htmlspecialchars($file['name']) . '" id="adv' . $file['id'] . '" im0="jingle16.png">';
+				$list = $list . '<userdata name="perm">' . $file['permissions'] . '</userdata>';
+				$list = $list . '</item>';
+			}
+		}
+
+		//#######
+		//CARTSETS
+		//#######
+		if(strpos($type,'c') !== false) {
+			$sql = "SELECT cartsets.name AS name, cartsets.id AS id 
+			FROM cartsets, cartsetsdir, cartsetsgroups 
+			WHERE
+				cartsetsdir.dirid = $dirID AND 
+				cartsetsdir.cartsetid = cartsets.id AND 
+				cartsetsgroups.cartsetid = cartsets.id AND 
+				cartsetsgroups.permissions & B'$readPerm' = '$readPerm' AND 
+				cartsetsgroups.groupid = $groupID 
+			ORDER BY name asc";
+			$files = $db->getAll($sql);
+			foreach($files as $file) {
+				$list = $list . '<item text="' . htmlspecialchars($file['name']) . '" id="crt' . $file['id'] . '" im0="cartset16.png">';
+				$list = $list . '<userdata name="perm">' . $file['permissions'] . '</userdata>';
+				$list = $list . '</item>';
+			}
+		}
+
+		//#######
+		//SCRIPTS
+		//#######
+		if(strpos($type,'s') !== false) {
+			$sql = "SELECT script.name AS name, scripts.id AS id 
+			FROM scripts, scriptsdir, scriptsgroups 
+			WHERE
+				scriptsdir.dirid = $dirID AND 
+				scriptsdir.scriptid = scripts.id AND 
+				scriptsgroups.scriptid = scripts.id AND 
+				scriptsgroups.permissions & B'$readPerm' = '$readPerm' AND 
+				scriptsgroups.groupid = $groupID 
+			ORDER BY name asc";
+			$files = $db->getAll($sql);
+			foreach($files as $file) {
+				$list = $list . '<item text="' . htmlspecialchars($file['name']) . '" 
+				id="scr' . $file['id'] . '" im0="script16.png">';
+				$list = $list . '<userdata name="perm">' . $file['permissions'] . '</userdata>';
+				$list = $list . '</item>';
+			}
+		}
+
+		//#######
+		//MUSIC
+		//#######
+		if(strpos($type,'m') !== false) {
+			$sql = "SELECT audio.title AS name, audio.id AS id 
+			FROM audio, audiodir, audiogroups, audiotypes 
+			WHERE
+				audiodir.dirid = $dirID AND 
+				audiodir.audioid = audio.id AND 
+				audiogroups.audioid = audio.id AND 
+				audiogroups.permissions & B'$readPerm' = '$readPerm' AND 
+				audiogroups.groupid = $groupID AND
+				audio.type = audiotypes.id AND 
+				audiotypes.name = " . $cfg['DPS']['MusicType'] . " 
+			ORDER BY name asc";
+			$files = $db->getAll($sql);
+			foreach($files as $file) {
+				$list = $list . '<item text="' . htmlspecialchars($file['name']) . '"  
+				id="mus' . $file['id'] . '" im0="music16.png">';
+				$list = $list . '<userdata name="perm">' . $file['permissions'] . '</userdata>';
+				$list = $list . '</item>';
+			}
+		}
+		return $list;
+	}
+
+	public static function searchAudio($searchValue,$searchType,$sortType,$offset,$sust) {
 		global $cfg;
 		$db = Database::getInstance($cfg['DPS']['dsn']);
 		$offsetCount = $offset*$cfg['DPS']['resultLimit'];
@@ -327,15 +513,15 @@ class DPS extends Module  {
 									AND audioartists.artistid = artists.id 
 									AND audioartists.audioid = audio.id 
 									AND( album.name ILIKE '0%' OR 
-											 album.name ILIKE '1%' OR 
-											 album.name ILIKE '2%' OR 
-											 album.name ILIKE '3%' OR 
-											 album.name ILIKE '4%' OR 
-											 album.name ILIKE '5%' OR 
-											 album.name ILIKE '6%' OR 
-											 album.name ILIKE '7%' OR 
-											 album.name ILIKE '8%' OR 
-											 album.name ILIKE '9%' OR) "; 
+											album.name ILIKE '1%' OR 
+											album.name ILIKE '2%' OR 
+											album.name ILIKE '3%' OR 
+											album.name ILIKE '4%' OR 
+											album.name ILIKE '5%' OR 
+											album.name ILIKE '6%' OR 
+											album.name ILIKE '7%' OR 
+											album.name ILIKE '8%' OR 
+											album.name ILIKE '9%' OR) "; 
 			if($sust != '') {
 				$query = $query . " AND audio.sustainer = '$sust' ";
 			}
@@ -363,12 +549,12 @@ class DPS extends Module  {
 			$number++;
 		}
 		return $searchResult;
-  }
+	}
 
-  public static function searchPageAudio($searchValue,$searchType,$sust) {
-    global $cfg;
-    
-    $db = Database::getInstance($cfg['DPS']['dsn']);
+	public static function searchPageAudio($searchValue,$searchType,$sust) {
+		global $cfg;
+		
+		$db = Database::getInstance($cfg['DPS']['dsn']);
 		$binID = pg_escape_string($cfg['DPS']['binDirectoryID']);
 		$searchValue = pg_escape_string($searchValue);
 		if($searchType == "Title") {
@@ -474,24 +660,24 @@ class DPS extends Module  {
 												AND audioartists.artistid = artists.id 
 												AND audioartists.audioid = audio.id 
 												AND( album.name ILIKE '0%' OR 
-														 album.name ILIKE '1%' OR 
-														 album.name ILIKE '2%' OR 
-														 album.name ILIKE '3%' OR 
-														 album.name ILIKE '4%' OR 
-														 album.name ILIKE '5%' OR 
-														 album.name ILIKE '6%' OR 
-														 album.name ILIKE '7%' OR 
-														 album.name ILIKE '8%' OR 
-														 album.name ILIKE '9%' OR) "; 
+														album.name ILIKE '1%' OR 
+														album.name ILIKE '2%' OR 
+														album.name ILIKE '3%' OR 
+														album.name ILIKE '4%' OR 
+														album.name ILIKE '5%' OR 
+														album.name ILIKE '6%' OR 
+														album.name ILIKE '7%' OR 
+														album.name ILIKE '8%' OR 
+														album.name ILIKE '9%' OR) "; 
 			if($sust != '') {
 				$count_query = $count_query . " AND audio.sustainer = '$sust' ";
 			}
 			$count_query = $count_query . "GROUP BY audio.id)as a1";
 			
 			$rNum = $db->getOne($count_query);
-    }
+		}
 		return $rNum;
-  }
+	}
 
 }
 

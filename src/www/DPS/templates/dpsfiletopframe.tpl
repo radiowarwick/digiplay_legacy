@@ -9,7 +9,6 @@
 		{literal}
 		<script language="javascript" type="text/javascript">
 			var tree;
-			var xml1="{/literal}{$VIEWER.treeData}{literal}";
 			var browserType;
 			var val=0;
 			var win=null;
@@ -39,17 +38,14 @@
 
 			function loadTree(){
 				tree=new dhtmlXTreeObject(document.getElementById('toc_tree'),"100%","100%",0);
-				//tree.setXMLAutoLoading("{/literal}{$CONFIG.general.siteRoot}{literal}?templateID=102");
-				tree.setXMLAutoLoading("https://www.radio.warwick.ac.uk/dps-dev/index.php?templateID=102");
+				tree.setXMLAutoLoading("{/literal}{$CONFIG.general.toolkitRootURL}{literal}?templateID=65&treeType={/literal}{$VIEWER.treeType}{literal}");;
 				tree.setImagePath("DPS/scripts/dhtmlxTree/imgs/");
 				tree.setOnClickHandler(doOnClick);
 				tree.enableTreeLines(false);
-				tree.loadXMLString(xml1);
-				tree.openItem('dir{/literal}{$DATA.rootdir}{literal}');
+				tree.loadXML("{/literal}{$CONFIG.general.toolkitRootURL}{literal}?templateID=65&treeType={/literal}{$VIEWER.treeType}{literal}&id=dir1");
 			}
 
-			function moveCartset()
-			{
+			function moveCartset() {
 				window.name = "dpsmain";
 				var left=0;
 				var top=20;
@@ -59,8 +55,8 @@
 				win=window.open(Nurl,title,settings);
 				win.focus();
 			}
-			function moveScript()
-			{
+
+			function moveScript() {
 				window.name = "dpsmain";
 				var left=0;
 				var top=20;
@@ -70,8 +66,7 @@
 				win=window.open(Nurl,title,settings);
 				win.focus();
 			}
-			function moveAudio()
-			{
+			function moveAudio() {
 				window.name = "dpsmain";
 				var left=0;
 				var top=20;
@@ -82,8 +77,7 @@
 				win.focus();
 			}
 
-			function moveDir()
-			{
+			function moveDir() {
 				window.name = "dpsmain"
 				var left=0
 				var top=20

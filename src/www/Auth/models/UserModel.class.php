@@ -87,7 +87,7 @@ class UserModel extends Model {
 		$updateArray = array('password' => $md5pass);
 		$db = Database::getInstance($cfg['Auth']['dsn']);
 		
-		$db->update('users', $updateArray, "userid = '{$this->userToEdit}'");
+		$db->update('users', $updateArray, "id = '{$this->userToEdit}'");
 	}
 	
 	/**
@@ -113,10 +113,11 @@ class UserModel extends Model {
 		
 		if(count($customFieldsToSave) > 0){
 			if($createNew){
-				$customFieldsToSave['userid'] = '#id#';
+				$customFieldsToSave['id'] = '#id#';
+				$customFieldsToSave['enabled'] = 't';
 				$this->userToEdit = $db->insert('users', $customFieldsToSave);
 			}else {
-				$db->update('users', $customFieldsToSave, "userid = '{$this->userToEdit}'");
+				$db->update('users', $customFieldsToSave, "id = '{$this->userToEdit}'");
 			}
 		}
 	}
@@ -144,9 +145,9 @@ class UserModel extends Model {
 		global $cfg;
 		$db = Database::getInstance($cfg['Auth']['dsn']);
 		
-		$db->delete('users', "userid = $uid");
-		$db->delete('usergrouplink', "userid = $uid");
-		$db->delete('realmuserlink', "userid = $uid");
+		$db->delete('users', "id = $uid");
+		$db->delete('usergrouplink', "id = $uid");
+		$db->delete('realmuserlink', "id = $uid");
 		
 		unset($this->userToEdit);
 		unset($this->fieldData['userToEdit']);

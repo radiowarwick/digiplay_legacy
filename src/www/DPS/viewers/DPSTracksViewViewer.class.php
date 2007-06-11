@@ -1,7 +1,6 @@
 <?php
 /**
-* @package FrontEnds
-* @subpackage MVC
+* @package DPS
 */
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 
@@ -26,20 +25,20 @@ class DPSTracksViewViewer extends Viewer {
 
 			$sql = "SELECT DISTINCT artists.name as name 
 			FROM artists, audioartists 
-			WHERE audioartists.audio = " . pg_escape_string($trackID) . " 
-				AND audioartists.artist = artists.id";
+			WHERE audioartists.audioid = " . pg_escape_string($trackID) . " 
+				AND audioartists.artistid = artists.id";
 			$trackDetails['artist'] = $db->getColumn($sql);
 		
 			$sql = "SELECT DISTINCT keywords.name as name 
 			FROM keywords, audiokeywords 
-			WHERE audiokeywords.track = " . pg_escape_string($trackID) . " 
-				AND audiokeywords.keyword = keywords.id";
+			WHERE audiokeywords.audioid = " . pg_escape_string($trackID) . " 
+				AND audiokeywords.keywordid = keywords.id";
 			$trackDetails['keywords'] = $db->getColumn($sql);
 			$samples = $trackDetails['length_smpl'];
 			$trackDetails['length'] = $tracksLen = round((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
 
 			$sql = "SELECT * from audiocomments 
-			WHERE audio = " . pg_escape_string($trackID) . " 
+			WHERE audioid = " . pg_escape_string($trackID) . " 
 			ORDER BY creationdate ASC";
 			$trackDetails['comments'] = $db->getAll($sql);
 			foreach($trackDetails['comments'] as &$comment) {

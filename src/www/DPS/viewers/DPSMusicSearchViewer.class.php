@@ -63,6 +63,7 @@ class DPSMusicSearchViewer extends Viewer {
 			$rNum = $rNum-$cfg['DPS']['resultLimit'];
 		}
 
+		$pageArray = array();
 		$pages = 1; 
 		$pageArray[] = $pages;
 		$rNum = $rNum-$cfg['DPS']['resultLimit'];

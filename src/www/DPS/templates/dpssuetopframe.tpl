@@ -49,9 +49,9 @@
 	      <input type="text" name="dpsSearchVal" value="{$VIEWER.searchValue}">
 	      <select name="dpsSearchType">
 		{if $VIEWER.searchType == "Both"}
-		  <option value="Both" selected="selected">Both</option>
+		  <option value="Both" selected="selected">All</option>
 		{else}
-		  <option value="Both">Both</option>
+		  <option value="Both">All</option>
 		{/if}
 		{if $VIEWER.searchType == "Artist"}
 		  <option value="Artist" selected="selected">Artist</option>

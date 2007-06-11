@@ -27,7 +27,7 @@ class DPSUserAddCartsetModel extends Model {
       $userID = $auth->getUserID();
       $perm['userid'] = $userID;
       $perm['cartsetid'] = $cartsetID;
-      $perm['permissions'] = 'o';
+      $perm['permissions'] = "B" . $cfg['DPS']['fileO'] . "B";
       $db->insert('cartsetsusers',$perm,true);
       $cartwall = array();
       $cartwall['name'] = "New Page";

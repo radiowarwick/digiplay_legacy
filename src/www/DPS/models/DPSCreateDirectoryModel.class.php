@@ -8,30 +8,27 @@ MVCUtils::includeModel('Model', 'tkfecommon');
  */
 class DPSCreateDirectoryModel extends Model {
 	
-  const module = 'DPS';
+	const module = 'DPS';
 	
-	
-  protected function processValid(){
-    global $cfg;
-    $db = Database::getInstance($cfg['DPS']['dsn']);
+	protected function processValid(){
+		global $cfg;
+		$db = Database::getInstance($cfg['DPS']['dsn']);
 		$dir = $this->fieldData['rootdir'];
-    if(is_numeric($dir)) {
-      $sql_insert['parent'] = $dir;
+		if(is_numeric($dir)) {
+			$sql_insert['parent'] = $dir;
 			$sql_insert['name'] = $this->fieldData['dirtext'];
 			$sql_insert['id'] = "#id#";
-      $id = $db->insert('dir',$sql_insert,true);
+			$id = $db->insert('dir',$sql_insert,true);
 			$sql_perm['dirid'] = $id;
 			$sql_perm['permissions'] = 'o';
 			$auth = Auth::getInstance();
 			$sql_perm['userid'] = $auth->getUserID();
 			$id = $db->insert('dirusers',$sql_perm,true);
-    }
-    
-  }	
-  protected function processInvalid(){
-    //No invalid processing required
-  }
+		}
+	}
 	
+	protected function processInvalid(){
+		//No invalid processing required
+	}
 }
-
 ?>

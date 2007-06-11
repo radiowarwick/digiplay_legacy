@@ -22,7 +22,8 @@ class DPSJAAudioIDValidator extends ValidatorRule {
 		
 		$sql = "SELECT COUNT(*) FROM v_audio
 			WHERE id = $audioID
-			AND (audiotype = 'Jingle' OR audiotype = 'Advert');
+			AND (audiotype = '" . $cfg['DPS']['AdvertType'] . "' 
+			OR audiotype = '" . $cfg['DPS']['JingleType'] . "');"
 		$check = $db->getOne($sql);
 		if($check > 0) {
 			return true

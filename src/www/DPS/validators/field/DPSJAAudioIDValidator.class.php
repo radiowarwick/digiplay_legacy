@@ -20,10 +20,9 @@ class DPSJAAudioIDValidator extends ValidatorRule {
 		}
 		$audioID = pg_escape_string($data);
 		
-		$sql = "SELECT COUNT(*) FROM v_audio_adverts, v_audio_jingles
-			WHERE v_audio_adverts.id = $audioID
-			OR v_audio_jingles.id = $audioID";
-		
+		$sql = "SELECT COUNT(*) FROM v_audio
+			WHERE id = $audioID
+			AND (audiotype = 'Jingle' OR audiotype = 'Advert');
 		$check = $db->getOne($sql);
 		if($check > 0) {
 			return true

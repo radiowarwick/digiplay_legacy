@@ -1,7 +1,6 @@
 <?php
 /**
- * @package FrontEnds
- * @subpackage Auth
+ * @package DPS
  */
 include_once($cfg['MVC']['dir']['root'] . '/MVCUtils.class.php');
 
@@ -14,5 +13,4 @@ class DPSLogoutViewer extends AuthViewer {
 		$auth->logout();
 	}
 }
-
 ?>

@@ -26,7 +26,7 @@ class DPSSystemCartOwnValidator extends ValidatorRule {
 			AND v_tree_cartset.id = cartwalls.cartsetid
 			AND cartwalls.id = cartsaudio.cartwallid
 			AND cartsaudio.id = $cartID
-			AND v_tree_cartset.permissions & B '" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
+			AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
 		$check = $db->getOne($sql);
 		if($check > 0) {
 			return true;

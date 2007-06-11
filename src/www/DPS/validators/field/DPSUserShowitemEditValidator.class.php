@@ -26,7 +26,7 @@ class DPSUserShowitemEditValidator extends ValidatorRule {
 			WHERE v_tree_showplan.userid = $userID
 			AND v_tree_showplan.id = showitems.showplanid
 			AND showitems.id = $itemID
-			AND v_tree_showplan.permissions & B '" . $cfg['DPS']['fileW'] . "' = '" . $cfg['DPS']['fileW'] . "'";
+			AND v_tree_showplan.permissions & B'" . $cfg['DPS']['fileW'] . "' = '" . $cfg['DPS']['fileW'] . "'";
 		$check = $db->getOne($sql);
 		if($check > 0) {
 			return true;

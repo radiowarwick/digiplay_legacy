@@ -24,7 +24,7 @@ class DPSUserDirDelValidator extends ValidatorRule {
 		$sql = "SELECT COUNT(*) FROM v_tree_dir
 			WHERE id = $dirID
 			AND userid = $userID
-			AND permissions & B '" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
+			AND permissions & B'" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
 		$check = $db->getOne($sql);
 		if($check > 0) {
 		} else {

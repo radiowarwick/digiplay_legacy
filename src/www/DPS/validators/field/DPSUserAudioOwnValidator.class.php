@@ -27,7 +27,7 @@ class DPSUserAudioOwnValidator extends ValidatorRule {
 		$sql = "SELECT COUNT(*) FROM v_tree_advert
 			WHERE userid = $userID
 			AND id = $audioID
-			AND permissions & B '" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
+			AND permissions & B'" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
 		$check = $db->getOne($sql);
 		if($check > 0) {
 			return true;
@@ -37,7 +37,7 @@ class DPSUserAudioOwnValidator extends ValidatorRule {
 		$sql = "SELECT COUNT(*) FROM v_tree_jingle
 			WHERE userid = $userID
 			AND id = $audioID
-			AND permissions & B '" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
+			AND permissions & B'" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
 		$check = $db->getOne($sql);
 		if ($check > 0) {
 			return true;
@@ -47,7 +47,7 @@ class DPSUserAudioOwnValidator extends ValidatorRule {
 		$sql = "SELECT COUNT(*) FROM v_tree_music
 			WHERE userid = $userID
 			AND id = $audioID
-			AND permissions & B '" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
+			AND permissions & B'" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
 		$check = $db->getOne($sql);
 		if ($check > 0) {
 			return true;

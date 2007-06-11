@@ -24,7 +24,7 @@ class DPSSystemCartsetReadValidator extends ValidatorRule {
 		$sql = "SELECT COUNT(*) FROM v_tree_cartset
 				WHERE userid = " . $cfg['DPS']['systemUserID'] . "
 				AND id = $cartID
-				AND permissions & B '" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "'";
+				AND permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "'";
 		$check = $db->getOne($sql);
 		if($check > 0) {
 			return true;

@@ -26,7 +26,7 @@ class DPSUserDirWriteValidator extends ValidatorRule {
 		$sql = "SELECT COUNT(*) FROM v_tree_dir
 			WHERE id = $dirID
 			AND userid = $userID
-			AND permissions & B '" . $cfg['DPS']['fileW'] . "' = '" . $cfg['DPS']['fileW'] . "'";
+			AND permissions & B'" . $cfg['DPS']['fileW'] . "' = '" . $cfg['DPS']['fileW'] . "'";
 		$check = $db->getOne($sql);
 		if($check > 0) {
 			return true;
@@ -34,4 +34,5 @@ class DPSUserDirWriteValidator extends ValidatorRule {
 			return "You do not have permission to write to that directory";
 		}
 	}
+}
 ?>

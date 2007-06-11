@@ -25,7 +25,7 @@ class DPSUserScriptDelValidator extends ValidatorRule {
 		$sql = "SELECT COUNT(*) FROM v_tree_script
 			WHERE userid = $userID
 			AND id = $scriptID
-			AND permissions & B '" . $cfg['DPS']['fileW'] . "' = '" . $cfg['DPS']['fileW'] . "'";
+			AND permissions & B'" . $cfg['DPS']['fileW'] . "' = '" . $cfg['DPS']['fileW'] . "'";
 		$check = $db->getOne($sql);
 		if ($check > 0) {
 			return true;

@@ -26,7 +26,7 @@ class DPSUserCartwallOwnValidator extends ValidatorRule {
 			WHERE v_tree_cartset.userid = $userID
 			AND v_tree_cartset.id = cartwalls.cartsetid
 			AND cartwalls.id = $cartwallID
-			AND v_tree_cartset.permissions & B '" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
+			AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
 		$check = $db->getOne($sql);
 		if($check > 0) {
 			return true;

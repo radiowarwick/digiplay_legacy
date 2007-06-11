@@ -22,7 +22,7 @@ class DPSLoginModel extends Model {
 			AND configs.name = 'user_curlogin' 
 			AND usersconfigs.userid = " . $userID;
 		$usercurlogin = $db->getRow($sql);
-		$sql = "SELECT usersconfigs.val, usersconfigs.id #
+		$sql = "SELECT usersconfigs.val, usersconfigs.id
 			FROM configs, usersconfigs 
 			WHERE configs.id = usersconfigs.configid
 			AND configs.name = 'user_lastlogin'

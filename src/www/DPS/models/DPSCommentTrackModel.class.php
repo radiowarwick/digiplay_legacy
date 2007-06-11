@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package DPS
+ */
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 include_once($cfg['MVC']['dir']['root'] . '/MVCUtils.class.php');
 MVCUtils::includeModel('Model', 'tkfecommon');
@@ -7,14 +10,13 @@ MVCUtils::includeModel('Model', 'tkfecommon');
  * Model for user management
  */
 class DPSCommentTrackModel extends Model {
-		
+	
 	const module = 'DPS';
-		
-		
-	protected function processValid(){
+	
+	protected function processValid() {
 		global $cfg;
 		$db = Database::getInstance($cfg['DPS']['dsn']);
-	
+		
 		$audioID = pg_escape_string($this->fieldData['audioID']);
 		if($this->fieldData['comment'] != ''
 			&& is_numeric($audioID) && $audioID != "" && $audioID != "*") {
@@ -33,7 +35,7 @@ class DPSCommentTrackModel extends Model {
 		}
 	}
 	
-	protected function processInvalid(){
+	protected function processInvalid() {
 		//No invalid processing required
 	}
 }

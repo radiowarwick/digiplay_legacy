@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package DPS
+ */
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 include_once($cfg['MVC']['dir']['root'] . '/MVCUtils.class.php');
 MVCUtils::includeModel('Model', 'tkfecommon');
@@ -8,16 +11,17 @@ MVCUtils::includeModel('Model', 'tkfecommon');
  */
 class DPSUserUpShowItemModel extends Model {
 	
-  const module = 'DPS';
+	const module = 'DPS';
 	
-  protected function processValid(){
-    global $cfg;
-    $db = Database::getInstance($cfg['DPS']['dsn']);
+	protected function processValid() {
+		global $cfg;
+		$db = Database::getInstance($cfg['DPS']['dsn']);
 		$itemID = pg_escape_string($this->fieldData['itemID']);
-		$sql = "select showplanid from showitems where id = $itemID";
+		$sql = "SELECT showplanid FROM showitems WHERE id = $itemID";
 		$showID = $db->getOne($sql);
-
-		$sql = "SELECT * from showitems where showplanid = $showID order by position asc";
+		
+		$sql = "SELECT * FROM showitems
+			WHERE showplanid = $showID ORDER BY position ASC";
 		$showItems = $db->getAll($sql);
 		$lastItem = false;
 		foreach($showItems as $item) {
@@ -35,9 +39,10 @@ class DPSUserUpShowItemModel extends Model {
 			}
 			$lastItem = $item;
 		}
-  }
+	}
 	
-  protected function processInvalid(){
+	protected function processInvalid() {
+		//No invalid processing required
 	}
 	
 }

@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package DPS
+ */
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 include_once($cfg['MVC']['dir']['root'] . '/MVCUtils.class.php');
 MVCUtils::includeModel('Model', 'tkfecommon');
@@ -10,15 +13,17 @@ class DPSUserAddCartsetModel extends Model {
 	
 	const module = 'DPS';
 	
-	protected function processValid(){
+	protected function processValid() {
 		global $cfg;
 		$db = Database::getInstance($cfg['DPS']['dsn']);
-
+		
 		$name = pg_escape_string($this->fieldData['name']);
 		$desc = pg_escape_string($this->fieldData['desc']);
 		
 		$userName = $auth->getUser();
-		$sql = "select id from dir where parent = " . $cfg['DPS']['userDirectoryID'] . " AND name = '" . $userName . "'";
+		$sql = "SELECT id FROM dir #
+			WHERE parent = " . $cfg['DPS']['userDirectoryID'] . "
+			AND name = '" . $userName . "'";
 		$dirID = $db->getOne($sql);
 		if($dirID == '') {
 			$newdir['name'] = $userName;
@@ -28,10 +33,10 @@ class DPSUserAddCartsetModel extends Model {
 			$dirID = $db->insert('dir',$newdir,true);
 			$newperm['dirid'] = $dirID;
 			$newperm['userid'] = $userID;
-			$newperm['permissions'] = 'B11000000B'; //read write
+			$newperm['permissions'] = 'B' . $cfg['DPS']['fileRW'] . 'B';
 			$db->insert('dirusers',$newperm,false); //for binary insert
 		}
-
+		
 		if($name != '') {
 			$cartset = array();
 			$perm = array();
@@ -56,8 +61,8 @@ class DPSUserAddCartsetModel extends Model {
 			$db->insert('cartsetsdir',$scriptdir,true);
 		}
 	}
-
-	protected function processInvalid(){
+	
+	protected function processInvalid() {
 		//No invalid processing required
 	}
 }

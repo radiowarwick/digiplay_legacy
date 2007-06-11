@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package DPS
+ */
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 include_once($cfg['MVC']['dir']['root'] . '/MVCUtils.class.php');
 MVCUtils::includeModel('Model', 'tkfecommon');
@@ -8,20 +11,19 @@ MVCUtils::includeModel('Model', 'tkfecommon');
  */
 class DPSUserCompleteShowModel extends Model {
 	
-  const module = 'DPS';
+	const module = 'DPS';
 	
-  protected function processValid(){
-    global $cfg;
-    $db = Database::getInstance($cfg['DPS']['dsn']);
+	protected function processValid() {
+		global $cfg;
+		$db = Database::getInstance($cfg['DPS']['dsn']);
 		$showID = pg_escape_string($this->fieldData['showID']);
 		$Where = "id = $showID";
 		$Update['completed'] = 't';
 		$db->update('showplans',$Update,$Where,true);
-  }
-	
-  protected function processInvalid(){
 	}
-	
+		
+	protected function processInvalid() {
+		//No invalid processing required
+	}
 }
-
 ?>

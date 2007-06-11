@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package DPS
+ */
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 include_once($cfg['MVC']['dir']['root'] . '/MVCUtils.class.php');
 MVCUtils::includeModel('Model', 'tkfecommon');
@@ -8,12 +11,11 @@ MVCUtils::includeModel('Model', 'tkfecommon');
  */
 class DPSUserDeleteScriptModel extends Model {
 	
-  const module = 'DPS';
+	const module = 'DPS';
 	
-	
-  protected function processValid(){
-    global $cfg;
-    $db = Database::getInstance($cfg['DPS']['dsn']);
+	protected function processValid() {
+		global $cfg;
+		$db = Database::getInstance($cfg['DPS']['dsn']);
 		$scriptID = pg_escape_string($this->fieldData['scriptID']);
 		if(is_numeric($scriptID)) {
 			$where = "scriptid = " . $scriptID;
@@ -23,11 +25,10 @@ class DPSUserDeleteScriptModel extends Model {
 			$where = "id = " . $scriptID;
 			$db->delete('scripts',$where,true);
 		}
-  }	
-  protected function processInvalid(){
-    //No invalid processing required
-  }
-	
-}
+	}
 
+	protected function processInvalid() {
+		//No invalid processing required
+	}
+}
 ?>

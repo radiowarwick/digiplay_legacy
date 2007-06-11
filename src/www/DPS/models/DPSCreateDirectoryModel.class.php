@@ -10,7 +10,7 @@ class DPSCreateDirectoryModel extends Model {
 	
 	const module = 'DPS';
 	
-	protected function processValid(){
+	protected function processValid() {
 		global $cfg;
 		$db = Database::getInstance($cfg['DPS']['dsn']);
 		$dir = $this->fieldData['rootdir'];
@@ -20,14 +20,14 @@ class DPSCreateDirectoryModel extends Model {
 			$sql_insert['id'] = "#id#";
 			$id = $db->insert('dir',$sql_insert,true);
 			$sql_perm['dirid'] = $id;
-			$sql_perm['permissions'] = 'o';
+			$sql_perm['permissions'] = 'B' . $cfg['DPS']['fileRWO'] . 'B';
 			$auth = Auth::getInstance();
 			$sql_perm['userid'] = $auth->getUserID();
-			$id = $db->insert('dirusers',$sql_perm,true);
+			$id = $db->insert('dirusers',$sql_perm,false);
 		}
 	}
 	
-	protected function processInvalid(){
+	protected function processInvalid() {
 		//No invalid processing required
 	}
 }

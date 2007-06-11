@@ -352,6 +352,9 @@ class DPS extends Module  {
 		$offsetCount = $offset*$cfg['DPS']['resultLimit'];
 		$resultLimit = pg_escape_string($cfg['DPS']['resultLimit']);
 		$binID = pg_escape_string($cfg['DPS']['binDirectoryID']);
+		if(strtolower(substr($searchValue,0,4)) == 'the ') {
+			$searchValue = substr($searchValue,4);
+		}
 		$searchValue = pg_escape_string($searchValue);
 		if($sortType == "artist") {
 			$sortstr = "artist.name";

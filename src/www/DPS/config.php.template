@@ -25,14 +25,21 @@ $cfg['DPS']['userDirectoryID'] = 5;
 $cfg['DPS']['binDirectoryID'] = 6;
 $cfg['DPS']['systemUserID'] = 0;
 $cfg['DPS']['root'] = $cfg['general']['toolkitRoot'] . '/DPS';
-$cfg['DPS']['playlistInfo'] = array(array('id' => 0,
-                                   'name' => 'A'),
-								    array('id' => 1,
-									'name' => 'B')
-									);
+$cfg['DPS']['playlistInfo'] = array(
+	array('id' => 0,'name' => 'A'),
+	array('id' => 1,'name' => 'B')
+	);
 $cfg['DPS']['HomeSite'] = "http://yourname.company.com/path/to/site";
 
+// Binary permissions
 $cfg['DPS']['fileR'] = "10000000";
 $cfg['DPS']['fileW'] = "01000000";
 $cfg['DPS']['fileO'] = "00100000";
+$cfg['DPS']['fileRW'] = "11000000";
+$cfg['DPS']['fileRWO'] = "1110000";
+
+// Audio types
+$cfg['DPS']['AdvertType'] = "Advert";
+$cfg['DPS']['JingleType'] = "Jingle";
+$cfg['DPS']['MusicType'] = "Music";
 ?>

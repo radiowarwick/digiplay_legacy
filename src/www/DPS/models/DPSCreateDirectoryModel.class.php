@@ -14,6 +14,7 @@ class DPSCreateDirectoryModel extends Model {
 		global $cfg;
 		$db = Database::getInstance($cfg['DPS']['dsn']);
 		$dir = $this->fieldData['rootdir'];
+
 		if(is_numeric($dir)) {
 			$sql_insert['parent'] = $dir;
 			$sql_insert['name'] = $this->fieldData['dirtext'];
@@ -29,6 +30,7 @@ class DPSCreateDirectoryModel extends Model {
 	
 	protected function processInvalid() {
 		//No invalid processing required
+				echo "here";
 	}
 }
 ?>

@@ -22,9 +22,9 @@
 					window.location = "{/literal}{$CONFIG.general.siteRoot}{literal}?templateID=86"
 				}
 			}
-
+			
 			function dirChange() {
-				document.getElementById('dirCreate').href = "{/literal}{$CONFIG.general.siteRoot}{literal}?templateID=86&formName=dpsdiradd&moduleName=DPS&rootdir=" + String(val).substring(3,String(val).length) + "&dirtext=" + document.getElementById('dirctext').value;
+				document.getElementById('dirCreate').href = "{/literal}{$CONFIG.general.siteRoot}{literal}?templateID={/literal}{$VIEWER.templateID}{literal}&formName=dpsdiradd&moduleName=DPS&rootdir=" + String(val).substring(3,String(val).length) + "&dirtext=" + document.getElementById('dirctext').value;
 				document.getElementById('dirRename').href = "{/literal}{$CONFIG.general.siteRoot}{literal}?templateID=86&formName=dpsdirrename&moduleName=DPS&rootdir=" + String(val).substring(3,String(val).length) + "&dirtext=" + document.getElementById('dirrtext').value;
 			}
 

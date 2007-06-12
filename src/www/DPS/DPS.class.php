@@ -64,6 +64,9 @@ class DPS extends Module  {
 				if(strpos($type,'a') !== false) {
 					$sql = $sql . " OR itemtype = 'advert' ";
 				}
+				if(strpos($type,'p') !== false) {
+					$sql = $sql . " OR itemtype = 'showplan' ";
+				}
 				$sql = $sql . ")";
 				$childCount = $db->getOne($sql);
 				if($childCount > 0) {
@@ -144,6 +147,25 @@ class DPS extends Module  {
 			foreach($files as $file) {
 				$list = $list . '<item text="' . htmlspecialchars($file['name']) . '" 
 				id="scr' . $file['id'] . '" im0="script16.png">';
+				$list = $list . '<userdata name="perm">' . $file['permissions'] . '</userdata>';
+				$list = $list . '</item>';
+			}
+		}
+
+		//#######
+		//SHOWPLANS
+		//#######
+		if(strpos($type,'p') !== false) {
+			$sql = "SELECT * from v_tree_showplan
+			WHERE
+				parent = $dirID AND 
+				permissions & B'$readPerm' = '$readPerm' AND 
+				userid = $userID 
+			ORDER BY name asc";
+			$files = $db->getAll($sql);
+			foreach($files as $file) {
+				$list = $list . '<item text="' . htmlspecialchars($file['name']) . '" 
+				id="shp' . $file['id'] . '" im0="showplan16.png">';
 				$list = $list . '<userdata name="perm">' . $file['permissions'] . '</userdata>';
 				$list = $list . '</item>';
 			}

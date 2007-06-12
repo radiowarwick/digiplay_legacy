@@ -41,12 +41,12 @@
 		<div class='subTitle'>You do not have permission to move that item</div>
 	{else}
 		<div class='alignleft'>
-			<div class='bigTitle'>Advanced Properties: {$VIEWER.script.name}</div>
+			<div class='bigTitle'>Advanced Properties: {$VIEWER.showplan.name}</div>
 			<form name="dpsUserMoveScriptForm" method="post" action="{$CONFIG.general.siteRoot}">
-    	  <input type="hidden" name="formName" value="dpsUserMoveScriptForm" />
+    	  <input type="hidden" name="formName" value="dpsUserMoveShowplanForm" />
 				<input type="hidden" name="moduleName" value="DPS" />
 				<input type="hidden" name="templateID" value="22" />
-				<input type="hidden" name="scriptID" value="{$VIEWER.script.id}" />
+				<input type="hidden" name="showplanID" value="{$VIEWER.showplan.id}" />
 				<input type="hidden" id="newparent" name="newParent" value="{$VIEWER.folder.parent}" />
 				{if $VIEWER.own == 't'}
 <!--				<div class='subTitle'>Select the items permissions from the options below</div>

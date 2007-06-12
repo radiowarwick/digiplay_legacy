@@ -1,10 +1,11 @@
 <?php
 /**
-* @package DPS
+* @package FrontEnds
+* @subpackage MVC
 */
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 
-class DPSUserCartsetMoveViewer extends Viewer {
+class DPSUserShowMoveViewer extends Viewer {
 
 	const module = 'DPS';
 	protected $activeNode = 'foldersTree';
@@ -15,18 +16,17 @@ class DPSUserCartsetMoveViewer extends Viewer {
 		$db = Database::getInstance($cfg['DPS']['dsn']);
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
-		$cartsetID = pg_escape_string($this->fieldData['cartsetID']);
-		$flag = false;
-		if(!is_numeric($cartsetID)) {
+		$showID = pg_escape_string($this->fieldData['showplanID']);
+		if(!is_numeric($showID)) {
 			$this->assign('permError', 't');
 		} else {
-			$sql = "SELECT count(*) FROM v_tree_cartset
-				WHERE id = $cartsetID
+			$sql = "SELECT count(*) FROM v_tree_showplan
+				WHERE id = $showID
 					AND	userid = $userID
 					AND permissions & B'" . $cfg['DPS']['fileW'] . "' = '" . $cfg['DPS']['fileW'] . "'";
 			if($db->getOne($sql) > 0) {
-				$sql = "SELECT dirid FROM cartsetsdir
-					WHERE cartsetid = $cartsetID";
+				$sql = "SELECT dirid FROM showplandir
+					WHERE showplanid = $showID";
 				$dirID = $db->getOne($sql);
 				"SELECT count(*) FROM v_tree_dir
 					WHERE id = $dirID
@@ -39,20 +39,19 @@ class DPSUserCartsetMoveViewer extends Viewer {
 		}
 		
 		if($flag) {
-			$sql = "SELECT * FROM cartsets 
-				WHERE id = " . pg_escape_string($cartsetID);
-			$cartset = $db->getRow($sql);
-			
-			$sql = "SELECT count(*) FROM v_tree_cartset
-				WHERE id = $cartsetID
-					AND	userid = $userID
-					AND permissions & B'" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
-			$check = $db->getOne($sql);
-			if($check > 0) {
-				$this->assign('own', 't');
-			}
-			
-			$this->assign('cartset', $cartset);
+			$sql = "SELECT * FROM showplans WHERE id = $showID";
+			$showplan = $db->getRow($sql);
+
+		$sql = "SELECT count(*) FROM v_tree_showplan
+			WHERE id = $showID
+				AND	userid = $userID
+				AND permissions & B'" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
+		$check = $db->getOne($sql);
+		if($check > 0) {
+			$this->assign('own', 't');
+		}
+
+			$this->assign('showplan', $showplan);
 			$this->assign('treeType', '');
 		} else {
 			$this->assign('permError', 't');

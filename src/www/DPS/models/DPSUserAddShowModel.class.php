@@ -19,7 +19,7 @@ class DPSUserAddShowModel extends Model {
 			$auth = Auth::getInstance();
 			$userID = $auth->getUserID();
 			$userName = $auth->getUser();
-			$sql = "SEELCT id FROM dir 
+			$sql = "SELECT id FROM dir 
 				WHERE parent = " . $cfg['DPS']['userDirectoryID'] . "
 				AND name = '" . $userName . "'";
 			$dirID = $db->getOne($sql);

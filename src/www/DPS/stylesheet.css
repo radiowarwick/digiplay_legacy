@@ -1379,6 +1379,7 @@ div.studioPlaylists {
 
 /* Start of Filebrowser stuff */
 div.fileLink {
+	display: block;
 	float: left;
 	margin:	2px;
 	border:	1px solid #015769;
@@ -1390,6 +1391,7 @@ div.fileLink {
 	padding-left:	0px;
 	padding-right:	1px;
 	height:	30px;
+	overflow: hidden;
 }
 div[class = "fileLink"] {
 	height:	20;

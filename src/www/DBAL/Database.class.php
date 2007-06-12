@@ -305,13 +305,10 @@ class Database {
 			}
 			$bin = false;
 			if(strtolower(substr($value,0,1)) == "b" && strtolower(substr($value,strlen($value)-1,1)) == "b") {
-				echo $value;
 				if(Database::binaryCheck(substr($value,1,strlen($value)-2))) {
 					$bin = true;
-					echo "true";
 				} else {
 					$bin = false;
-					echo "false";
 				}
 			}
 			if($bin) {

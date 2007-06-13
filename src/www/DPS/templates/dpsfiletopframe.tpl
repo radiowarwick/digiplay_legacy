@@ -119,7 +119,7 @@
 				var top=20;
 				var title = "MoveFile";
 				var Nurl = siteRoot + "?" +
-					"templateID=96&audioID=" + String(currentVal).substring(3,String(currentVal).length);
+					"templateID=47&audioID=" + String(currentVal).substring(3,String(currentVal).length);
 				var settings="width=800,height=600,top=20,left=0,scrollbars=yes," +
 					"location=no,directories=no,status=no,menubar=no,toolbar=no,resizable=no";
 				win=window.open(Nurl,title,settings);
@@ -292,10 +292,11 @@
 					//Update form links for new ID
 					document.getElementById('jingleEdit').href = 
 						siteRoot +
-						"?templateID=87&trackID=" + String(val).substring(3,String(val).length);
+						"?templateID=37&trackID=" + String(val).substring(3,String(val).length);
 					document.getElementById('jingleDelete').href = 
 						siteRoot +
-						"?templateID=86&formName=dpsUserDelAudio&moduleName=DPS&" + 
+						"?templateID=" + templateID + "&formName=dpsUserDelAudio&" + 
+						"moduleName=DPS&" + 
 						"audioID=" + String(val).substring(3,String(val).length);
 			
 				} else if ((String(val).substring(0,3)) == "dir") {

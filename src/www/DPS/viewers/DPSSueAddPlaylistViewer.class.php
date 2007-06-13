@@ -1,8 +1,7 @@
 <?php
 /**
- * @package FrontEnds
- * @subpackage MVC
- */
+* @package DPS
+*/
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 include_once($cfg['DPS']['dir']['root'] . '/DPS.class.php');
 
@@ -49,7 +48,8 @@ class DPSSueAddPlaylistViewer extends Viewer {
 		}
 
 		if($searchValue != '') {
-			$searchResult = DPS::searchAudio($searchValue,$searchType,$sortType,$offset,'');
+			$searchResult = DPS::searchAudio($searchValue,$searchType,
+				$sortType,$offset,'');
 			$rNum = DPS::searchPageAudio($searchValue,$searchType,'');
 			$searchInfo = "Found $rNum results matching your query";
 		}
@@ -72,25 +72,32 @@ class DPSSueAddPlaylistViewer extends Viewer {
 		LIMIT 1";
 		$sueNextTrack = $db->getRow($query);
 		if($sueNextTrack != '') {
-			$sql = "SELECT DISTINCT artists.name as name 
+			$sql = "SELECT DISTINCT artists.name AS name 
 			FROM artists, audioartists 
-			WHERE audioartists.audioid = " . $sueNextTrack['id'] . " AND
-				audioartists.artist = artists.id";
+			WHERE audioartists.audioid = " . $sueNextTrack['id'] . " 
+			AND audioartists.artist = artists.id";
 			$artists = $db->getAll($sql);
 			foreach($artists as $artist) {
-				$sueNextTrack['artist'] = $sueNextTrack['artist'] . $artist['name'] . " & ";
+				$sueNextTrack['artist'] = $sueNextTrack['artist'] . 
+					$artist['name'] . " & ";
 			}
 			$sueNextTrack['artist'] = rtrim($sueNextTrack['artist']," & ");
 		}
 
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
-		$this->assign('Access_ViewSue',AuthUtil::getDetailedUserrealmAccess(array(26,20,3), $userID));
-		$this->assign('Access_EditSue',AuthUtil::getDetailedUserrealmAccess(array(24,20,3), $userID));
-		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
-		$this->assign('Access_EditTrack',AuthUtil::getDetailedUserrealmAccess(array(27,21,3), $userID));
-		$this->assign('Access_SueStats',AuthUtil::getDetailedUserrealmAccess(array(25,20,3), $userID));
-		$this->assign('Access_Delete',AuthUtil::getDetailedUserrealmAccess(array(32,21,3), $userID));
+		$this->assign('Access_ViewSue',AuthUtil::getDetailedUserrealmAccess(
+			array(26,20,3), $userID));
+		$this->assign('Access_EditSue',AuthUtil::getDetailedUserrealmAccess(
+			array(24,20,3), $userID));
+		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(
+			array(1), $userID));
+		$this->assign('Access_EditTrack',AuthUtil::getDetailedUserrealmAccess(
+			array(27,21,3), $userID));
+		$this->assign('Access_SueStats',AuthUtil::getDetailedUserrealmAccess(
+			array(25,20,3), $userID));
+		$this->assign('Access_Delete',AuthUtil::getDetailedUserrealmAccess(
+			array(32,21,3), $userID));
 
 		$this->assign('sueNextTrack', $sueNextTrack);
 		$this->assign('page', $offset);
@@ -101,8 +108,6 @@ class DPSSueAddPlaylistViewer extends Viewer {
 		$this->assign('searchValue', $searchValue);
 		$this->assign('searchLetter', $letter);
 		$this->assign('sortType',$sortType);
-  }
-
+	}
 }
-
 ?>

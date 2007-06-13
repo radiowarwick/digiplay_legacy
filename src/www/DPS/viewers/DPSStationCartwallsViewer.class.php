@@ -1,7 +1,6 @@
 <?php
 /**
-* @package FrontEnds
-* @subpackage MVC
+* @package DPS
 */
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 
@@ -14,14 +13,14 @@ class DPSStationCartwallsViewer extends Viewer {
 		parent::setupTemplate();
 
 		$db = Database::getInstance($cfg['DPS']['dsn']);
-//    $db_web = Database::getInstance($cfg['DPS']['dsn_web']);
 		$cartset = pg_escape_string($this->fieldData['cartset']);
 		$flag = false;
 		if($cartset != '' && is_numeric($cartset)) {
 			$sql = "SELECT count(*) from v_tree_cartset 
 				WHERE v_tree_cartset.userid = " . $cfg['DPS']['systemUserID'] . " 
 					AND v_tree_cartset.cartsetid = $cartset 
-					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "'";
+					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] .
+						"' = '" . $cfg['DPS']['fileR'] . "'";
 			$check = $db->getOne($sql);
 			if($check > 0) {
 				$flag = true;
@@ -50,9 +49,9 @@ class DPSStationCartwallsViewer extends Viewer {
 			}
 			for($i=0; $i<12; $i++) {
 				$tcart = array();
-				$sql = "SELECT cartsaudio.id as id, cartsaudio.audio as audio, 
-					cartsaudio.text as name, cartsaudio.cart as cart, 
-					audio.length_smpl as len 
+				$sql = "SELECT cartsaudio.id AS id, cartsaudio.audio AS audio, 
+					cartsaudio.text AS name, cartsaudio.cart AS cart, 
+					audio.length_smpl AS len 
 				FROM cartwalls, cartsaudio, audio 
 				WHERE cartwalls.cartsetid = " . $cartset . " 
 					AND cartwalls.id = cartsaudio.cartwall 
@@ -69,8 +68,8 @@ class DPSStationCartwallsViewer extends Viewer {
 					} else {
 						$tcart['length'] = $secs . "s";
 					}
-					$sql = "SELECT cartstyleprops.value as value, 
-						cartproperties.name as name
+					$sql = "SELECT cartstyleprops.value AS value, 
+						cartproperties.name AS name
 					FROM cartsaudio, cartstyle, cartstyleprops, cartproperties
 					WHERE cartsaudio.id = " . $tcart['id'] . " 
 						AND cartsaudio.styleid = cartstyle.id 
@@ -80,12 +79,18 @@ class DPSStationCartwallsViewer extends Viewer {
 					foreach($cartprop as $prop) {
 						if($prop['name'] == 'ForeColourRGB') {
 							$tcart['ForeColour']['r'] = (int)((int)$prop['value'] / (256*256));
-							$tcart['ForeColour']['g'] = (int)(($prop['value']-$tcart['ForeColour']['r']*256*256) / 256);
-							$tcart['ForeColour']['b'] = (int)(($prop['value']-$tcart['ForeColour']['r']*256*256-$tcart['ForeColour']['g']*256));
+							$tcart['ForeColour']['g'] = (int)(($prop['value']
+								-$tcart['ForeColour']['r']*256*256) / 256);
+							$tcart['ForeColour']['b'] = (int)(($prop['value']
+								-$tcart['ForeColour']['r']*256*256
+								-$tcart['ForeColour']['g']*256));
 						} elseif($prop['name'] == 'BackColourRGB') {
 							$tcart['BackColour']['r'] = (int)((int)$prop['value'] / (256*256));
-							$tcart['BackColour']['g'] = (int)(($prop['value']-$tcart['BackColour']['r']*256*256) / 256);
-							$tcart['BackColour']['b'] = ($prop['value']-$tcart['BackColour']['r']*256*256-$tcart['BackColour']['g']*256);
+							$tcart['BackColour']['g'] = (int)(($prop['value']
+								-$tcart['BackColour']['r']*256*256) / 256);
+							$tcart['BackColour']['b'] = ($prop['value']
+								-$tcart['BackColour']['r']*256*256
+								-$tcart['BackColour']['g']*256);
 						}
 					}
 				} else {
@@ -103,26 +108,26 @@ class DPSStationCartwallsViewer extends Viewer {
 			$userID = $auth->getUserID();
 
 			if($cartset != '' && is_numeric($cartset)) {
-				$sql = "SELECT count(*) from v_tree_cartset 
+				$sql = "SELECT count(*) FROM v_tree_cartset 
 					WHERE v_tree_cartset.userid = " . $cfg['DPS']['systemUserID'] . " 
 						AND v_tree_cartset.cartsetid = $cartset 
-						AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileW'] . "' = '" . $cfg['DPS']['fileW'] . "'";
+						AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileW'] .
+							"' = '" . $cfg['DPS']['fileW'] . "'";
 				$check = $db->getOne($sql);
 				if($check > 0) {
 					$this->assign('editperm','t');
 				}
 			}
 
-		$this->assign('cartwall',$cartwall);
-		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
-		$this->assign('access_playlist',AuthUtil::getDetailedUserrealmAccess(array(3,21,33), $userID));
-		$this->assign('pagelink',$pageArray);
-		$this->assign('cartsetID',$cartset);
+			$this->assign('cartwall',$cartwall);
+			$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
+			$this->assign('access_playlist',AuthUtil::getDetailedUserrealmAccess(
+				array(3,21,33), $userID));
+			$this->assign('pagelink',$pageArray);
+			$this->assign('cartsetID',$cartset);
 		} else {
 			$this->assign('permError','t');
 		}
 	}
 }
-
 ?>
-				

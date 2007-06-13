@@ -1,58 +1,66 @@
 <?php
 /**
- * @package FrontEnds
- * @subpackage MVC
-  */
-//ToDo: Update line 53 so that it uses a view 
+* @package DPS
+*/
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 include_once($cfg['Auth']['dir']['root'] . '/AuthUtil.class.php');
+
 class DPSShowPlanEditViewer extends Viewer {
 	
-  const module = 'DPS';
+	const module = 'DPS';
 	
-  protected function setupTemplate() {
-    global $cfg;
-    parent::setupTemplate();
-    
-    $db = Database::getInstance($cfg['DPS']['dsn']);
-   
-	 	$showID = pg_escape_string($this->fieldData['showID']);
-    $auth = Auth::getInstance();
-    $userID = $auth->getUserID();
-    $date = time();
+	protected function setupTemplate() {
+		global $cfg;
+		parent::setupTemplate();
+		
+		$db = Database::getInstance($cfg['DPS']['dsn']);
+		
+		$showID = pg_escape_string($this->fieldData['showID']);
+		$auth = Auth::getInstance();
+		$userID = $auth->getUserID();
+		$date = time();
 		if(is_numeric($showID)) {
 			
-			$show_query = "select bit_or(permissions) from (SELECT permissions FROM showplanusers where 
-										showplanusers.userid = $userID AND 
-										showplanusers.showplanid =  $showID 
-				UNION( SELECT permissions FROM showplangroups, usersgroups where 
-										showplangroups.groupid = usersgroups.groupid and 
-										showplangroups.showplanid = $showID  and 
-										usersgroups.userid =  $userID)) as Q1";
-			$checkShows = $db->getOne($show_query);
-			if(substr($checkShows,0,1) == "1") {
-				if(substr($checkShows,1,1) == "1") {
+			$sql = "SELECT count(*) FROM v_tree_showplan
+				WHERE id = $showID
+					AND	userid = $userID
+					AND permissions & B'" . $cfg['DPS']['fileR'] .
+						"' = '" . $cfg['DPS']['fileR'] . "'";
+			if($db->getOne($sql) > 0) {
+				$sql = "SELECT count(*) FROM v_tree_showplan
+					WHERE id = $showID
+						AND	userid = $userID
+						AND permissions & B'" . $cfg['DPS']['fileW'] .
+							"' = '" . $cfg['DPS']['fileW'] . "'";
+				if($db->getOne($sql) > 0) {
 					$this->assign('write', 't');
 				} else {
 					$this->assign('write', 'f');
 				}
-				$show_sql = "SELECT * FROM showplans where id = " . $showID;
+				$show_sql = "SELECT * FROM showplans WHERE id = " . $showID;
 				$show = $db->getRow($show_sql);
-      	$show['niceAirDate'] = date("d/m/y",$show['showdate']);
-      	$show['niceAirTime'] = date("g a",$show['showdate']);
-      	$show['niceCreateDate'] = date("d/m/y",$show['creationdate']);
-      	$show['niceCreateTime'] = date("g a",$show['creationdate']);
-				$items_sql = "SELECT * from showitems where showplanid = " . $showID . " ORDER BY position asc";
+				
+				$show['niceAirDate'] = date("d/m/y",$show['showdate']);
+				$show['niceAirTime'] = date("g a",$show['showdate']);
+				$show['niceCreateDate'] = date("d/m/y",$show['creationdate']);
+				$show['niceCreateTime'] = date("g a",$show['creationdate']);
+				
+				$items_sql = "SELECT * FROM showitems 
+					WHERE showplanid = " . $showID . " 
+					ORDER BY position asc";
 				$items = $db->getAll($items_sql);
 				$time = $show['showdate'];
 				foreach($items as &$item) {
 					$item['time'] = $time;
 					$item['niceTime'] = date("H:i:s",$item['time']);
-					$item['niceLength'] = ((int)($item['length'] / 60)) . ":" . ($item['length'] - (((int)($item['length'] / 60))*60));
+					$item['niceLength'] = ((int)($item['length'] / 60)) . 
+						":" . ($item['length'] - (((int)($item['length'] / 60))*60));
 					$time = $time + $item['length'];
 					if($item['audioid'] != '') {
-						$sql = "select audio.title as title, audiotypes.name as type from audio, audiotypes  where 
-										audio.type = audiotypes.id and audio.id = " . $item['audioid'];
+						$sql = "SELECT audio.title AS title, audiotypes.name AS type 
+							FROM audio, audiotypes 
+							WHERE audio.type = audiotypes.id 
+								AND audio.id = " . $item['audioid'];
 						$stuff = $db->getRow($sql);
 						$item['audioTitle'] = $stuff['title'];
 						$item['nature'] = $stuff['type'];
@@ -60,12 +68,14 @@ class DPSShowPlanEditViewer extends Viewer {
 						$item['nature'] = 'unknown';
 					}
 					if($item['scriptid'] != '') {
-						$sql = "select name from scripts where id = " . $item['scriptid'];
+						$sql = "SELECT name FROM scripts 
+							WHERE id = " . $item['scriptid'];
 						$item['scriptName'] = $db->getOne($sql);
 					}
 				}
 				$time = $time - $show['showdate'];
-				$show['niceLength'] = (int)($time / 60) . "mins " . ($time - ((int)($time / 60)*60)) . "s";
+				$show['niceLength'] = (int)($time / 60) . "mins " . 
+					($time - ((int)($time / 60)*60)) . "s";
 				$show['niceProducer'] = AuthUtil::getUsername($show['userid']);
 				if($show['showdate'] > $date) {
 					$this->assign('done', 'f');
@@ -81,9 +91,8 @@ class DPSShowPlanEditViewer extends Viewer {
 		} else {
 			$this->assign('error', 'Invalid Show ID supplied');
 		}
-
-    $this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
-  }
+		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
+	}
 }
 
 ?>

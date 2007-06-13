@@ -1,7 +1,6 @@
 <?php
 /**
- * @package FrontEnds
- * @subpackage MVC
+ * @package DPS
  */
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 
@@ -58,9 +57,12 @@ class DPSSueStatsViewer extends Viewer {
 		
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
-		$this->assign('Access_EditSue',AuthUtil::getDetailedUserrealmAccess(array(24,20,3), $userID));
-		$this->assign('Access_ViewSue',AuthUtil::getDetailedUserrealmAccess(array(26,20,3), $userID));
-		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
+		$this->assign('Access_EditSue',AuthUtil::getDetailedUserrealmAccess(
+			array(24,20,3), $userID));
+		$this->assign('Access_ViewSue',AuthUtil::getDetailedUserrealmAccess(
+			array(26,20,3), $userID));
+		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(
+			array(1), $userID));
 		
 		$this->assign('storedTracks', $systemTracks);
 		$this->assign('lengthOfTracks', $systemLength);
@@ -71,6 +73,4 @@ class DPSSueStatsViewer extends Viewer {
 		$this->assign('suePlaylist', $suePlaylist);
 	}
 }
-
 ?>
-		    

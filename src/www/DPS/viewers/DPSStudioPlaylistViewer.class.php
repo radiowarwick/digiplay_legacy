@@ -1,7 +1,6 @@
 <?php
 /**
-* @package FrontEnds
-* @subpackage MVC
+* @package DPS
 */
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 
@@ -51,7 +50,8 @@ class DPSStudioPlaylistViewer extends Viewer {
 		}
 
 		if($searchValue != '') {
-			$searchResult = DPS::searchAudio($searchValue,$searchType,$sortType,$offset,'');
+			$searchResult = DPS::searchAudio($searchValue,$searchType,
+				$sortType,$offset,'');
 			$rNum = DPS::searchPageAudio($searchValue,$searchType,'');
 			$searchInfo = "Found $rNum results matching your query";
 		}
@@ -65,17 +65,18 @@ class DPSStudioPlaylistViewer extends Viewer {
 			$rNum = $rNum-$cfg['DPS']['resultLimit'];
 		}
 
-		$sql = "select * from playlists";
+		$sql = "SELECT * FROM playlists";
 		$playlists = $db->getAll($sql);
 
-		$sql = "select * from playlists where id = " . pg_escape_string($playlistID);
+		$sql = "SELECT * FROM playlists WHERE id = " . pg_escape_string($playlistID);
 		$playlist = $db->getRow($sql);
 
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
 
 		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
-		$this->assign('studioAccess',AuthUtil::getDetailedUserrealmAccess(array(3,21,34), $userID));
+		$this->assign('studioAccess',AuthUtil::getDetailedUserrealmAccess(
+			array(3,21,34), $userID));
 		$this->assign('playlists',$playlists);
 		$this->assign('playlist',$playlist);
 		$this->assign('page', $offset);
@@ -88,5 +89,4 @@ class DPSStudioPlaylistViewer extends Viewer {
 		$this->assign('sortType',$sortType);
 	}
 }
-
 ?>

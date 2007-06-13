@@ -23,7 +23,8 @@ class DPSUserCartwallsViewer extends Viewer {
 			$sql = "SELECT count(*) from v_tree_cartset 
 				WHERE v_tree_cartset.userid = $userID 
 					AND v_tree_cartset.id = $cartset 
-					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "'";
+					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] .
+						"' = '" . $cfg['DPS']['fileR'] . "'";
 			$check = $db->getOne($sql);
 			if($check > 0) {
 				$flag = true;
@@ -36,7 +37,8 @@ class DPSUserCartwallsViewer extends Viewer {
 				$page = 0;
 			}
 
-			$sql = "SELECT * FROM cartwalls WHERE cartsetid = $cartset AND page = $page";
+			$sql = "SELECT * FROM cartwalls 
+				WHERE cartsetid = $cartset AND page = $page";
 			$cartwall = $db->getRow($sql);
 
 			$sql = "SELECT count(*) FROM cartwalls WHERE cartsetid = " . $cartset;
@@ -70,7 +72,8 @@ class DPSUserCartwallsViewer extends Viewer {
 					} else {
 						$tcart['length'] = $secs . "s";
 					}
-					$sql = "SELECT cartstyleprops.value AS value, cartproperties.name AS name
+					$sql = "SELECT cartstyleprops.value AS value,
+							cartproperties.name AS name
 						FROM cartsaudio, cartstyle, cartstyleprops, cartproperties
 						WHERE cartsaudio.id = " . $tcart['id'] . " 
 							AND cartsaudio.styleid = cartstyle.id 
@@ -80,12 +83,18 @@ class DPSUserCartwallsViewer extends Viewer {
 					foreach($cartprop as $prop) {
 						if($prop['name'] == 'ForeColourRGB') {
 							$tcart['ForeColour']['r'] = (int)((int)$prop['value'] / (256*256));
-							$tcart['ForeColour']['g'] = (int)(($prop['value']-$tcart['ForeColour']['r']*256*256) / 256);
-							$tcart['ForeColour']['b'] = (int)(($prop['value']-$tcart['ForeColour']['r']*256*256-$tcart['ForeColour']['g']*256));
+							$tcart['ForeColour']['g'] = (int)(($prop['value']
+								-$tcart['ForeColour']['r']*256*256) / 256);
+							$tcart['ForeColour']['b'] = (int)(($prop['value']
+								-$tcart['ForeColour']['r']*256*256
+								-$tcart['ForeColour']['g']*256));
 						} elseif($prop['name'] == 'BackColourRGB') {
 							$tcart['BackColour']['r'] = (int)((int)$prop['value'] / (256*256));
-							$tcart['BackColour']['g'] = (int)(($prop['value']-$tcart['BackColour']['r']*256*256) / 256);
-							$tcart['BackColour']['b'] = ($prop['value']-$tcart['BackColour']['r']*256*256-$tcart['BackColour']['g']*256);
+							$tcart['BackColour']['g'] = (int)(($prop['value']
+								-$tcart['BackColour']['r']*256*256) / 256);
+							$tcart['BackColour']['b'] = ($prop['value']
+								-$tcart['BackColour']['r']*256*256
+								-$tcart['BackColour']['g']*256);
 						}
 					}
 				} else {
@@ -103,15 +112,19 @@ class DPSUserCartwallsViewer extends Viewer {
 			$sql = "SELECT count(*) from v_tree_cartset 
 				WHERE v_tree_cartset.userid = $userID 
 					AND v_tree_cartset.id = $cartset 
-					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileW'] . "' = '" . $cfg['DPS']['fileW'] . "'";
+					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileW'] .
+						"' = '" . $cfg['DPS']['fileW'] . "'";
 			$check = $db->getOne($sql);
 			if($check > 0) {
 				$this->assign('editperm','t');
 			}
-			$this->assign('access_playlist',AuthUtil::getDetailedUserrealmAccess(array(3,21,33), $userID));
+			$this->assign('access_playlist',AuthUtil::getDetailedUserrealmAccess(
+				array(3,21,33), $userID));
 			$this->assign('cartwall',$cartwall);
-			$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
-			$this->assign('studioAccess',AuthUtil::getDetailedUserrealmAccess(array(3,21,34), $userID));
+			$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(
+				array(1), $userID));
+			$this->assign('studioAccess',AuthUtil::getDetailedUserrealmAccess(
+				array(3,21,34), $userID));
 			$this->assign('pagelink',$pageArray);
 			$this->assign('cartsetID',$cartset);
 		} else {
@@ -119,6 +132,4 @@ class DPSUserCartwallsViewer extends Viewer {
 		}
 	}
 }
-
 ?>
-				

@@ -1,7 +1,6 @@
 <?php
 /**
-* @package FrontEnds
-* @subpackage MVC
+* @package DPS
 */
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 include_once($cfg['Auth']['dir']['root'] . '/AuthUtil.class.php');
@@ -18,7 +17,7 @@ class DPSTrackRequestViewer extends Viewer {
 		$count_query = "SELECT count(*) FROM requests";
 		$requestedNum = $db->getOne($count_query);
 		
-		$query = "SELECT * FROM requests order by date desc";
+		$query = "SELECT * FROM requests ORDER BY date DESC";
 		$requestedResult = $db->getAll($query);
 		$i=0;
 		
@@ -32,10 +31,13 @@ class DPSTrackRequestViewer extends Viewer {
 		
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
-		$this->assign('CensorTrack',AuthUtil::getDetailedUserrealmAccess(array(3,21,30), $userID));
+		$this->assign('CensorTrack',AuthUtil::getDetailedUserrealmAccess(
+			array(3,21,30), $userID));
 		$this->assign('RequestTrack','t');
-		$this->assign('RemoveRequestTrack',AuthUtil::getDetailedUserrealmAccess(array(3,21,29), $userID));
-		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
+		$this->assign('RemoveRequestTrack',AuthUtil::getDetailedUserrealmAccess(
+			array(3,21,29), $userID));
+		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(
+			array(1), $userID));
 		$this->assign('requestedTracks', $requestedResult);
 		$this->assign('requestedNum', $requestedNum);
 	}

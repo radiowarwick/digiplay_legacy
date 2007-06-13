@@ -133,7 +133,7 @@
 				var top=20
 				var title = "MoveDirectory"
 				var Nurl = siteRoot + "?" +
-					"templateID=88&rootdir=" + String(currentVal).substring(3,String(currentVal).length)
+					"templateID=53&rootdir=" + String(currentVal).substring(3,String(currentVal).length)
 				var settings="width=800,height=600,top=20,left=0,scrollbars=yes," +
 					"location=no,directories=no,status=no,menubar=no,toolbar=no,resizable=no"
 				win = window.open(Nurl,title,settings)
@@ -148,7 +148,7 @@
 				var top=20;
 				var title = "UploadFile";
 				var Nurl = siteRoot + "?" +
-					"templateID=99&rootdir=" + String(currentVal).substring(3,String(currentVal).length);
+					"templateID=50&rootdir=" + String(currentVal).substring(3,String(currentVal).length);
 				var settings="width=800,height=600,top=20,left=0,scrollbars=yes," +
 					"location=no,directories=no,status=no,menubar=no,toolbar=no,resizable=no";
 				win=window.open(Nurl,title,settings);

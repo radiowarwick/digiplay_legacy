@@ -19,7 +19,8 @@ class DPSUserCartsetsViewer extends Viewer {
 		$loc = 1;
 		$sql = "SELECT * from v_tree_cartset 
 			WHERE v_tree_cartset.userid = $userID 
-				AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "'";
+				AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] .
+					"' = '" . $cfg['DPS']['fileR'] . "'";
 		$cartsets = $db->getAll($sql);
 
 		foreach ($cartsets as &$cartset) {
@@ -30,9 +31,12 @@ class DPSUserCartsetsViewer extends Viewer {
 			}
 		}
 		
-		$this->assign('access_playlist',AuthUtil::getDetailedUserrealmAccess(array(3,21,33), $userID));
-		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
-		$this->assign('studioAccess',AuthUtil::getDetailedUserrealmAccess(array(3,21,34), $userID));
+		$this->assign('access_playlist',AuthUtil::getDetailedUserrealmAccess(
+			array(3,21,33), $userID));
+		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(
+			array(1), $userID));
+		$this->assign('studioAccess',AuthUtil::getDetailedUserrealmAccess(
+			array(3,21,34), $userID));
 		$this->assign('cartsets', $cartsets);
 	}
 }

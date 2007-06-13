@@ -1,7 +1,6 @@
 <?php
 /**
-* @package FrontEnds
-* @subpackage MVC
+* @package DPS
 */
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 
@@ -20,13 +19,13 @@ class DPSTrackCensorViewer extends Viewer {
 		WHERE audio.flagged='t'";
 		$flaggedNum = $db->getOne($count_query);
 		
-		$query = "SELECT DISTINCT audio.title as title, audio.id as id 
+		$query = "SELECT DISTINCT audio.title AS title, audio.id AS id 
 		FROM audio 
 		WHERE audio.flagged='t'";
 		$flaggedResult = $db->getAll($query);
 		$i=0;
 		foreach($flaggedResult as $key => &$track) { 
-			$sql = "SELECT DISTINCT artists.name as name 
+			$sql = "SELECT DISTINCT artists.name AS name 
 			FROM artists, audioartists 
 			WHERE audioartists.audioid = " . $track['id'] . " 
 				AND audioartists.artistid = artists.id";
@@ -44,13 +43,13 @@ class DPSTrackCensorViewer extends Viewer {
 		WHERE audio.censor='t'";
 		$censoredNum = $db->getOne($count_query);
 		
-		$query = "SELECT DISTINCT audio.title as title, audio.id as id 
+		$query = "SELECT DISTINCT audio.title AS title, audio.id AS id 
 		FROM audio 
 		WHERE audio.censor='t'";
 		$censoredResult = $db->getAll($query);
 		$i = 0;
 		foreach($censoredResult as $key => &$track) { 
-			$sql = "SELECT DISTINCT artists.name as name 
+			$sql = "SELECT DISTINCT artists.name AS name 
 			FROM artists, audioartists 
 			WHERE audioartists.audioid = " . $track['id'] . " 
 				AND audioartists.artistid = artists.id";
@@ -65,14 +64,16 @@ class DPSTrackCensorViewer extends Viewer {
 		
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
-		$this->assign('RequestTrack',AuthUtil::getDetailedUserrealmAccess(array(3,21,29), $userID));
-		$this->assign('CensorTrack',AuthUtil::getDetailedUserrealmAccess(array(3,21,30), $userID));
-		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
+		$this->assign('RequestTrack',AuthUtil::getDetailedUserrealmAccess(
+			array(3,21,29), $userID));
+		$this->assign('CensorTrack',AuthUtil::getDetailedUserrealmAccess(
+			array(3,21,30), $userID));
+		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(
+			array(1), $userID));
 		$this->assign('flaggedTracks', $flaggedResult);
 		$this->assign('censoredTracks', $censoredResult);
 		$this->assign('flagNum', $flaggedNum);
 		$this->assign('censorNum', $censoredNum);
 	}
 }
-
 ?>

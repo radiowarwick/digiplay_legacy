@@ -23,7 +23,8 @@ class DPSUserCartsetMoveViewer extends Viewer {
 			$sql = "SELECT count(*) FROM v_tree_cartset
 				WHERE id = $cartsetID
 					AND	userid = $userID
-					AND permissions & B'" . $cfg['DPS']['fileW'] . "' = '" . $cfg['DPS']['fileW'] . "'";
+					AND permissions & B'" . $cfg['DPS']['fileW'] . "' = '"
+						. $cfg['DPS']['fileW'] . "'";
 			if($db->getOne($sql) > 0) {
 				$sql = "SELECT dirid FROM cartsetsdir
 					WHERE cartsetid = $cartsetID";
@@ -31,7 +32,8 @@ class DPSUserCartsetMoveViewer extends Viewer {
 				"SELECT count(*) FROM v_tree_dir
 					WHERE id = $dirID
 						AND	userid = $userID
-						AND permissions & B'" . $cfg['DPS']['fileW'] . "' = '" . $cfg['DPS']['fileW'] . "'";
+						AND permissions & B'" . $cfg['DPS']['fileW'] . "' = '"
+							. $cfg['DPS']['fileW'] . "'";
 				if($db->getOne($sql) > 0) {
 					$flag = true;
 				}
@@ -46,7 +48,8 @@ class DPSUserCartsetMoveViewer extends Viewer {
 			$sql = "SELECT count(*) FROM v_tree_cartset
 				WHERE id = $cartsetID
 					AND	userid = $userID
-					AND permissions & B'" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
+					AND permissions & B'" . $cfg['DPS']['fileO'] . "' = '".
+						$cfg['DPS']['fileO'] . "'";
 			$check = $db->getOne($sql);
 			if($check > 0) {
 				$this->assign('own', 't');

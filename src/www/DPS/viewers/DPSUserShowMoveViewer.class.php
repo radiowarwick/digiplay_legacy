@@ -1,7 +1,6 @@
 <?php
 /**
-* @package FrontEnds
-* @subpackage MVC
+* @package DPS
 */
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 
@@ -23,7 +22,8 @@ class DPSUserShowMoveViewer extends Viewer {
 			$sql = "SELECT count(*) FROM v_tree_showplan
 				WHERE id = $showID
 					AND	userid = $userID
-					AND permissions & B'" . $cfg['DPS']['fileW'] . "' = '" . $cfg['DPS']['fileW'] . "'";
+					AND permissions & B'" . $cfg['DPS']['fileW'] . "' = '" .
+						$cfg['DPS']['fileW'] . "'";
 			if($db->getOne($sql) > 0) {
 				$sql = "SELECT dirid FROM showplandir
 					WHERE showplanid = $showID";
@@ -31,30 +31,30 @@ class DPSUserShowMoveViewer extends Viewer {
 				"SELECT count(*) FROM v_tree_dir
 					WHERE id = $dirID
 						AND	userid = $userID
-						AND permissions & B'" . $cfg['DPS']['fileW'] . "' = '" . $cfg['DPS']['fileW'] . "'";
+						AND permissions & B'" . $cfg['DPS']['fileW'] . "' = '" .
+							$cfg['DPS']['fileW'] . "'";
 				if($db->getOne($sql) > 0) {
 					$flag = true;
 				}
 			}
-		}
-		
-		if($flag) {
-			$sql = "SELECT * FROM showplans WHERE id = $showID";
-			$showplan = $db->getRow($sql);
-
-		$sql = "SELECT count(*) FROM v_tree_showplan
-			WHERE id = $showID
-				AND	userid = $userID
-				AND permissions & B'" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
-		$check = $db->getOne($sql);
-		if($check > 0) {
-			$this->assign('own', 't');
-		}
-
-			$this->assign('showplan', $showplan);
-			$this->assign('treeType', '');
-		} else {
-			$this->assign('permError', 't');
+			
+			if($flag) {
+				$sql = "SELECT * FROM showplans WHERE id = $showID";
+				$showplan = $db->getRow($sql);
+				$sql = "SELECT count(*) FROM v_tree_showplan
+					WHERE id = $showID
+						AND	userid = $userID
+						AND permissions & B'" . $cfg['DPS']['fileO'] . "' = '" .
+							$cfg['DPS']['fileO'] . "'";
+				$check = $db->getOne($sql);
+				if($check > 0) {
+					$this->assign('own', 't');
+				}
+				$this->assign('showplan', $showplan);
+				$this->assign('treeType', '');
+			} else {
+				$this->assign('permError', 't');
+			}
 		}
 	}
 }

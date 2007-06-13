@@ -25,6 +25,8 @@ $cfg['DPS']['userDirectoryID'] = 5;
 $cfg['DPS']['binDirectoryID'] = 6;
 $cfg['DPS']['systemUserID'] = 0;
 $cfg['DPS']['root'] = $cfg['general']['toolkitRoot'] . '/DPS';
+$cfg['DPS']['dir']['uploadDir'] = $cfg['DPS']['dir']['root'] . "/Uploads";
+$cfg['DPS']['dir']['scriptsDir'] = $cfg['DPS']['dir']['root'] . "/scripts";
 $cfg['DPS']['playlistInfo'] = array(
 	array('id' => 0,'name' => 'A'),
 	array('id' => 1,'name' => 'B')

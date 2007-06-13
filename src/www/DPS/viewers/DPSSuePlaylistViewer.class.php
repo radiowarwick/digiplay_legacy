@@ -1,8 +1,7 @@
 <?php
 /**
- * @package FrontEnds
- * @subpackage MVC
- */
+* @package DPS
+*/
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 include_once($cfg['DPS']['dir']['root'] . '/DPS.class.php');
 
@@ -49,7 +48,8 @@ class DPSSuePlaylistViewer extends Viewer {
 		}
 
 		if($searchValue != '') {
-			$searchResult = DPS::searchAudio($searchValue,$searchType,$sortType,$offset,'t');
+			$searchResult = DPS::searchAudio($searchValue,$searchType,
+				$sortType,$offset,'t');
 			$rNum = DPS::searchPageAudio($searchValue,$searchType,'t');
 			$searchInfo = "Found $rNum results matching your query";
 		}
@@ -78,19 +78,26 @@ class DPSSuePlaylistViewer extends Viewer {
 				audioartists.artist = artists.id";
 			$artists = $db->getAll($sql);
 			foreach($artists as $artist) {
-				$sueNextTrack['artist'] = $sueNextTrack['artist'] . $artist['name'] . " & ";
+				$sueNextTrack['artist'] = $sueNextTrack['artist'] .
+					$artist['name'] . " & ";
 			}
 			$sueNextTrack['artist'] = rtrim($sueNextTrack['artist']," & ");
 		}
 
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
-		$this->assign('Access_ViewSue',AuthUtil::getDetailedUserrealmAccess(array(26,20,3), $userID));
-		$this->assign('Access_EditSue',AuthUtil::getDetailedUserrealmAccess(array(24,20,3), $userID));
-		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
-		$this->assign('Access_EditTrack',AuthUtil::getDetailedUserrealmAccess(array(27,21,3), $userID));
-		$this->assign('Access_SueStats',AuthUtil::getDetailedUserrealmAccess(array(25,20,3), $userID));
-		$this->assign('Access_Delete',AuthUtil::getDetailedUserrealmAccess(array(32,21,3), $userID));
+		$this->assign('Access_ViewSue',AuthUtil::getDetailedUserrealmAccess(
+			array(26,20,3), $userID));
+		$this->assign('Access_EditSue',AuthUtil::getDetailedUserrealmAccess(
+			array(24,20,3), $userID));
+		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(
+			array(1), $userID));
+		$this->assign('Access_EditTrack',AuthUtil::getDetailedUserrealmAccess(
+			array(27,21,3), $userID));
+		$this->assign('Access_SueStats',AuthUtil::getDetailedUserrealmAccess(
+			array(25,20,3), $userID));
+		$this->assign('Access_Delete',AuthUtil::getDetailedUserrealmAccess(
+			array(32,21,3), $userID));
 
 		$this->assign('sueNextTrack', $sueNextTrack);
 		$this->assign('page', $offset);
@@ -102,7 +109,5 @@ class DPSSuePlaylistViewer extends Viewer {
 		$this->assign('searchLetter', $letter);
 		$this->assign('sortType',$sortType);
 	}
-
 }
-
 ?>

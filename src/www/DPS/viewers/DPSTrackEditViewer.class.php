@@ -1,7 +1,6 @@
 <?php
 /**
-* @package FrontEnds
-* @subpackage MVC
+* @package DPS
 */
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 
@@ -17,16 +16,16 @@ class DPSTrackEditViewer extends Viewer {
 		
 		$trackID = $this->fieldData['trackID'];
 
-		$sql = "SELECT audio.*, albums.name as album 
-		FROM audio, albums 
-		WHERE audio.music_album = albums.id 
-			AND audio.id = " . pg_escape_string($trackID);
+		$sql = "SELECT audio.*, albums.name AS album 
+			FROM audio, albums 
+			WHERE audio.music_album = albums.id 
+				AND audio.id = " . pg_escape_string($trackID);
 		$trackDetails = $db->getRow($sql);
 
-		$sql = "SELECT DISTINCT artists.name as name, artists.id as id 
-		FROM artists, audioartists 
-		WHERE audioartists.audioid = " . pg_escape_string($trackID) . " 
-			AND audioartists.artistid = artists.id";
+		$sql = "SELECT DISTINCT artists.name AS name, artists.id AS id 
+			FROM artists, audioartists 
+			WHERE audioartists.audioid = " . pg_escape_string($trackID) . " 
+			A	ND audioartists.artistid = artists.id";
 		$trackDetails['artist'] = $db->getAll($sql);
 		$i = 0;
 		foreach($trackDetails['artist'] as &$artist) {
@@ -35,10 +34,10 @@ class DPSTrackEditViewer extends Viewer {
 		}
 		$artistNum = $i;
 		
-		$sql = "SELECT DISTINCT keywords.name as name, keywords.id as id 
-		FROM keywords, audiokeywords 
-		WHERE audiokeywords.audioid = " . pg_escape_string($trackID) . " 
-			AND audiokeywords.keywordid = keywords.id"; 
+		$sql = "SELECT DISTINCT keywords.name AS name, keywords.id AS id 
+			FROM keywords, audiokeywords 
+			WHERE audiokeywords.audioid = " . pg_escape_string($trackID) . " 
+				AND audiokeywords.keywordid = keywords.id"; 
 		$trackDetails['keywords'] = $db->getAll($sql);
 		$i = 0;
 		foreach($trackDetails['keywords'] as &$keyword) {
@@ -48,9 +47,10 @@ class DPSTrackEditViewer extends Viewer {
 		$keywordNum = $i;
 		
 		$samples = $trackDetails['length_smpl'];
-		$trackDetails['length'] = $tracksLen = round((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
+		$trackDetails['length'] = $tracksLen = round((($samples/44100)/60)) .
+			"mins " . (($samples/44100)%60) . "secs.";
 		
-		$sql = "SELECT * from audiocomments 
+		$sql = "SELECT * FROM audiocomments 
 		WHERE audioid = " . pg_escape_string($trackID) . " 
 		ORDER BY creationdate ASC";
 		$trackDetails['comments'] = $db->getAll($sql);
@@ -62,11 +62,16 @@ class DPSTrackEditViewer extends Viewer {
 
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
-		$this->assign('RequestTrack',AuthUtil::getDetailedUserrealmAccess(array(3,21,29), $userID));
-		$this->assign('CensorTrack',AuthUtil::getDetailedUserrealmAccess(array(3,21,30), $userID));
-		$this->assign('ReportTrack',AuthUtil::getDetailedUserrealmAccess(array(3,21,43), $userID));
-		$this->assign('SueEdit',AuthUtil::getDetailedUserrealmAccess(array(3,20,24), $userID));
-		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
+		$this->assign('RequestTrack',AuthUtil::getDetailedUserrealmAccess(
+			array(3,21,29), $userID));
+		$this->assign('CensorTrack',AuthUtil::getDetailedUserrealmAccess(
+			array(3,21,30), $userID));
+		$this->assign('ReportTrack',AuthUtil::getDetailedUserrealmAccess(
+			array(3,21,43), $userID));
+		$this->assign('SueEdit',AuthUtil::getDetailedUserrealmAccess(
+			array(3,20,24), $userID));
+		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(
+			array(1), $userID));
 		
 		$this->assign('trackDetails', $trackDetails);
 		$this->assign('keywordNum', $keywordNum);
@@ -74,5 +79,4 @@ class DPSTrackEditViewer extends Viewer {
 		$this->assign('trackID', $trackID);
 	}
 }
-
 ?>

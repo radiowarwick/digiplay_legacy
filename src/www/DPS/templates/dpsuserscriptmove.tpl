@@ -1,7 +1,7 @@
 <html>
-  <head>
-    <title>{$title}</title>
-    <link rel="stylesheet" type="text/css" href="DPS/stylesheet.css" />
+	<head>
+		<title>{$title}</title>
+		<link rel="stylesheet" type="text/css" href="DPS/stylesheet.css" />
 		<link rel="STYLESHEET" type="text/css" href="DPS/scripts/dhtmlxTree/css/dhtmlXTree.css">
 		<script src="DPS/scripts/dhtmlxTree/js/dhtmlXCommon.js"></script>
 		<script src="DPS/scripts/dhtmlxTree/js/dhtmlXTree.js"></script>	
@@ -34,8 +34,8 @@
 			}
 		</script>
 		{/literal}
-  </head>
-  <body>
+	</head>
+	<body>
 	{if $VIEWER.permError}
 		<div class='bigTitle'>Permission Error</div>
 		<div class='subTitle'>You do not have permission to move that item</div>
@@ -43,7 +43,7 @@
 		<div class='alignleft'>
 			<div class='bigTitle'>Advanced Properties: {$VIEWER.script.name}</div>
 			<form name="dpsUserMoveScriptForm" method="post" action="{$CONFIG.general.siteRoot}">
-    	  <input type="hidden" name="formName" value="dpsUserMoveScriptForm" />
+				<input type="hidden" name="formName" value="dpsUserMoveScriptForm" />
 				<input type="hidden" name="moduleName" value="DPS" />
 				<input type="hidden" name="templateID" value="22" />
 				<input type="hidden" name="scriptID" value="{$VIEWER.script.id}" />
@@ -60,7 +60,7 @@
 				{if $DATA.error == 'perm'}
 				<div class='error'>You do not have permission to move the item to the selected location</div>
 				{/if}
-	  		<div id="toc_tree" class="filebrowser">
+				<div id="toc_tree" class="filebrowser">
 					<script>
 						loadTree();
 					</script>

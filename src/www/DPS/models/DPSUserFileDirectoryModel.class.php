@@ -7,9 +7,6 @@ include_once($cfg['MVC']['dir']['root'] . '/MVCUtils.class.php');
 MVCUtils::includeModel('Model', 'tkfecommon');
 include_once($cfg['Logger']['dir']['root'] . '/BasicLogger.class.php');
 
-/**
- * Model for user management
- */
 class DPSUserFileDirectoryModel extends Model {
 	
 	const module = 'DPS';
@@ -17,10 +14,11 @@ class DPSUserFileDirectoryModel extends Model {
 	protected function processValid() {
 		global $cfg;
 		$db = Database::getInstance($cfg['DPS']['dsn']);
-		$dir = $this->fieldData['newParent'];
+		$dirID = pg_escape_string($this->fieldData['newParent']);
 		$auth = Auth::getInstance();
 		$userID = $auth->UserID();
-		$uploaddir = $cfg['DPS']['root'] . '/Uploads/';
+		$uploaddir = $cfg['DPS']['uploadDir'];
+		
 		$fname = md5($_FILES['ufile']['name'] . time() . $_FILES['ufile']['tmp_name']);
 		$uploadfile = $uploaddir . $fname;
 		
@@ -32,7 +30,7 @@ class DPSUserFileDirectoryModel extends Model {
 			} else {
 				$type="jingle";
 			}
-			if($handle = fopen($uploaddir . $fname . ".info", "w")) {
+			if($handle = fopen($uploadfile . ".info", "w")) {
 				$info = "uid: \n
 				title: " . $this->fieldData['name'] . "\n
 				artists: \n
@@ -48,15 +46,17 @@ class DPSUserFileDirectoryModel extends Model {
 				cdpresult: N/A website upload\n
 				reclibinsert: \n";
 				if (fwrite($handle, $info) !== FALSE) {
-					$id = exec('webimport.pl ' . $fname);
+					$id = exec(
+						escapeshellcmd($cfg['DPS']['dir']['scriptsDir'] . 'webimport.pl ') .
+						escapeshellarg($fname));
 					if(is_numeric($id) && $id != '') {
 						//insert into db stuff
 						$audioDir['audioid'] = $id;
-						$audioDir['dirid'] = $this->fieldData['dirID'];
+						$audioDir['dirid'] = $dirID;
 						$audioDir['linktype'] = 0;
 						$audioUser['audioid'] = $id;
 						$audioUser['userid'] = $userID;
-						$audioUser['permissions'] = 'o';
+						$audioUser['permissions'] = $cfg['DPS']['fileRWO'];
 						$where = "audio = " . $id;
 						$db->delete('audioDir',$where,true);
 						$db->insert('audioDir',$audioDir,true);
@@ -66,28 +66,27 @@ class DPSUserFileDirectoryModel extends Model {
 						BasicLogger::logMessage(
 							"Error recieved when uploading file: '" . $id . "'",
 							'error');
+						$this->errors['form'] = "Invalid audio id returned from import";
+						processInvalid(); //This should work(I hope)
 					}
 				} else {
 					//error
 					BasicLogger::logMessage(
 						"Error recieved when uploading file: Unable to write to $fname.info'",
 						'error');
+					$this->errors['form'] = "Unable to write to info file";
+					processInvalid(); //This should work(I hope)
 				}
+				fclose($handle);
 			} else {
 				//error
 				BasicLogger::logMessage(
 					"Error recieved when uploading file: Unable to open $fname.info file to write'",
 					'error');
+				$this->errors['form'] = "Unable to open info file for writing";
+				processInvalid(); //This should work(I hope)
 			}
 		}
-		fclose($handle);
-	} else {
-	}
-	//if(is_numeric($dir) && is_numeric($this->fieldData['newParent'])) {
-		//	$sql_update['parent'] = $this->fieldData['newParent'];
-		//	$swhere = "id = " . pg_escape_string($dir);
-		//  $db->update('dir',$sql_update,$swhere,true);
-		//}
 	}
 	
 	protected function processInvalid() {

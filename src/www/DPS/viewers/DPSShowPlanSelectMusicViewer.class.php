@@ -124,7 +124,7 @@ class DPSShowPlanSelectMusicViewer extends Viewer {
 					$pageArray[] = $pages;
 					$rNum = $rNum-$cfg['DPS']['resultLimit'];
 				}
-		
+				
 				$this->assign('page', $offset);
 				$this->assign('searchResult', $searchResult);
 				$this->assign('searchInfo', $searchInfo);

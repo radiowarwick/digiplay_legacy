@@ -26,7 +26,8 @@ class DPSUserEditCartViewer extends Viewer {
 				WHERE v_tree_cartset.userid = $userID 
 					AND v_tree_cartset.id = cartwalls.cartsetid 
 					AND cartwalls.id = $cartwallID 
-					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "'";
+					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] .
+						"' = '" . $cfg['DPS']['fileR'] . "'";
 				$check = $db->getOne($sql);
 				if($check > 0) {
 					$flag = true;
@@ -49,7 +50,8 @@ class DPSUserEditCartViewer extends Viewer {
 					AND cartsaudio.cartwallid = cartwalls.id 
 					AND v_tree_cartset.id = cartwalls.cartsetid 
 					AND cartsaudio.id = $cartID 
-					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "'";
+					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] .
+						"' = '" . $cfg['DPS']['fileR'] . "'";
 				$check = $db->getOne($sql);
 				if($check > 0) {
 					$flag = true;
@@ -60,7 +62,7 @@ class DPSUserEditCartViewer extends Viewer {
 			if($flag) {
 				// cartwalls
 				$sql = "SELECT cartsaudio.id AS id, cartsaudio.text AS text,
-									cartsaudio.audioid AS audioID, cartwalls.cartsetid AS cartset, 
+									cartsaudio.audioid AS audioID, cartwalls.cartsetid AS cartset,
 									cartsaudio.styleid AS styleID,cartsaudio.cart AS cart 
 								FROM cartsaudio, cartwalls 
 								WHERE cartsaudio.cartwallid = cartwalls.id AND 
@@ -71,14 +73,14 @@ class DPSUserEditCartViewer extends Viewer {
 				$this->assign('permError', 't');
 			}
 		}
-
 		//CHECK IF ANYONE ELSE CAN READ PERMS (IE NEED TO USE ALL USERS TREE)
 		if($cartID == "New") {
 			$sql = "SELECT count(*) from v_tree_cartset, cartwalls 
 			WHERE v_tree_cartset.userid != $userID 
 				AND v_tree_cartset.id = cartwalls.cartsetid 
 				AND cartwalls.id = $cartwallID 
-				AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "'";
+				AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] .
+					"' = '" . $cfg['DPS']['fileR'] . "'";
 			$user_count = $db->getOne($sql);
 		} else {
 			$sql = "SELECT count(*) from v_tree_cartset, cartwalls, cartsaudio 
@@ -86,16 +88,15 @@ class DPSUserEditCartViewer extends Viewer {
 				AND cartsaudio.cartwallid = cartwalls.id 
 				AND v_tree_cartset.id = cartwalls.cartsetid 
 				AND cartsaudio.id = $cartID 
-				AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "'";
+				AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] .
+					"' = '" . $cfg['DPS']['fileR'] . "'";
 			$user_count = $db->getOne($sql);
 		}
-
 		if($user_count == 0) {
 			$this->assign('treeUser', 'user');
 		} else {
 			$this->assign('treeUser', 'group');
 		}
-
 		$this->assign('activeNode', $this->activeNode);
 		$this->assign('styles', $styles);
 	}

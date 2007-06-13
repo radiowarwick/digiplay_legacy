@@ -6,9 +6,6 @@ include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 include_once($cfg['MVC']['dir']['root'] . '/MVCUtils.class.php');
 MVCUtils::includeModel('Model', 'tkfecommon');
 
-/**
- * Model for user management
- */
 class DPSMoveDirectoryModel extends Model {
 	
 	const module = 'DPS';

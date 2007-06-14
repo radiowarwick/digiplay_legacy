@@ -469,7 +469,7 @@ public static function getDetailedUserrealmAccess($realmPath, $user){
 		}
 		
 		$sql = "SELECT allow FROM realmgrouplink, usersgroups WHERE
-		        realmgrouplink.groupid = usergroups.groupid AND
+		        realmgrouplink.groupid = usersgroups.groupid AND
 		        realmgrouplink.realmid = '$realmid' AND
 		        usersgroups.userid = '{$uid}'";
 		$db = Database::getInstance($cfg['Auth']['dsn']);
@@ -621,7 +621,7 @@ public static function getDetailedUserrealmAccess($realmPath, $user){
 				$db->insert('usersgroups', $inserts);
 			}
 		}else{
-			$db->delete('usergroups', $where);
+			$db->delete('usersgroups', $where);
 		}
 	}
 	

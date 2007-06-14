@@ -115,7 +115,7 @@ class GroupModel extends Model {
 			AuthUtil::editGroupRelmAccess($gid, $rguid, 'n');
 		} elseif($task == 'realmIgnore'){ 
 			AuthUtil::editGroupRelmAccess($gid, $rguid, null);
-		} elseif($task == 'userAdd'){ 
+		} elseif($task == 'userAdd'){
 			AuthUtil::editUserGroup($rguid, $gid, true);
 		} elseif($task == 'userRemove'){
 			AuthUtil::editUserGroup($rguid, $gid, false);

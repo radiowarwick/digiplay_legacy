@@ -1,7 +1,10 @@
-{include file="rfile:authtopframe.tpl" title="Group Administration"}
+{include file="rfile:authtopframe.tpl" title="Group Administration" type="group"}
+<div class='bigTitle'>Group Management</div>
+<hr />
 	<form name="groupSelForm" method="post" action="{$CONFIG.general.siteRoot}">
 	<input type="hidden" name="templateID" value="{$DATA.templateID}">
-	<p align="center"><span class="label">Select Group:</span><br />
+	<div class="subTitle">Select Group:</div>
+	<p align='center'>
 	<select name="groupToEdit" id="groupToEdit" size="1">
 	{foreach from=$VIEWER.groups key="id" item="name"}
 		{if $id == $DATA.groupToEdit}
@@ -18,6 +21,7 @@
 	</p>
 	<hr />
 	{if $DATA.groupToEdit}
+	<div class='subTitle'>Details:</div>
 	<table width="100%" border="0" cellspacing="0" cellpadding="5">
 		{if $ERRORS}
 		<tr valign="top">
@@ -29,7 +33,6 @@
 		<tr valign="top">
 			<td colspan="2">
 			{if $VIEWER.customFields}
-				<h2>Details:</h2>
 				<form name="groupDetailsForm" method="post" action="{$CONFIG.general.siteRoot}">
 				<input type="hidden" name="groupToEdit" value="{$DATA.groupToEdit}" />
 				<input type="hidden" name="templateID" value="{$DATA.templateID}" />
@@ -72,7 +75,7 @@
 			<td colspan="2">
 				<table width="100%" border="0" cellspacing="0" cellpadding="5">
 					<tr>
-						<td width="70%" valign="top">
+						<td width="60%" valign="top">
 							<h3>Realms:</h3>
 							<div id="toc_tree" >
 								<script>
@@ -83,9 +86,10 @@
 								</noscript>
 							</div>
 						</td>
-						<td width="30%" valign="top"><h3>Users:</h3>
+						<td width="40%" valign="top"><h3>Users:</h3>
 							<ul>
 								{foreach from=$VIEWER.userinfo key="userid" item="user"}
+									<li>
 									{if $user.inGroup}
 										<b>{$user.username}</b>
 									{else}
@@ -119,6 +123,7 @@
 	</table>
 	</form>
 {else}
+	<div class='subTitle'>New Group Details:</div>
 	<table width="100%" border="0" cellspacing="0" cellpadding="5">
 		{if $ERRORS}
 		<tr valign="top">
@@ -134,7 +139,6 @@
 				if you wish to modify their permissions
 			{else}
 			<td colspan="2">
-				<h2>New Group Details:</h2>
 				<form name="addGroupForm" method="post" action="{$CONFIG.general.siteRoot}">
 				<input type="hidden" name="templateID" value="{$DATA.templateID}" />
 				<input type="hidden" name="formName" value="addGroupForm" />

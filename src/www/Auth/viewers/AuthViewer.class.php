@@ -28,7 +28,7 @@ class AuthViewer extends Viewer {
 		
 		if($table == "users"){
 			$fields = $cfg['Auth']['userfields'];
-			$idFieldName = 'userid';
+			$idFieldName = 'id';
 		}elseif($table == "groups"){
 			$fields = $cfg['Auth']['groupfields'];
 			$idFieldName = 'id';

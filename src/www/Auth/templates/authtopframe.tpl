@@ -2,6 +2,7 @@
 	<head>
 		<title>{$title}</title>
 		<link rel="stylesheet" type="text/css" href="DPS/stylesheet.css" />
+		{if $type != ''}
 		<link rel="STYLESHEET" type="text/css" href="DPS/scripts/dhtmlxTree/css/dhtmlXTree.css">
 		<script src="DPS/scripts/dhtmlxTree/js/dhtmlXCommon.js"></script>
 		<script src="DPS/scripts/dhtmlxTree/js/dhtmlXTree.js"></script>	
@@ -12,6 +13,14 @@
 			var treeUser="{/literal}{$VIEWER.treeUser}{literal}";
 			var guid="{/literal}{$VIEWER.id}{literal}";
 			var template="{/literal}{$VIEWER.templateID}{literal}";
+			{/literal}{if $type=='user'}
+				var formname="userPermissionForm";
+				var toedit="userToEdit";
+			{/if}
+			{if $type=='group'}
+				var formname="groupRealmForm";
+				var toedit="groupToEdit";
+			{/if}{literal}
 
 			function loadTree(){
 				var hrefstr = siteRoot + "?" +
@@ -27,23 +36,24 @@
 			function doOnClick(id){
 				if ((String(id).substring(0,3)) == "opa") {
 					document.location.href=siteRoot+"?templateID="+template+
-						"&formName=groupRealmForm&moduleName=Auth"+
-						"&task=realmAllow&groupToEdit=" + guid + 
+						"&formName="+formname+"&moduleName=Auth"+
+						"&task=realmAllow&"+toedit+"=" + guid + 
 						"&rguid=" + String(id).substring(3,String(id).length);
 				}else if ((String(id).substring(0,3)) == "opd") {
 					document.location.href=siteRoot+"?templateID="+template+
-						"&formName=groupRealmForm&moduleName=Auth"+
-						"&task=realmDeny&groupToEdit=" + guid + 
+						"&formName="+formname+"&moduleName=Auth"+
+						"&task=realmDeny&"+toedit+"=" + guid + 
 						"&rguid=" + String(id).substring(3,String(id).length);
 				}else if ((String(id).substring(0,3)) == "opi") {
 					document.location.href=siteRoot+"?templateID="+template+
-						"&formName=groupRealmForm&moduleName=Auth"+
-						"&task=realmIgnore&groupToEdit=" + guid + 
+						"&formName="+formname+"&moduleName=Auth"+
+						"&task=realmIgnore&"+toedit+"=" + guid + 
 						"&rguid=" + String(id).substring(3,String(id).length);
 				}
 			}
 		</script>
 		{/literal}
+		{/if}
 	</head>
 	<body>
 		<div class="centreContainer">
@@ -57,8 +67,8 @@
 					<div class="frame_studiosidebarlinks">
 						{templateLink id="1" text="Users"}<br />
 						{templateLink id="2" text="Groups"}<br />
-						{templateLink id="3" text="Realms"}<br />
-						{templateLink id="" text="Configuration"}
+						{templateLink id="5" text="Location Management"}<br />
+						{templateLink id="4" text="Configuration"}
 					</div>
 							</div>
 							<div class="frame_rightside">

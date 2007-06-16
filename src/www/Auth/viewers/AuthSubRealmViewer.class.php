@@ -51,27 +51,58 @@ class AuthSubRealmViewer extends Viewer {
 			if($group === false) { //user realmtree
 					$uAccess = AuthUtil::getUserAccess($realmID, $ID);
 					$gAccess = AuthUtil::getGroupAccessForUser($realmID, $ID);
+				if($gAccess == 'n' && $uAccess != 'n') {
+					$gAc = 'g ';
+				} else {
+					$gAc = '';
+				}
+				if($gAccess == 'n' || $uAccess == 'n') {
+					$list = $list . '<item text="allow" id="opa' . $realmID . '" im0="radio_off.gif" child="0" />';
+					$list = $list . '<item text="' . $gAc . 'deny" id="opd' . $realmID . '" im0="radio_on.gif" child="0" />';
+					$list = $list . '<item text="ignore" id="opi' . $realmID . '" im0="radio_off.gif" child="0" />';
+				} elseif ($gAccess == 'y' || $uAccess == 'y') {
+					$list = $list . '<item text="' . $gAc . 'allow" id="opa' . $realmID . '" im0="radio_on.gif" child="0" />';
+					$list = $list . '<item text="deny" id="opd' . $realmID . '" im0="radio_off.gif" child="0" />';
+					$list = $list . '<item text="ignore" id="opi' . $realmID . '" im0="radio_off.gif" child="0" />';
+				} else {
+					$list = $list . '<item text="' . $gAc . 'allow" id="opa' . $realmID . '" im0="radio_off.gif" child="0" />';
+					$list = $list . '<item text="' . $gAc . 'deny" id="opd' . $realmID . '" im0="radio_off.gif" child="0" />';
+					$list = $list . '<item text="ignore" id="opi' . $realmID . '" im0="radio_on.gif" child="0" />';
+				}
 			} else { //group realmtree
 				$gAccess = AuthUtil::getGroupAccess($realmID, $ID);
-			}
-			if($gAccess == 'y') {
-				$list = $list . '<item text="allow" id="opa' . $realmID . '" im0="radio_on.gif" child="0" />';
-				$list = $list . '<item text="deny" id="opd' . $realmID . '" im0="radio_off.gif" child="0" />';
-				$list = $list . '<item text="ignore" id="opi' . $realmID . '" im0="radio_off.gif" child="0" />';
-			} elseif ($gAccess == 'n') {
-				$list = $list . '<item text="allow" id="opa' . $realmID . '" im0="radio_off.gif" child="0" />';
-				$list = $list . '<item text="deny" id="opd' . $realmID . '" im0="radio_on.gif" child="0" />';
-				$list = $list . '<item text="ignore" id="opi' . $realmID . '" im0="radio_off.gif" child="0" />';
-			} else {
-				$list = $list . '<item text="allow" id="opa' . $realmID . '" im0="radio_off.gif" child="0" />';
-				$list = $list . '<item text="deny" id="opd' . $realmID . '" im0="radio_off.gif" child="0" />';
-				$list = $list . '<item text="ignore" id="opi' . $realmID . '" im0="radio_on.gif" child="0" />';
+				if($gAccess == 'y') {
+					$list = $list . '<item text="allow" id="opa' . $realmID . '" im0="radio_on.gif" child="0" />';
+					$list = $list . '<item text="deny" id="opd' . $realmID . '" im0="radio_off.gif" child="0" />';
+					$list = $list . '<item text="ignore" id="opi' . $realmID . '" im0="radio_off.gif" child="0" />';
+				} elseif ($gAccess == 'n') {
+					$list = $list . '<item text="allow" id="opa' . $realmID . '" im0="radio_off.gif" child="0" />';
+					$list = $list . '<item text="deny" id="opd' . $realmID . '" im0="radio_on.gif" child="0" />';
+					$list = $list . '<item text="ignore" id="opi' . $realmID . '" im0="radio_off.gif" child="0" />';
+				} else {
+					$list = $list . '<item text="allow" id="opa' . $realmID . '" im0="radio_off.gif" child="0" />';
+					$list = $list . '<item text="deny" id="opd' . $realmID . '" im0="radio_off.gif" child="0" />';
+					$list = $list . '<item text="ignore" id="opi' . $realmID . '" im0="radio_on.gif" child="0" />';
+				}
 			}
 		}
 		foreach($subRealms as $realm) {
 			if($group === false) { //user realmtree
 				$uAccess = AuthUtil::getUserAccess($realm['realmid'], $ID);
 				$gAccess = AuthUtil::getGroupAccessForUser($realm['realmid'], $ID);
+				if($gAccess == 'n' || $uAccess == 'n') {
+					$list = $list . '<item text="' . htmlspecialchars($realm['name']) .
+						'" id="rlm' . $realm['realmid'] . '" im0="red.gif" 
+						im1="red.gif" im2="red.gif" child="1" />';
+				} elseif ($gAccess == 'y' || $uAccess == 'y') {
+					$list = $list . '<item text="' . htmlspecialchars($realm['name']) .
+						'" id="rlm' . $realm['realmid'] . '" im0="green.gif" 
+						im1="green.gif" im2="green.gif" child="1" />';
+				} else {
+					$list = $list . '<item text="' . htmlspecialchars($realm['name']) .
+						'" id="rlm' . $realm['realmid'] . '" im0="white.gif"
+						im1="white.gif" im2="white.gif" child="1" />';
+				}
 			} else { //group realmtree
 				$gAccess = AuthUtil::getGroupAccess($realm['realmid'], $ID);
 				if($gAccess == 'y') {

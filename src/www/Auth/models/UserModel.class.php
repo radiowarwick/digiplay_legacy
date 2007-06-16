@@ -28,7 +28,6 @@ class UserModel extends Model {
 	protected $userToEdit;
 	
 	protected function processValid(){
-			
 		//Load class variable userToEdit
 		if(isset($this->fieldData['userToEdit'])){
 			$this->userToEdit = $this->fieldData['userToEdit'];

@@ -13,13 +13,14 @@ class UserViewer extends AuthViewer {
 		parent::setupTemplate();
 		if(isset($this->fieldData['userToEdit'])){
 			$uid = $this->fieldData['userToEdit'];
+			$this->assign('id', $uid);
 		}else{
 			$uid = null;
 		}
 		$this->assignCustomFields('users', $uid);
 		
 		if(isset($this->fieldData['userToEdit'])){
-			$this->assign('realminfo', AuthUtil::buildRealmTreeForUser($uid));
+			$this->assign('treeUser', 'user');
 			$this->assign('groupinfo', $this->getGroupInfoForUser($uid));
 			$this->assign('username', AuthUtil::getUsername($uid));
 		}
@@ -63,7 +64,7 @@ class UserViewer extends AuthViewer {
 		$gsql = "SELECT * FROM groups ORDER BY name";
 		$groups = $db->getAll($gsql);
 		
-		$ugsql = "SELECT groupid FROM groupmembers WHERE userid=$user ORDER BY groupid";
+		$ugsql = "SELECT groupid FROM usersgroups WHERE userid=$user ORDER BY groupid";
 		$usergroups = $db->getColumn($ugsql);
 		$out = array();
 		

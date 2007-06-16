@@ -20,8 +20,7 @@ class EditContentModel extends Model {
 		//If the content hasn't changed, then don't store it
 		if($oldContent != $this->fieldData['contentEditor']){
 		
-			$ins = array('contentid' => '#id#',
-						 'regionid'  => $this->fieldData['regionID'],
+			$ins = array('regionid'  => $this->fieldData['regionID'],
 						 'timestamp' => time(),
 						 'content'   => str_replace(array("\015\012"),'',$this->fieldData['contentEditor']),
 						 'userid'    => $auth->getUserID()

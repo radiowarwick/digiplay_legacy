@@ -61,8 +61,8 @@ class EditContentWindowViewer extends Viewer {
 							$this->assign('showInLineEditing', "");
 						}
 					} else {
-						$sesh->setValue("CMSShowInLine","y");
-						$this->assign('showInLineEditing', "CHECKED");
+						$sesh->setValue("CMSShowInLine","n");
+						$this->assign('showInLineEditing', "");
 					}
 				  $editor = new FCKeditor('contentEditor') ;
 				  //FCKEditor does not seem to include the trailing slash,

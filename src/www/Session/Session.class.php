@@ -117,7 +117,7 @@ class Session {
 	public function isValid(){
 		global $cfg;
 		$db = Database::getInstance($cfg['Session']['dsn']);
-		$dbsession = $db->getRow("SELECT sessionid, useragent, rndidentifier, ip FROM sessions WHERE sessionid = '{$this->cookie['key1']}'");
+		$dbsession = $db->getRow("SELECT sessionid, useragent, rndidentifier, ip, lastaccess FROM sessions WHERE sessionid = '{$this->cookie['key1']}'");
 		
 		$this->purgeExpiredSessions();
 		
@@ -131,6 +131,8 @@ class Session {
 		}elseif($correctHash != $this->cookie['key2']){
 			$valid = false;
 		}elseif(!$this->checkIP($dbsession['ip'], $this->ip)){
+			$valid = false;
+		}elseif(($dbsession['lastaccess'] + $cfg['Session']['lifetime']) < time()) {
 			$valid = false;
 		}
 		return $valid;
@@ -209,7 +211,7 @@ class Session {
 	 * 
 	 * @return boolean True if session has been passed in cookie data, false if not.
 	 */
-	private function exists(){
+	private function exists() {
 		return isset($this->cookie['key1']) && isset($this->cookie['key2']);
 	}
 	

@@ -14,13 +14,13 @@ class DPSUserFileDirectoryModel extends Model {
 	protected function processValid() {
 		global $cfg;
 		$db = Database::getInstance($cfg['DPS']['dsn']);
-		$dirID = pg_escape_string($this->fieldData['newParent']);
+		$dirID = pg_escape_string($this->fieldData['dirID']);
 		$auth = Auth::getInstance();
-		$userID = $auth->UserID();
-		$uploaddir = $cfg['DPS']['uploadDir'];
+		$userID = $auth->getUserID();
+		$uploaddir = $cfg['DPS']['dir']['uploadDir'];
 		
 		$fname = md5($_FILES['ufile']['name'] . time() . $_FILES['ufile']['tmp_name']);
-		$uploadfile = $uploaddir . $fname;
+		$uploadfile = $uploaddir . "/" . $fname;
 		
 		if (move_uploaded_file($_FILES['ufile']['tmp_name'], $uploadfile)) {
 			if($this->fieldData['type'] == "advert") {
@@ -31,24 +31,25 @@ class DPSUserFileDirectoryModel extends Model {
 				$type="jingle";
 			}
 			if($handle = fopen($uploadfile . ".info", "w")) {
-				$info = "uid: \n
-				title: " . $this->fieldData['name'] . "\n
-				artists: \n
-				album: \n
-				tracknum: \n
-				genres: \n
-				released: \n
-				lengthfr: \n
-				mcn: \n
-				reclibid: \n
-				origin: " . $auth->getUser() . "\n
-				type: $type\n 
-				cdpresult: N/A website upload\n
-				reclibinsert: \n";
+				$info = "uid: \n"
+				."title: " . $this->fieldData['name'] . "\n"
+				."artists: \n"
+				."album: \n"
+				."tracknum: \n"
+				."genres: \n"
+				."released: \n"
+				."lengthfr: \n"
+				."mcn: \n"
+				."reclibid: \n"
+				."origin: " . $auth->getUser() . "\n"
+				."type: $type\n"
+				."cdpresult: N/A website upload\n"
+				."reclibinsert: \n";
 				if (fwrite($handle, $info) !== FALSE) {
-					$id = exec(
-						escapeshellcmd($cfg['DPS']['dir']['scriptsDir'] . 'webimport.pl ') .
-						escapeshellarg($fname));
+					exec(
+						escapeshellcmd($cfg['DPS']['dir']['scriptsDir'] . '/webimport.pl ') .
+						escapeshellarg($fname),$id);
+						$id = $id[0];
 					if(is_numeric($id) && $id != '') {
 						//insert into db stuff
 						$audioDir['audioid'] = $id;
@@ -57,17 +58,17 @@ class DPSUserFileDirectoryModel extends Model {
 						$audioUser['audioid'] = $id;
 						$audioUser['userid'] = $userID;
 						$audioUser['permissions'] = $cfg['DPS']['fileRWO'];
-						$where = "audio = " . $id;
-						$db->delete('audioDir',$where,true);
-						$db->insert('audioDir',$audioDir,true);
-						$db->insert('audioUsers',$audioUser,true);
+						$where = "audioid = " . $id;
+						$db->delete('audiodir',$where,true);
+						$db->insert('audiodir',$audioDir,true);
+						$db->insert('audiousers',$audioUser,true);
 					} else {
 						//error
 						BasicLogger::logMessage(
 							"Error recieved when uploading file: '" . $id . "'",
 							'error');
 						$this->errors['form'] = "Invalid audio id returned from import";
-						processInvalid(); //This should work(I hope)
+						DPSUserFileDirectoryModel::processInvalid(); //This should work(I hope)
 					}
 				} else {
 					//error
@@ -75,7 +76,7 @@ class DPSUserFileDirectoryModel extends Model {
 						"Error recieved when uploading file: Unable to write to $fname.info'",
 						'error');
 					$this->errors['form'] = "Unable to write to info file";
-					processInvalid(); //This should work(I hope)
+					DPSUserFileDirectoryModel::processInvalid(); //This should work(I hope)
 				}
 				fclose($handle);
 			} else {
@@ -84,7 +85,7 @@ class DPSUserFileDirectoryModel extends Model {
 					"Error recieved when uploading file: Unable to open $fname.info file to write'",
 					'error');
 				$this->errors['form'] = "Unable to open info file for writing";
-				processInvalid(); //This should work(I hope)
+				DPSUserFileDirectoryModel::processInvalid(); //This should work(I hope)
 			}
 		}
 	}

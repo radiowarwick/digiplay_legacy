@@ -81,24 +81,24 @@ void Logger::log(LOG_TYPE type, char* routine, string message,
 	if (displayLevel >= level) {
 		switch (level) {
 			case INFO:
-				cout << "INFO      > ";
+				cerr << "INFO      > ";
 				break;
 			case WARNING:
-				cout << "WARNING   > ";
+				cerr << "WARNING   > ";
 				break;
 			case ERROR:
-				cout << "ERROR     > ";
+				cerr << "ERROR     > ";
 				break;
 			case GENERAL:
-				cout << "GENERAL   > ";
+				cerr << "GENERAL   > ";
 				break;
 			case CRITICAL:
-				cout << "CRITICAL! > ";
+				cerr << "CRITICAL! > ";
 				break;
 			default:
 				break;
 		}
-		cout << message << endl;
+		cerr << message << endl;
 	}
 }	
 

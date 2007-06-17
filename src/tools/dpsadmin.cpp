@@ -32,17 +32,21 @@ using namespace std;
 #include "archivemanager.h"
 #include "Logger.h"
 
+#define VERSION 0.95
+
 // Global flags
-static int verbose;
+static int verbose = 0;
+static int quiet = 0;
 static map<string,string> options;
 
 static struct option long_options[] = {
     // Be verbose about what we do
 	{"verbose",     no_argument,    &verbose,1},
     // Be brief about what we do
-	{"brief",       no_argument,    &verbose,0},
+	{"quiet",       no_argument,    &quiet,  1},
     // Display help
     {"help",        no_argument,        0,  'h'},
+    {"version",     no_argument,        0,  'v'},
     // categories
     {"archive",     no_argument,        0,  'A'},
     {"music",       no_argument,        0,  'M'},
@@ -58,7 +62,7 @@ static struct option long_options[] = {
     {"create",      required_argument,  0,  'c'},
     {"import",      no_argument,        0,  'i'},
     {"import-md5",  required_argument,  0,  'j'},
-    {"set-password",no_argument,        0,  's'},
+    {"set-password",required_argument,  0,  's'},
     // parameters
     {"local-path",   required_argument, 0,  'x'},
 	{"remote-path",  required_argument, 0,  'y'},
@@ -67,7 +71,7 @@ static struct option long_options[] = {
 	{0,0,0,0}
 };
 
-static char* short_options = "AMLUGa:d:lm:pc:ij:sx:y:e:w:h";
+static char* short_options = "AMLUGa:d:lm:pc:i:se:w:hiv";
 
 // Function prototypes
 void parseCommand(int argc, char *argv[]);
@@ -80,11 +84,35 @@ void processUser();
 void processGroup();
 
 int main(int argc, char *argv[]) {
+    // Parse the command line parameters
 	parseCommand(argc,argv);
+    if (verbose && quiet) {
+        cerr << "ERROR     > Can't be verbose and quiet!" << endl;
+        exit(-1);
+    }
+
+    // configure logging
+    Logger::setAppName("dpsadmin");
+    Logger::setLogLevel(3);
+    Logger::setDisplayLevel(WARNING);
+    if (verbose) Logger::setDisplayLevel(INFO);
+    if (quiet) Logger::setDisplayLevel(CRITICAL);
+
+    // Display version if requested
+    if (options["version"] == "yes") {
+        cout << "Digital Playout System Administration Tool" << endl;
+        cout << "Copyright (c) 2005-2007 Chris Cantwell" << endl;
+        cout << "Version " << VERSION << endl;
+        exit(0);
+    }
+
+    // Display help if requested
     if (options["help"] == "yes") {
         displayUsage();
         exit(0);
     }
+
+    // Perform the action
     process();
     return 0;
 }
@@ -93,6 +121,7 @@ int main(int argc, char *argv[]) {
  * Parses the command-line options.
  */
 void parseCommand(int argc, char *argv[]) {
+    char* routine = "dpsadmin::parseCommand";
     int t = 0;
     int c = 0;
 	while (1) {
@@ -120,14 +149,15 @@ void parseCommand(int argc, char *argv[]) {
             case 'e': options["dest-archive"] = optarg; break;
             case 'w': options["with-password"] = optarg; break;
             case 'h': options["help"] = "yes"; break;
+            case 'v': options["version"] = "yes"; break;
 		}
 	}
     if (t > 1) {
-        cout << "ERROR: only one task may be specified." << endl;
+        L_ERROR(LOG_DB,"Only one task may be specified.");
         exit(-1);
     }
     if (c > 1) {
-        cout << "ERROR: only one command may be specified." << endl;
+        L_ERROR(LOG_DB,"Only one command may be specified.");
         exit(-1);
     }
 }
@@ -136,31 +166,54 @@ void parseCommand(int argc, char *argv[]) {
  * Displays usage information
  */
 void displayUsage() {
-	cout << "Usage: dpsadmin [TASK] name [COMMAND] {OPTIONS}" << endl;
-	cout << "Possible tasks:" << endl;
-	cout << " -A, --archive       archive management" << endl;
-    cout << " -M, --music         music management" << endl;
-    cout << " -L, --location      system location management" << endl;
-    cout << " -U, --user          user management" << endl;
-    cout << " -G, --group         group management" << endl;
-    cout << endl;
-    cout << "Archive management commands:" << endl;
-    cout << " -a, --add           add an existing archive" << endl;
-    cout << " -c, --create        create a new archive and add it" << endl;
-    cout << " -d, --drop          remove archive (not deleted)" << endl;
-    cout << " -l, --list          list the available archives" << endl;
-    cout << endl;
-    cout << "Music management commands:" << endl;
-    cout << " -i, --import <md5>  imports all new audio in all archive" << endl;
-    cout << "                     or just <md5>" << endl;
-    cout << " -p, --purge-deleted delete audio marked for deletion" << endl;
-    cout << endl;
-    cout << "Location management commands:" << endl;
-    cout << endl;
-    cout << "User management commands:" << endl;
-    cout << endl;
-    cout << "Group management commands:" << endl;
-    cout << endl;
+cout <<
+"Usage: dpsadmin [TASK] [COMMAND] {OPTIONS}\n"
+"   --verbose               be verbose about what is being done\n"
+"   --quiet                 do not print anything to stdout\n"
+"   --version               print the copyright and version info\n"
+"   --help                  print this help\n"
+"\n"
+"Possible tasks:\n"
+"   -A, --archive           archive management\n"
+"   -M, --music             music management\n"
+"   -L, --location          system location management\n"
+"   -U, --user              user management\n"
+"   -G, --group             group management\n"
+"\n"
+"Archive management commands:\n"
+"   -a, --add <name>        add an existing archive\n"
+"   -c, --create <name>     create a new archive and add it\n"
+"   -d, --drop <name>       remove archive (not deleted)\n"
+"   -l, --list              list the available archives\n"
+"\n"
+"Music management commands:\n"
+"   -i, --import            imports all new audio in all archive\n"
+"   --import-md5 <md5>      import <md5> only\n"
+"   -p, --purge-deleted     delete audio marked for deletion\n"
+"\n"
+"Location management commands:\n"
+"   -a, --add <number>      add configuration for a new location\n"
+"   -d, --drop <number>     remove configuration for a location\n"
+"   -l, --list              list the configured locations\n"
+"   --set <number>          set a parameter for a location\n"
+"\n"
+"User management commands:\n"
+"   -a, --add <username>    add a new user\n"
+"   -d, --drop <username>   drop a user\n"
+"   -l, --list              list users on the system\n"
+"   --set-passwd <username> set a users password (prompt)\n"
+"\n"
+"Group management commands:\n"
+"   -a, --add <group>       add a new group\n"
+"   -d, --drop <group>      drop a group\n"
+"   -l, --list              list groups on the system\n"
+"\n"
+"Command parameters:\n"
+"   --local-path            the local path of the archive to add/create\n"
+"   --remote-path           the remote path of the new archive to add/create\n"
+"   --dest-archive          destination archive for archive merge\n"
+"   --with-passwd           specify a users password instead of prompt\n"
+<< endl;
 }
 
 /**
@@ -188,43 +241,39 @@ void process() {
  * Process archive management
  */
 void processArchive() {
-    if (verbose) cout << "Entering archive mode." << endl;
+    char* routine = "dpsadmin::processArchive";
+
+    L_INFO(LOG_DB,"Entering archive mode.");
+    systemmanager *Sys = new systemmanager();
 
     // Add archive
     if (options["add"] != "") {
         string name = options["add"];
         if (options["local-path"] == "") {
-            cout << "ERROR: no 'local-path' specified" << endl;
+            L_ERROR(LOG_DB,"No 'local-path' specified");
             exit(-1);
         }
         if (options["remote-path"] == "") {
-            cout << "ERROR: no 'remote-path' specified" << endl;
+            L_ERROR(LOG_DB,"No 'remote-path' specified");
             exit(-1);
         }
-        if (verbose) {
-            cout << "Adding existing archive '" << name << "' to database...";
-        }
+        L_INFO(LOG_DB,"Adding existing archive '" + name + "' to database...");
 
-        systemmanager *Sys = new systemmanager();
         if (Sys->atArchive(name)) {
-            cout << endl << "ERROR: '" << name << "' already exists" << endl;
+            L_ERROR(LOG_DB,"'" + name + "' already exists");
             exit(-1);
         }
         Sys->addArchive(name,options["local-path"],options["remote-path"]);
-        if (verbose) cout << "Complete!" << endl;
+        L_INFO(LOG_DB,"Complete!");
     }
 
     // Drop archive
     else if (options["drop"] != "") {
         string name = options["drop"];
-        if (verbose) {
-            cout << "Dropping archive '" << name << "' from database...";
-        }
+        L_INFO(LOG_DB,"Dropping archive '" + name + "' from database...");
 
-        systemmanager *Sys = new systemmanager();
         if (!Sys->atArchive(name)) {
-            cout << endl <<  "ERROR: Archive '" << name << "' does not exist!"
-                << endl;
+            L_ERROR(LOG_DB,"Archive '" + name + "' does not exist!");
             exit(-1);
         }
         for (short i = 0; i < Sys->sizeArchive(); i++) {
@@ -233,12 +282,11 @@ void processArchive() {
                 break;
             }
         }
-        if (verbose) cout << "Complete!" << endl;
+        L_INFO(LOG_DB,"Complete!");
     }
 
     // List archives
     else if (options["list"] != "") {
-        systemmanager *Sys = new systemmanager();
         archive A;
         cout.setf(ios::left);
         cout.width(20);
@@ -264,16 +312,16 @@ void processArchive() {
 
     // Create archive
     else if (options["create"] != "") {
-        cout << "Archive create " << options["create"] << endl;
+    
     }
 
     else if (options["merge"] != "") {
-        cout << "Archive merge " << options["merge"] << endl;
+    
     }
 
     // Other
     else {
-        cout << "Invalid command for Archive" << endl;
+        L_ERROR(LOG_DB,"No valid command supplied for archive operation");
     }
 }
 
@@ -281,7 +329,67 @@ void processArchive() {
  * Process music management
  */
 void processMusic() {
+    char* routine = "dpsadmin::processMusic";
 
+    systemmanager *Sys = new systemmanager();
+
+    // Import music
+    if (options["import"] != "" || options["import-md5"] != "") {
+        string target_md5 = options["import-md5"];
+
+        // Load the archives
+        L_INFO(LOG_DB,"Import run started.");
+        L_INFO(LOG_DB,"Loading music archives");
+        for (unsigned short i = 0; i < Sys->sizeArchive(); i++){
+            L_INFO(LOG_DB,"Loading archive '" 
+                            + Sys->atArchive(i)->spec().name + "'");
+            Sys->atArchive(i)->load();
+        }
+
+        // Add new music from the various archive inboxes into the system
+        L_INFO(LOG_DB,"Adding new music");
+        bool done_import_flag = false;
+
+        // Process each archive in the system
+        for (unsigned short i = 0; i < Sys->sizeArchive(); i++){
+            // if we need to import just one md5, and we've done it, stop
+            if (target_md5 != "" && done_import_flag) break;
+    
+            // get the current archive and process each track in the inbox
+            archivemanager *A = Sys->atArchive(i);
+            unsigned int count = A->size(DPS_INBOX);
+            for (unsigned short j = 0; j < count; j++){
+                // if we're looking for one track, and found it, add it and quit
+                // we won't be importing every track, so it'll be the j'th entry
+                if (target_md5 != "" && target_md5 == A->at(DPS_INBOX,j).md5) {
+                    L_INFO(LOG_DB,"Importing " + A->at(DPS_INBOX,j).md5 + " ["
+                                    + A->at(DPS_INBOX,j).title + "]");
+                    A->add(j);
+                    done_import_flag = true;
+                    break;
+                }
+                // if we're importing everything, import the first entry in the
+                // remaining items. This is then removed so reduce size by one
+                else if (target_md5 == "") {
+                    L_INFO(LOG_DB,"Importing " + A->at(DPS_INBOX,0).md5 + " ["
+                                    + A->at(DPS_INBOX,0).title + "]");
+                    A->add(0);
+                }
+            }
+            L_INFO(LOG_DB,"Finished importing from '" + A->spec().name + "'");
+            L_INFO(LOG_DB,dps_itoa(A->size(DPS_DB)) + " tracks in archive");
+        }
+
+        L_INFO(LOG_DB,"Cleaning up.");
+        delete Sys;
+        L_INFO(LOG_DB,"Import complete.");
+
+    }
+    
+    // Purge deleted tracks
+    else if (options["purge-deleted"] != "") {
+
+    }
 }
 
 /**

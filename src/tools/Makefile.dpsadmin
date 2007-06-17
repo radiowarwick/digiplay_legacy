@@ -18,7 +18,7 @@ QT_ENABLED 	=	no
 MODS		=	dpsadmin
 QT_MODS		=
 SHARED_MODS	=	systemmanager archivemanager Config xmlDocument xmlElement \
-				dps Logger DataAccess
+				dps Logger DataAccess Security
 
 # Global header files on which dependance exists
 HDRS		=

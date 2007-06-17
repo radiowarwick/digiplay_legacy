@@ -35,6 +35,7 @@ class DPSStationCartsetsViewer extends Viewer {
 				$cartset['active'] = 'f';
 			}
 		}
+
 		$this->assign('access_playlist',AuthUtil::getDetailedUserrealmAccess(
 			array(3,21,33), $userID));
 		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));

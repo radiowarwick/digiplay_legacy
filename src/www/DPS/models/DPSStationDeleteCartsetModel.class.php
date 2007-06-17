@@ -19,7 +19,8 @@ class DPSStationDeleteCartsetModel extends Model {
 		$loc = 1;
 		$cartsetID = pg_escape_string($this->fieldData['cartset']);
 		if($cartsetID != '' && is_numeric($cartsetID)) {
-			$sql = "SELECT val, id FROM configuration #
+			
+			$sql = "SELECT val, id FROM configuration 
 				WHERE location = $loc AND parameter = 'station_cartset'";
 			$userset = $db->getRow($sql);
 			if($userset['val'] == $cartsetID) {
@@ -38,6 +39,7 @@ class DPSStationDeleteCartsetModel extends Model {
 			$where = "cartsetid = " . $cartsetID;
 			$db->delete('cartsetsusers',$where,true);
 			$db->delete('cartsetsgroups',$where,true);
+			$db->delete('cartsetsdir',$where,true);
 			$where = "id = " . $cartsetID;
 			$db->delete('cartsets',$where,true);
 		}

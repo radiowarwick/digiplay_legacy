@@ -4,6 +4,7 @@
 */
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 include_once($cfg['Auth']['dir']['root'] . '/AuthUtil.class.php');
+include_once($cfg['DPS']['dir']['root'] . '/DPS.class.php');
 class DPSShowPlanSelectMusicViewer extends Viewer {
 	
 	const module = 'DPS';
@@ -26,11 +27,11 @@ class DPSShowPlanSelectMusicViewer extends Viewer {
 				AND showplanusers.userid = " . $userID . "
 				AND showitems.id = " . $itemID . "
 				UNION(SELECT showplangroups.permissions
-				FROM showplangroups, groupmembers, showitems
-				WHERE showplangroups.groupid = groupmembers.groupid
+				FROM showplangroups, usersgroups, showitems
+				WHERE showplangroups.groupid = usersgroups.groupid
 				AND showplangroups.showplanid = showitems.showplanid
 				AND showitems.id = $itemID
-				AND groupmembers.userid = $userID)) AS Q1";
+				AND usersgroups.userid = $userID)) AS Q1";
 			$checkShows = $db->getOne($show_query);
 			if(substr($checkShows,0,1) == "1") {
 				if(substr($checkShows,1,1) == "1") {
@@ -112,10 +113,11 @@ class DPSShowPlanSelectMusicViewer extends Viewer {
 					}
 				}
 
-				$searchResult = DPS::searchAudio($searchValue,$searchType,
-					$sortType,$offset,'');
-				$rNum = searchPageAudio($searchValue,$searchType,'');
-
+				if($searchValue != '') {
+					$searchResult = DPS::searchAudio($searchValue,$searchType,
+						$sortType,$offset,'');
+					$rNum = DPS::searchPageAudio($searchValue,$searchType,'');
+				}
 				$pages = 1; 
 				$pageArray[] = $pages;
 				$rNum = $rNum-$cfg['DPS']['resultLimit'];

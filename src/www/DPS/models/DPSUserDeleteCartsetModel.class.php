@@ -38,6 +38,7 @@ class DPSUserDeleteCartsetModel extends Model {
 			}
 			$where = "cartsetid = " . $cartsetID;
 			$db->delete('cartwalls',$where,true);
+			$db->delete('cartsetsdir',$where,true);
 			$db->delete('cartsetsusers',$where,true);
 			$db->delete('cartsetsgroups',$where,true);
 			$where = "id = " . $cartsetID;

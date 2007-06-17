@@ -21,10 +21,9 @@ class DPSStationEditCartsetViewer extends Viewer {
 		$userID = $auth->getUserID();
 		$flag = false;
 		if($cartset != '' && is_numeric($cartset)) {
-			$sql = "SELECT count(*) from v_tree_cartset, cartwalls 
+			$sql = "SELECT count(*) from v_tree_cartset 
 				WHERE v_tree_cartset.userid = " . $cfg['DPS']['systemUserID'] . " 
-					AND v_tree_cartset.cartsetid = cartwalls.cartsetid 
-					AND cartwalls.id = $cartwallID 
+					AND v_tree_cartset.id =  $cartset 
 					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] .
 						"' = '" . $cfg['DPS']['fileR'] . "'";
 			$check = $db->getOne($sql);
@@ -61,9 +60,9 @@ class DPSStationEditCartsetViewer extends Viewer {
 								cartsaudio.text AS name, cartsaudio.cart AS cart,
 								audio.length_smpl AS len, audio.title AS title 
 							FROM cartwalls, cartsaudio, audio 
-							WHERE cartwalls.cartsetid = $cartset 
+							WHERE cartwalls.cartsetid = $cartset
 							AND cartwalls.id = cartsaudio.cartwallid 
-							AND cartsaudio.audio = audio.id 
+							AND cartsaudio.audioid = audio.id 
 							AND cartwalls.page = $page 
 							AND cartsaudio.cart = $i";
 				$tcart = $db->getRow($sql);
@@ -115,29 +114,26 @@ class DPSStationEditCartsetViewer extends Viewer {
 			}
 
 			//IF SYSTEM OWNS THIS, CHECK TO SEE IF OTHER PEOPLE HAVE READ/WRITE
-			$sql = "SELECT count(*) from v_tree_cartset, cartwalls 
+			$sql = "SELECT count(*) from v_tree_cartset 
 				WHERE v_tree_cartset.userid = " . $cfg['DPS']['systemUserID'] . " 
-					AND v_tree_cartset.cartsetid = cartwalls.cartsetid 
-					AND cartwalls.id = $cartwallID 
+					AND v_tree_cartset.id = $cartset 
 					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileO'] .
 						"' = '" . $cfg['DPS']['fileO'] . "'";
 			$check = $db->getOne($sql);
 			if($check > 0) {
 				$this->assign('owner','t');
-				$sql = "SELECT count(*) from v_tree_cartset, cartwalls 
+				$sql = "SELECT count(*) from v_tree_cartset 
 				WHERE v_tree_cartset.userid != " . $cfg['DPS']['systemUserID'] . " 
-					AND v_tree_cartset.cartsetid = cartwalls.cartsetid 
-					AND cartwalls.id = $cartwallID 
+					AND v_tree_cartset.id = $cartset 
 					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] .
 						"' = '" . $cfg['DPS']['fileR'] . "'";
 				$check = $db->getOne($sql);
 				if($check > 0) {
 					$this->assign('groupread','t');
 				}
-				$sql = "SELECT count(*) from v_tree_cartset, cartwalls 
+				$sql = "SELECT count(*) from v_tree_cartset 
 				WHERE v_tree_cartset.userid != " . $cfg['DPS']['systemUserID'] . " 
-					AND v_tree_cartset.cartsetid = cartwalls.cartsetid 
-					AND cartwalls.id = $cartwallID 
+					AND v_tree_cartset.id = $cartset 
 					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileW'] .
 						"' = '" . $cfg['DPS']['fileW'] . "'";
 				$check = $db->getOne($sql);
@@ -148,7 +144,7 @@ class DPSStationEditCartsetViewer extends Viewer {
 
 			$this->assign('access_playlist',AuthUtil::getDetailedUserrealmAccess(
 				array(3,21,33), $userID));
-			$this->assign('StationCartset','t', $userID));
+			$this->assign('StationCartset','t', $userID);
 			$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
 			$this->assign('pagelink',$pageArray);
 			$this->assign('cartwall',$cartwall);

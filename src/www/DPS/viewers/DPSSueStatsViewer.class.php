@@ -40,7 +40,7 @@ class DPSSueStatsViewer extends Viewer {
 		//Sue playing now/next
 		$query = "SELECT audio.title AS title, audio.id AS id 
 		FROM sustschedule, audio 
-		WHERE sustschedule.audio = audio.id 
+		WHERE sustschedule.audioid = audio.id 
 		ORDER BY sustschedule.id asc";
 		$suePlaylist = $db->getAll($query);
 		foreach($suePlaylist as $key => &$track) {

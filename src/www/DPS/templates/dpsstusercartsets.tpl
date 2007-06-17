@@ -4,7 +4,7 @@
 
 <div class='subTitle'>You currently have the following cartwalls available:</div>
 	<table border=1 class='stationtable'>
-	{if $VIEWER.stationcartset != "None"}
+	{if $VIEWER.stationcartset != "None" && $VIEWER.stationcartset.id != ""}
 		<tr>
 			<th class="stationTableName">
 				{$VIEWER.stationcartset.name}
@@ -58,6 +58,13 @@
 			</td>
 		</tr>
 {/foreach}
+{if !$VIEWER.cartsets}
+		<tr>
+			<th colspan=5 class="stationTableName">
+				no user cartsets exist
+			</th>
+		</tr>
+{/if}
 	</table>
 <div class='statiosubtitle'>Create new cartwall</div>
 <form name="dpsUserNewCartsetForm" method="post" action="{$CONFIG.general.siteRoot}">

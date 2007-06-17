@@ -18,7 +18,7 @@ class DPSStationCartwallsViewer extends Viewer {
 		if($cartset != '' && is_numeric($cartset)) {
 			$sql = "SELECT count(*) from v_tree_cartset 
 				WHERE v_tree_cartset.userid = " . $cfg['DPS']['systemUserID'] . " 
-					AND v_tree_cartset.cartsetid = $cartset 
+					AND v_tree_cartset.id = $cartset 
 					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] .
 						"' = '" . $cfg['DPS']['fileR'] . "'";
 			$check = $db->getOne($sql);
@@ -34,10 +34,10 @@ class DPSStationCartwallsViewer extends Viewer {
 			}
 
 			$sql = "SELECT * FROM cartwalls 
-			WHERE cartset = $cartset AND page = $page";
+			WHERE cartsetid = $cartset AND page = $page";
 			$cartwall = $db->getRow($sql);
 
-			$sql = "SELECT count(*) FROM cartwalls WHERE cartset = " . $cartset;
+			$sql = "SELECT count(*) FROM cartwalls WHERE cartsetid = " . $cartset;
 			$pages = $db->getOne($sql);
 			$pageArray = array();
 			for($i=0; $i < $pages; $i++) {
@@ -49,12 +49,12 @@ class DPSStationCartwallsViewer extends Viewer {
 			}
 			for($i=0; $i<12; $i++) {
 				$tcart = array();
-				$sql = "SELECT cartsaudio.id AS id, cartsaudio.audio AS audio, 
+				$sql = "SELECT cartsaudio.id AS id, cartsaudio.audioid AS audio, 
 					cartsaudio.text AS name, cartsaudio.cart AS cart, 
 					audio.length_smpl AS len 
 				FROM cartwalls, cartsaudio, audio 
 				WHERE cartwalls.cartsetid = " . $cartset . " 
-					AND cartwalls.id = cartsaudio.cartwall 
+					AND cartwalls.id = cartsaudio.cartwallid 
 					AND cartsaudio.audioid = audio.id 
 					AND cartwalls.page = " . $page . " 
 					AND cartsaudio.cart = " . $i;
@@ -110,7 +110,7 @@ class DPSStationCartwallsViewer extends Viewer {
 			if($cartset != '' && is_numeric($cartset)) {
 				$sql = "SELECT count(*) FROM v_tree_cartset 
 					WHERE v_tree_cartset.userid = " . $cfg['DPS']['systemUserID'] . " 
-						AND v_tree_cartset.cartsetid = $cartset 
+						AND v_tree_cartset.id = $cartset 
 						AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileW'] .
 							"' = '" . $cfg['DPS']['fileW'] . "'";
 				$check = $db->getOne($sql);

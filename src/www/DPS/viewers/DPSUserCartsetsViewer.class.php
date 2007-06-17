@@ -17,6 +17,27 @@ class DPSUserCartsetsViewer extends Viewer {
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
 		$loc = 1;
+		
+		$sql = "SELECT usersconfigs.val FROM configs, usersconfigs
+			WHERE configs.id = usersconfigs.configid
+				AND configs.name = 'default_cartset'
+				AND usersconfigs.userid = " . $userID;
+		$userset = $db->getOne($sql);
+		
+		$sql = "SELECT val FROM configuration 
+			WHERE location = $loc
+				AND parameter='station_cartset'";
+		$stationset = $db->getOne($sql);
+		if($stationset != '') {
+			$sql = "SELECT cartsets.id as id, cartsets.name as name,
+					cartsets.description as desc
+				FROM cartsets
+				WHERE id = $stationset";
+			$scartset = $db->getRow($sql);
+		} else {
+			$scartset = "None";
+		}
+		
 		$sql = "SELECT * from v_tree_cartset 
 			WHERE v_tree_cartset.userid = $userID 
 				AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] .
@@ -30,7 +51,7 @@ class DPSUserCartsetsViewer extends Viewer {
 				$cartset['active'] = 'f';
 			}
 		}
-		
+
 		$this->assign('access_playlist',AuthUtil::getDetailedUserrealmAccess(
 			array(3,21,33), $userID));
 		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(
@@ -38,6 +59,7 @@ class DPSUserCartsetsViewer extends Viewer {
 		$this->assign('studioAccess',AuthUtil::getDetailedUserrealmAccess(
 			array(3,21,34), $userID));
 		$this->assign('cartsets', $cartsets);
+		$this->assign('stationcartset',$scartset);
 	}
 }
 ?>

@@ -1313,6 +1313,7 @@ div.statioinfo1 {
 table.stationtable {
   border: 1px solid #000000;
   border-spacing: 0px;
+  width: 500px;
   empty-cells:	show;
   font-size:  12pt;
 }

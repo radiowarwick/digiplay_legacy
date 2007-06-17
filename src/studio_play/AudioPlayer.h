@@ -34,6 +34,7 @@ using namespace pqxx;
 #include "audio/InputRaw.h"
 #include "audio/OutputDsp.h"
 #include "audio/Counter.h"
+#include "clockThread.h"
 #include "Config.h"
 #include "DataAccess.h"
 
@@ -63,6 +64,8 @@ class AudioPlayer:  public QWidget,
         void onSetSample();
         void onSetState();
         void onSetTotalSamples();
+        void customEvent(QCustomEvent *event);
+        void updateEndTime();
         QString getTime(long smpl);
 
         void drawCreate();
@@ -78,10 +81,13 @@ class AudioPlayer:  public QWidget,
         Audio::OutputDsp* audioPlayer;
         unsigned long _lastSample;
 
+        clockThread *ck;
         QGroupBox* grpFrame;
         QLabel* lblTime;
         QPushButton* btnTimeMode;
         QLabel* lblCounter;
+        QLabel* lblEndlbl;
+        QLabel* lblEnd;
         QPushButton* btnLoad;
         QPushButton* btnLog;
         QPushButton* btnStop;
@@ -90,6 +96,10 @@ class AudioPlayer:  public QWidget,
         QPushButton* btnSeekBack;
         QPushButton* btnSeekForward;
         QSlider* sldSeek;
+        int length_hours;
+        int length_mins;
+        int length_secs;
+        QString* strTime;
         QLabel* lblTitleLabel;
         QLabel* lblTitle;
         QLabel* lblArtistLabel;

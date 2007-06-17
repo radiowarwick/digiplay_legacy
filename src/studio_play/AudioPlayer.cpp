@@ -44,19 +44,46 @@ AudioPlayer::AudioPlayer(QWidget *parent, const char* name, unsigned short playe
 	location = atoi( conf->getParam("LOCATION").c_str() );
     grpFrame = 0;
 
-
+    cout << "1" <<endl;
+    ck = new clockThread(this);
+    ck->start();
     processConfigUpdate();
+    cout << "2" <<endl;
 
     audioFilereader = new Audio::InputRaw();
     audioPlayer = new Audio::OutputDsp(device);
 
     audioFilereader->connect(OUT0,audioPlayer,IN0);
     audioFilereader->addCounter(this);
+
+    length_hours = 0;
+    length_mins = 0;
+    length_secs = 0;
 }
 
 AudioPlayer::~AudioPlayer() {
     clean();
 }
+
+void AudioPlayer::customEvent(QCustomEvent *event) {
+    char *routine = "AudioPlayer::customEvent";
+    switch (event->type()) {
+    case 20000: {       // Clock update
+            strTime = (QString *) event->data();
+            updateEndTime();
+            break;
+        }
+    case 20001: {       // Date update - unused
+            break;
+        }
+    default: {
+            qWarning("Unknown event type: %d", event->type());
+            L_WARNING(LOG_DB,"Unknown event type: " + dps_itoa(event->type()));
+            break;
+        }
+    }
+}
+
 
 void AudioPlayer::load() {
     cout << "AudioPlayer::load" << endl;
@@ -83,10 +110,48 @@ void AudioPlayer::load() {
     lblArtist->setText(R[0]["artist"].c_str());
     btnPlay->setEnabled(true);
     btnStop->setEnabled(true);
-		btnLog->setEnabled(true);
+    btnLog->setEnabled(true);
     //btnSeekBack1->setEnabled(true);
     //btnSeekForward1->setEnabled(true);
     sldSeek->setEnabled(true);
+}
+
+void AudioPlayer::updateEndTime(){
+    int current_position = (_totalSamples-_currentSample) / 44100;
+    if ((_totalSamples-_currentSample) % 44100 > 22050) {
+        current_position++;
+    }
+    int time_hours = atoi( strTime->section(':', 0, 0) );
+    int time_mins = atoi( strTime->section(':', 1, 1) );
+    int time_secs = atoi( strTime->section(':', 2, 2) );
+    length_hours = current_position / 3600;
+    length_mins = (current_position % 3600) / 60;
+    length_secs = ((current_position % 3600) % 60);
+    int carry=0;
+    time_secs += length_secs;
+    if (time_secs > 60) {
+        time_secs -= 60;
+        carry++;;
+    }
+    time_mins += length_mins + carry;
+    if (time_mins > 60) {
+        time_mins -= 60;
+        carry = 1;
+    }
+    else {
+        carry = 0;
+    }
+    time_hours += length_hours + carry;
+    if (time_hours > 24) {
+        time_hours -= 24;
+    }
+    QString hours = dps_itoa(time_hours);
+    QString mins = dps_itoa(time_mins);
+    QString secs = dps_itoa(time_secs);
+    if (secs.length() == 1) secs = "0" + secs;
+    if (mins.length() == 1) mins = "0" + mins;
+    if (hours.length() == 1) hours = "0" + hours;
+    lblEnd->setText(hours + ":" + mins + ":" + secs);
 }
 
 void AudioPlayer::log() {
@@ -257,12 +322,28 @@ void AudioPlayer::drawCreate() {
     connect(btnTimeMode,SIGNAL(pressed()),this,SLOT(setTimeDisplay()));
 
     lblCounter = new QLabel( grpFrame, "lblCounter" );
-    lblCounter->setGeometry( QRect( 10, 60, 260, 57 ) );
+    lblCounter->setGeometry( QRect( 10, 50, 260, 57 ) );
     QFont lblCounter_font(  lblCounter->font() );
     lblCounter_font.setPointSize( 48 );
     lblCounter->setFont( lblCounter_font );
     lblCounter->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft )  );
     lblCounter->setText( tr( "00:00.00" ) );
+
+    lblEndlbl = new QLabel( grpFrame, "lblEndlbl" );
+    lblEndlbl->setGeometry( QRect( 10, 96, 80, 15 ) );
+    QFont lblEndlbl_font(  lblEndlbl->font() );
+    lblEndlbl_font.setPointSize( 14 );
+    lblEndlbl->setFont( lblEndlbl_font );
+    lblEndlbl->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft )  );
+    lblEndlbl->setText( tr( "End Time:" ) );
+
+    lblEnd = new QLabel( grpFrame, "lblEnd" );
+    lblEnd->setGeometry( QRect( 90, 96, 180, 15 ) );
+    QFont lblEnd_font(  lblEnd->font() );
+    lblEnd_font.setPointSize( 14 );
+    lblEnd->setFont( lblEnd_font );
+    lblEnd->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft )  );
+    lblEnd->setText( tr( "--:--:--" ) );
 
     btnLog = new QPushButton( grpFrame, "btnLog" );
     btnLog->setGeometry( QRect( 390, 10, 140, 50 ) );

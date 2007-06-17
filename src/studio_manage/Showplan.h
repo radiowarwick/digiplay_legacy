@@ -85,6 +85,7 @@ class Showplan : public QWidget {
 
     private slots:
         void processConfigUpdate();
+        void clicked(QListViewItem* x);
         void selectionChanged(QListViewItem* x);
         void updateNextTrack();
 

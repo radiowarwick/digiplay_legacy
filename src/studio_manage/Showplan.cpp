@@ -49,13 +49,10 @@ Showplan::Showplan(QWidget *parent, const char* name)
     conf = new Config("digiplay");
     activePoint = 0;
 	selectedItem = 0;
-    //_parent = parent;
     draw();
     triggerConfig = new DbTrigger("triggerConfig","trig_id1");
     triggerConfig->start();
     connect(triggerConfig, SIGNAL(trigger()),this,SLOT(processConfigUpdate()));
-//    confTrigger = new triggerThread(this,QString(conf->getDBConnectString()),1);
-//    confTrigger->start();
 }
 
 Showplan::~Showplan() {
@@ -281,6 +278,18 @@ void Showplan::moveBottom() {
     }
 }
 
+void Showplan::clicked(QListViewItem *x) {
+    // if no item is clicked, then there should now be nothing selected
+    // so disable all the appropriate buttons
+    if (x == 0) {
+        btnMoveBottom->setEnabled(false);
+        btnMoveDown->setEnabled(false);
+        btnMoveUp->setEnabled(false);
+        btnMoveTop->setEnabled(false);
+        btnDelete->setEnabled(false);
+    }
+}
+
 void Showplan::selectionChanged(QListViewItem* x) {
     ShowPlanItem *y = (ShowPlanItem*)x;
 	if ( selectedItem && selectedItem->getType() == 1 &&
@@ -314,16 +323,7 @@ void Showplan::selectionChanged(QListViewItem* x) {
 			emit scriptSelected( s->getScript().getId() );
 		}
 		selectedItem = y;
-        return;
     }
-
-
-	selectedItem = y;
-    btnMoveBottom->setEnabled(false);
-    btnMoveDown->setEnabled(false);
-    btnMoveUp->setEnabled(false);
-    btnMoveTop->setEnabled(false);
-    btnDelete->setEnabled(false);
 }
 
 void Showplan::scriptDone() {
@@ -458,6 +458,8 @@ void Showplan::draw() {
     connect( btnClear, SIGNAL( clicked() ),         this, SLOT( clear() ));
     connect( lstShowPlan, SIGNAL( selectionChanged(QListViewItem*) ),
                 this, SLOT( selectionChanged(QListViewItem*) ));
+    connect( lstShowPlan, SIGNAL( clicked(QListViewItem*) ),
+                this, SLOT( clicked(QListViewItem*) ));
 }
 
 void Showplan::clean() {

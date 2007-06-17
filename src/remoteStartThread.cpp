@@ -55,10 +55,8 @@ void remoteStartThread::run() {
 		delete conf;
 		while(!stopped) {
 			status = inb(ADDRESS+1);
-			cout << status << endl;
 			if (status != old_status) {
 				int changed = status^old_status;
-				cout << "Matched" << endl;
 				QCustomEvent *remote;
 				if ((changed & 0x80) == 0x80) {
 					if ((status & 0x80) == 0x80) {

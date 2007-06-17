@@ -20,8 +20,9 @@ class DPSUserAddCartsetModel extends Model {
 		$name = pg_escape_string($this->fieldData['name']);
 		$desc = pg_escape_string($this->fieldData['desc']);
 		
+		$auth = Auth::getInstance();
 		$userName = $auth->getUser();
-		$sql = "SELECT id FROM dir #
+		$sql = "SELECT id FROM dir 
 			WHERE parent = " . $cfg['DPS']['userDirectoryID'] . "
 			AND name = '" . $userName . "'";
 		$dirID = $db->getOne($sql);

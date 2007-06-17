@@ -67,7 +67,7 @@ class DPSUserFileDirectoryModel extends Model {
 						BasicLogger::logMessage(
 							"Error recieved when uploading file: '" . $id . "'",
 							'error');
-						$this->errors['form'] = "Invalid audio id returned from import";
+						$this->errors['form'] = "Unable to import file (file may be of invalid type)";
 						DPSUserFileDirectoryModel::processInvalid(); //This should work(I hope)
 					}
 				} else {
@@ -93,10 +93,10 @@ class DPSUserFileDirectoryModel extends Model {
 	protected function processInvalid() {
 		//No invalid processing required
 		if($this->errors['form']) {
-			MVCUtils::redirect(MVCUtils::getTemplateID('dpsuserdirmove.tpl'),
+			MVCUtils::redirect(MVCUtils::getTemplateID('dpsuserfileupload.tpl'),
 				array("rootdir" => $this->fieldData['dirID'], "error" => "form"));
 		} else {
-			MVCUtils::redirect(MVCUtils::getTemplateID('dpsuserdirmove.tpl'),
+			MVCUtils::redirect(MVCUtils::getTemplateID('dpsuserfileupload.tpl'),
 				array("rootdir" => $this->fieldData['dirID'], "error" => "perm"));
 		}
 	}

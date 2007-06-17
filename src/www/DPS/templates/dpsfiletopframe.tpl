@@ -41,13 +41,6 @@
 					"&rootdir=" + String(currentVal).substring(3,String(currentVal).length) + "&" +
 					"dirtext=" + document.getElementById('dirctext').currentValue;
 				document.getElementById('dirCreate').href = hrefstr;
-			
-				hrefstr = siteRoot + "?" + 
-					"templateID=" + templateID + "&" + 
-					"formName=dpsdirrename&moduleName=DPS&" +
-					"rootdir=" + String(currentVal).substring(3,String(currentVal).length) + "&" + 
-					"dirtext=" + document.getElementById('dirrtext').currentValue;
-				document.getElementById('dirRename').href = hrefstr;
 			}
 			
 			//Capture enter events on text boxes and execute the connected link
@@ -126,6 +119,21 @@
 				win.focus();
 			}
 			
+			//Opens a window to upload a file
+			function editDir()
+			{
+				window.name = "dpsmain";
+				var left=0;
+				var top=20;
+				var title = "UploadFile";
+				var Nurl = siteRoot + "?" +
+					"templateID=68&rootdir=" + String(currentVal).substring(3,String(currentVal).length);
+				var settings="width=800,height=600,top=20,left=0,scrollbars=yes," +
+					"location=no,directories=no,status=no,menubar=no,toolbar=no,resizable=no";
+				win=window.open(Nurl,title,settings);
+				win.focus();
+			}
+
 			//Opens a window to move a directory
 			function moveDir() {
 				window.name = "dpsmain"
@@ -334,11 +342,6 @@
 			
 					//Update links and text boxes
 					document.dirrtext.value = tree.getItemText(val);
-					document.dirRename.href =
-						siteRoot + "?" +
-						"templateID=" + templateID + "&" +
-						"formName=dpsdirrename&moduleName=DPS&" +
-						"rootdir=" + String(val).substring(3,String(val).length);
 					document.dirDelete.href =
 						siteRoot + "?" +
 						"templateID=" + templateID + "&" +

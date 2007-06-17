@@ -15,8 +15,7 @@
 		</div>
 		<div id="dircRename" class="fileLink">
 			<img src="DPS/images/dirRename.png" alt="Rename Folder"> 
-			<input size="10" onchange="javascript:dirChange()" type=text name=dirtext id=dirrtext value="" onkeypress="javascript:handleKeyPress(event,'dirRename')"> 
-			<a id="dirRename" href="{$CONFIG.general.siteRoot}?templateID={$VIEWER.templateID}">Rename</a>
+			<a id="dirRename" href="javascript:editDir();">Edit</a>
 		</div>
 		<div id="dircDelete" class="fileLink">
 			<a id="dirDelete" href="{$CONFIG.general.siteRoot}?templateID={$VIEWER.templateID}">

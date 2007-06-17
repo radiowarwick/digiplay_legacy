@@ -25,7 +25,7 @@ class DPSTrackEditViewer extends Viewer {
 		$sql = "SELECT DISTINCT artists.name AS name, artists.id AS id 
 			FROM artists, audioartists 
 			WHERE audioartists.audioid = " . pg_escape_string($trackID) . " 
-			A	ND audioartists.artistid = artists.id";
+			AND audioartists.artistid = artists.id";
 		$trackDetails['artist'] = $db->getAll($sql);
 		$i = 0;
 		foreach($trackDetails['artist'] as &$artist) {

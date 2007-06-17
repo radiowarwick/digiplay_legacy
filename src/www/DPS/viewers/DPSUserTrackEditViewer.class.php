@@ -20,13 +20,13 @@ class DPSUserTrackEditViewer extends Viewer {
 
 		//As there is no general audio view
 		$sql = "SELECT count(*) FROM audiousers 
-			WHERE audio = " . pg_escape_string($trackID) . " 
+			WHERE audioid = " . pg_escape_string($trackID) . " 
 				AND userid = " . $userID . " 
-				AND permissions & B'" . $cfg['DPS']['fileW'] . "' = '"
+				AND permissions & B'" . $cfg['DPS']['fileW'] . "' = '" .
 					$cfg['DPS']['fileW'] . "'";
 		$check = $db->getOne($sql);
 		$sql = "SELECT count(*) FROM audiogroups, usersgroups 
-			WHERE audiogroups.audio = " . pg_escape_string($trackID) . " 
+			WHERE audiogroups.audioid = " . pg_escape_string($trackID) . " 
 				AND usersgroups.userid = " . $userID . " 
 				AND usersgroups.groupid = audiogroups.groupid 
 				AND audiogroups.permissions & B'" . $cfg['DPS']['fileW'] .
@@ -40,8 +40,8 @@ class DPSUserTrackEditViewer extends Viewer {
 			$trackDetails = $db->getRow($sql);
 			$sql = "SELECT DISTINCT artists.name AS name, artists.id AS id 
 				FROM artists, audioartists 
-				WHERE audioartists.audio = " . pg_escape_string($trackID) . " 
-					AND audioartists.artist = artists.id";
+				WHERE audioartists.audioid = " . pg_escape_string($trackID) . " 
+					AND audioartists.artistid = artists.id";
 			$trackDetails['artist'] = $db->getAll($sql);
 			$i = 0;
 			foreach($trackDetails['artist'] as &$artist) {
@@ -67,7 +67,7 @@ class DPSUserTrackEditViewer extends Viewer {
 				"mins " . (($samples/44100)%60) . "secs.";
 		
 			$sql = "SELECT * from audiocomments 
-				WHERE audio = " . pg_escape_string($trackID) . "
+				WHERE audioid = " . pg_escape_string($trackID) . "
 				ORDER BY creationdate ASC";
 			$trackDetails['comments'] = $db->getAll($sql);
 			foreach($trackDetails['comments'] as &$comment) {

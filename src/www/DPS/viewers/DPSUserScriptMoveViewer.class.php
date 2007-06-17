@@ -56,7 +56,7 @@ class DPSUserScriptMoveViewer extends Viewer {
 			} else {
 				$this->assign('permError', 't');
 			}
-		{
+		}
 	}
 }
 ?>

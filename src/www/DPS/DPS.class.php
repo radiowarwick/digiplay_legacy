@@ -408,23 +408,6 @@ class DPS extends Module  {
 			LIMIT $resultLimit 
 			OFFSET $offsetCount";
 			$searchResult = $db->getAll($query);
-			$number=0;
-			foreach($searchResult as $key => &$track) { 
-				$sql = "SELECT DISTINCT artists.name as name 
-				FROM artists, audioartists 
-				WHERE audioartists.audio = " . $track['id'] . " 
-					AND audioartists.artist = artists.id 
-				ORDER BY artists.name ASC";
-				$artists = $db->getAll($sql);
-				foreach($artists as $artist) {
-					$track['artist'] = $track['artist'] . $artist['name'] . " & "; 
-				}
-				$track['artist'] = rtrim($track['artist']," & ");
-				$track['searchNumber'] = $number;
-				$samples = $track['end_smpl'];
-				$track['length'] = $tracksLen = round((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
-				$number++;
-			}
 		} else if($searchType == "Both") {
 			$query = "SELECT min(audio.title) AS title, min(audio.id) AS id,
 				min(audio.sustainer) as sust, min(audio.flagged) as flagged,
@@ -465,7 +448,7 @@ class DPS extends Module  {
 				AND audiodir.dirid != $binID 
 				AND audioartists.artistid = artists.id 
 				AND audioartists.audioid = audio.id 
-				AND artist.name ILIKE '%$searchValue%' "; 
+				AND artists.name ILIKE '%$searchValue%' "; 
 			if($sust != '') {
 				$query = $query . " AND audio.sustainer = '$sust' ";
 			}
@@ -630,7 +613,7 @@ class DPS extends Module  {
 												AND audiodir.dirid != $binID 
 												AND audioartists.artistid = artists.id 
 												AND audioartists.audioid = audio.id 
-												AND artist.name ILIKE '%$searchValue%' ";
+												AND artists.name ILIKE '%$searchValue%' ";
 			if($sust != '') {
 				$count_query = $count_query . " AND audio.sustainer = '$sust' ";
 			}

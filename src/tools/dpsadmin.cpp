@@ -60,13 +60,14 @@ static struct option long_options[] = {
     {"import-md5",  required_argument,  0,  'j'},
     {"set-password",no_argument,        0,  's'},
     // parameters
-    {"local-path",   required_argument,  0,  'x'},
-	{"remote-path",  required_argument,  0,  'y'},
+    {"local-path",   required_argument, 0,  'x'},
+	{"remote-path",  required_argument, 0,  'y'},
+    {"dest-archive", required_argument, 0,  'e'},
     {"with-password",required_argument, 0,  'w'},
 	{0,0,0,0}
 };
 
-static char* short_options = "AMLUGa:d:lm:pc:ij:sx:y:w:h";
+static char* short_options = "AMLUGa:d:lm:pc:ij:sx:y:e:w:h";
 
 // Function prototypes
 void parseCommand(int argc, char *argv[]);
@@ -79,7 +80,6 @@ void processUser();
 void processGroup();
 
 int main(int argc, char *argv[]) {
-    char* routine = "dpsadmin::main";
 	parseCommand(argc,argv);
     if (options["help"] == "yes") {
         displayUsage();
@@ -117,6 +117,7 @@ void parseCommand(int argc, char *argv[]) {
             case 's': options["set-password"] = optarg; c++; break;
             case 'x': options["local-path"] = optarg; break;
             case 'y': options["remote-path"] = optarg; break;
+            case 'e': options["dest-archive"] = optarg; break;
             case 'w': options["with-password"] = optarg; break;
             case 'h': options["help"] = "yes"; break;
 		}

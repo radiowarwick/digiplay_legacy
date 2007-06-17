@@ -35,6 +35,7 @@ int main( int argc, char ** argv )
 {
     // Configure logging
     Logger::setAppName("studio_manage");
+    Logger::initLogDir();
     Logger::setLogLevel(5);
     Logger::setDisplayLevel(0);
 

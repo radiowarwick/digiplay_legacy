@@ -83,6 +83,7 @@ class Logger {
 		static void setLogLevel(unsigned short level){logLevel=level;}
 		static void setDisplayLevel(unsigned short level){displayLevel=level;}
 		static void setAppName(string name){appName=name;}
+        static void initLogDir();
 
 	private:
 		Logger();

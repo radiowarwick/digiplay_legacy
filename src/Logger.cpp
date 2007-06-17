@@ -25,6 +25,7 @@
 using namespace std;
 
 #include "Logger.h"
+#include "Security.h"
 
 ofstream *Logger::logFile = 0;
 unsigned short Logger::logLevel = 0;
@@ -100,3 +101,22 @@ void Logger::log(LOG_TYPE type, char* routine, string message,
 		cout << message << endl;
 	}
 }	
+
+void Logger::initLogDir() {
+    if (appName == "") {
+        cout << "ERROR: Application name not set!" << endl;
+        exit(-1);
+    }
+    if (!logFile) {
+        if (!isRoot()) {
+            cout << "WARNING: not as root" << endl;
+        }
+        system("mkdir -p /var/log/dps");
+        system("chown digiplay:adm /var/log/dps");
+        system("chmod 640 /var/log/dps");
+        string filename = "/var/log/dps/" + appName + ".log";
+        logFile = new ofstream(filename.c_str(), ios::app);
+        system(string("chown digiplay:adm " + filename).c_str());
+        system(string("chmod 640 " + filename).c_str());
+    }
+}

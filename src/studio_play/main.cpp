@@ -31,6 +31,7 @@ int main( int argc, char ** argv )
 {
     // Configure logging
     Logger::setAppName("studio_play");
+    Logger::initLogDir();
     Logger::setLogLevel(5);
     Logger::setDisplayLevel(0);
 

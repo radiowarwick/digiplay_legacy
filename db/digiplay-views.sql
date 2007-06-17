@@ -139,6 +139,7 @@ AS
             users.username AS cause 
     FROM    audio, audiodir, audiousers, users
     WHERE   (audiodir.audioid = audio.id)
+        AND (audiousers.audioid = audio.id)
         AND (audiousers.userid = users.id)
         AND (audio.type = 1)
 
@@ -154,6 +155,7 @@ AS
             groups.name AS cause
     FROM    audio, audiodir, audiogroups, usersgroups, users, groups
     WHERE   (audiodir.audioid = audio.id)
+        AND (audiogroups.audioid = audio.id)
         AND (audiogroups.groupid = groups.id)
         AND (usersgroups.groupid = groups.id)
         AND (usersgroups.userid = users.id)
@@ -215,6 +217,7 @@ AS
             users.username AS cause
     FROM    audio, audiodir, audiousers, users
     WHERE   (audiodir.audioid = audio.id)
+        AND (audiousers.audioid = audio.id)
         AND (audiousers.userid = users.id)
         AND (audio.type = 2)
 
@@ -230,6 +233,7 @@ AS
             groups.name AS cause
     FROM    audio, audiodir, audiogroups, usersgroups, users, groups
     WHERE   (audiodir.audioid = audio.id)
+        AND (audiogroups.audioid = audio.id)
         AND (audiogroups.groupid = groups.id)
         AND (usersgroups.groupid = groups.id)
         AND (usersgroups.userid = users.id)
@@ -291,6 +295,7 @@ AS
             users.username AS cause
     FROM    audio, audiodir, audiousers, users
     WHERE   (audiodir.audioid = audio.id)
+        AND (audiousers.audioid = audio.id)
         AND (audiousers.userid = users.id)
         AND (audio.type = 3)
 
@@ -306,6 +311,7 @@ AS
             groups.name AS cause
     FROM    audio, audiodir, audiogroups, usersgroups, users, groups
     WHERE   (audiodir.audioid = audio.id)
+        AND (audiogroups.audioid = audio.id)
         AND (audiogroups.groupid = groups.id)
         AND (usersgroups.groupid = groups.id)
         AND (usersgroups.userid = users.id)
@@ -367,6 +373,7 @@ AS
             users.username AS cause
     FROM    cartsets, cartsetsdir, cartsetsusers, users
     WHERE   (cartsetsdir.cartsetid = cartsets.id)
+        AND (cartsetsusers.cartsetid = cartsets.id)
         AND (cartsetsusers.userid = users.id)
 
     UNION
@@ -381,6 +388,7 @@ AS
             groups.name AS cause
     FROM    cartsets, cartsetsdir, cartsetsgroups, usersgroups, users, groups
     WHERE   (cartsetsdir.cartsetid = cartsets.id)
+        AND (cartsetsgroups.cartsetid = cartsets.id)
         AND (cartsetsgroups.groupid = groups.id)
         AND (usersgroups.groupid = groups.id)
         AND (usersgroups.userid = users.id)
@@ -441,6 +449,7 @@ AS
             users.username AS cause
     FROM    scripts, scriptsdir, scriptsusers, users
     WHERE   (scriptsdir.scriptid = scripts.id)
+        AND (scriptsusers.scriptid = scripts.id)
         AND (scriptsusers.userid = users.id)
 
     UNION
@@ -455,6 +464,7 @@ AS
             groups.name AS cause
     FROM    scripts, scriptsdir, scriptsgroups, usersgroups, users, groups
     WHERE   (scriptsdir.scriptid = scripts.id)
+        AND (scriptsgroups.scriptid = scripts.id)
         AND (scriptsgroups.groupid = groups.id)
         AND (usersgroups.groupid = groups.id)
         AND (usersgroups.userid = users.id)
@@ -515,6 +525,7 @@ AS
             users.username AS cause
     FROM    showplans, showplandir, showplanusers, users
     WHERE   (showplandir.showplanid = showplans.id)
+        AND (showplanusers.showplanid = showplans.id)
         AND (showplanusers.userid = users.id)
 
     UNION
@@ -529,6 +540,7 @@ AS
             groups.name AS cause
     FROM    showplans, showplandir, showplangroups, usersgroups, users, groups
     WHERE   (showplandir.showplanid = showplans.id)
+        AND (showplangroups.showplanid = showplans.id)
         AND (showplangroups.groupid = groups.id)
         AND (usersgroups.groupid = groups.id)
         AND (usersgroups.userid = users.id)

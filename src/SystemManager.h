@@ -1,6 +1,6 @@
 /*
  * System Management module
- * systemmanager.h
+ * SystemManager.h
  * Provides global archive management operations on a DPS system
  *
  * Copyright (c) 2005-2006 Chris Cantwell
@@ -35,16 +35,16 @@ using namespace pqxx;
 
 #include "dps.h"
 #include "Config.h"
-#include "archivemanager.h"
+#include "ArchiveManager.h"
 
-class systemmanager {
+class SystemManager {
     public:
-        systemmanager();
-        ~systemmanager();
+        SystemManager();
+        ~SystemManager();
 
         /* Track management */
-        archivemanager* atArchive(unsigned int index);
-		archivemanager* atArchive(string name);
+        ArchiveManager* atArchive(unsigned int index);
+		ArchiveManager* atArchive(string name);
         short sizeArchive();
         void addArchive(string name, string localPath, string remotePath);
 		void createArchive(string name, string localPath, string remotePath);	
@@ -55,7 +55,7 @@ class systemmanager {
 	
 		Connection *C;
 		Transaction *T;
-		vector<archivemanager*>* archives;
+		vector<ArchiveManager*>* archives;
 };
-#endif
 
+#endif

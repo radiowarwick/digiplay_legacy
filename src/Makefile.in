@@ -126,4 +126,5 @@ default: $(OUTPUT)
 clean:
 	@rm -f *.o
 	@-$(foreach MOD,$(QT_MODS), rm -f moc_$(MOD).cpp)
+	@-$(foreach MOD,$(SHARED_QT_MODS), rm -f ../moc_$(MOD).cpp)
 	@-$(foreach MOD,$(QT_MODS), if [ -e $(MOD).ui ]; then rm -f $(MOD).cpp $(MOD).h; fi;)

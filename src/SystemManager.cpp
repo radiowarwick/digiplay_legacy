@@ -1,6 +1,6 @@
 /*
  * System Management module
- * systemmanager.cpp
+ * SystemManager.cpp
  * Provides global archive management operations on a DPS system
  *
  * Copyright (c) 2005-2006 Chris Cantwell
@@ -20,9 +20,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#include "systemmanager.h"
+#include "SystemManager.h"
 
-systemmanager::systemmanager() {
+SystemManager::SystemManager() {
 	Config *Conf = new Config("digiplay");
 	try {
 		C = new Connection(Conf->getDBConnectString());
@@ -32,7 +32,7 @@ systemmanager::systemmanager() {
 		exit(-1);
 	}
 
-	archives = new vector<archivemanager*>;
+	archives = new vector<ArchiveManager*>;
 
 	/* Load archives */
 	T = new Transaction(*C,"");
@@ -43,26 +43,26 @@ systemmanager::systemmanager() {
 		A.name = R[i]["name"].c_str();
 		A.localPath = R[i]["localPath"].c_str();
 		A.remotePath = R[i]["remotePath"].c_str();
-		archives->push_back(new archivemanager(A));
+		archives->push_back(new ArchiveManager(A));
 	}
 	T->abort();
 	delete T;
 }
 
-systemmanager::~systemmanager() {
+SystemManager::~SystemManager() {
 
 }
 
-archivemanager* systemmanager::atArchive(unsigned int index) {
+ArchiveManager* SystemManager::atArchive(unsigned int index) {
     if (index > archives->size() - 1) {
-        cout << "archivemanager::atArchive: index " << index 
+        cout << "ArchiveManager::atArchive: index " << index 
                         << " out of range." << endl;
     	return NULL;
 	}
     return archives->at(index);
 }
 
-archivemanager* systemmanager::atArchive(string name) {
+ArchiveManager* SystemManager::atArchive(string name) {
 	for (unsigned short i = 0; i < archives->size(); i++) {
 		if (name == archives->at(i)->spec().name)
 			return archives->at(i);
@@ -70,15 +70,15 @@ archivemanager* systemmanager::atArchive(string name) {
 	return NULL;
 }
 
-short systemmanager::sizeArchive() {
+short SystemManager::sizeArchive() {
 	return archives->size();
 }
 
-void systemmanager::addArchive(string name, string localPath, 
+void SystemManager::addArchive(string name, string localPath, 
 										string remotePath) {
 	string SQL;
 	if (atArchive(name)) {
-		cout << "systemmanager::addArchive: Named archive exists!" << endl;
+		cout << "SystemManager::addArchive: Named archive exists!" << endl;
 		return;
 	}
 	try {
@@ -98,22 +98,22 @@ void systemmanager::addArchive(string name, string localPath,
         A.name = R[0]["name"].c_str();
 	    A.localPath = R[0]["localPath"].c_str();
         A.remotePath = R[0]["remotePath"].c_str();
-        archives->push_back(new archivemanager(A));							
+        archives->push_back(new ArchiveManager(A));							
 	}
 	catch (...) {
-		cout << "systemmanager::addArchive: Failed to add archive" << endl;
+		cout << "SystemManager::addArchive: Failed to add archive" << endl;
 		cout << " -> SQL: " << SQL << endl;
 	}
 }
 
-void systemmanager::createArchive(string name, string localPath, 
+void SystemManager::createArchive(string name, string localPath, 
 										string remotePath) {
 
 }
 
-void systemmanager::dropArchive(unsigned int index) {
+void SystemManager::dropArchive(unsigned int index) {
 	if (index > archives->size() - 1) {
-		cout << "systemmanager::dropArchive: Index out of range!" << endl;
+		cout << "SystemManager::dropArchive: Index out of range!" << endl;
 		return;
 	}
 	
@@ -128,7 +128,7 @@ void systemmanager::dropArchive(unsigned int index) {
 		archives->erase(archives->begin() + index);
 	}
 	catch (...) {
-		cout << "systemmanager::dropArchive: Failed to delete archive" << endl;
+		cout << "SystemManager::dropArchive: Failed to delete archive" << endl;
 		cout << SQL << endl;
 	}
 }
@@ -136,6 +136,6 @@ void systemmanager::dropArchive(unsigned int index) {
 /*
  * PRIVATE
  */
-void systemmanager::loadArchives() {
+void SystemManager::loadArchives() {
 
 }

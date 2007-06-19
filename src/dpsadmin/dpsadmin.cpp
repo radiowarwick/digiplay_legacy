@@ -28,8 +28,8 @@ using namespace std;
 #include "sys/stat.h"
 #include "getopt.h"
 
-#include "systemmanager.h"
-#include "archivemanager.h"
+#include "SystemManager.h"
+#include "ArchiveManager.h"
 #include "Logger.h"
 
 #define VERSION 0.95
@@ -244,7 +244,7 @@ void processArchive() {
     char* routine = "dpsadmin::processArchive";
 
     L_INFO(LOG_DB,"Entering archive mode.");
-    systemmanager *Sys = new systemmanager();
+    SystemManager *Sys = new SystemManager();
 
     // Add archive
     if (options["add"] != "") {
@@ -331,7 +331,7 @@ void processArchive() {
 void processMusic() {
     char* routine = "dpsadmin::processMusic";
 
-    systemmanager *Sys = new systemmanager();
+    SystemManager *Sys = new SystemManager();
 
     // Import music
     if (options["import"] != "" || options["import-md5"] != "") {
@@ -356,7 +356,7 @@ void processMusic() {
             if (target_md5 != "" && done_import_flag) break;
     
             // get the current archive and process each track in the inbox
-            archivemanager *A = Sys->atArchive(i);
+            ArchiveManager *A = Sys->atArchive(i);
             unsigned int count = A->size(DPS_INBOX);
             for (unsigned short j = 0; j < count; j++){
                 // if we're looking for one track, and found it, add it and quit

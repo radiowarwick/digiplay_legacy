@@ -4,7 +4,7 @@
 ROOT		=	../..
 
 # Base name for output (executable name, library basename) and version
-OUT_BASE	=	dpsexport
+OUT_BASE	=	dpsadmin
 VERSION		=	1
 
 # Create a library and whether it should be a static library
@@ -12,13 +12,13 @@ OUT_LIB		=	no
 OUT_STATIC	=	no
 
 # Enable QT support?
-QT_ENABLED 	=	yes
+QT_ENABLED 	=	no
 
 # .cpp modules from which to create output
-MODS		=	dpsexport
+MODS		=	dpsadmin
 QT_MODS		=
-SHARED_MODS	=	systemmanager archivemanager Config xmlDocument xmlElement \
-				dps Logger DataAccess
+SHARED_MODS	=	SystemManager ArchiveManager Config xmlDocument xmlElement \
+				dps Logger DataAccess Security
 
 # Global header files on which dependance exists
 HDRS		=

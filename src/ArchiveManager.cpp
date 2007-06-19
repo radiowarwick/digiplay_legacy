@@ -1,6 +1,6 @@
 /*
  * Archive Management module
- * archivemanager.cpp
+ * ArchiveManager.cpp
  * Provides management operations on a DPS archive
  *
  * Copyright (c) 2005-2006 Chris Cantwell
@@ -20,14 +20,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#include "archivemanager.h"
+#include "ArchiveManager.h"
 
 #include <time.h>
 #include "Logger.h"
 #include "xmlDocument.h"
 #include "xmlElement.h"
 
-archivemanager::archivemanager(archive new_A) {
+ArchiveManager::ArchiveManager(archive new_A) {
 	A = new_A;
 	initialised = false;
 	t_null.isNull = true;
@@ -36,11 +36,11 @@ archivemanager::archivemanager(archive new_A) {
 	trackTrash = NULL;
 }
 
-archivemanager::~archivemanager() {
+ArchiveManager::~ArchiveManager() {
 
 }
 
-void archivemanager::load() {
+void ArchiveManager::load() {
 	/* Reinitialise any vectors if they already exist */
 	delete trackDB;
 	delete trackInbox;
@@ -57,13 +57,13 @@ void archivemanager::load() {
         loadDB(trackDB);
     }
 	catch (broken_connection &e) {
-		cout << "archivemanager::load: Failed to connect to database." << endl;
+		cout << "ArchiveManager::load: Failed to connect to database." << endl;
         cout << e.what() << endl;
 		return;
 	}
 	catch (...) {
-        cout << "archivemanager::load: An error has occured." << endl;
-		//cout << "archivemanager::load: Failed to create transaction." << endl;
+        cout << "ArchiveManager::load: An error has occured." << endl;
+		//cout << "ArchiveManager::load: Failed to create transaction." << endl;
         //cout << e.what() << endl;
 		return;
 	}
@@ -78,14 +78,14 @@ void archivemanager::load() {
 	initialised = true;
 }
 
-archive archivemanager::spec() {
+archive ArchiveManager::spec() {
 	return A;
 }
 
-track archivemanager::at(unsigned short location, unsigned int index) {
+track ArchiveManager::at(unsigned short location, unsigned int index) {
 	if (!initialised) load();
 	if (index > size(location) - 1) {
-		cout << "archivemanager::at: index " << index 
+		cout << "ArchiveManager::at: index " << index 
 						<< " out of range." << endl;
 		return t_null;
 	}
@@ -97,12 +97,12 @@ track archivemanager::at(unsigned short location, unsigned int index) {
 		case DPS_TRASH:
 			return trackTrash->at(index);
 		default:
-			cout << "archivemanager::at: unknown location" << endl;
+			cout << "ArchiveManager::at: unknown location" << endl;
 			return t_null;
 	}
 }
 
-unsigned int archivemanager::size(unsigned short location) {
+unsigned int ArchiveManager::size(unsigned short location) {
 	if (!initialised) load();
 	switch (location) {
 		case DPS_DB:
@@ -112,16 +112,16 @@ unsigned int archivemanager::size(unsigned short location) {
 		case DPS_TRASH:
 			return trackTrash->size();
 		default:
-			cout << "archivemanager::size: unknown location" << endl;
+			cout << "ArchiveManager::size: unknown location" << endl;
 			return 0;
 	}
 	return 0;
 }
 
-void archivemanager::clean(unsigned short location, unsigned int index) {
+void ArchiveManager::clean(unsigned short location, unsigned int index) {
 	if (!initialised) load();
 	if (index > size(location) - 1) {
-		cout << "archivemanager::clean: index out of range" << endl;
+		cout << "ArchiveManager::clean: index out of range" << endl;
 		return;
 	}
 	switch (location) {
@@ -137,11 +137,11 @@ void archivemanager::clean(unsigned short location, unsigned int index) {
 /** Adds a track from the inbox into the database
  * @param	index	The index of the track in the inbox to add
  */
-void archivemanager::add(unsigned int index) {
-	char* routine = "archivemanager::add";
+void ArchiveManager::add(unsigned int index) {
+	char* routine = "ArchiveManager::add";
 	if (!initialised) load();
 	if (index > size(DPS_INBOX) - 1) {
-		cout << "archivemanager::add: index out of range" << endl;
+		cout << "ArchiveManager::add: index out of range" << endl;
 		return;
 	}
 
@@ -183,7 +183,7 @@ void archivemanager::add(unsigned int index) {
 	string command = "mv " + src + " " + dest;
 	int rv = system(command.c_str());
 	if (rv != 0) {
-		cout << "archivemanager::add: Unable to put files in archive" << endl;
+		cout << "ArchiveManager::add: Unable to put files in archive" << endl;
 		cout << " -> mv returned code " << rv << endl;
 		return;
 	}
@@ -196,18 +196,18 @@ void archivemanager::add(unsigned int index) {
 	trackInbox->erase(trackInbox->begin() + index);
 }
 
-void archivemanager::remove(unsigned int index) {
+void ArchiveManager::remove(unsigned int index) {
 
 }
 
-void archivemanager::recover(unsigned int index) {
+void ArchiveManager::recover(unsigned int index) {
 
 }
 
-void archivemanager::backup(unsigned int index) {
+void ArchiveManager::backup(unsigned int index) {
     if (!initialised) load();
 	if (index > size(DPS_DB) - 1) {
-		cout << "archivemanager::backup: index out of range" << endl;
+		cout << "ArchiveManager::backup: index out of range" << endl;
 		return;
 	}
 	writeXML(at(DPS_DB,index));
@@ -217,7 +217,7 @@ void archivemanager::backup(unsigned int index) {
  * PRIVATE ROUTINES
  */
 
-void archivemanager::loadDB(vector<track> *tracks) {
+void ArchiveManager::loadDB(vector<track> *tracks) {
 	track t;
     string SQL = "SELECT * FROM v_audio WHERE archiveid = " + dps_itoa(A.id);
     try {
@@ -242,7 +242,7 @@ void archivemanager::loadDB(vector<track> *tracks) {
         delete T;
     }
     catch (...) {
-        cout << "archivemanager::loadDB: An error occured." << endl;
+        cout << "ArchiveManager::loadDB: An error occured." << endl;
         cout << SQL << endl;
         T->abort();
         delete T;
@@ -250,8 +250,8 @@ void archivemanager::loadDB(vector<track> *tracks) {
     }
 }
 
-void archivemanager::loadInbox(vector<track> *tracks) {
-	char* routine = "archivemanager::loadInbox";
+void ArchiveManager::loadInbox(vector<track> *tracks) {
+	char* routine = "ArchiveManager::loadInbox";
     DIR *dirp;
     struct dirent *dp;
     string fn, md5, path, test;
@@ -293,7 +293,7 @@ void archivemanager::loadInbox(vector<track> *tracks) {
 			f_test_info.close();
 			
 			if (t.isNull) {
-				cout << "archivemanager::loadInbox: Can't find info!" << endl;
+				cout << "ArchiveManager::loadInbox: Can't find info!" << endl;
 				cout << " -> ignored this track " << endl;
 				continue;
 			}
@@ -310,11 +310,11 @@ void archivemanager::loadInbox(vector<track> *tracks) {
     }
 }
 
-void archivemanager::loadTrash(vector<track> *tracks) {
+void ArchiveManager::loadTrash(vector<track> *tracks) {
 
 }
 
-void archivemanager::addTrack(track t) {
+void ArchiveManager::addTrack(track t) {
     Result R;
     int artist_id = -1, album_id = -1, audio_id = -1;
     string SQL;
@@ -415,7 +415,7 @@ void archivemanager::addTrack(track t) {
     }
 }
 
-void archivemanager::addJingle(track t) {
+void ArchiveManager::addJingle(track t) {
     Result R;
     int pkg_id = -1, audio_id = -1;
     string SQL;
@@ -493,12 +493,12 @@ void archivemanager::addJingle(track t) {
     }
 }
 
-void archivemanager::addAdvert(track t) {
+void ArchiveManager::addAdvert(track t) {
 
 }
 
 // Clean out directory, user, group entries, etc
-void archivemanager::removeTrack(string id) {
+void ArchiveManager::removeTrack(string id) {
     string SQL;
     try {
         if (!T) throw;
@@ -522,7 +522,7 @@ void archivemanager::removeTrack(string id) {
     }
 }
 
-void archivemanager::writeXML(track t) {
+void ArchiveManager::writeXML(track t) {
 	xmlDocument *D = new xmlDocument();
 	xmlElement *e1, *e2, *e3;
 
@@ -578,7 +578,7 @@ void archivemanager::writeXML(track t) {
 	delete D;
 }
 
-track archivemanager::readInfo(string filename) {
+track ArchiveManager::readInfo(string filename) {
 	string buffer;
 	track t;
 	ifstream *f_info, *f_raw;
@@ -626,7 +626,7 @@ track archivemanager::readInfo(string filename) {
 		delete f_info;
 	}
     catch (...) {
-        cout << "archivemanager::readInfo: Unable to open file." << endl;
+        cout << "ArchiveManager::readInfo: Unable to open file." << endl;
         cout << " -> " << filename << endl;
         return t_null;
     }
@@ -649,7 +649,7 @@ track archivemanager::readInfo(string filename) {
 	return t;
 }
 
-track archivemanager::readXML(string filename) {
+track ArchiveManager::readXML(string filename) {
 	track t;
 	xmlElement *root, *e_album, *e_segment, *e_smpl;
 	xmlDocument *D = new xmlDocument(filename);
@@ -693,11 +693,11 @@ track archivemanager::readXML(string filename) {
 	return t;
 }
 
-bool archivemanager::hasAudio(string md5) {
+bool ArchiveManager::hasAudio(string md5) {
 	return true;
 }
 
-void archivemanager::cleanInfo(track *t) {
+void ArchiveManager::cleanInfo(track *t) {
     dps_strTrim(t->title);
     dps_strPcase(&(t->title));
 	if ((t->title).length() > 4 && (t->title).substr(0,4) == "The ") {
@@ -741,7 +741,7 @@ void archivemanager::cleanInfo(track *t) {
 		t->origin = "Reclib";
 }
 
-void archivemanager::trimAudio(track *t) {
+void ArchiveManager::trimAudio(track *t) {
 #define BLOCK_SAMPLES 4096
 #define SAMPLE_TOL 512		// Approx 2% = -42dB
     if (t->md5 == "") return;

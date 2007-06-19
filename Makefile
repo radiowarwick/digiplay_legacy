@@ -1,6 +1,6 @@
 STUDIO		=	audio studio_play studio_manage
 SUE			=	audio sueplay suesched
-ADMIN		=	tools
+ADMIN		=	dpsadmin tools
 APPS		= 	$(STUDIO) $(SUE) $(ADMIN)
 
 studio: 	$(STUDIO)

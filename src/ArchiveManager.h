@@ -1,6 +1,6 @@
 /*
  * Archive Management module
- * archivemanager.h
+ * ArchiveManager.h
  * Provides management operations on a DPS archive
  *
  * Copyright (c) 2005-2006 Chris Cantwell
@@ -40,10 +40,10 @@ using namespace pqxx;
 #include "dps.h"
 #include "Config.h"
 
-class archivemanager {
+class ArchiveManager {
 	public:
-		archivemanager(archive new_A);
-		~archivemanager();
+		ArchiveManager(archive new_A);
+		~ArchiveManager();
 
 		void load();
 		archive spec();

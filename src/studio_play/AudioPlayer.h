@@ -24,6 +24,7 @@
 #define CLASS_AUDIO_PLAYER
 
 #include <qwidget.h>
+#include <qmutex.h>
 
 #include "pqxx/connection.h"
 #include "pqxx/transaction.h"
@@ -67,6 +68,7 @@ class AudioPlayer:  public QWidget,
         void customEvent(QCustomEvent *event);
         void updateEndTime();
         QString getTime(long smpl);
+        QMutex mutex;
 
         void drawCreate();
         void drawResize();

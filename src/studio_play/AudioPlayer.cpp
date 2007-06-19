@@ -129,12 +129,12 @@ void AudioPlayer::updateEndTime(){
     length_secs = ((current_position % 3600) % 60);
     int carry=0;
     time_secs += length_secs;
-    if (time_secs > 60) {
+    if (time_secs >= 60) {
         time_secs -= 60;
         carry++;;
     }
     time_mins += length_mins + carry;
-    if (time_mins > 60) {
+    if (time_mins >= 60) {
         time_mins -= 60;
         carry = 1;
     }
@@ -142,7 +142,7 @@ void AudioPlayer::updateEndTime(){
         carry = 0;
     }
     time_hours += length_hours + carry;
-    if (time_hours > 24) {
+    if (time_hours >= 24) {
         time_hours -= 24;
     }
     QString hours = dps_itoa(time_hours);
@@ -218,7 +218,8 @@ void AudioPlayer::processConfigUpdate() {
 }
 
 void AudioPlayer::onSetSample() {
-/*    if (_currentSample - _lastSample < 441) return;
+/*    if (_currentSample - _lastSample < 4410) return;
+    mutex.lock();
     _lastSample = _currentSample;
     sldSeek->setValue(_currentSample);
     if (_currentSample != 0 
@@ -233,7 +234,8 @@ void AudioPlayer::onSetSample() {
     }
     else {
         lblCounter->setText(getTime(_currentSample));
-    }*/
+    } 
+    mutex.unlock();*/
 }
 
 void AudioPlayer::onSetState() {

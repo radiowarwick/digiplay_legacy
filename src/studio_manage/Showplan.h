@@ -72,7 +72,7 @@ class Showplan : public QWidget {
         void addAdvert(QString md5);
         void addScript(DpsShowScript& S);
         void scriptDone();
-        void clear();
+        void clear(bool prompt = true);
         void remove();
         void moveUp();
         void moveDown();

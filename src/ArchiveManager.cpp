@@ -24,8 +24,8 @@
 
 #include <time.h>
 #include "Logger.h"
-#include "xmlDocument.h"
-#include "xmlElement.h"
+#include "XmlDocument.h"
+#include "XmlElement.h"
 
 ArchiveManager::ArchiveManager(archive new_A) {
 	A = new_A;
@@ -523,8 +523,8 @@ void ArchiveManager::removeTrack(string id) {
 }
 
 void ArchiveManager::writeXML(track t) {
-	xmlDocument *D = new xmlDocument();
-	xmlElement *e1, *e2, *e3;
+	XmlDocument *D = new XmlDocument();
+	XmlElement *e1, *e2, *e3;
 
 	D->set_header("<?xml version=\"1.0\"?>");
 	D->set_doctype("<!DOCTYPE audio_v1 SYSTEM \"dps.dtd\">");
@@ -651,8 +651,8 @@ track ArchiveManager::readInfo(string filename) {
 
 track ArchiveManager::readXML(string filename) {
 	track t;
-	xmlElement *root, *e_album, *e_segment, *e_smpl;
-	xmlDocument *D = new xmlDocument(filename);
+	XmlElement *root, *e_album, *e_segment, *e_smpl;
+	XmlDocument *D = new XmlDocument(filename);
 	if (!D) {
 		t.isNull = true;
 		return t;

@@ -1,6 +1,6 @@
 /*
  * XML Element class
- * xmlElement.h
+ * XmlElement.h
  * Representation of a hierarchial XML element.
  *
  * Copyright (c) 2005-2006 Chris Cantwell
@@ -32,11 +32,11 @@ struct xmlAttribute {
 	string value;
 };
 
-class xmlElement {
+class XmlElement {
 	public:
-		xmlElement();
-		xmlElement(string name);
-		~xmlElement();
+		XmlElement();
+		XmlElement(string name);
+		~XmlElement();
 
 		void set_name(string text);
 		void set_cdata(string text);
@@ -51,10 +51,10 @@ class xmlElement {
 		void remove_attribute(string name);
 		unsigned int count_attributes();
 
-		xmlElement *add_element(string name);
-		xmlElement *add_element(xmlElement *elem);
-		xmlElement *get_element(unsigned int index);
-		xmlElement *get_element(string name);
+		XmlElement *add_element(string name);
+		XmlElement *add_element(XmlElement *elem);
+		XmlElement *get_element(unsigned int index);
+		XmlElement *get_element(string name);
 		void remove_element(unsigned int index);
 		void remove_element(string name);
 		unsigned int count_elements();
@@ -63,7 +63,7 @@ class xmlElement {
 		string name;
 		string cdata;
 		vector<xmlAttribute> *attributes;
-		vector<xmlElement*> *elements;
+		vector<XmlElement*> *elements;
 };
 
 #endif

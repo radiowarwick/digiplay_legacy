@@ -1,6 +1,6 @@
 /*
  * XML Document class
- * xmlDocument.cpp
+ * XmlDocument.cpp
  * Representation of an XML document
  *
  * Copyright (c) 2005-2006 Chris Cantwell
@@ -20,21 +20,21 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#include "xmlDocument.h"
+#include "XmlDocument.h"
 
 #include <iostream>
 using namespace std;
 
 #include "dps.h"
 
-xmlDocument::xmlDocument() {
-	root = new xmlElement();
+XmlDocument::XmlDocument() {
+	root = new XmlElement();
 	header = "<?xml version=\"1.0\"?>";
 	doctype = "";
 }
 
-xmlDocument::xmlDocument(string filename) {
-	root = new xmlElement();
+XmlDocument::XmlDocument(string filename) {
+	root = new XmlElement();
 
 	ifstream *f_in = new ifstream(filename.c_str());
 	if (!f_in->is_open() || !f_in->good()) {
@@ -54,23 +54,23 @@ xmlDocument::xmlDocument(string filename) {
 	read_element(root,&data,0,data.size());
 }
 
-xmlDocument::~xmlDocument() {
+XmlDocument::~XmlDocument() {
 	delete root;
 }
 
-void xmlDocument::set_header(string text) {
+void XmlDocument::set_header(string text) {
 	header = text;
 }
 
-void xmlDocument::set_doctype(string text) {
+void XmlDocument::set_doctype(string text) {
 	doctype = text;
 }
 
-xmlElement *xmlDocument::get_root() {
+XmlElement *XmlDocument::get_root() {
 	return root;
 }
 
-void xmlDocument::write_file(string filename) {
+void XmlDocument::write_file(string filename) {
 	ofstream *f_out = new ofstream(filename.c_str());
 	(*f_out) << header << endl;
 	(*f_out) << doctype << endl;
@@ -79,7 +79,7 @@ void xmlDocument::write_file(string filename) {
 	delete f_out;
 }
 
-void xmlDocument::read_element(xmlElement *E, string *content, unsigned int start, unsigned int end) {
+void XmlDocument::read_element(XmlElement *E, string *content, unsigned int start, unsigned int end) {
 	unsigned short depth = 0;
 	unsigned short i = start;
 	bool element_open = false;
@@ -170,7 +170,7 @@ void xmlDocument::read_element(xmlElement *E, string *content, unsigned int star
 		i++;
 		// When weight is zero, add a new element and recursively parse.
 		if (depth == 0) {
-			xmlElement *E_new = E->add_element(new xmlElement());
+			XmlElement *E_new = E->add_element(new XmlElement());
 			read_element(E_new,content,data_start,i);
 			data_start = i;
 			while (i < end && content->at(i) == ' ') i++;
@@ -180,7 +180,7 @@ void xmlDocument::read_element(xmlElement *E, string *content, unsigned int star
 	}
 }
 
-void xmlDocument::write_element(xmlElement *E, ofstream *f_out, unsigned int indent) {
+void XmlDocument::write_element(XmlElement *E, ofstream *f_out, unsigned int indent) {
 	for (unsigned int i = 0; i < indent; i++) (*f_out) << "\t";
 
 	(*f_out) << "<" << E->get_name();

@@ -259,6 +259,8 @@ void frmStudioManage::btnLoginClicked()
 		dlg->setWarning("Are you sure you wish to logout?");
 		if ( dlg->exec() == QDialog::Accepted ){
 		    authModule->closeSession();
+            sp->clear(false);
+            tabManage->setCurrentPage(0);
 		    btnLogin->setText("Log In");
 		}
 		delete dlg;

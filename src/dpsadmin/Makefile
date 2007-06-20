@@ -17,7 +17,8 @@ QT_ENABLED 	=	no
 # .cpp modules from which to create output
 MODS		=	dpsadmin
 QT_MODS		=
-SHARED_MODS	=	SystemManager ArchiveManager Config xmlDocument xmlElement \
+SHARED_MODS	=	SystemManager ArchiveManager UserManager GroupManager \
+				MusicManager Config XmlDocument XmlElement \
 				dps Logger DataAccess Security
 
 # Global header files on which dependance exists

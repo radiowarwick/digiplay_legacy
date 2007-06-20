@@ -1,6 +1,6 @@
 /*
  * XML Element class
- * xmlElement.cpp
+ * XmlElement.cpp
  * Representation of a hierarchial XML element.
  *
  * Copyright (c) 2005-2006 Chris Cantwell
@@ -27,29 +27,29 @@ using namespace std;
 
 #include "Logger.h"
 
-#include "xmlElement.h"
+#include "XmlElement.h"
 
 /** Constructor: Createse a new XML Element node
  */
-xmlElement::xmlElement() {
+XmlElement::XmlElement() {
 	attributes = new vector<xmlAttribute>;
-	elements = new vector<xmlElement*>;
+	elements = new vector<XmlElement*>;
 	name = "";
 	cdata = "";
 }
 
 /** Constructor: Creates a new XML Element node with the given name
  */
-xmlElement::xmlElement(string name) {
+XmlElement::XmlElement(string name) {
     attributes = new vector<xmlAttribute>;
-    elements = new vector<xmlElement*>;
+    elements = new vector<XmlElement*>;
 	this->name = name;
 	cdata = "";
 }
 
 /** Destructor
  */
-xmlElement::~xmlElement() {
+XmlElement::~XmlElement() {
 	for (unsigned int i = 0; i < elements->size(); i++) {
 		delete elements->at(i);
 	}
@@ -60,28 +60,28 @@ xmlElement::~xmlElement() {
 /** Sets the name of the element node
  * @param	text	The new name for the element node
  */
-void xmlElement::set_name(string text) {
+void XmlElement::set_name(string text) {
 	name = text;
 }
 
 /** Sets the cdata for the element node
  * @param 	text	The new cdata for the element node
  */
-void xmlElement::set_cdata(string text) {
+void XmlElement::set_cdata(string text) {
 	cdata = text;
 }
 
 /** Gets the name of the element node
  * @return	Name of the element
  */
-string xmlElement::get_name() {
+string XmlElement::get_name() {
 	return name;
 }
 
 /** Gets the cdata associated with the element node
  * @return	CDATA associated with the element
  */
-string xmlElement::get_cdata() {
+string XmlElement::get_cdata() {
 	return cdata;
 }
 
@@ -90,7 +90,7 @@ string xmlElement::get_cdata() {
  * @param	value	Value of the attribute
  * @return	xmlAttribute structure for the added attribute
  */
-xmlAttribute xmlElement::add_attribute(string name, string value) {
+xmlAttribute XmlElement::add_attribute(string name, string value) {
 	xmlAttribute A;
 	A.name = name;
 	A.value = value;
@@ -101,7 +101,7 @@ xmlAttribute xmlElement::add_attribute(string name, string value) {
  * @param	attr	xmlAttribute structure containing the required data
  * @return	xmlAttribute structure for the added attribute
  */
-xmlAttribute xmlElement::add_attribute(xmlAttribute attr) {
+xmlAttribute XmlElement::add_attribute(xmlAttribute attr) {
 	attributes->push_back(attr);
 	return attr;
 }
@@ -111,8 +111,8 @@ xmlAttribute xmlElement::add_attribute(xmlAttribute attr) {
  * @return	xmlAttribute structure for the requested attribute or an empty
  * 			structure if index out of range
  */
-xmlAttribute xmlElement::get_attribute(unsigned int index) {
-	char* routine = "xmlElement::get_attribute";
+xmlAttribute XmlElement::get_attribute(unsigned int index) {
+	char* routine = "XmlElement::get_attribute";
 	if (index < attributes->size()) {
 		return attributes->at(index);
 	}
@@ -130,8 +130,8 @@ xmlAttribute xmlElement::get_attribute(unsigned int index) {
  * @return	xmlAttribute structure for the requested attribute or an empty
  * 			structure if attribute does not exist
  */
-xmlAttribute xmlElement::get_attribute(string name) {
-	char* routine = "xmlElement::get_attribute";
+xmlAttribute XmlElement::get_attribute(string name) {
+	char* routine = "XmlElement::get_attribute";
 	for (unsigned int i = 0; i < attributes->size(); i++)
 		if (attributes->at(i).name == name)
 			return attributes->at(i);
@@ -142,8 +142,8 @@ xmlAttribute xmlElement::get_attribute(string name) {
 	return A;
 }
 
-void xmlElement::remove_attribute(unsigned int index) {
-	char* routine = "xmlElement::remove_attribute";
+void XmlElement::remove_attribute(unsigned int index) {
+	char* routine = "XmlElement::remove_attribute";
 	if (index < attributes->size()) {
 		attributes->erase(attributes->begin() + index);
 	}
@@ -154,8 +154,8 @@ void xmlElement::remove_attribute(unsigned int index) {
 	}
 }
 
-void xmlElement::remove_attribute(string name) {
-	char* routine = "xmlElement::remove_attribute";
+void XmlElement::remove_attribute(string name) {
+	char* routine = "XmlElement::remove_attribute";
 	for (unsigned int i = 0; i < attributes->size(); i++)
 		if (attributes->at(i).name == name) {
 			attributes->erase(attributes->begin() + i);
@@ -166,22 +166,22 @@ void xmlElement::remove_attribute(string name) {
 	L_ERROR(LOG_XML,S.str());
 }
 
-unsigned int xmlElement::count_attributes() {
+unsigned int XmlElement::count_attributes() {
 	return attributes->size();
 }
 
-xmlElement *xmlElement::add_element(string name) {
-	xmlElement *E = new xmlElement(name);
+XmlElement *XmlElement::add_element(string name) {
+	XmlElement *E = new XmlElement(name);
 	return add_element(E);
 }
 
-xmlElement *xmlElement::add_element(xmlElement *elem) {
+XmlElement *XmlElement::add_element(XmlElement *elem) {
 	elements->push_back(elem);
 	return elem;
 }
 
-xmlElement *xmlElement::get_element(unsigned int index) {
-	char* routine = "xmlElement::get_element";
+XmlElement *XmlElement::get_element(unsigned int index) {
+	char* routine = "XmlElement::get_element";
 	if (index < elements->size())
 		return elements->at(index);
 	stringstream S;
@@ -190,8 +190,8 @@ xmlElement *xmlElement::get_element(unsigned int index) {
 	return NULL;
 }
 
-xmlElement *xmlElement::get_element(string name) {
-	char* routine = "xmlElement::get_element";
+XmlElement *XmlElement::get_element(string name) {
+	char* routine = "XmlElement::get_element";
 	for (unsigned int i = 0; i < elements->size(); i++)
 		if (elements->at(i)->name == name)
 			return elements->at(i);
@@ -201,8 +201,8 @@ xmlElement *xmlElement::get_element(string name) {
 	return NULL;
 }
 
-void xmlElement::remove_element(unsigned int index) {
-	char* routine = "xmlElement::remove_element";
+void XmlElement::remove_element(unsigned int index) {
+	char* routine = "XmlElement::remove_element";
 	if (index < elements->size())
 		elements->erase(elements->begin() + index);
 	else {
@@ -212,8 +212,8 @@ void xmlElement::remove_element(unsigned int index) {
 	}
 }
 
-void xmlElement::remove_element(string name) {
-	char* routine = "xmlElement::remove_element";
+void XmlElement::remove_element(string name) {
+	char* routine = "XmlElement::remove_element";
 	for (unsigned int i = 0; i < elements->size(); i++)
 		if (elements->at(i)->name == name) {
 			elements->erase(elements->begin() + i);
@@ -224,6 +224,6 @@ void xmlElement::remove_element(string name) {
 	L_ERROR(LOG_XML,S.str());
 }
 
-unsigned int xmlElement::count_elements() {
+unsigned int XmlElement::count_elements() {
 	return elements->size();
 }

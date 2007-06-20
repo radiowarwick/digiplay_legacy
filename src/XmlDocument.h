@@ -1,6 +1,6 @@
 /*
  * XML Document class
- * xmlDocument.h
+ * XmlDocument.h
  * Representation of an XML document
  *
  * Copyright (c) 2005-2006 Chris Cantwell
@@ -27,26 +27,26 @@
 #include <fstream>
 using namespace std;
 
-#include "xmlElement.h"
+#include "XmlElement.h"
 
-class xmlDocument {
+class XmlDocument {
 	public:
-		xmlDocument();
-		xmlDocument(string filename);
-		~xmlDocument();
+		XmlDocument();
+		XmlDocument(string filename);
+		~XmlDocument();
 
 		void set_header(string text);
 		void set_doctype(string text);
-		xmlElement *get_root();
+		XmlElement *get_root();
 		void write_file(string filename);
 
 	private:
 		string header;
 		string doctype;
-		xmlElement *root;
+		XmlElement *root;
 
-		void read_element(xmlElement *E, string *content, unsigned int start, unsigned int end);
-		void write_element(xmlElement *E, ofstream *f_out, unsigned int indent);
+		void read_element(XmlElement *E, string *content, unsigned int start, unsigned int end);
+		void write_element(XmlElement *E, ofstream *f_out, unsigned int indent);
 };
 
 #endif

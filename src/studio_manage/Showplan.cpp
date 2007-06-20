@@ -186,18 +186,22 @@ void Showplan::addScript(DpsShowScript& S) {
     L_INFO(LOG_DB,"Playlist add complete.");
 }
 
-void Showplan::clear() {
+void Showplan::clear(bool prompt) {
     if (lstShowPlan->childCount() == 0) return;
-    dlgWarn *dlg = new dlgWarn(this, "");
-    dlg->setTitle("Clear All");
-    dlg->setWarning("Are you sure you wish to clear the show plan?");
-    if ( dlg->exec() == QDialog::Accepted ){
-        lstShowPlan->clear();
-        selectionChanged(0);
-        activePoint = 0;
-        updateNextTrack();
+    if (prompt) {
+        dlgWarn *dlg = new dlgWarn(this, "");
+        dlg->setTitle("Clear All");
+        dlg->setWarning("Are you sure you wish to clear the show plan?");
+        if ( dlg->exec() != QDialog::Accepted ){
+            delete dlg;
+            return;
+        }
+        delete dlg;
     }
-    delete dlg;
+    lstShowPlan->clear();
+    selectionChanged(0);
+    activePoint = 0;
+    updateNextTrack();
 }
 
 void Showplan::remove() {
@@ -207,6 +211,7 @@ void Showplan::remove() {
     if ( x ) {
         y = x->nextSibling();
         delete x;
+        selectedItem = 0;
         if ( y ) {
             lstShowPlan->setSelected(y,true);
         }

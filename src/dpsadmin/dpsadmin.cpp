@@ -58,10 +58,10 @@ static struct option long_options[] = {
 	{"drop",        required_argument,  0,  'd'},
 	{"list",        no_argument,        0,  'l'},
     {"merge",       required_argument,  0,  'm'},
-    {"purge-deleted", no_argument,      0,  'p'},
     {"create",      required_argument,  0,  'c'},
     {"import",      no_argument,        0,  'i'},
     {"import-md5",  required_argument,  0,  'j'},
+    {"purge-deleted", no_argument,      0,  'p'},
     {"set-password",required_argument,  0,  's'},
     // parameters
     {"local-path",   required_argument, 0,  'x'},
@@ -187,9 +187,13 @@ cout <<
 "   -l, --list              list the available archives\n"
 "\n"
 "Music management commands:\n"
-"   -i, --import            imports all new audio in all archive\n"
+"   -i, --import-all        imports all new audio in all archive\n"
 "   --import-md5 <md5>      import <md5> only\n"
 "   -p, --purge-deleted     delete audio marked for deletion\n"
+"   -x, --export-xml        exports track data to XML for all tracks\n"
+"   --export-xml-md5 <md5>  exports track data to XML for <md5>\n"
+"   --import-sustainer      imports MD5 ids to set active on sustainer\n"
+"   --export-sustainer      exports MD5 ids for tracks on sustainer\n"
 "\n"
 "Location management commands:\n"
 "   -a, --add <number>      add configuration for a new location\n"

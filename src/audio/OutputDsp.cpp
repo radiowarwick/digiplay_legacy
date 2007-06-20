@@ -35,6 +35,14 @@ void OutputDsp::receiveMessage(PORT inPort, MESSAGE message) {
     }
 }
 
+void OutputDsp::onConnect(PORT localPort) {
+
+}
+
+void OutputDsp::onDisconnect(PORT localPort) {
+
+}
+
 void OutputDsp::threadExecute() {
     if (!connectedDevice(IN0)) 
 		cout << "CONNECTED DEVICE IS NULL" << endl;

@@ -9,7 +9,7 @@
 class Audio::Output : public Audio::Component {
 	public:
 		virtual ~Output();
-		virtual void getAudio(AudioPacket* audioData) {return;}
+		virtual void getAudio(AudioPacket* audioData);
 
 	protected:
 		virtual void receiveMessage(PORT inPort, MESSAGE message) = 0;

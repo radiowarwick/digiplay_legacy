@@ -91,7 +91,10 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
 	f.close();
 	f.clear();
 	f.open(filename.c_str(), ios::in|ios::binary);
-	if (f.is_open() && f.good() == false) throw;
+	if (f.is_open() && f.good() == false) {
+        cout << "Failed to open file '" << filename << "'" << endl;
+        return;
+    }
 	f.seekg(0,ios::end);
 	f_filename = filename;
 
@@ -197,6 +200,14 @@ void InputRaw::updateStates(enum STATE state) {
 	}
 }
 void InputRaw::receiveMessage(PORT inPort, MESSAGE message) {
+
+}
+
+void InputRaw::onConnect(PORT localPort) {
+
+}
+
+void InputRaw::onDisconnect(PORT localPort) {
 
 }
 

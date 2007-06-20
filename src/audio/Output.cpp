@@ -5,6 +5,10 @@ Output::~Output() {
 
 }
 
+void Output::getAudio(AudioPacket* audioData) {
+    return;
+}
+
 void Output::receiveMessage(PORT inPort, MESSAGE message) {
 
 }

@@ -45,9 +45,9 @@ class Audio::InputRaw : public Input {
 		void receiveMessage(PORT inPort, MESSAGE message);
 
         /// Perform any initialisation tasks required on connection
-		virtual void onConnect(PORT localPort) {}
+		virtual void onConnect(PORT localPort);
         /// Perform any uninitialisation tasks required on disconnection
-		virtual void onDisconnect(PORT localPort) {}
+		virtual void onDisconnect(PORT localPort);
 
         /// Caches the audio in a separate thread
 		void threadExecute();

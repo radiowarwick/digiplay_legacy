@@ -44,11 +44,9 @@ AudioPlayer::AudioPlayer(QWidget *parent, const char* name, unsigned short playe
 	location = atoi( conf->getParam("LOCATION").c_str() );
     grpFrame = 0;
 
-    cout << "1" <<endl;
     ck = new clockThread(this);
     ck->start();
     processConfigUpdate();
-    cout << "2" <<endl;
 
     audioFilereader = new Audio::InputRaw();
     audioPlayer = new Audio::OutputDsp(device);
@@ -86,16 +84,17 @@ void AudioPlayer::customEvent(QCustomEvent *event) {
 
 
 void AudioPlayer::load() {
-    cout << "AudioPlayer::load" << endl;
     btnLoad->setEnabled(false);
+    
     if (conf->getParam("next_on_showplan") == "") {
         return;
     }
+    
     string SQL = "SELECT * FROM v_audio WHERE md5='"
                     + conf->getParam("next_on_showplan") + "'";
     Result R = DB->exec(SQL);
-    cout << "Done query!" << endl;
     DB->abort();
+    
     if (R.size() == 0) {
         cout << "No such track!" << endl;
         return;
@@ -111,9 +110,11 @@ void AudioPlayer::load() {
     btnPlay->setEnabled(true);
     btnStop->setEnabled(true);
     btnLog->setEnabled(true);
-    //btnSeekBack1->setEnabled(true);
-    //btnSeekForward1->setEnabled(true);
     sldSeek->setEnabled(true);
+
+    // Set last sample to be the end sample and update counter
+    _lastSample = _totalSamples;
+    onSetSample();
 }
 
 void AudioPlayer::updateEndTime(){
@@ -177,20 +178,19 @@ void AudioPlayer::log() {
 
 void AudioPlayer::play() {
     if (_state == STATE_PLAY) {
-        cout << "Do pause" << endl;
         audioFilereader->pause();
     }
     else {
-        cout << "Do play" << endl;
         audioFilereader->play();
-        cout << "Done play" << endl;
     }
 }
 
 void AudioPlayer::stop() {
-    cout << "Do stop" << endl;
     audioFilereader->stop();
-    cout << "Done stop" << endl;
+}
+
+void AudioPlayer::seek() {
+    seek(sldSeek->value());
 }
 
 void AudioPlayer::seek(unsigned long sample) {
@@ -198,12 +198,15 @@ void AudioPlayer::seek(unsigned long sample) {
 }
 
 void AudioPlayer::setTimeDisplay() {
+    qApp->lock();
     if (lblTime->text() == "ELAPSED") {
         lblTime->setText( tr( "REMAIN" ) );
     }
     else {
         lblTime->setText( tr( "ELAPSED" ) );
     }
+    onSetSample();
+    qApp->unlock();
 }
 
 void AudioPlayer::processConfigUpdate() {
@@ -223,54 +226,59 @@ void AudioPlayer::processConfigUpdate() {
 
 void AudioPlayer::onSetSample() {
     if (_currentSample - _lastSample < 1764) return;
+    
     qApp->lock();
+    
     _lastSample = _currentSample;
     sldSeek->setValue(_currentSample);
-    if (_currentSample != 0 
-            && (_totalSamples - _currentSample)/44100 < 20) {
+    
+    if ((_totalSamples - _currentSample)/44100 < 20) {
         lblCounter->setPaletteForegroundColor(QColor(QRgb(16711680)));
     }
     else {
         lblCounter->setPaletteForegroundColor(QColor(QRgb(0)));
     }
+    
     if (lblTime->text() == "REMAIN") {
         lblCounter->setText(getTime(_totalSamples - _currentSample));
     }
     else {
         lblCounter->setText(getTime(_currentSample));
     } 
+    
     qApp->unlock();
 }
 
 void AudioPlayer::onSetState() {
-    cout << "Setting state" << endl;
     qApp->lock();
     switch (_state) {
         case STATE_PLAY:
             {
                 btnLoad->setEnabled(false);
+                sldSeek->setEnabled(false);
                 btnPlay->setPixmap(*pixPause);
             }
             break;
         case STATE_STOP:
             {
-                if (audioFilereader->isLoaded()) btnPlay->setEnabled(true);
-                btnPlay->setPixmap(*pixPlay);
+                if (audioFilereader->isLoaded()) {
+                    btnPlay->setEnabled(true);
+                }
+                
                 if (conf->getParam("next_on_showplan") != "") {
                     btnLoad->setEnabled(true);
                 }
-                lblCounter->setPaletteForegroundColor(QColor(QRgb(0)));
-                if (lblTime->text() == "REMAIN")
-                    lblCounter->setText(getTime(_totalSamples));
-                else
-                    lblCounter->setText(getTime(0));
-                sldSeek->setValue(0);
+
+                btnPlay->setPixmap(*pixPlay);
                 sldSeek->setMaxValue(_totalSamples);
+                sldSeek->setEnabled(true);
+                onSetSample();
             }
             break;
         case STATE_PAUSE:
             {
                 btnPlay->setPixmap(*pixPlay);
+                sldSeek->setEnabled(true);
             }
             break;
     }
@@ -408,6 +416,7 @@ void AudioPlayer::drawCreate() {
     sldSeek->setGeometry( QRect( 10, 120, 520, 29 ) );
     sldSeek->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7,             (QSizePolicy::SizeType)4, 0, 0, sldSeek->sizePolicy().hasHeightForWidth() ) );
     sldSeek->setOrientation( QSlider::Horizontal );
+    connect( sldSeek, SIGNAL(sliderReleased()), this, SLOT(seek()));
 
     lblTitleLabel = new QLabel( grpFrame, "lblTitleLabel" );
     lblTitleLabel->setGeometry( QRect( 10, 40, 60, 20 ) );

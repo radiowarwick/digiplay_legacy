@@ -21,8 +21,8 @@ class Audio::OutputDsp : public Audio::Output {
 
 		void receiveMessage(PORT inPort, MESSAGE message);
 		
-		virtual void onConnect(PORT localPort) {}
-		virtual void onDisconnect(PORT localPort) {}
+		virtual void onConnect(PORT localPort);
+		virtual void onDisconnect(PORT localPort);
 
 		void threadExecute();
 

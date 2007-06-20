@@ -83,7 +83,7 @@ void OutputDsp::initialise(string device) {
     ioctl(audio, SNDCTL_DSP_SPEED, &dsp_sample_rate);
 
     // Set a small buffer to allow accurate control of audio output
-    int arg = 0x0002000B;
+    int arg = 0x0002000D;
     if (ioctl (audio, SNDCTL_DSP_SETFRAGMENT, &arg)) {
         cout << "   -> ERROR: " << deviceName
              << ": occured setting buffer!" << endl;

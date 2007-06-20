@@ -218,8 +218,8 @@ void AudioPlayer::processConfigUpdate() {
 }
 
 void AudioPlayer::onSetSample() {
-/*    if (_currentSample - _lastSample < 4410) return;
-    mutex.lock();
+    if (_currentSample - _lastSample < 1764) return;
+    myApplication->lock();
     _lastSample = _currentSample;
     sldSeek->setValue(_currentSample);
     if (_currentSample != 0 
@@ -235,7 +235,7 @@ void AudioPlayer::onSetSample() {
     else {
         lblCounter->setText(getTime(_currentSample));
     } 
-    mutex.unlock();*/
+    myApplication->unlock();
 }
 
 void AudioPlayer::onSetState() {
@@ -324,9 +324,9 @@ void AudioPlayer::drawCreate() {
     connect(btnTimeMode,SIGNAL(pressed()),this,SLOT(setTimeDisplay()));
 
     lblCounter = new QLabel( grpFrame, "lblCounter" );
-    lblCounter->setGeometry( QRect( 10, 50, 260, 57 ) );
+    lblCounter->setGeometry( QRect( 10, 54, 260, 45 ) );
     QFont lblCounter_font(  lblCounter->font() );
-    lblCounter_font.setPointSize( 48 );
+    lblCounter_font.setPointSize( 36 );
     lblCounter->setFont( lblCounter_font );
     lblCounter->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft )  );
     lblCounter->setText( tr( "00:00.00" ) );

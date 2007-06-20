@@ -151,13 +151,15 @@ void AudioPlayer::updateEndTime(){
     if (secs.length() == 1) secs = "0" + secs;
     if (mins.length() == 1) mins = "0" + mins;
     if (hours.length() == 1) hours = "0" + hours;
+    qApp->lock();
     lblEnd->setText(hours + ":" + mins + ":" + secs);
+    qApp->unlock();
 }
 
 void AudioPlayer::log() {
-	  btnLog->setEnabled(false);
+	btnLog->setEnabled(false);
 
-		// Get current time
+	// Get current time
     int now = (int)time(NULL);
 
     // Escape the artist and title
@@ -206,6 +208,7 @@ void AudioPlayer::setTimeDisplay() {
 
 void AudioPlayer::processConfigUpdate() {
     conf->requery();
+    qApp->lock();
     if (conf->getParam("next_on_showplan") == "") {
         cout << "Config updated: DISABLED LOAD" << endl;
         btnLoad->setEnabled(false);
@@ -214,12 +217,13 @@ void AudioPlayer::processConfigUpdate() {
         cout << "Config updated: ENABLED LOAD" << endl;
         btnLoad->setEnabled(true);
     }
+    qApp->unlock();
 	userid = atoi(conf->getParam("userid").c_str());
 }
 
 void AudioPlayer::onSetSample() {
     if (_currentSample - _lastSample < 1764) return;
-    myApplication->lock();
+    qApp->lock();
     _lastSample = _currentSample;
     sldSeek->setValue(_currentSample);
     if (_currentSample != 0 
@@ -235,11 +239,12 @@ void AudioPlayer::onSetSample() {
     else {
         lblCounter->setText(getTime(_currentSample));
     } 
-    myApplication->unlock();
+    qApp->unlock();
 }
 
 void AudioPlayer::onSetState() {
     cout << "Setting state" << endl;
+    qApp->lock();
     switch (_state) {
         case STATE_PLAY:
             {
@@ -269,10 +274,13 @@ void AudioPlayer::onSetState() {
             }
             break;
     }
+    qApp->unlock();
 }
 
 void AudioPlayer::onSetTotalSamples() {
+    qApp->lock();
     sldSeek->setMaxValue(_totalSamples);
+    qApp->unlock();
 }
 
 QString AudioPlayer::getTime( long smpl ) {
@@ -328,7 +336,7 @@ void AudioPlayer::drawCreate() {
     QFont lblCounter_font(  lblCounter->font() );
     lblCounter_font.setPointSize( 36 );
     lblCounter->setFont( lblCounter_font );
-    lblCounter->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft )  );
+    lblCounter->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft ) );
     lblCounter->setText( tr( "00:00.00" ) );
 
     lblEndlbl = new QLabel( grpFrame, "lblEndlbl" );
@@ -336,7 +344,7 @@ void AudioPlayer::drawCreate() {
     QFont lblEndlbl_font(  lblEndlbl->font() );
     lblEndlbl_font.setPointSize( 14 );
     lblEndlbl->setFont( lblEndlbl_font );
-    lblEndlbl->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft )  );
+    lblEndlbl->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft ) );
     lblEndlbl->setText( tr( "End Time:" ) );
 
     lblEnd = new QLabel( grpFrame, "lblEnd" );
@@ -344,7 +352,7 @@ void AudioPlayer::drawCreate() {
     QFont lblEnd_font(  lblEnd->font() );
     lblEnd_font.setPointSize( 14 );
     lblEnd->setFont( lblEnd_font );
-    lblEnd->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft )  );
+    lblEnd->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft ) );
     lblEnd->setText( tr( "--:--:--" ) );
 
     btnLog = new QPushButton( grpFrame, "btnLog" );

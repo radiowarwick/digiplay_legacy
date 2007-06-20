@@ -69,7 +69,6 @@ class AudioPlayer:  public QWidget,
         void customEvent(QCustomEvent *event);
         void updateEndTime();
         QString getTime(long smpl);
-        QApplication *myApplication;
 
         void drawCreate();
         void drawResize();

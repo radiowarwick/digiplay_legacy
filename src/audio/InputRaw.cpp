@@ -68,7 +68,9 @@ void InputRaw::getAudio(AudioPacket* audioData) {
 	
 	// removed check to see if state == STATE_PLAY
 	if (cacheSize == cacheFree) {
-        cout << "Out of cached audio" << endl;
+        if (f_end_byte - f_pos_byte > 256) {
+            cout << "Out of cached audio" << endl;
+        }
 		stop();
 	}
 

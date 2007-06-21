@@ -109,7 +109,7 @@ void Logger::initLogDir() {
     }
     if (!logFile) {
         if (!isRoot()) {
-            cout << "WARNING: not as root" << endl;
+            cout << "WARNING: You have not started the program as root." << endl << "Logs may not be writable." << endl;
         }
         system("mkdir -p /var/log/dps");
         system("chown digiplay:adm /var/log/dps");

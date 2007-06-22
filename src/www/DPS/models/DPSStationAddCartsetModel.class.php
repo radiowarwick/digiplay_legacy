@@ -21,7 +21,7 @@ class DPSStationAddCartsetModel extends Model {
 			WHERE id = " . $cfg['DPS']['systemUserID'];
 		$userName = $db->getOne($sql);
 		$sql = "SELECT id FROM dir 
-		WHERE parent = " . $cfg['DPS']['systemUserID'] . "
+		WHERE parent = " . $cfg['DPS']['userDirectoryID'] . "
 		AND name = '" . $userName . "'";
 		$dirID = $db->getOne($sql);
 		if($dirID == '') {

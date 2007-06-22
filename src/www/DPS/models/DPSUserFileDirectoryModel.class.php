@@ -25,10 +25,13 @@ class DPSUserFileDirectoryModel extends Model {
 		if (move_uploaded_file($_FILES['ufile']['tmp_name'], $uploadfile)) {
 			if($this->fieldData['type'] == "advert") {
 				$type="advert";
+				$typeID = $cfg['DPS']['AdvertTypeID'];
 			} else if($this->fieldData['type'] == "pre-rec") {
 				$type="pre-rec";
+				$typeID = $cfg['DPS']['PrerecTypeID'];
 			} else {
 				$type="jingle";
+				$typeID = $cfg['DPS']['JingleTypeID'];
 			}
 			if($handle = fopen($uploadfile . ".info", "w")) {
 				$info = "uid: \n"
@@ -58,8 +61,10 @@ class DPSUserFileDirectoryModel extends Model {
 						$audioUser['audioid'] = $id;
 						$audioUser['userid'] = $userID;
 						$audioUser['permissions'] = $cfg['DPS']['fileRWO'];
+						$audio['type'] = $typeID;
 						$where = "audioid = " . $id;
 						$db->delete('audiodir',$where,true);
+						$db->update('audio', $audio, $where, true);
 						$db->insert('audiodir',$audioDir,true);
 						$db->insert('audiousers',$audioUser,true);
 					} else {
@@ -94,7 +99,8 @@ class DPSUserFileDirectoryModel extends Model {
 		//No invalid processing required
 		if($this->errors['form']) {
 			MVCUtils::redirect(MVCUtils::getTemplateID('dpsuserfileupload.tpl'),
-				array("rootdir" => $this->fieldData['dirID'], "error" => "form"));
+				array("rootdir" => $this->fieldData['dirID'], "error" => "form", 
+					"Emessage" => $this->errors['form']));
 		} else {
 			MVCUtils::redirect(MVCUtils::getTemplateID('dpsuserfileupload.tpl'),
 				array("rootdir" => $this->fieldData['dirID'], "error" => "perm"));

@@ -10,7 +10,7 @@
 	<div id="folderBar" class="folderBar">
 		<div id="dircCreate" class="fileLink">
 			<img src="DPS/images/dirNew.png" alt="Create Folder"> 
-			<input size="10" onchange="javascript:dirChange()" type=text name=dirtext id=dirctext value="New Folder" onkeypress="javascript:handleKeyPress(event,'dirCreate')"> 
+			<input size="10" onkeyup="javascript:dirChange()" type=text name=dirtext id=dirctext value="New Folder" onkeypress="javascript:handleKeyPress(event,'dirCreate')"> 
 			<a id="dirCreate" href="{$CONFIG.general.siteRoot}?templateID={$VIEWER.templateID}">Create New</a>
 		</div>
 		<div id="dircRename" class="fileLink">

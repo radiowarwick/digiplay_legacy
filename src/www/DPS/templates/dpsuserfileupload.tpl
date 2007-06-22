@@ -14,6 +14,11 @@
 		<div class='alignleft'>
 			<div class='bigTitle'>File Upload: {$VIEWER.folder.name}</div>
 			<div class='subTitle'>Only upload *.wav files</div>
+			{if $DATA.error == 'form'}
+			<div class='subTitle'>{$DATA.Emessage}</div>
+			{elseif $DATA.error == 'perm'}
+			<div class='subTitle'>You do not have permission to upload to the selected location</div>
+			{/if}
 			<form name="dpsUserUploadFileForm" enctype="multipart/form-data" method="post" action="{$CONFIG.general.siteRoot}">
 				<input type="hidden" name="formName" value="dpsUserUploadFileForm" />
 				<input type="hidden" name="moduleName" value="DPS" />

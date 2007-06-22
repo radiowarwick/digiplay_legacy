@@ -14,7 +14,7 @@ class DPSUserFileViewer extends Viewer {
 		parent::setupTemplate();
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
-		$this->assign('treeType','jacspm');
+		$this->assign('treeType','jacspmr');
 		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(
 			array(1), $userID));
 	}

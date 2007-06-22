@@ -36,10 +36,10 @@
 			//updates links when text boxes on the dir bar are changed
 			function dirChange() {
 				var hrefstr = siteRoot + "?" +
-					"templateID=" + templateID + "{literal}&" +
+					"templateID=" + templateID + "&" +
 					"formName=dpsdiradd&moduleName=DPS&" +
 					"&rootdir=" + String(currentVal).substring(3,String(currentVal).length) + "&" +
-					"dirtext=" + document.getElementById('dirctext').currentValue;
+					"dirtext=" + document.getElementById('dirctext').value;
 				document.getElementById('dirCreate').href = hrefstr;
 			}
 			
@@ -341,12 +341,17 @@
 					}
 			
 					//Update links and text boxes
-					document.dirrtext.value = tree.getItemText(val);
 					document.dirDelete.href =
 						siteRoot + "?" +
 						"templateID=" + templateID + "&" +
 						"formName=dpsdirdel&moduleName=DPS&" +
 						"rootdir=" + String(val).substring(3,String(val).length);
+					var hrefstr = siteRoot + "?" +
+						"templateID=" + templateID + "&" +
+						"formName=dpsdiradd&moduleName=DPS&" +
+						"&rootdir=" + String(val).substring(3,String(val).length) + "&" +
+						"dirtext=" + document.getElementById('dirctext').value;
+					document.getElementById('dirCreate').href = hrefstr;
 				} else if ((String(val).substring(0,3)) == "crt") {
 					//show&hide sections
 					document.folderLayer.style.display = "none";

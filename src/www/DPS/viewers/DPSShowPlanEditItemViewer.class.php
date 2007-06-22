@@ -56,12 +56,11 @@ class DPSShowPlanEditItemViewer extends Viewer {
 					if($item['id'] == $itemID) {
 						$item['time'] = $time;
 						$item['niceTime'] = date("H:i:s",$item['time']);
-						$item['m'] = (String)((int)($item['length'] / 60));
-						$item['s'] = (String)($item['length'] -
-							($item['m'])*60);
-						$item['niceLength'] = ((int)($item['length'] / 60)) . 
-							":" . ($item['length'] -
-							(((int)($item['length'] / 60))*60));
+						$item['m'] = str_pad(((int)($item['length'] / 60)),2,"0",STR_PAD_LEFT);
+						$item['s'] = str_pad(($item['length'] -
+							($item['m'])*60),2,"0",STR_PAD_LEFT);
+						$item['niceLength'] = $item['m'] . 
+							":" . $item['s'];
 						if($item['audioid'] != '') {
 							$sql = "SELECT audio.title AS title,
 								audiotypes.name AS type,

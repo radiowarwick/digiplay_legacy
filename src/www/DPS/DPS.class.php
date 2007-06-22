@@ -19,6 +19,7 @@ class DPS extends Module  {
 	/*$type [j][a][c][s]
 	* j - show jingles
 	* a - show adverts
+	* r - show prerecs
 	* c - show cartsets
 	* s - show scripts
 	* p - show show plan
@@ -67,12 +68,17 @@ class DPS extends Module  {
 				if(strpos($type,'p') !== false) {
 					$sql = $sql . " OR itemtype = 'showplan' ";
 				}
+				if(strpos($type,'r') !== false) {
+					$sql = $sql . " OR itemtype = 'prerec' ";
+				}
 				$sql = $sql . ")";
 				$childCount = $db->getOne($sql);
 				if($childCount > 0) {
-					$list = $list . '<item text="' . htmlspecialchars($dir['name']) . '" id="dir' . $dir['id'] . '" im0="folderClosed.gif" child="1" >';
+					$list = $list . '<item text="' . htmlspecialchars($dir['name']) . 
+						'" id="dir' . $dir['id'] . '" im0="folderClosed.gif" child="1" >';
 				} else {
-					$list = $list . '<item text="' . htmlspecialchars($dir['name']) . '" id="dir' . $dir['id'] . '" im0="folderClosed.gif" child="0" >';
+					$list = $list . '<item text="' . htmlspecialchars($dir['name']) . 
+						'" id="dir' . $dir['id'] . '" im0="folderClosed.gif" child="0" >';
 				}
 				$list = $list . '<userdata name="perm">' . $dir['permissions'] . '</userdata>';
 				$list = $list . '</item>';
@@ -91,7 +97,8 @@ class DPS extends Module  {
 			ORDER BY name asc";
 			$files = $db->getAll($sql);
 			foreach($files as $file) {
-				$list = $list . '<item text="' . htmlspecialchars($file['name']) . '" id="jgl' . $file['id'] . '" im0="jingle16.png">';
+				$list = $list . '<item text="' . htmlspecialchars($file['name']) . 
+					'" id="jgl' . $file['id'] . '" im0="jingle16.png">';
 				$list = $list . '<userdata name="perm">' . $file['permissions'] . '</userdata>';
 				$list = $list . '</item>';
 			}
@@ -109,7 +116,27 @@ class DPS extends Module  {
 			ORDER BY name asc";
 			$files = $db->getAll($sql);
 			foreach($files as $file) {
-				$list = $list . '<item text="' . htmlspecialchars($file['name']) . '" id="adv' . $file['id'] . '" im0="jingle16.png">';
+				$list = $list . '<item text="' . htmlspecialchars($file['name']) . 
+					'" id="adv' . $file['id'] . '" im0="jingle16.png">';
+				$list = $list . '<userdata name="perm">' . $file['permissions'] . '</userdata>';
+				$list = $list . '</item>';
+			}
+		}
+
+		//#######
+		//PRE-RECS
+		//#######
+		if(strpos($type,'r') !== false) {
+			$sql = "SELECT v_tree_prerec.* from v_tree_prerec 
+			WHERE
+				v_tree_prerec.parent = $dirID AND 
+				v_tree_prerec.permissions & B'$readPerm' = '$readPerm' AND 
+				v_tree_prerec.userid = $userID 
+			ORDER BY name asc";
+			$files = $db->getAll($sql);
+			foreach($files as $file) {
+				$list = $list . '<item text="' . htmlspecialchars($file['name']) . 
+					'" id="jgl' . $file['id'] . '" im0="jingle16.png">';
 				$list = $list . '<userdata name="perm">' . $file['permissions'] . '</userdata>';
 				$list = $list . '</item>';
 			}
@@ -127,7 +154,8 @@ class DPS extends Module  {
 			ORDER BY name asc";
 			$files = $db->getAll($sql);
 			foreach($files as $file) {
-				$list = $list . '<item text="' . htmlspecialchars($file['name']) . '" id="crt' . $file['id'] . '" im0="cartset16.png">';
+				$list = $list . '<item text="' . htmlspecialchars($file['name']) . 
+					'" id="crt' . $file['id'] . '" im0="cartset16.png">';
 				$list = $list . '<userdata name="perm">' . $file['permissions'] . '</userdata>';
 				$list = $list . '</item>';
 			}
@@ -146,7 +174,7 @@ class DPS extends Module  {
 			$files = $db->getAll($sql);
 			foreach($files as $file) {
 				$list = $list . '<item text="' . htmlspecialchars($file['name']) . '" 
-				id="scr' . $file['id'] . '" im0="script16.png">';
+					id="scr' . $file['id'] . '" im0="script16.png">';
 				$list = $list . '<userdata name="perm">' . $file['permissions'] . '</userdata>';
 				$list = $list . '</item>';
 			}
@@ -165,7 +193,7 @@ class DPS extends Module  {
 			$files = $db->getAll($sql);
 			foreach($files as $file) {
 				$list = $list . '<item text="' . htmlspecialchars($file['name']) . '" 
-				id="shp' . $file['id'] . '" im0="showplan16.png">';
+					id="shp' . $file['id'] . '" im0="showplan16.png">';
 				$list = $list . '<userdata name="perm">' . $file['permissions'] . '</userdata>';
 				$list = $list . '</item>';
 			}
@@ -184,7 +212,7 @@ class DPS extends Module  {
 			$files = $db->getAll($sql);
 			foreach($files as $file) {
 				$list = $list . '<item text="' . htmlspecialchars($file['name']) . '"  
-				id="mus' . $file['id'] . '" im0="music16.png">';
+					id="mus' . $file['id'] . '" im0="music16.png">';
 				$list = $list . '<userdata name="perm">' . $file['permissions'] . '</userdata>';
 				$list = $list . '</item>';
 			}

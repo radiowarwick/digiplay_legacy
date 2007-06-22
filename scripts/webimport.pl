@@ -16,8 +16,9 @@ if (!defined($ARGV[0])) {
 $ARGV[0] =~ m/^(.*)$/;
 my $webfile = $1;
 
-if(validate_pcm("$webdir/$webfile") ne "pcm") {
-    print "invalid_format";
+my $result = validate_pcm("$webdir/$webfile");
+if( $result ne "pcm") {
+    print $result;
     exit;
 }
 

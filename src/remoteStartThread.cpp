@@ -26,7 +26,6 @@
 #include <unistd.h>
 #include <sys/io.h>
 
-#include "Config.h"
 #include "Security.h"
 
 #define ADDRESS 0x378
@@ -38,21 +37,18 @@ remoteStartThread::remoteStartThread(QObject *o) {
 
 void remoteStartThread::run() {
 	// Look up normal user in config and drop privilages
-	Config *conf = new Config("digiplay");
 	mutex.lock();
 	stopped = FALSE;
 	mutex.unlock();
 	gainPrivilage();
 	showPrivilage();
 	if (ioperm(ADDRESS,2,1)) {
-	    dropPrivilage(conf->getParam("user"));
-		delete conf;
+	    dropPrivilage();
 		cout << "Couldn't open port at address ";
 		printf("%x\n",ADDRESS);
 	}
 	else {
-	    dropPrivilage(conf->getParam("user"));
-		delete conf;
+	    dropPrivilage();
 		while(!stopped) {
 			status = inb(ADDRESS+1);
 			if (status != old_status) {

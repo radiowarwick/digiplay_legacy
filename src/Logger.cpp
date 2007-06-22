@@ -108,15 +108,25 @@ void Logger::initLogDir() {
         exit(-1);
     }
     if (!logFile) {
-        if (!isRoot()) {
-            cout << "WARNING: You have not started the program as root." << endl << "Logs may not be writable." << endl;
+	    string filename = "/var/log/dps/" + appName + ".log";
+        if (isRoot()) {
+	        system("mkdir -p /var/log/dps");
+	        system("chown dps:adm /var/log/dps");
+	        system("chmod 640 /var/log/dps");
+			system(string("touch " + filename).c_str());
+	        system(string("chown dps:adm " + filename).c_str());
+	        system(string("chmod 640 " + filename).c_str());
+		}
+		else {
+            cout << "WARNING: This program is not currently running as root."; 
+			cout << endl;
         }
-        system("mkdir -p /var/log/dps");
-        system("chown digiplay:adm /var/log/dps");
-        system("chmod 640 /var/log/dps");
-        string filename = "/var/log/dps/" + appName + ".log";
-        logFile = new ofstream(filename.c_str(), ios::app);
-        system(string("chown digiplay:adm " + filename).c_str());
-        system(string("chmod 640 " + filename).c_str());
+	    logFile = new ofstream(filename.c_str(), ios::app);
+		if ( ! (logFile->is_open() && logFile->good())) {
+			cout << "WARNING: Unable to open log file for writing." << endl;
+			cout << "    The current user may not have permissions to" << endl;
+			cout << "       /var/log/dps" << endl;
+			cout << "    or permission to create this directory." << endl;
+		}
     }
 }

@@ -33,6 +33,8 @@ using std::endl;
 
 int main( int argc, char ** argv )
 {
+	char* routine = "studio_manage::main";
+
     // Configure logging
     Logger::setAppName("studio_manage");
     Logger::initLogDir();
@@ -40,10 +42,8 @@ int main( int argc, char ** argv )
     Logger::setDisplayLevel(0);
 
 	if (isRoot()) {
-		// Look up normal user in config and drop privilages
-		Config *conf = new Config("digiplay");
-		dropPrivilage(conf->getParam("user"));
-		delete conf;
+		L_INFO(LOG_DB,"Attempting to drop to unprivilaged user.");
+		dropPrivilage();
 	}
 
 	// Create new application and main window

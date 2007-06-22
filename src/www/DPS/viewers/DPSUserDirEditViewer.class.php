@@ -39,23 +39,32 @@ class DPSUserDirEditViewer extends Viewer {
 					$this->assign('dirown', 't');
 				}
 				
-				$sql = "SELECT count(*) FROM dirgroups
-					WHERE dirid = " . $folder['parent'] . "
-						AND	groupid = " . $cfg['Auth']['defaultNewUserGroup'] . "
-						AND permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "'";
-				if($db->getOne($sql) > 0) {
+				$sql = "SELECT bit_or(permissions) FROM (SELECT bit_or(permissions) AS permissions 
+					FROM v_tree_dir_explicit 
+					WHERE causetype = 'group'
+						AND cause = " . $cfg['Auth']['defaultNewUserGroup'] . "
+						AND permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "') AS Q1 
+				UNION (SELECT bit_or(permissions) AS permissions 
+					FROM v_tree_dir_inherited 
+					WHERE causetype = 'group'
+						AND cause = " . $cfg['Auth']['defaultNewUserGroup'] . "
+						AND permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "')";
+				$perm = $db->getOne($sql);;
+				if($perm[0] == "1") {
 					$this->assign('dirpub', 't');
 				}
 				
+				
 				$sql = "SELECT bit_or(permissions) FROM dirgroups
 					WHERE dirid = $dirID
-						AND	groupid = " . $cfg['Auth']['defaultNewUserGroup'] . "
-					GROUP BY permissions";
-				$perm = $db->getOne($sql);
-				if($perm[2] == 1) {
+						AND groupid = " . $cfg['Auth']['defaultNewUserGroup'];
+					$perm = $db->getOne($sql);
+				if($perm[1] == "1") {
 					$this->assign('dirrw', 't');
-				} elseif($perm[1] == 1) {
+				} elseif($perm[0] == "1") {
 					$this->assign('dirr', 't');
+				} else {
+					$this->assign('priv', 't');
 				}
 				
 				$this->assign('folder', $folder);

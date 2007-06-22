@@ -16,21 +16,25 @@
 				<input type="hidden" name="formName" value="dpsdirrename" />
 				<input type="hidden" name="moduleName" value="DPS" />
 				<input type="hidden" name="templateID" value="22" />
-				<input type="hidden" name="dirID" value="{$VIEWER.folder.id}" />
+				<input type="hidden" name="rootdir" value="{$VIEWER.folder.id}" />
 				Name: <input type="text" name="dirtext" value="{$VIEWER.folder.name}" /><br />
 				{if $VIEWER.dirown == 't'}
 				{if $VIEWER.dirpub == 't'}
-				Permission: 
-				<input type="option" name="dirperm" value="priv" />
-				{if $VIEWER.dirr == 't'}
-				<input type="option" name="dirperm" value="pubr" checked/>
+				Permission:<br />
+				{if $VIEWER.priv == 't'}
+				Private: <input type="radio" name="dirperm" value="priv" checked/>
 				{else}
-				<input type="option" name="dirperm" value="pubr" />
+				Private: <input type="radio" name="dirperm" value="priv" />
+				{/if}
+				{if $VIEWER.dirr == 't'}
+				Public read: <input type="radio" name="dirperm" value="pubr" checked/>
+				{else}
+				Public read: <input type="radio" name="dirperm" value="pubr" />
 				{/if}
 				{if $VIEWER.dirrw == 't'}
-				<input type="option" name="dirperm" value="pubrw" checked/>
+				Public write: <input type="radio" name="dirperm" value="pubrw" checked/>
 				{else}
-				<input type="option" name="dirperm" value="pubrw" />
+				Public write: <input type="radio" name="dirperm" value="pubrw" />
 				{/if}
 				<br />
 				{else}

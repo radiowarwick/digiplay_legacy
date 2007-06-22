@@ -73,7 +73,9 @@ class DPSUserFileDirectoryModel extends Model {
 							"Error recieved when uploading file: '" . $id . "'",
 							'error');
 						$this->errors['form'] = "Unable to import file (file may be of invalid type)";
-						DPSUserFileDirectoryModel::processInvalid(); //This should work(I hope)
+						exec("rm $uploadfile");
+						exec("rm $uploadfile.info");
+						DPSUserFileDirectoryModel::processInvalid();
 					}
 				} else {
 					//error
@@ -81,7 +83,8 @@ class DPSUserFileDirectoryModel extends Model {
 						"Error recieved when uploading file: Unable to write to $fname.info'",
 						'error');
 					$this->errors['form'] = "Unable to write to info file";
-					DPSUserFileDirectoryModel::processInvalid(); //This should work(I hope)
+					exec("rm $uploadfile");
+					DPSUserFileDirectoryModel::processInvalid();
 				}
 				fclose($handle);
 			} else {
@@ -90,8 +93,16 @@ class DPSUserFileDirectoryModel extends Model {
 					"Error recieved when uploading file: Unable to open $fname.info file to write'",
 					'error');
 				$this->errors['form'] = "Unable to open info file for writing";
-				DPSUserFileDirectoryModel::processInvalid(); //This should work(I hope)
+				exec("rm $uploadfile");
+				DPSUserFileDirectoryModel::processInvalid();
 			}
+		} else {
+			//error
+			BasicLogger::logMessage(
+				"Error recieved when uploading file: Unable to move file for processing'",
+				'error');
+			$this->errors['form'] = "Unable tomovefile for processing";
+			DPSUserFileDirectoryModel::processInvalid();
 		}
 	}
 	

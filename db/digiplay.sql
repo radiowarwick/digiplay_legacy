@@ -9,7 +9,7 @@
 --                      See http://tedia2sql.tigris.org/AUTHORS.html for tedia2sql author information
 -- 
 --   Target Database:   postgres
---   Generated at:      Mon Jun  4 20:33:26 2007
+--   Generated at:      Fri Jun 22 16:30:41 2007
 --   Input Files:       usersgroupsdir.dia cartsets.dia audio.dia scripts.dia showplans.dia sustainer.dia website.dia digiplay.dia
 -- 
 -- ================================================================================
@@ -58,6 +58,7 @@ create table dir (
   parent                    integer,
   name                      character varying,
   notes                     character varying,
+  inherited                 character(1) default 't' not null,
   constraint pk_Dir primary key (id)
 ) ;
 
@@ -861,7 +862,6 @@ create table patches (
 
 
 -- Special statements for postgres:post databases
-\i digiplay-views.sql
 END transaction;
 
 

@@ -75,7 +75,8 @@ alter sequence cartstyleprops_id_seq restart 9;
 insert into audiotypes values ( 1,'Music','Music tracks from the CD library or other sources.' ) ;
 insert into audiotypes values ( 2,'Jingle','Station or show specific idents.' ) ;
 insert into audiotypes values ( 3,'Advert','Advertisement audio clip.' ) ;
-alter sequence audiotypes_id_seq restart 4;
+insert into audiotypes values ( 4,'Pre-rec','Prerecorded content.' ) ;
+alter sequence audiotypes_id_seq restart 5;
 
 -- inserts for lifespansg
 insert into lifespans values ( 1,'Permanent','-1','Audio files (e.g. music) which should remain on the system indefinitely.' ) ;
@@ -327,7 +328,11 @@ INSERT INTO forms VALUES (69, 'dpsUserMoveAudioForm', 'DPSMoveAudioModel', 'DPS'
 INSERT INTO forms VALUES (70, 'dpsUserMoveCartsetForm', 'DPSMoveCartsetModel', 'DPS', 19, NULL, NULL);
 INSERT INTO forms VALUES (71, 'dpsUserMoveScriptForm', 'DPSMoveScriptModel', 'DPS', 19, NULL, NULL);
 INSERT INTO forms VALUES (72, 'dpsUserUploadFileForm', 'DPSUserFileDirectoryModel', 'DPS', 19, NULL, NULL);
-ALTER SEQUENCE forms_formid_seq RESTART 73;
+INSERT INTO forms VALUES (73, 'dpsUserMoveShowplanForm', 'DPSMoveShowplanModel', 'DPS', 19, NULL, NULL);
+INSERT INTO forms VALUES (74, 'alterConfigurationForm', 'ConfigsModel', 'Auth', 1, NULL, NULL);
+INSERT INTO forms VALUES (75, 'addLocationForm', 'LocationAddModel', 'Auth', 1, NULL, NULL);
+INSERT INTO forms VALUES (76, 'removeLocationForm', 'LocationRemoveModel', 'Auth', 1, NULL, NULL);
+ALTER SEQUENCE forms_formid_seq RESTART 77;
 
 -- formfields
 INSERT INTO formfields VALUES (1, 'loginForm', 'authPassword', 3, 'Auth');
@@ -414,14 +419,15 @@ INSERT INTO formfields VALUES (81, 'dpsUserMoveScriptForm', 'scriptID', 39, 'DPS
 INSERT INTO formfields VALUES (82, 'dpsUserMoveCartsetForm', 'cartsetID', 19, 'DPS');
 INSERT INTO formfields VALUES (83, 'dpsUserUploadFileForm', 'name', 10, 'DPS');
 INSERT INTO formfields VALUES (84, 'dpsUserUploadFileForm', 'dirID', 2, 'DPS');
-ALTER SEQUENCE formfields_fieldid_seq RESTART 85;
+INSERT INTO formfields VALUES (85, 'dpsUserMoveShowplanForm', 'newParent', 2, 'DPS');
+ALTER SEQUENCE formfields_fieldid_seq RESTART 86;
 
 -- templates
 INSERT INTO templates VALUES (1, 'userModify.tpl', 'UserViewer', 1, 'Auth');
 INSERT INTO templates VALUES (2, 'groupModify.tpl', 'GroupViewer', 1, 'Auth');
 INSERT INTO templates VALUES (3, 'realmModify.tpl', 'RealmViewer', 1, 'Auth');
-INSERT INTO templates VALUES (4, 'userAdd.tpl', 'UserViewer', 1, 'Auth');
-INSERT INTO templates VALUES (5, 'groupAdd.tpl', 'GroupViewer', 1, 'Auth');
+INSERT INTO templates VALUES (4, 'configuration.tpl', 'ConfigurationViewer', 1, 'Auth');
+INSERT INTO templates VALUES (5, 'location.tpl', 'LocationViewer', 1, 'Auth');
 INSERT INTO templates VALUES (6, 'realmAdd.tpl', 'RealmViewer', 1, 'Auth');
 INSERT INTO templates VALUES (7, 'listTemplates.tpl', 'TemplateListViewer', 1, 'MVC');
 INSERT INTO templates VALUES (8, 'addTemplate.tpl', 'AddTemplateViewer', 17, 'MVC');
@@ -482,4 +488,6 @@ INSERT INTO templates VALUES (62, 'editContent.tpl', 'EditContentViewer', 18, 'C
 INSERT INTO templates VALUES (63, 'editContentWindow.rpl', 'editContentWindowViewer', 18, 'CMS');
 INSERT INTO templates VALUES (64, 'editorForm.tpl', 'EditorFormViewer', 18, 'CMS');
 INSERT INTO templates VALUES (65, 'dpsempty.tpl', 'DPSUserSubFileViewer', 18, 'DPS');
-ALTER SEQUENCE templates_templateid_seq RESTART 66;
+INSERT INTO templates VALUES (66, 'dpsusershowmove.tpl', 'DPSUserShowMoveViewer', 19, 'DPS');
+INSERT INTO templates VALUES (67, 'blank.tpl', 'AuthSubRealmViewer', 1, 'Auth');
+ALTER SEQUENCE templates_templateid_seq RESTART 68;

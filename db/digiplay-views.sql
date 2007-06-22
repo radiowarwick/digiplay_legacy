@@ -15,28 +15,21 @@ CREATE OR REPLACE FUNCTION v_tree_getInherited(IN int8, IN int8) RETURNS bit(8) 
         int_userid ALIAS FOR $2;
         result RECORD;
         int_parent int8;
+        int_type int8;
         bit_permissions bit(8);
     BEGIN
-        SELECT parent INTO int_parent FROM dir WHERE id = int_id AND parent > 0;
+        SELECT parent INTO int_parent FROM dir WHERE id = int_id AND parent > 0
+            AND inherited=\'t\';
         IF NOT FOUND THEN
-            SELECT INTO bit_permissions bit_or(permissions) 
-                    FROM v_tree_dir_explicit 
-                    WHERE id = int_id AND userid = int_userid 
-                    GROUP BY id;
-            IF NOT FOUND THEN
-                RETURN \'00000000\';
-            END IF;
-            RETURN bit_permissions;
+            RETURN \'00000000\';
         END IF;
         SELECT INTO bit_permissions bit_or(permissions) 
                     FROM v_tree_dir_explicit 
-                    WHERE id = int_id AND userid = int_userid 
+                    WHERE id = int_parent AND userid = int_userid 
                     GROUP BY id;
         IF NOT FOUND THEN
             bit_permissions = \'00000000\';
         END IF;
---        bit_permissions = bit_permissions 
---                        | v_tree_getInherited(int_parent, int_userid);
         RETURN bit_permissions;
     END' LANGUAGE 'plpgsql';
 
@@ -64,7 +57,7 @@ AS
             users.username AS username,
             dirusers.permissions AS permissions,
             'user'::text AS causetype,
-            users.username AS cause
+            users.id AS cause
     FROM    dir, users, dirusers
     WHERE   (dir.id = dirusers.dirid)
         AND (dirusers.userid = users.id)
@@ -78,7 +71,7 @@ AS
             users.username AS username,
             dirgroups.permissions AS permissions,
             'group'::text AS causetype,
-            groups.name AS cause
+            groups.id AS cause
     FROM    dir, groups, dirgroups, usersgroups, users
     WHERE   (dir.id = dirgroups.dirid)
         AND (dirgroups.groupid = groups.id)
@@ -100,7 +93,7 @@ AS
             users.username,
             v_tree_getInherited(dir.parent,users.id) AS permissions,
             'inherited'::text AS causetype,
-            users.username AS cause
+            users.id AS cause
     FROM    dir cross join users
     WHERE   v_tree_getInherited(dir.parent,users.id) != '00000000'
 ;
@@ -136,7 +129,7 @@ AS
             users.username AS username,
             audiousers.permissions AS permissions, 
             'user'::text AS causetype,
-            users.username AS cause 
+            users.id AS cause 
     FROM    audio, audiodir, audiousers, users
     WHERE   (audiodir.audioid = audio.id)
         AND (audiousers.audioid = audio.id)
@@ -152,7 +145,7 @@ AS
             users.username AS username,
             audiogroups.permissions AS permissions,
             'group'::text AS causetype,
-            groups.name AS cause
+            groups.id AS cause
     FROM    audio, audiodir, audiogroups, usersgroups, users, groups
     WHERE   (audiodir.audioid = audio.id)
         AND (audiogroups.audioid = audio.id)
@@ -176,7 +169,7 @@ AS
             users.username,
             v_tree_getInherited(audiodir.dirid,users.id) AS permissions,
             'inherited'::text AS causetype,
-            users.username AS cause
+            users.id AS cause
     FROM    (audio inner join audiodir ON (audio.id = audiodir.audioid))
              cross join users
     WHERE   v_tree_getInherited(audiodir.dirid,users.id) != '00000000'
@@ -214,7 +207,7 @@ AS
             users.username AS username,
             audiousers.permissions AS permissions,
             'user'::text AS causetype,
-            users.username AS cause
+            users.id AS cause
     FROM    audio, audiodir, audiousers, users
     WHERE   (audiodir.audioid = audio.id)
         AND (audiousers.audioid = audio.id)
@@ -230,7 +223,7 @@ AS
             users.username AS username,
             audiogroups.permissions AS permissions,
             'group'::text AS causetype,
-            groups.name AS cause
+            groups.id AS cause
     FROM    audio, audiodir, audiogroups, usersgroups, users, groups
     WHERE   (audiodir.audioid = audio.id)
         AND (audiogroups.audioid = audio.id)
@@ -254,7 +247,7 @@ AS
             users.username,
             v_tree_getInherited(audiodir.dirid,users.id) AS permissions,
             'inherited'::text AS causetype,
-            users.username AS cause
+            users.id AS cause
     FROM    (audio inner join audiodir ON (audio.id = audiodir.audioid))
              cross join users
     WHERE   v_tree_getInherited(audiodir.dirid,users.id) != '00000000'
@@ -266,6 +259,84 @@ AS
 -- Shows the overall permissions on each jingle for each user
 --
 CREATE OR REPLACE VIEW v_tree_jingle
+    (id,name,parent,userid,username,permissions)
+AS
+    SELECT id,name,parent,userid,username,bit_or(permissions) AS permissions
+    FROM (
+        SELECT * FROM v_tree_jingle_explicit
+        UNION
+        SELECT * FROM v_tree_jingle_inherited
+    ) AS Q1
+    GROUP BY id,name,parent,userid,username
+    HAVING bit_or(permissions) != '00000000'
+;
+
+--
+-- v_tree_prerec_explicit
+-- Shows the explicit permissions defined on prerec objects
+--
+CREATE OR REPLACE VIEW v_tree_prerec_explicit
+    (id,name,parent,userid,username,permissions,causetype,cause)
+AS
+    SELECT  audio.id AS id,
+            audio.title AS name,
+            audiodir.dirid AS parent,
+            users.id AS userid,
+            users.username AS username,
+            audiousers.permissions AS permissions,
+            'user'::text AS causetype,
+            users.id AS cause
+    FROM    audio, audiodir, audiousers, users
+    WHERE   (audiodir.audioid = audio.id)
+        AND (audiousers.audioid = audio.id)
+        AND (audiousers.userid = users.id)
+        AND (audio.type = 4)
+
+    UNION
+
+    SELECT  audio.id AS id,
+            audio.title AS name,
+            audiodir.dirid AS parent,
+            users.id AS userid,
+            users.username AS username,
+            audiogroups.permissions AS permissions,
+            'group'::text AS causetype,
+            groups.id AS cause
+    FROM    audio, audiodir, audiogroups, usersgroups, users, groups
+    WHERE   (audiodir.audioid = audio.id)
+        AND (audiogroups.audioid = audio.id)
+        AND (audiogroups.groupid = groups.id)
+        AND (usersgroups.groupid = groups.id)
+        AND (usersgroups.userid = users.id)
+        AND (audio.type = 4)
+;
+
+--
+-- v_tree_prerec_inherited
+-- Shows the inherited user and group permissions defined on a prerec
+--
+CREATE OR REPLACE VIEW v_tree_prerec_inherited
+    (id,name,parent,userid,username,permissions,causetype,cause)
+AS
+    SELECT  audio.id,
+            audio.title,
+            audiodir.dirid,
+            users.id,
+            users.username,
+            v_tree_getInherited(audiodir.dirid,users.id) AS permissions,
+            'inherited'::text AS causetype,
+            users.id AS cause
+    FROM    (audio inner join audiodir ON (audio.id = audiodir.audioid))
+             cross join users
+    WHERE   v_tree_getInherited(audiodir.dirid,users.id) != '00000000'
+        AND (audio.type = 4)
+;
+
+--
+-- v_tree_prerec
+-- Shows the overall permissions on each jingle for each user
+--
+CREATE OR REPLACE VIEW v_tree_prerec
     (id,name,parent,userid,username,permissions)
 AS
     SELECT id,name,parent,userid,username,bit_or(permissions) AS permissions
@@ -292,7 +363,7 @@ AS
             users.username AS username,
             audiousers.permissions AS permissions,
             'user'::text AS causetype,
-            users.username AS cause
+            users.id AS cause
     FROM    audio, audiodir, audiousers, users
     WHERE   (audiodir.audioid = audio.id)
         AND (audiousers.audioid = audio.id)
@@ -308,7 +379,7 @@ AS
             users.username AS username,
             audiogroups.permissions AS permissions,
             'group'::text AS causetype,
-            groups.name AS cause
+            groups.id AS cause
     FROM    audio, audiodir, audiogroups, usersgroups, users, groups
     WHERE   (audiodir.audioid = audio.id)
         AND (audiogroups.audioid = audio.id)
@@ -332,7 +403,7 @@ AS
             users.username,
             v_tree_getInherited(audiodir.dirid,users.id) AS permissions,
             'inherited'::text AS causetype,
-            users.username AS cause
+            users.id AS cause
     FROM    (audio inner join audiodir ON (audio.id = audiodir.audioid))
              cross join users
     WHERE   v_tree_getInherited(audiodir.dirid,users.id) != '00000000'
@@ -370,7 +441,7 @@ AS
             users.username AS username,
             cartsetsusers.permissions AS permissions,
             'user'::text AS causetype,
-            users.username AS cause
+            users.id AS cause
     FROM    cartsets, cartsetsdir, cartsetsusers, users
     WHERE   (cartsetsdir.cartsetid = cartsets.id)
         AND (cartsetsusers.cartsetid = cartsets.id)
@@ -385,7 +456,7 @@ AS
             users.username AS username,
             cartsetsgroups.permissions AS permissions,
             'group'::text AS causetype,
-            groups.name AS cause
+            groups.id AS cause
     FROM    cartsets, cartsetsdir, cartsetsgroups, usersgroups, users, groups
     WHERE   (cartsetsdir.cartsetid = cartsets.id)
         AND (cartsetsgroups.cartsetid = cartsets.id)
@@ -408,7 +479,7 @@ AS
             users.username,
             v_tree_getInherited(cartsetsdir.dirid,users.id) AS permissions,
             'inherited'::text AS causetype,
-            users.username AS cause
+            users.id AS cause
     FROM    (cartsets inner join cartsetsdir 
                     ON (cartsets.id = cartsetsdir.cartsetid))
              cross join users
@@ -446,7 +517,7 @@ AS
             users.username AS username,
             scriptsusers.permissions AS permissions,
             'user'::text AS causetype,
-            users.username AS cause
+            users.id AS cause
     FROM    scripts, scriptsdir, scriptsusers, users
     WHERE   (scriptsdir.scriptid = scripts.id)
         AND (scriptsusers.scriptid = scripts.id)
@@ -461,7 +532,7 @@ AS
             users.username AS username,
             scriptsgroups.permissions AS permissions,
             'group'::text AS causetype,
-            groups.name AS cause
+            groups.id AS cause
     FROM    scripts, scriptsdir, scriptsgroups, usersgroups, users, groups
     WHERE   (scriptsdir.scriptid = scripts.id)
         AND (scriptsgroups.scriptid = scripts.id)
@@ -484,7 +555,7 @@ AS
             users.username,
             v_tree_getInherited(scriptsdir.dirid,users.id) AS permissions,
             'inherited'::text AS causetype,
-            users.username AS cause
+            users.id AS cause
     FROM    (scripts inner join scriptsdir 
                     ON (scripts.id = scriptsdir.scriptid))
              cross join users
@@ -522,7 +593,7 @@ AS
             users.username AS username,
             showplanusers.permissions AS permissions,
             'user'::text AS causetype,
-            users.username AS cause
+            users.id AS cause
     FROM    showplans, showplandir, showplanusers, users
     WHERE   (showplandir.showplanid = showplans.id)
         AND (showplanusers.showplanid = showplans.id)
@@ -537,7 +608,7 @@ AS
             users.username AS username,
             showplangroups.permissions AS permissions,
             'group'::text AS causetype,
-            groups.name AS cause
+            groups.id AS cause
     FROM    showplans, showplandir, showplangroups, usersgroups, users, groups
     WHERE   (showplandir.showplanid = showplans.id)
         AND (showplangroups.showplanid = showplans.id)
@@ -560,7 +631,7 @@ AS
             users.username,
             v_tree_getInherited(showplandir.dirid,users.id) AS permissions,
             'inherited'::text AS causetype,
-            users.username AS cause
+            users.id AS cause
     FROM    (showplans inner join showplandir 
                     ON (showplans.id = showplandir.showplanid))
              cross join users
@@ -603,6 +674,8 @@ AS
         SELECT 'music' AS itemtype, v_tree_music.* FROM v_tree_music
         UNION
         SELECT 'jingle' AS itemtype, v_tree_jingle.* FROM v_tree_jingle
+        UNION
+        SELECT 'prerec' AS itemtype, v_tree_prerec.* FROM v_tree_prerec
         UNION
         SELECT 'advert' AS itemtype, v_tree_advert.* FROM v_tree_advert
         UNION

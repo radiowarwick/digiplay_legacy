@@ -211,7 +211,8 @@ INSERT INTO cmscontent VALUES (5, 4, 1161102371, '<div align="center"><strong>Th
 INSERT INTO cmscontent VALUES (6, 6, 1168011808, '<div align="center"><strong>Public Help</strong><br /></div><br />This help will be available in the near future. In the meantime if you need help please contact the webmaster <a href="mailto:webmaster@radio.warwick.ac.uk?subject=DPS%20Website%20-%20Help">here</a>.', 1);
 INSERT INTO cmscontent VALUES (7, 7, 1168015727, '<div align="center"><strong>You are now logged out</strong><br /></div><strong><br /></strong><div align="left">Click <a href="https://www.radio.warwick.ac.uk">here</a> to go to the main RaW page.<br /></div><div align="left">Click <a href="https://www.radio.warwick.ac.uk/dps-dev/">here</a> to return to the Digiplay login page.</div>', 1);
 INSERT INTO cmscontent VALUES (8, 8, 1171467945, '<strong>Other Features<br /></strong><a href="https://www.radio.warwick.ac.uk/dps-dev/?templateID=59">Requested Tracks</a><br /><a href="http://www.radio.warwick.ac.uk/dps-dev/?templateID=52">Censored Tracks<br /></a>', 1);
-ALTER SEQUENCE cmscontent_contentid_seq RESTART 9;
+INSERT INTO cmscontent VALUES (9,4,0,'',1);
+ALTER SEQUENCE cmscontent_contentid_seq RESTART 10;
 
 -- fieldvalidators
 INSERT INTO fieldvalidators VALUES (1, 'EmailValidator', 'Validate an email address', 'MVC');

@@ -18,17 +18,12 @@ CREATE OR REPLACE FUNCTION v_tree_getInherited(IN int8, IN int8) RETURNS bit(8) 
         int_type int8;
         bit_permissions bit(8);
     BEGIN
-        SELECT parent INTO int_parent FROM dir WHERE id = int_id AND parent > 0
-            AND inherited=\'t\';
-        IF NOT FOUND THEN
-            RETURN \'00000000\';
-        END IF;
         SELECT INTO bit_permissions bit_or(permissions) 
                     FROM v_tree_dir_explicit 
-                    WHERE id = int_parent AND userid = int_userid 
+                    WHERE id = int_id AND userid = int_userid 
                     GROUP BY id;
         IF NOT FOUND THEN
-            bit_permissions = \'00000000\';
+            RETURN \'00000000\';
         END IF;
         RETURN bit_permissions;
     END' LANGUAGE 'plpgsql';
@@ -96,6 +91,7 @@ AS
             users.id AS cause
     FROM    dir cross join users
     WHERE   v_tree_getInherited(dir.parent,users.id) != '00000000'
+        AND (dir.inherit = 't');
 ;
    
 --
@@ -173,6 +169,7 @@ AS
     FROM    (audio inner join audiodir ON (audio.id = audiodir.audioid))
              cross join users
     WHERE   v_tree_getInherited(audiodir.dirid,users.id) != '00000000'
+		AND (audiodir.inherit = 't')
         AND (audio.type = 1)
 ;
 
@@ -251,6 +248,7 @@ AS
     FROM    (audio inner join audiodir ON (audio.id = audiodir.audioid))
              cross join users
     WHERE   v_tree_getInherited(audiodir.dirid,users.id) != '00000000'
+        AND (audiodir.inherit = 't')
         AND (audio.type = 2)
 ;
 
@@ -329,6 +327,7 @@ AS
     FROM    (audio inner join audiodir ON (audio.id = audiodir.audioid))
              cross join users
     WHERE   v_tree_getInherited(audiodir.dirid,users.id) != '00000000'
+        AND (audiodir.inherit = 't')
         AND (audio.type = 4)
 ;
 
@@ -341,9 +340,9 @@ CREATE OR REPLACE VIEW v_tree_prerec
 AS
     SELECT id,name,parent,userid,username,bit_or(permissions) AS permissions
     FROM (
-        SELECT * FROM v_tree_jingle_explicit
+        SELECT * FROM v_tree_prerec_explicit
         UNION
-        SELECT * FROM v_tree_jingle_inherited
+        SELECT * FROM v_tree_prerec_inherited
     ) AS Q1
     GROUP BY id,name,parent,userid,username
     HAVING bit_or(permissions) != '00000000'
@@ -407,6 +406,7 @@ AS
     FROM    (audio inner join audiodir ON (audio.id = audiodir.audioid))
              cross join users
     WHERE   v_tree_getInherited(audiodir.dirid,users.id) != '00000000'
+        AND (audiodir.inherit = 't')
         AND (audio.type = 3)
 ;
 
@@ -484,6 +484,7 @@ AS
                     ON (cartsets.id = cartsetsdir.cartsetid))
              cross join users
     WHERE   v_tree_getInherited(cartsetsdir.dirid,users.id) != '00000000'
+        AND (cartsetsdir.inherit = 't')
 ;
 
 --
@@ -560,6 +561,7 @@ AS
                     ON (scripts.id = scriptsdir.scriptid))
              cross join users
     WHERE   v_tree_getInherited(scriptsdir.dirid,users.id) != '00000000'
+        AND (scriptsdir.inherit = 't')
 ;
 
 --
@@ -636,6 +638,7 @@ AS
                     ON (showplans.id = showplandir.showplanid))
              cross join users
     WHERE   v_tree_getInherited(showplandir.dirid,users.id) != '00000000'
+        AND (showplandir.inherit = 't')
 ;
 
 --
@@ -850,6 +853,47 @@ AS
         AND (audio.advert_company = companies.id)
     ORDER BY audio.md5;
 
+-- v_audio_prerec
+CREATE OR REPLACE VIEW v_audio_prerec
+AS
+    SELECT  audio.id AS id, 
+            audio.md5 AS md5, 
+            audio.title AS title, 
+            array_to_string(array_accum(artists.name),', ') AS artist, 
+            albums.name AS album, 
+            archives.id AS archiveid, 
+            archives.name AS archive,
+            archives.localpath AS path, 
+            audio.music_track AS track, 
+            audio.music_released AS released, 
+            audio.origin AS origin, 
+            audio.censor AS censor, 
+            audiodir.dirid AS dir, 
+            audio.length_smpl AS length_smpl, 
+            audio.start_smpl AS start_smpl, 
+            audio.end_smpl AS end_smpl, 
+            audio.intro_smpl AS intro_smpl, 
+            audio.extro_smpl AS extro_smpl, 
+            lifespans.data AS lifespan, 
+            audio.sustainer AS sustainer
+    FROM audio, audioartists, artists, albums, archives, lifespans, 
+         audiodir, dir
+    WHERE   (audioartists.audioid = audio.id)
+        AND (audioartists.artistid = artists.id)
+        AND (audio.archive = archives.id)
+        AND (audio.music_album = albums.id)
+        AND (audio.lifespan = lifespans.id)
+        AND (audiodir.audioid = audio.id)
+        AND (audiodir.dirid = dir.id)
+        AND (audiodir.linktype = 0)
+        AND (audio.type = 4)
+    GROUP BY audio.id,  audio.md5, audio.title, albums.name, archives.id,
+            archives.name, archives.localpath, audio.music_track,
+            audio.music_released, audio.origin, audio.censor, audiodir.dirid,
+            audio.length_smpl, audio.start_smpl, audio.end_smpl, 
+            audio.intro_smpl, audio.extro_smpl, lifespans.data, audio.sustainer
+    ORDER BY audio.md5;
+
 -- v_audio
 CREATE OR REPLACE VIEW v_audio
     (audiotype,id,md5,title,artist,album,archiveid,archive,path,track,released,
@@ -872,6 +916,12 @@ AS
 			'0' AS released,length_smpl,start_smpl,end_smpl,intro_smpl,
 			extro_smpl,lifespan,sustainer
     FROM v_audio_adverts
+    UNION
+    SELECT 'Prerec'::character varying,id,md5,title,'' AS artist,pkg AS album,
+			archiveid,archive,path,'0' AS track,'0' AS released,length_smpl,
+			start_smpl,end_smpl,intro_smpl,extro_smpl,lifespan,
+			enabled AS sustainer
+    FROM v_audio_jingles
 ORDER BY id;
 
 -- v_cartwalls

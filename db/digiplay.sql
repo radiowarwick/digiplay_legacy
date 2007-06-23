@@ -9,7 +9,7 @@
 --                      See http://tedia2sql.tigris.org/AUTHORS.html for tedia2sql author information
 -- 
 --   Target Database:   postgres
---   Generated at:      Fri Jun 22 16:30:41 2007
+--   Generated at:      Sat Jun 23 15:17:47 2007
 --   Input Files:       usersgroupsdir.dia cartsets.dia audio.dia scripts.dia showplans.dia sustainer.dia website.dia digiplay.dia
 -- 
 -- ================================================================================
@@ -58,7 +58,7 @@ create table dir (
   parent                    integer,
   name                      character varying,
   notes                     character varying,
-  inherited                 character(1) default 't' not null,
+  inherit                   character(1) default 't' not null,
   constraint pk_Dir primary key (id)
 ) ;
 
@@ -147,6 +147,7 @@ create table cartsetsdir (
   cartsetid                 integer not null,
   dirid                     integer not null,
   linktype                  smallint default 0 not null,
+  inherit                   character(1) default 't' not null,
   constraint pk_Cartsetsdir primary key (id)
 ) ;
 
@@ -300,6 +301,7 @@ create table audiodir (
   audioid                   integer not null,
   dirid                     integer not null,
   linktype                  smallint default 0 not null,
+  inherit                   character(1) default 't' not null,
   constraint pk_Audiodir primary key (id)
 ) ;
 
@@ -437,6 +439,7 @@ create table scriptsdir (
   scriptid                  integer not null,
   dirid                     integer not null,
   linktype                  smallint default 0 not null,
+  inherit                   character(1) default 't' not null,
   constraint pk_Scriptsdir primary key (id)
 ) ;
 
@@ -468,6 +471,7 @@ create table showplandir (
   showplanid                integer not null,
   dirid                     integer not null,
   linktype                  smallint default 0 not null,
+  inherit                   character(1) default 't' not null,
   constraint pk_Showplandir primary key (id)
 ) ;
 

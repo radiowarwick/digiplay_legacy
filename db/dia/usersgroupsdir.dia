@@ -245,13 +245,13 @@
         <dia:point val="26.125,32.1377"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="26.075,32.0877;40.325,37.7877"/>
+        <dia:rectangle val="26.075,32.0877;39.625,37.7877"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="26.125,32.1377"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="14.15"/>
+        <dia:real val="13.449999999999999"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="5.5999999999999996"/>
@@ -435,7 +435,7 @@
         </dia:composite>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#inherited#</dia:string>
+            <dia:string>#inherit#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#character(1)#</dia:string>
@@ -447,7 +447,7 @@
             <dia:string>##</dia:string>
           </dia:attribute>
           <dia:attribute name="visibility">
-            <dia:enum val="0"/>
+            <dia:enum val="3"/>
           </dia:attribute>
           <dia:attribute name="abstract">
             <dia:boolean val="false"/>
@@ -1891,15 +1891,15 @@
     </dia:object>
     <dia:object type="UML - Association" version="1" id="O12">
       <dia:attribute name="obj_pos">
-        <dia:point val="40.275,35.6377"/>
+        <dia:point val="39.575,35.6377"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="38.175,34.5377;47.3,36.4377"/>
+        <dia:rectangle val="38.175,34.5377;46.95,36.4377"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="40.275,35.6377"/>
-        <dia:point val="40.9,35.6377"/>
-        <dia:point val="40.9,35.6396"/>
+        <dia:point val="39.575,35.6377"/>
+        <dia:point val="40.55,35.6377"/>
+        <dia:point val="40.55,35.6396"/>
         <dia:point val="41.525,35.6396"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">

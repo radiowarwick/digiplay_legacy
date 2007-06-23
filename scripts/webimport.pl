@@ -58,7 +58,7 @@ system "rm $webdir/$webfile";
 #system "mv -i $webdir/$webfile $inbox/$md5";
 system "mv -i $webdir/$webfile.info $inbox/$md5.info";
 
-system "dpsimport -m $md5 1>/dev/null";
+system "dpsadmin --music --import-md5 $md5 1>/dev/null";
 
 my $dbh = DBI->connect($db_connect,"$dbuser","$dbpass") 
         || die "Cannot connect to database";

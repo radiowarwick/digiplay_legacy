@@ -41,9 +41,9 @@ class DPSShowPlanEditViewer extends Viewer {
 				$show = $db->getRow($show_sql);
 				
 				$show['niceAirDate'] = date("d/m/y",$show['showdate']);
-				$show['niceAirTime'] = date("g a",$show['showdate']);
+				$show['niceAirTime'] = date("H:i",$show['showdate']);
 				$show['niceCreateDate'] = date("d/m/y",$show['creationdate']);
-				$show['niceCreateTime'] = date("g a",$show['creationdate']);
+				$show['niceCreateTime'] = date("H:i",$show['creationdate']);
 				
 				$items_sql = "SELECT * FROM showitems 
 					WHERE showplanid = " . $showID . " 

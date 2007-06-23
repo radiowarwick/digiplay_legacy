@@ -34,7 +34,6 @@
 		{else}
 		Name: {$VIEWER.script.name}<br />
 		Length (mm:ss): {$VIEWER.script.m}:{$VIEWER.script.s}<br />
-		Producer: {$VIEWER.script.niceProducer}<br />
 		{/if}
 	</div>
 	<br style="&7b;clear:both;&7c;" />

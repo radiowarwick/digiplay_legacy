@@ -50,17 +50,17 @@ class DPSShowPlanViewer extends Viewer {
 
 		foreach($partShows as &$show) {
 			$show['niceAirDate'] = date("d/m/y",$show['showdate']);
-			$show['niceAirTime'] = date("g a",$show['showdate']);
+			$show['niceAirTime'] = date("H:i",$show['showdate']);
 			$show['niceCreateDate'] = date("d/m/y",$show['creationdate']);
-			$show['niceCreateTime'] = date("g a",$show['creationdate']);
+			$show['niceCreateTime'] = date("H:i",$show['creationdate']);
 			$show['text'] = $show['name'] . " - " . $show['niceAirDate'] .
 				" - " . $show['niceAirTime'];
 		}
 		foreach($doneShows as &$show) { 
 			$show['niceAirDate'] = date("d/m/y",$show['showdate']);
-			$show['niceAirTime'] = date("g a",$show['showdate']);
+			$show['niceAirTime'] = date("H:i",$show['showdate']);
 			$show['niceCreateDate'] = date("d/m/y",$show['creationdate']);
-			$show['niceCreateTime'] = date("g a",$show['creationdate']);
+			$show['niceCreateTime'] = date("H:i",$show['creationdate']);
 			$show['text'] = $show['name'] . " - " . $show['niceAirDate'] .
 				" - " . $show['niceAirTime'];
 		}

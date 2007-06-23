@@ -31,7 +31,7 @@
 	<div class="rightLinks">{templateLink id="54" text="<< Back to your shows"}</div>
 	<br style="&7b;clear:both;&7c;" />
 	<hr>
-	{if $VIEWER.write == "t"}
+	{if $VIEWER.write == "t" && $VIEWER.done != 't'}
 	{if $VIEWER.show.completed == 't'}
 	<div class="showLinks">{templateLink id=$VIEWER.templateID text="<img src='DPS/images/showUnfinished.png' alt='Finished'>Declare show not finished" _formName="dpsUserUnCompleteShow" _moduleName="DPS" _showID=$VIEWER.show.id}</div>
 	{else}

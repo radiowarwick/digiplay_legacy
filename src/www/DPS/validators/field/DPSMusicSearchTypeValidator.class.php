@@ -15,7 +15,7 @@ class DPSMusicSearchTypeValidator extends ValidatorRule {
 	
 	public function isValid(&$data){
 		global $cfg;
-		if($data == "Both" || $data == "Title" || $data == "Artist") {
+		if($data == "Both" || $data == "Title" || $data == "Artist" || $data == "Album" ) {
 			return true;
 		}
 		return "Please select a valid search type";

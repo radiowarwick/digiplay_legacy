@@ -43,9 +43,9 @@ class DPSShowPlanEditItemViewer extends Viewer {
 					AND showitems.id = " . $itemID;
 				$show = $db->getRow($show_sql);
 				$show['niceAirDate'] = date("d/m/y",$show['showdate']);
-				$show['niceAirTime'] = date("g a",$show['showdate']);
+				$show['niceAirTime'] = date("H:i",$show['showdate']);
 				$show['niceCreateDate'] = date("d/m/y",$show['creationdate']);
-				$show['niceCreateTime'] = date("g a",$show['creationdate']);
+				$show['niceCreateTime'] = date("H:i",$show['creationdate']);
 				$items_sql = "SELECT * FROM showitems 
 					WHERE showplanid = " . $show['id'] . "
 					ORDER BY position ASC";
@@ -73,8 +73,8 @@ class DPSShowPlanEditItemViewer extends Viewer {
 							$item['nature'] = $stuff['type'];
 							$item['audioLen'] = $stuff['len'];
 							$item['niceAudioLength'] = 
-								round((($stuff['len']/44100)/60)) .
-								":" . (($stuff['len']/44100)%60);
+								str_pad(floor((($stuff['len']/44100)/60)),2,"0",STR_PAD_LEFT) .
+								":" . str_pad((($stuff['len']/44100)%60),2,"0",STR_PAD_LEFT);
 						} else {
 							$item['nature'] = 'unknown';
 						}
@@ -84,9 +84,9 @@ class DPSShowPlanEditItemViewer extends Viewer {
 							$stuff = $db->getRow($sql);
 							$item['scriptName'] = $stuff['name'];
 							$item['sm'] =
-								(String)((int)($stuff['length'] / 60));
+								str_pad(((int)($stuff['length'] / 60)),2,"0",STR_PAD_LEFT);
 							$item['ss'] =
-								(String)($stuff['length'] - ($item['sm'])*60);
+								str_pad(($stuff['length'] - ($item['sm'])*60),2,"0",STR_PAD_LEFT);
 							$item['scriptLen'] = $stuff['length'];
 							$item['niceScriptLength'] =
 								$item['sm'] . ":" . $item['ss'];
@@ -99,10 +99,10 @@ class DPSShowPlanEditItemViewer extends Viewer {
 				if($show['showdate'] > $date) {
 					$this->assign('done', 'f');
 				} else {
-						$this->assign('done', 't');
+					$this->assign('done', 't');
 				}
 				if($items[$i]['length'] < $items[$i]['scriptLen'] 
-					|| $items[$i]['length'] < ($items[$i]['audioLen']/44100)) {
+					|| $items[$i]['length'] < floor(($items[$i]['audioLen']/44100))) {
 					$this->assign('short', 't');
 				}
 				$this->assign('show', $show);

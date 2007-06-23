@@ -17,7 +17,7 @@ class DPSMp3PreviewViewer extends Viewer {
 		$trackid = $this->fieldData['trackID'];
 		if(is_numeric($trackid)) {
 			$query = "SELECT title, artist, md5, path FROM v_audio 
-				WHERE audio.id = " . $trackid;
+				WHERE id = " . $trackid;
 			$file = $db->getRow($query);
 			$filename = escapeshellarg($file['path']) . "/" .
 				escapeshellarg($file['md5'][0]) . "/" .

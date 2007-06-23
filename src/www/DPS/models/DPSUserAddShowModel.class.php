@@ -38,7 +38,7 @@ class DPSUserAddShowModel extends Model {
 			$newshow['name'] = "New Show";
 			$newshow['userid'] = $userID;
 			$newshow['creationdate'] = time();
-			$newshow['showdate'] = time() + 604800;
+			$newshow['showdate'] = mktime(date('H',time()),0,0) + 604800;
 			$newshow['completed'] = 'f';
 			$newshow['id'] = '#id#';
 			$showID = $db->insert('showplans',$newshow,true);

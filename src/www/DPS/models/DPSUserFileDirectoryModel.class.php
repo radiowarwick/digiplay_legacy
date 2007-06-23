@@ -64,6 +64,7 @@ class DPSUserFileDirectoryModel extends Model {
 						$audio['type'] = $typeID;
 						$where = "audioid = " . $id;
 						$db->delete('audiodir',$where,true);
+						$where = "id = " . $id;
 						$db->update('audio', $audio, $where, true);
 						$db->insert('audiodir',$audioDir,true);
 						$db->insert('audiousers',$audioUser,true);
@@ -97,11 +98,16 @@ class DPSUserFileDirectoryModel extends Model {
 				DPSUserFileDirectoryModel::processInvalid();
 			}
 		} else {
-			//error
-			BasicLogger::logMessage(
-				"Error recieved when uploading file: Unable to move file for processing'",
-				'error');
-			$this->errors['form'] = "Unable tomovefile for processing";
+			if($_FILES['ufile']['error'] == 1) {
+				//error
+				$this->errors['form'] = "File too large for upload";
+			} else {
+				//error
+				BasicLogger::logMessage(
+					"Error recieved when uploading file: Unable to move file for processing ({$_FILES['ufile']['error']}",
+					'error');
+				$this->errors['form'] = "Unable to movefile for processing";
+			}
 			DPSUserFileDirectoryModel::processInvalid();
 		}
 	}

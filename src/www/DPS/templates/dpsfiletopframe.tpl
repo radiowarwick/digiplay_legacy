@@ -186,9 +186,11 @@
 					document.cartsetcEdit = document.getElementById('cartsetcEdit');
 					document.cartsetcMove = document.getElementById('cartsetcMove');
 					document.cartsetcDelete = document.getElementById('cartsetcDelete');
+					document.scriptcView = document.getElementById('scriptcView');
 					document.scriptcEdit = document.getElementById('scriptcEdit');
 					document.scriptcMove = document.getElementById('scriptcMove');
 					document.scriptcDelete = document.getElementById('scriptcDelete');
+					document.showcView = document.getElementById('showcView');
 					document.showcEdit = document.getElementById('showcEdit');
 					document.showcMove = document.getElementById('showcMove');
 					document.showcDelete = document.getElementById('showcDelete');
@@ -200,8 +202,10 @@
 					document.cartsetEdit = document.getElementById('cartsetEdit');
 					document.cartsetMove = document.getElementById('cartsetMove');
 					document.cartsetDelete = document.getElementById('cartsetDelete');
+					document.scriptView = document.getElementById('scriptView');
 					document.scriptEdit = document.getElementById('scriptEdit');
 					document.scriptDelete = document.getElementById('scriptDelete');
+					document.showView = document.getElementById('showView');
 					document.showEdit = document.getElementById('showEdit');
 					document.showDelete = document.getElementById('showDelete');
 				} else if (browserType == "ie") {
@@ -223,8 +227,10 @@
 					document.cartsetcMove = document.all['cartsetcMove'];
 					document.cartsetcDelete = document.all['cartsetcDelete'];
 					document.scriptcEdit = document.all['scriptcEdit'];
+					document.scriptcView = document.all['scriptcView'];
 					document.scriptcMove = document.all['scriptcMove'];
 					document.scriptcDelete = document.all['scriptcDelete'];
+					document.showcView = document.all['showcView'];
 					document.showcEdit = document.all['showcEdit'];
 					document.showcMove = document.all['showcMove'];
 					document.showcDelete = document.all['showcDelete'];
@@ -236,9 +242,11 @@
 					document.cartsetEdit = document.all['cartsetEdit'];
 					document.cartsetMove = document.all['cartsetMove'];
 					document.cartsetDelete = document.all['cartsetDelete'];
-					document.scriptEdit = document.all['scriptMove'];
+					document.scriptView = document.all['scriptView'];
+					document.scriptEdit = document.all['scriptEdit'];
 					document.scriptDelete = document.all['scriptDelete'];
-					document.showEdit = document.all['showMove'];
+					document.showView = document.all['showView'];
+					document.showEdit = document.all['showEdit'];
 					document.showDelete = document.all['showDelete'];
 				} else {
 					document.folderLayer = document.layers['folderBar'];
@@ -258,9 +266,11 @@
 					document.cartsetcEdit = document.layers['cartsetcEdit'];
 					document.cartsetcMove = document.layers['cartsetcMove'];
 					document.cartsetcDelete = document.layers['cartsetcDelete'];
+					document.scriptcView = document.layers['scriptcView'];
 					document.scriptcEdit = document.layers['scriptcEdit'];
 					document.scriptcMove = document.layers['scriptcMove'];
 					document.scriptcDelete = document.layers['scriptcDelete'];
+					document.showcView = document.layers['showcView'];
 					document.showcEdit = document.layers['showcEdit'];
 					document.showcMove = document.layers['showcMove'];
 					document.showcDelete = document.layers['showcDelete'];
@@ -272,9 +282,11 @@
 					document.cartsetEdit = document.layers['cartsetEdit'];
 					document.cartsetMove = document.layers['cartsetMove'];
 					document.cartsetDelete = document.layers['cartsetDelete'];
-					document.scriptEdit = document.layers['scriptMove'];
+					document.scriptView = document.layers['scriptView'];
+					document.scriptEdit = document.layers['scriptEdit'];
 					document.scriptDelete = document.layers['scriptDelete'];
-					document.showEdit = document.layers['showMove'];
+					document.showView = document.layers['showView'];
+					document.showEdit = document.layers['showEdit'];
 					document.showDelete = document.layers['showDelete'];
 				}
 				if((String(val).substring(0,3)) == "jgl") {
@@ -408,14 +420,20 @@
 						document.scriptcMove.style.display = "none";
 						document.scriptcDelete.style.display = "none";
 					}
+
 					if((String(nodePerm).substring(1,2)) == "1") {
 						document.scriptcEdit.style.display = "block";
+						document.scriptcView.style.display = "none";
 					} else {
 						document.scriptcEdit.style.display = "none";
+						document.scriptcView.style.display = "block";
 					}
 					
 					//Update links
 					document.scriptEdit.href = 
+						siteRoot + "?" +
+						"templateID=45&scriptID=" + String(val).substring(3,String(val).length);
+					document.scriptView.href = 
 						siteRoot + "?" +
 						"templateID=45&scriptID=" + String(val).substring(3,String(val).length);
 					document.scriptDelete.href = 
@@ -444,12 +462,17 @@
 					}
 					if((String(nodePerm).substring(1,2)) == "1") {
 						document.showcEdit.style.display = "block";
+						document.showcView.style.display = "none";
 					} else {
 						document.showcEdit.style.display = "none";
+						document.showcView.style.display = "block";
 					}
 					
 					//Update links
 					document.showEdit.href = 
+						siteRoot + "?" +
+						"templateID=55&showID=" + String(val).substring(3,String(val).length);
+					document.showView.href = 
 						siteRoot + "?" +
 						"templateID=55&showID=" + String(val).substring(3,String(val).length);
 					document.showDelete.href = 

@@ -32,8 +32,10 @@
 		<textarea name="content" cols=70 rows=20>{$VIEWER.script.contents}</textarea><br />
 		<input type="Submit" name="Submit" value="Submit" />
 		{else}
-		Name: {$VIEWER.script.name}<br />
-		Length (mm:ss): {$VIEWER.script.m}:{$VIEWER.script.s}<br />
+		<b>Name:</b> {$VIEWER.script.name}<br />
+		<b>Length (mm:ss):</b> {$VIEWER.script.m}:{$VIEWER.script.s}<br />
+		<hr />
+		<div>{$VIEWER.script.contents}</div>
 		{/if}
 	</div>
 	<br style="&7b;clear:both;&7c;" />

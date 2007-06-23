@@ -20,14 +20,9 @@ class DPSUserEditScriptViewer extends Viewer {
 		$date = time();
 		if(is_numeric($scriptID)) {
 			$script_query = "SELECT bit_or(permissions) 
-				FROM (SELECT scriptsusers.permissions FROM scriptsusers WHERE 
-					scriptsusers.userid = " . $userID . " AND
-					scriptsusers.scriptid = " . $scriptID . "  
-						UNION( SELECT scriptsgroups.permissions 
-							FROM scriptsgroups, usersgroups 
-							WHERE usersgroups.userid = " . $userID . " AND 
-								scriptsgroups.groupid = usersgroups.groupid AND 
-								scriptsgroups.scriptid = " . $scriptID . ")) AS Q1"; 
+				FROM v_tree_script
+				WHERE id = $scriptID
+					AND userid = $userID";
 			$checkScripts = $db->getOne($script_query);
 			if(substr($checkScripts,0,1) == "1") {
 				if(substr($checkScripts,1,1) == "1") {

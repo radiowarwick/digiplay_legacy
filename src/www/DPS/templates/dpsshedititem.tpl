@@ -104,7 +104,7 @@
 			<th>Associated script</th>
 			<td>
 				{if $VIEWER.item.scriptid != ''}
-				{templateLink id="94" _scriptID=$VIEWER.item.scriptid text=$VIEWER.item.scriptName} - {$VIEWER.item.niceScriptLength} ({templateLink id=$VIEWER.templateID text="Remove" _formName="dpsUserDelScriptShow" _moduleName="DPS" _itemID=$VIEWER.item.id})
+				{templateLink id="45" _scriptID=$VIEWER.item.scriptid text=$VIEWER.item.scriptName} - {$VIEWER.item.niceScriptLength} ({templateLink id=$VIEWER.templateID text="Remove" _formName="dpsUserDelScriptShow" _moduleName="DPS" _itemID=$VIEWER.item.id})
 				{else}
 				None (Add: <a href="javascript:NewWindow('?templateID=46&itemID={$VIEWER.item.id}','DPS - Script','640','580');">Script</a>)
 				{/if}

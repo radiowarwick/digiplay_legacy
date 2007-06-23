@@ -79,6 +79,11 @@
 	</div>
 	
 	<div id="scriptBar" class="folderBar">
+		<div id="scriptcView" class="fileLink">
+			<a id="scriptView" href="{$CONFIG.general.siteRoot}?templateID={$VIEWER.templateID}">
+				<img src="DPS/images/scriptEdit.png" alt="View Script"> View Script
+			</a>
+		</div>
 		<div id="scriptcEdit" class="fileLink">
 			<a id="scriptEdit" href="{$CONFIG.general.siteRoot}?templateID={$VIEWER.templateID}">
 				<img src="DPS/images/scriptEdit.png" alt="Edit Script"> Edit Script
@@ -97,14 +102,19 @@
 	</div>
 	
 	<div id="showBar" class="folderBar">
+		<div id="showcView" class="fileLink">
+			<a id="showView" href="{$CONFIG.general.siteRoot}?templateID={$VIEWER.templateID}">
+				<img src="DPS/images/scriptEdit.png" alt="View Show"> View Show
+			</a>
+		</div>
 		<div id="showcEdit" class="fileLink">
 			<a id="showEdit" href="{$CONFIG.general.siteRoot}?templateID={$VIEWER.templateID}">
-				<img src="DPS/images/scriptEdit.png" alt="Edit Script"> Edit Show
+				<img src="DPS/images/scriptEdit.png" alt="Edit Show"> Edit Show
 			</a>
 		</div>
 		<div id="showcMove" class="fileLink">
 			<a id="showMove" href="javascript:moveShow();">
-				<img src="DPS/images/scriptMove.png" alt="Move Script"> Move Show
+				<img src="DPS/images/scriptMove.png" alt="Move Show"> Move Show
 			</a>
 		</div>
 		<div id="showcDelete" class="fileLink">

@@ -17,19 +17,12 @@ class DPSShowUserScriptViewer extends Viewer {
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
 		$date = time();
-		$script_query = "SELECT DISTINCT scripts.* 
-			FROM scripts, scriptsusers 
-			WHERE scripts.id = scriptsusers.scriptid AND 
-				scriptsusers.userid = " . $userID . " AND 
-				scriptsusers.permissions & B'" . $cfg['DPS']['fileR'] .
-					"' = '" . $cfg['DPS']['fileR'] . "'
-			UNION(SELECT scripts.* FROM scripts, scriptsgroups, usersgroups 
-				WHERE scripts.id = scriptsgroups.scriptid AND 
-				usersgroups.groupid = scriptsgroups.groupid AND 
-				usersgroups.userid = " . $userID . " AND 
-				scriptsgroups.permissions & B'" . $cfg['DPS']['fileR'] .
-					"' = '" . $cfg['DPS']['fileR'] . "')
-			ORDER BY name asc";
+		$script_query = "SELECT scripts.*, v_tree_script.permissions
+				FROM v_tree_script, scripts
+				WHERE v_tree_script.userid = $userID
+					AND v_tree_script.id = scripts.id
+					AND v_tree_script.permissions & B'{$cfg['DPS']['fileR']}' = '{$cfg['DPS']['fileR']}'
+			ORDER BY scripts.name asc";
 		$scripts = $db->getAll($script_query);
 		$scriptCount = count($scripts);
 		

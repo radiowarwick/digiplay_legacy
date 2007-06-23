@@ -47,7 +47,7 @@
 	<table class="showItems" width=100%>
 		<tr>
 			<th>Time</th><th>Element</th><th>Nature</th><th>Length</th><th>Note</th>
-			{if $VIEWER.done != 't' && $VIEWER.show.completed != 't'}
+			{if $VIEWER.write == "t" && $VIEWER.done != 't' && $VIEWER.show.completed != 't'}
 			<th></th>
 			{/if}
 		</tr>
@@ -80,7 +80,7 @@
 			<td>
 				{$item.comment}
 			</td>
-			{if $VIEWER.done != 't' && $VIEWER.show.completed != 't'}
+			{if $VIEWER.write == "t" && $VIEWER.done != 't' && $VIEWER.show.completed != 't'}
 			<td>
 				{templateLink id="58" text="Edit" _itemID=$item.id}<br>{templateLink id=$VIEWER.templateID text="Erase" _itemID=$item.id _formName="dpsUserDelShowItem" _moduleName="DPS" _showID=$VIEWER.show.id}
 			</td>

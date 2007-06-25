@@ -411,7 +411,7 @@ INSERT INTO formfields VALUES (72, 'dpsUserEditScript', 'name', 10, 'DPS');
 INSERT INTO formfields VALUES (73, 'dpsUserScriptShow', 'itemID', 36, 'DPS');
 INSERT INTO formfields VALUES (74, 'dpsUserDelScriptShow', 'itemID', 36, 'DPS');
 INSERT INTO formfields VALUES (75, 'dpsUserScriptShow', 'scriptID', 12, 'DPS');
-INSERT INTO formfields VALUES (76, 'dpsUserDelAudio', 'audioID', 9, 'DPS');
+INSERT INTO formfields VALUES (76, 'dpsUserDelAudio', 'trackID', 9, 'DPS');
 INSERT INTO formfields VALUES (77, 'dpsUserMoveAudioForm', 'audioID', 24, 'DPS');
 INSERT INTO formfields VALUES (78, 'dpsUserMoveAudioForm', 'newParent', 2, 'DPS');
 INSERT INTO formfields VALUES (79, 'dpsUserMoveScriptForm', 'newParent', 2, 'DPS');
@@ -460,7 +460,7 @@ INSERT INTO templates VALUES (33, 'dpsstudiofront.tpl', 'DPSStudioFrontViewer', 
 INSERT INTO templates VALUES (34, 'dpsshowfront.tpl', 'DPSShowFrontViewer', 19, 'DPS');
 INSERT INTO templates VALUES (35, 'dpssaddplaylist.tpl', 'DPSSueAddPlaylistViewer', 24, 'DPS');
 INSERT INTO templates VALUES (36, 'dpssstats.tpl', 'DPSSueStatsViewer', 25, 'DPS');
-INSERT INTO templates VALUES (37, 'dpstedit.tpl', 'DPSTrackEditViewer', 27, 'DPS');
+INSERT INTO templates VALUES (37, 'dpstedit.tpl', 'DPSTrackEditViewer', 19, 'DPS');
 INSERT INTO templates VALUES (38, 'dpstcensor.tpl', 'DPSTrackCensorViewer', 19, 'DPS');
 INSERT INTO templates VALUES (39, 'dpsstplaylist.tpl', 'DPSStudioPlaylistViewer', 33, 'DPS');
 INSERT INTO templates VALUES (40, 'dpssplaylist.tpl', 'DPSSuePlaylistViewer', 26, 'DPS');
@@ -491,4 +491,5 @@ INSERT INTO templates VALUES (64, 'editorForm.tpl', 'EditorFormViewer', 18, 'CMS
 INSERT INTO templates VALUES (65, 'dpsempty.tpl', 'DPSUserSubFileViewer', 18, 'DPS');
 INSERT INTO templates VALUES (66, 'dpsusershowmove.tpl', 'DPSUserShowMoveViewer', 19, 'DPS');
 INSERT INTO templates VALUES (67, 'blank.tpl', 'AuthSubRealmViewer', 1, 'Auth');
-ALTER SEQUENCE templates_templateid_seq RESTART 68;
+INSERT INTO templates VALUES (68, 'dpsuserfileedit.tpl', 'DPSUserDirEditViewer', 19, 'DPS');
+ALTER SEQUENCE templates_templateid_seq RESTART 69;

@@ -269,6 +269,84 @@ AS
     HAVING bit_or(permissions) != '00000000'
 ;
 
+-- v_tree_advert_explicit
+-- Shows the explicit permissions defined on each advert
+--
+CREATE OR REPLACE VIEW v_tree_advert_explicit
+    (id,name,parent,userid,username,permissions,causetype,cause)
+AS
+    SELECT  audio.id AS id,
+            audio.title AS name,
+            audiodir.dirid AS parent,
+            users.id AS userid,
+            users.username AS username,
+            audiousers.permissions AS permissions,
+            'user'::text AS causetype,
+            users.id AS cause
+    FROM    audio, audiodir, audiousers, users
+    WHERE   (audiodir.audioid = audio.id)
+        AND (audiousers.audioid = audio.id)
+        AND (audiousers.userid = users.id)
+        AND (audio.type = 3)
+
+    UNION
+
+    SELECT  audio.id AS id,
+            audio.title AS name,
+            audiodir.dirid AS parent,
+            users.id AS userid,
+            users.username AS username,
+            audiogroups.permissions AS permissions,
+            'group'::text AS causetype,
+            groups.id AS cause
+    FROM    audio, audiodir, audiogroups, usersgroups, users, groups
+    WHERE   (audiodir.audioid = audio.id)
+        AND (audiogroups.audioid = audio.id)
+        AND (audiogroups.groupid = groups.id)
+        AND (usersgroups.groupid = groups.id)
+        AND (usersgroups.userid = users.id)
+        AND (audio.type = 3)
+ORDER BY id;
+
+--
+-- v_tree_advert_inherited
+-- Shows the inherited user and group permissions defined on a jingle
+--
+CREATE OR REPLACE VIEW v_tree_advert_inherited
+    (id,name,parent,userid,username,permissions,causetype,cause)
+AS
+    SELECT  audio.id,
+            audio.title,
+            audiodir.dirid,
+            users.id,
+            users.username,
+            v_tree_getInherited(audiodir.dirid,users.id) AS permissions,
+            'inherited'::text AS causetype,
+            users.id AS cause
+    FROM    (audio inner join audiodir ON (audio.id = audiodir.audioid))
+             cross join users
+    WHERE   v_tree_getInherited(audiodir.dirid,users.id) != '00000000'
+        AND (audiodir.inherit = 't')
+        AND (audio.type = 3)
+;
+
+--
+-- v_tree_advert
+-- Shows the overall permissions on an advert
+--
+CREATE OR REPLACE VIEW v_tree_advert
+    (id,name,parent,userid,username,permissions)
+AS
+    SELECT id,name,parent,userid,username,bit_or(permissions) AS permissions
+    FROM (
+        SELECT * FROM v_tree_advert_explicit
+        UNION
+        SELECT * FROM v_tree_advert_inherited
+    ) AS Q1
+    GROUP BY id,name,parent,userid,username
+    HAVING bit_or(permissions) != '00000000'
+;
+
 --
 -- v_tree_prerec_explicit
 -- Shows the explicit permissions defined on prerec objects
@@ -349,83 +427,27 @@ AS
 ;
 
 --
--- v_tree_advert_explicit
--- Shows the explicit permissions defined on each advert
 --
-CREATE OR REPLACE VIEW v_tree_advert_explicit
-    (id,name,parent,userid,username,permissions,causetype,cause)
+-- v_tree_audio
+-- Shows the overall permissions on audio objects for each user
+--
+CREATE OR REPLACE VIEW v_tree_audio
+    (itemtype,id,name,parent,userid,username,permissions) 
 AS
-    SELECT  audio.id AS id,
-            audio.title AS name,
-            audiodir.dirid AS parent,
-            users.id AS userid,
-            users.username AS username,
-            audiousers.permissions AS permissions,
-            'user'::text AS causetype,
-            users.id AS cause
-    FROM    audio, audiodir, audiousers, users
-    WHERE   (audiodir.audioid = audio.id)
-        AND (audiousers.audioid = audio.id)
-        AND (audiousers.userid = users.id)
-        AND (audio.type = 3)
-
-    UNION
-
-    SELECT  audio.id AS id,
-            audio.title AS name,
-            audiodir.dirid AS parent,
-            users.id AS userid,
-            users.username AS username,
-            audiogroups.permissions AS permissions,
-            'group'::text AS causetype,
-            groups.id AS cause
-    FROM    audio, audiodir, audiogroups, usersgroups, users, groups
-    WHERE   (audiodir.audioid = audio.id)
-        AND (audiogroups.audioid = audio.id)
-        AND (audiogroups.groupid = groups.id)
-        AND (usersgroups.groupid = groups.id)
-        AND (usersgroups.userid = users.id)
-        AND (audio.type = 3)
-ORDER BY id;
-
---
--- v_tree_advert_inherited
--- Shows the inherited user and group permissions defined on a jingle
---
-CREATE OR REPLACE VIEW v_tree_advert_inherited
-    (id,name,parent,userid,username,permissions,causetype,cause)
-AS
-    SELECT  audio.id,
-            audio.title,
-            audiodir.dirid,
-            users.id,
-            users.username,
-            v_tree_getInherited(audiodir.dirid,users.id) AS permissions,
-            'inherited'::text AS causetype,
-            users.id AS cause
-    FROM    (audio inner join audiodir ON (audio.id = audiodir.audioid))
-             cross join users
-    WHERE   v_tree_getInherited(audiodir.dirid,users.id) != '00000000'
-        AND (audiodir.inherit = 't')
-        AND (audio.type = 3)
-;
-
---
--- v_tree_advert
--- Shows the overall permissions on an advert
---
-CREATE OR REPLACE VIEW v_tree_advert
-    (id,name,parent,userid,username,permissions)
-AS
-    SELECT id,name,parent,userid,username,bit_or(permissions) AS permissions
+    SELECT itemtype, id, name, parent, userid, username,
+            bit_or(permissions) AS permissions
     FROM (
-        SELECT * FROM v_tree_advert_explicit
+        SELECT 'music' AS itemtype, v_tree_music.* FROM v_tree_music
         UNION
-        SELECT * FROM v_tree_advert_inherited
+        SELECT 'jingle' AS itemtype, v_tree_jingle.* FROM v_tree_jingle
+        UNION
+        SELECT 'prerec' AS itemtype, v_tree_prerec.* FROM v_tree_prerec
+        UNION
+        SELECT 'advert' AS itemtype, v_tree_advert.* FROM v_tree_advert
     ) AS Q1
-    GROUP BY id,name,parent,userid,username
-    HAVING bit_or(permissions) != '00000000'
-;
+GROUP BY itemtype, id, name, parent, userid, username
+HAVING bit_or(permissions) != '00000000'
+ORDER BY itemtype, name;
 
 --
 -- v_tree_cartset_explicit

@@ -317,7 +317,7 @@
 						siteRoot +
 						"?templateID=" + templateID + "&formName=dpsUserDelAudio&" + 
 						"moduleName=DPS&" + 
-						"audioID=" + String(val).substring(3,String(val).length);
+						"trackID=" + String(val).substring(3,String(val).length);
 			
 				} else if ((String(val).substring(0,3)) == "dir") {
 					//show&hide sections

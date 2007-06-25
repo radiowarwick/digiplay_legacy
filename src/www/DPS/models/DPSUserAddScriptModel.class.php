@@ -28,11 +28,16 @@ class DPSUserAddScriptModel extends Model {
 				$newdir['parent'] = $cfg['DPS']['userDirectoryID'];
 				$newdir['id'] = '#id#';
 				$newdir['notes'] = $userName . "'s home directory";
+				$newdir['inherit'] = 'f';
 				$dirID = $db->insert('dir',$newdir,true);
 				$newperm['dirid'] = $dirID;
 				$newperm['userid'] = $userID;
 				$newperm['permissions'] = 'B' . $cfg['DPS']['fileRW'] . 'B';
 				$db->insert('dirusers',$newperm,false); //for binary insert
+				$sql_gperm['dirid'] = $dirID;
+				$sql_gperm['permissions'] = 'B' . $cfg['DPS']['fileRWO'] . 'B';
+				$sql_gperm['groupid'] = $cfg['Auth']['AdminGroup'];
+				$db->insert('dirgroups',$sql_gperm,false);
 			}
 		
 		$newscript['name'] = "New Script";
@@ -45,6 +50,10 @@ class DPSUserAddScriptModel extends Model {
 		$newsperm['userid'] = $userID;
 		$newsperm['permissions'] = 'B' . $cfg['DPS']['fileRWO'] . 'B'; //own
 		$db->insert('scriptsusers',$newsperm,false); //for binary insert
+		$gperm['groupid'] = $cfg['Auth']['AdminGroup'];
+		$gperm['scriptid'] = $scriptID;
+		$gperm['permissions'] = 'B' . $cfg['DPS']['fileRWO'] . 'B';
+		$db->insert('scriptsgroups',$gperm,false);
 		$scriptdir['scriptid'] = $scriptID;
 		$scriptdir['dirid'] = $dirID;
 		$scriptdir['linktype'] = 0;

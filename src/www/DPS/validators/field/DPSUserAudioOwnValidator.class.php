@@ -53,6 +53,16 @@ class DPSUserAudioOwnValidator extends ValidatorRule {
 			return true;
 		}
 		
+		// Check for if this is a piece of music
+		$sql = "SELECT COUNT(*) FROM v_tree_prerec
+			WHERE userid = $userID
+			AND id = $audioID
+			AND permissions & B'" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
+		$check = $db->getOne($sql);
+		if ($check > 0) {
+			return true;
+		}
+		
 		return "You do not own this track";
 	}
 }

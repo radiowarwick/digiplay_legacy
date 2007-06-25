@@ -53,6 +53,16 @@ class DPSUserAudioEditValidator extends ValidatorRule {
 			return true;
 		}
 		
+		// Check for if this is a piece of music
+		$sql = "SELECT COUNT(*) FROM v_tree_prerec
+			WHERE userid = $userID
+			AND id = $audioID
+			AND permissions & B'" . $cfg['DPS']['fileW'] . "' = '" . $cfg['DPS']['fileW'] . "'";
+		$check = $db->getOne($sql);
+		if ($check > 0) {
+			return true;
+		}
+		
 		// If it reaches here then no permissions are present
 		return "You do not have write permission on that track";
 	}

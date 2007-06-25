@@ -23,7 +23,11 @@ class DPSCreateDirectoryModel extends Model {
 			$sql_perm['permissions'] = 'B' . $cfg['DPS']['fileRWO'] . 'B';
 			$auth = Auth::getInstance();
 			$sql_perm['userid'] = $auth->getUserID();
-			$id = $db->insert('dirusers',$sql_perm,false);
+			$db->insert('dirusers',$sql_perm,false);
+			$sql_gperm['dirid'] = $id;
+			$sql_gperm['permissions'] = 'B' . $cfg['DPS']['fileRWO'] . 'B';
+			$sql_gperm['groupid'] = $cfg['Auth']['AdminGroup'];
+			$db->insert('dirgroups',$sql_gperm,false);
 		}
 	}
 	

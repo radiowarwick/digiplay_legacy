@@ -28,11 +28,16 @@ class DPSUserAddShowModel extends Model {
 				$newdir['parent'] = $cfg['DPS']['userDirectoryID'];
 				$newdir['id'] = '#id#';
 				$newdir['notes'] = $userName . "'s home directory";
+				$newdir['inherit'] = 'f';
 				$dirID = $db->insert('dir',$newdir,true);
 				$newperm['dirid'] = $dirID;
 				$newperm['userid'] = $userID;
 				$newperm['permissions'] = 'B' . $cfg['DPS']['fileRW'] . 'B';
 				$db->insert('dirusers',$newperm,false); //for binary
+				$sql_gperm['dirid'] = $dirID;
+				$sql_gperm['permissions'] = 'B' . $cfg['DPS']['fileRWO'] . 'B';
+				$sql_gperm['groupid'] = $cfg['Auth']['AdminGroup'];
+				$db->insert('dirgroups',$sql_gperm,false);
 			}
 			
 			$newshow['name'] = "New Show";
@@ -46,6 +51,10 @@ class DPSUserAddShowModel extends Model {
 			$newsperm['userid'] = $userID;
 			$newsperm['permissions'] = 'B' . $cfg['DPS']['fileRWO'] . 'B';
 			$db->insert('showplanusers',$newsperm,false); //for binary
+			$gperm['groupid'] = $cfg['Auth']['AdminGroup'];
+			$gperm['showplanid'] = $showID;
+			$gperm['permissions'] = 'B' . $cfg['DPS']['fileRWO'] . 'B';
+			$db->insert('showplangroups',$gperm,false);
 			$showdir['showplanid'] = $showID;
 			$showdir['dirid'] = $dirID;
 			$showdir['linktype'] = 0;

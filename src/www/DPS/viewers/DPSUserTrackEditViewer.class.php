@@ -19,18 +19,23 @@ class DPSUserTrackEditViewer extends Viewer {
 		$userID = $auth->getUserID();
 
 		//As there is no general audio view
-		$sql = "SELECT count(*) FROM audiousers 
-			WHERE audioid = " . pg_escape_string($trackID) . " 
+		$sql = "SELECT count(*) FROM v_tree_jingle 
+			WHERE id = " . pg_escape_string($trackID) . " 
 				AND userid = " . $userID . " 
 				AND permissions & B'" . $cfg['DPS']['fileW'] . "' = '" .
 					$cfg['DPS']['fileW'] . "'";
 		$check = $db->getOne($sql);
-		$sql = "SELECT count(*) FROM audiogroups, usersgroups 
-			WHERE audiogroups.audioid = " . pg_escape_string($trackID) . " 
-				AND usersgroups.userid = " . $userID . " 
-				AND usersgroups.groupid = audiogroups.groupid 
-				AND audiogroups.permissions & B'" . $cfg['DPS']['fileW'] .
-					"' = '" . $cfg['DPS']['fileW'] . "'";
+		$sql = "SELECT count(*) FROM v_tree_advert 
+			WHERE id = " . pg_escape_string($trackID) . " 
+				AND userid = " . $userID . " 
+				AND permissions & B'" . $cfg['DPS']['fileW'] . "' = '" .
+					$cfg['DPS']['fileW'] . "'";
+		$check = $check + $db->getOne($sql);
+		$sql = "SELECT count(*) FROM v_tree_prerec 
+			WHERE id = " . pg_escape_string($trackID) . " 
+				AND userid = " . $userID . " 
+				AND permissions & B'" . $cfg['DPS']['fileW'] . "' = '" .
+					$cfg['DPS']['fileW'] . "'";
 		$check = $check + $db->getOne($sql);
 		if($check < 1) {
 			$this->assign('authError','t');
@@ -63,7 +68,7 @@ class DPSUserTrackEditViewer extends Viewer {
 			$keywordNum = $i;
 		
 			$samples = $trackDetails['length_smpl'];
-			$trackDetails['length'] = $tracksLen = round((($samples/44100)/60)) .
+			$trackDetails['length'] = $tracksLen = floor((($samples/44100)/60)) .
 				"mins " . (($samples/44100)%60) . "secs.";
 		
 			$sql = "SELECT * from audiocomments 

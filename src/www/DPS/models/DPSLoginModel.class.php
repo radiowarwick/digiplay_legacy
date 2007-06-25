@@ -38,11 +38,16 @@ class DPSLoginModel extends Model {
 				$newdir['parent'] = $cfg['DPS']['userDirectoryID'];
 				$newdir['id'] = '#id#';
 				$newdir['notes'] = $userName . "'s home directory";
+				$newdir['inherit'] = 'f';
 				$dirID = $db->insert('dir',$newdir,true);
 				$newperm['dirid'] = $dirID;
 				$newperm['userid'] = $userID;
 				$newperm['permissions'] = 'B' . $cfg['DPS']['fileRW'] . 'B';
 				$db->insert('dirusers',$newperm,false); //false for binary insert
+				$sql_gperm['dirid'] = $dirID;
+				$sql_gperm['permissions'] = 'B' . $cfg['DPS']['fileRWO'] . 'B';
+				$sql_gperm['groupid'] = $cfg['Auth']['AdminGroup'];
+				$db->insert('dirgroups',$sql_gperm,false);
 			}
 		if(is_null($userlastlogin) && !is_null($usercurlogin)){
 		$cartset = array();

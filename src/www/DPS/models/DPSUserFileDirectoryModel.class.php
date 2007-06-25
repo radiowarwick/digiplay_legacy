@@ -24,20 +24,22 @@ class DPSUserFileDirectoryModel extends Model {
 		
 		if (move_uploaded_file($_FILES['ufile']['tmp_name'], $uploadfile)) {
 			if($this->fieldData['type'] == "advert") {
-				$type="advert";
+				$type="2";
 				$typeID = $cfg['DPS']['AdvertTypeID'];
+				$package = $auth->getUser();
 			} else if($this->fieldData['type'] == "pre-rec") {
-				$type="pre-rec";
+				$type="3";
 				$typeID = $cfg['DPS']['PrerecTypeID'];
 			} else {
-				$type="jingle";
+				$type="1";
 				$typeID = $cfg['DPS']['JingleTypeID'];
+				$package = $auth->getUser();
 			}
 			if($handle = fopen($uploadfile . ".info", "w")) {
 				$info = "uid: \n"
 				."title: " . $this->fieldData['name'] . "\n"
 				."artists: \n"
-				."album: \n"
+				."album: $package\n"
 				."tracknum: \n"
 				."genres: \n"
 				."released: \n"
@@ -68,6 +70,10 @@ class DPSUserFileDirectoryModel extends Model {
 						$db->update('audio', $audio, $where, true);
 						$db->insert('audiodir',$audioDir,true);
 						$db->insert('audiousers',$audioUser,true);
+						$gperm['groupid'] = $cfg['Auth']['AdminGroup'];
+						$gperm['audioid'] = $id;
+						$gperm['permissions'] = 'B' . $cfg['DPS']['fileRWO'] . 'B';
+						$db->insert('audiogroups',$gperm,false);
 					} else {
 						//error
 						BasicLogger::logMessage(

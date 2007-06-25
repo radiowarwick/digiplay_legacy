@@ -51,18 +51,17 @@ class DPSUserUpdateCartwallModel extends Model {
 			
 			$auth = Auth::getInstance();
 			$userID = $auth->getUserID();
-			$sql = "SEELCT COUNT(*) FROM v_tree_cartset
-				WHERE userid = $userID
-				AND id = cartwalls.cartsetid
+			$sql = "SELECT COUNT(*) FROM v_tree_cartset, cartwalls
+				WHERE v_tree_cartset.userid = $userID
+				AND v_tree_cartset.id = cartwalls.cartsetid
 				AND cartwalls.id = $cartwallID
-				AND permissions & B ' " . $cfg['DPS']['fileO'] . "
-				' = '" . $cfg['DPS']['fileO'] . "'";
+				AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
 			$check = $db->getOne($sql);
 			if($check > 0) {
 				$sql = "SELECT cartsetid FROM cartwalls 
 					WHERE id = $cartwallID LIMIT 1";
 				$cartsetID = $db->getOne($sql);
-				$where = "cartsetid = $cartsetID #
+				$where = "cartsetid = $cartsetID 
 					AND groupid = " . $cfg['DPS']['allusersgroupid'];
 				$db->delete('cartsetsgroups',$where,true);
 				$sql = "SELECT COUNT(*) FROM cartsaudio, cartwalls
@@ -71,8 +70,7 @@ class DPSUserUpdateCartwallModel extends Model {
 				$cartcount = $db->getOne($sql);
 				$sql = "SELECT COUNT(*) FROM cartsaudio, cartwalls, audiodir, dirgroups
 					WHERE audiodir.dirid = dirgroups.dirid
-					AND dirgroups.permissions & B ' " . $cfg['DPS']['fileR'] . "
-					' = '" . $cfg['DPS']['fileR'] . "'
+					AND dirgroups.permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "'
 					AND cartsaudio.audioid = audiodir.audioid
 					AND cartsaudio.cartwallid = cartwalls.id
 					AND cartwalls.cartsetid = $cartsetID";
@@ -83,19 +81,19 @@ class DPSUserUpdateCartwallModel extends Model {
 						$perm = array();
 						$perm['groupid'] = $cfg['DPS']['allusersgroupid'];
 						$perm['cartsetid'] = $cartsetID;
-						$perm['permissions'] = 'rw';
+						$perm['permissions'] = $cfg['DPS']['fileRW'];
 						$db->insert('cartsetsgroups',$perm,true);
 					}elseif($this->fieldData['writeAll'] == "on") {
 						$perm = array();
 						$perm['groupid'] = $cfg['DPS']['allusersgroupid'];
 						$perm['cartsetid'] = $cartsetID;
-						$perm['permissions'] = 'rw';
+						$perm['permissions'] = $cfg['DPS']['fileRW'];
 						$db->insert('cartsetsgroups',$perm,true);
 					}elseif($this->fieldData['readAll'] == "on") {
 						$perm = array();
 						$perm['groupid'] = $cfg['DPS']['allusersgroupid'];
 						$perm['cartsetid'] = $cartsetID;
-						$perm['permissions'] = 'r';
+						$perm['permissions'] = $cfg['DPS']['fileR'];
 						$db->insert('cartsetsgroups',$perm,true);
 					}
 				} else {

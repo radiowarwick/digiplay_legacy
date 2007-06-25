@@ -29,11 +29,16 @@ class DPSStationAddCartsetModel extends Model {
 			$newdir['parent'] = $cfg['DPS']['userDirectoryID'];
 			$newdir['id'] = '#id#';
 			$newdir['notes'] = $userName . "'s home directory";
+			$newdir['inherit'] = 'f';
 			$dirID = $db->insert('dir',$newdir,true);
 			$newperm['dirid'] = $dirID;
 			$newperm['userid'] = $cfg['DPS']['systemUserID'];
 			$newperm['permissions'] = 'B' . $cfg['DPS']['fileRW'] . 'B';
 			$db->insert('dirusers',$newperm,false); //for binary insert
+			$sql_gperm['dirid'] = $dirID;
+			$sql_gperm['permissions'] = 'B' . $cfg['DPS']['fileRWO'] . 'B';
+			$sql_gperm['groupid'] = $cfg['Auth']['AdminGroup'];
+			$db->insert('dirgroups',$sql_gperm,false);
 		}
 		$name = pg_escape_string($this->fieldData['name']);
 		$desc = pg_escape_string($this->fieldData['desc']);
@@ -51,6 +56,10 @@ class DPSStationAddCartsetModel extends Model {
 			$gperm['groupid'] = $cfg['DPS']['allusersgroupid'];
 			$gperm['cartsetid'] = $cartsetID;
 			$gperm['permissions'] = 'B' . $cfg['DPS']['fileR'] . 'B';
+			$db->insert('cartsetsgroups',$gperm,false);
+			$gperm['groupid'] = $cfg['Auth']['AdminGroup'];
+			$gperm['cartsetid'] = $cartsetID;
+			$gperm['permissions'] = 'B' . $cfg['DPS']['fileRWO'] . 'B';
 			$db->insert('cartsetsgroups',$gperm,false);
 			$dir['cartsetid'] = $cartsetID;
 			$dir['dirid'] = $dirID;

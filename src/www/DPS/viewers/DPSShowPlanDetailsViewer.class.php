@@ -19,22 +19,23 @@ class DPSShowPlanDetailsViewer extends Viewer {
 		$userID = $auth->getUserID();
 		$date = time();
 		if(is_numeric($showID)) {
-			$show_query = "SELECT bit_or(permissions) FROM(
-				SELECT showplanusers.permissions FROM showplanusers 
-				WHERE showplanusers.showplanid =  $showID 
-				AND showplanusers.userid = $userID 
-				UNION (SELECT showplangroups.permissions
-				FROM showplangroups, usersgroups 
-				WHERE showplangroups.groupid = usersgroups.groupid
-				AND showplangroups.showplanid = $showID
-				AND usersgroups.userid =  $userID)) as Q1"; 
-				$checkShows = $db->getOne($show_query);
+			$show_query = "SELECT BIT_OR(v_tree_showplan.permissions) 
+			FROM v_tree_showplan 
+			WHERE v_tree_showplan.userid = $userID AND 
+				v_tree_showplan.id = $showID";
+			$checkShows = $db->getOne($show_query);
 			if(substr($checkShows,0,1) == "1") { //READ PERM
 				if(substr($checkShows,1,1) == "1") {
 					$this->assign('write','t');
 				} else {
 					$this->assign('write','f');
 				}
+				$sql = "SELECT BIT_OR(v_tree_dir.permissions) 
+					FROM v_tree_showplan, v_tree_dir 
+					WHERE v_tree_showplan.id = $showID
+						AND v_tree_showplan.parent = v_tree_dir.id
+						AND v_tree_dir.userid = $userID";
+				$checkShows = $db->getOne($show_query);
 				if(substr($checkShows,2,1) == "1") {
 					$this->assign('perms','t');
 				} else {

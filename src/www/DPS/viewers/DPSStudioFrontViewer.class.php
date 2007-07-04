@@ -19,7 +19,7 @@ class DPSStudioFrontViewer extends Viewer {
 			array(3,21,33), $userID));
 		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
 		$this->assign('studioAccess',AuthUtil::getDetailedUserrealmAccess(
-			array(3,21,34), $userID));
+			array(3,21,35), $userID));
 	}
 }
 ?>

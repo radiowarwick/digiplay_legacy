@@ -27,7 +27,6 @@
 			{$ERRORS.dpsUserEditScript.secs}<br />
 		{/if}
 		Length (mm:ss): <input type=text name="mins" maxlength=2 size=2 value="{$VIEWER.script.m}" />:<input type=text name="secs" maxlength=2 size=2 value="{$VIEWER.script.s}" /><br />
-		Producer: {$VIEWER.script.niceProducer}<br />
 		<hr>
 		<textarea name="content" cols=70 rows=20>{$VIEWER.script.contents}</textarea><br />
 		<input type="Submit" name="Submit" value="Submit" />

@@ -26,11 +26,17 @@ class DPSShowUserScriptViewer extends Viewer {
 		$scripts = $db->getAll($script_query);
 		$scriptCount = count($scripts);
 		
-		foreach($scripts as &$script) { 
+		foreach($scripts as &$script) {
 			$script['niceCreateDate'] = date("d/m/y",$script['creationdate']);
 			$script['niceCreateTime'] = date("g a",$script['creationdate']);
 			$script['text'] = $script['name'] . " - " .
-				$script['niceCreateDate'] . " - " . $script['niceCreateTime'];
+			$script['niceCreateDate'] . " - " . $script['niceCreateTime'];
+			$sql = "SELECT BIT_OR(v_tree_dir.permissions) 
+				FROM v_tree_script, v_tree_dir 
+				WHERE v_tree_script.id = {$script['id']}
+					AND v_tree_script.parent = v_tree_dir.id
+					AND v_tree_dir.userid = $userID";
+			$script['parentperm'] = $db->getOne($sql);
 		}
 		
 		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));

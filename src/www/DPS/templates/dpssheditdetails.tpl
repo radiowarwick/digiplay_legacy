@@ -42,7 +42,6 @@
 			{$ERRORS.dpsUserEditShow.mins}<br />
 		{/if}
 		Airing Time(24h): <input type=text name="hours" maxlength=2 size=2 value="{$VIEWER.show.h}" />:<input type=text name="mins" maxlength=2 size=2 value="{$VIEWER.show.m}" /><br />
-		Producer: {$VIEWER.show.niceProducer}<br />
 		<!--<b>Participants: </b> People, Many many people<br />
 		<a href="">Edit details and participants</a>-->
 		<input type="Submit" name="Submit" value="Submit" />

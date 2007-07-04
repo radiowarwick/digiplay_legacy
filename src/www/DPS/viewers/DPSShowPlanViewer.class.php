@@ -17,34 +17,22 @@ class DPSShowPlanViewer extends Viewer {
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
 		$date = time();
-		$show_query = "SELECT DISTINCT showplans.* FROM showplans, showplanusers 
-			WHERE showplans.id = showplanusers.showplanid AND 
-			showplanusers.userid = " . $userID . " AND 
-			showplans.showdate >= " . $date . " AND 
-			showplanusers.permissions & B'" . $cfg['DPS']['fileR'] .
-				"' = '" . $cfg['DPS']['fileR'] . "' 
-			UNION(SELECT showplans.* FROM showplans, showplangroups, usersgroups 
-				WHERE showplans.id = showplangroups.showplanid AND 
-				usersgroups.userid = " . $userID . " AND 
-				usersgroups.groupid = showplangroups.groupid AND	 
-				showplans.showdate >= " . $date . " AND
-				showplangroups.permissions & B'" . $cfg['DPS']['fileR'] .
-					"' = '" . $cfg['DPS']['fileR'] . "')  
+		$show_query = "SELECT DISTINCT showplans.*, v_tree_showplan.permissions 
+			FROM showplans, v_tree_showplan 
+			WHERE showplans.id = v_tree_showplan.id AND 
+				v_tree_showplan.userid = $userID AND 
+				showplans.showdate >= " . $date . " AND 
+				v_tree_showplan.permissions & B'" . $cfg['DPS']['fileR'] .
+					"' = '" . $cfg['DPS']['fileR'] . "' 
 			ORDER BY name asc";
 		$partShows = $db->getAll($show_query);
-		$show_query = "SELECT DISTINCT showplans.* FROM showplans, showplanusers 
-		WHERE showplans.id = showplanusers.showplanid AND 
-			showplanusers.userid = " . $userID . " AND 
-			showplans.showdate < " . $date . " AND 
-			showplanusers.permissions & B'" . $cfg['DPS']['fileR'] .
-				"' = '" . $cfg['DPS']['fileR'] . "' 
-			UNION(SELECT showplans.* FROM showplans, showplangroups, usersgroups 
-				WHERE showplans.id = showplangroups.showplanid AND 
-				usersgroups.userid = " . $userID . " AND 
-				usersgroups.groupid = showplangroups.groupid AND	 
-				showplans.showdate < " . $date . " AND
-				showplangroups.permissions & B'" . $cfg['DPS']['fileR'] .
-					"' = '" . $cfg['DPS']['fileR'] . "')  
+		$show_query = "SELECT DISTINCT showplans.*, v_tree_showplan.permissions 
+			FROM showplans, v_tree_showplan 
+			WHERE showplans.id = v_tree_showplan.id AND 
+				v_tree_showplan.userid = $userID AND 
+				showplans.showdate < " . $date . " AND 
+				v_tree_showplan.permissions & B'" . $cfg['DPS']['fileR'] .
+					"' = '" . $cfg['DPS']['fileR'] . "' 
 			ORDER BY name asc";
 		$doneShows = $db->getAll($show_query);
 
@@ -55,6 +43,12 @@ class DPSShowPlanViewer extends Viewer {
 			$show['niceCreateTime'] = date("H:i",$show['creationdate']);
 			$show['text'] = $show['name'] . " - " . $show['niceAirDate'] .
 				" - " . $show['niceAirTime'];
+			$sql = "SELECT BIT_OR(v_tree_dir.permissions) 
+				FROM v_tree_showplan, v_tree_dir 
+				WHERE v_tree_showplan.id = {$show['id']}
+					AND v_tree_showplan.parent = v_tree_dir.id
+					AND v_tree_dir.userid = $userID";
+			$show['parentperm'] = $db->getOne($sql);
 		}
 		foreach($doneShows as &$show) { 
 			$show['niceAirDate'] = date("d/m/y",$show['showdate']);
@@ -63,6 +57,12 @@ class DPSShowPlanViewer extends Viewer {
 			$show['niceCreateTime'] = date("H:i",$show['creationdate']);
 			$show['text'] = $show['name'] . " - " . $show['niceAirDate'] .
 				" - " . $show['niceAirTime'];
+			$sql = "SELECT BIT_OR(v_tree_dir.permissions) 
+				FROM v_tree_showplan, v_tree_dir 
+				WHERE v_tree_showplan.id = {$show['id']}
+					AND v_tree_showplan.parent = v_tree_dir.id
+					AND v_tree_dir.userid = $userID";
+			$show['parentperm'] = $db->getOne($sql);
 		}
 
 		$pShowCount = count($partShows);

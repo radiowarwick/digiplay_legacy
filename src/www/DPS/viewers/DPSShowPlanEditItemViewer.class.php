@@ -19,18 +19,11 @@ class DPSShowPlanEditItemViewer extends Viewer {
 		$userID = $auth->getUserID();
 		$date = time();
 		if(is_numeric($itemID)) {
-			$show_query = "SELECT bit_or(permissions) FROM 
-				(SELECT showplanusers.permissions
-				FROM showplanusers, showitems
-				WHERE showitems.showplanid = showplanusers.showplanid
-				AND showplanusers.userid = $userID
-				AND showitems.id = $itemID
-				UNION(SELECT permissions
-				FROM showplangroups, usersgroups, showitems
-				WHERE showplangroups.groupid = usersgroups.groupid
-				AND showplangroups.showplanid = showitems.showplanid
-				AND showitems.id = $itemID
-				AND usersgroups.userid = $userID)) as Q1";
+			$show_query = "SELECT DISTINCT BIT_OR(v_tree_showplan.permissions) 
+			FROM showitems, v_tree_showplan 
+			WHERE showitems.showplanid = v_tree_showplan.id AND 
+				v_tree_showplan.userid = $userID AND 
+				showitems.id = $itemID";
 			$checkShows = $db->getOne($show_query);
 			if(substr($checkShows,0,1) == "1") {
 				if(substr($checkShows,1,1) == "1") {

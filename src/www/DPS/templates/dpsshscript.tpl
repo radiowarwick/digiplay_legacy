@@ -8,7 +8,7 @@
 				{foreach from=$VIEWER.scripts item=script}
 				<img src="DPS/images/showScript.png" alt="Show Script">
 				{templateLink id="45" text=$script.text _scriptID=$script.id}<br>
-				{if $script.permissions.2 == "1"}
+				{if $script.parentperm.1 == "1"}
 				<div class="showPlanInteract">
 					{templateLink id=$VIEWER.templateID text="Delete Script" _formName="dpsUserDelScript" _moduleName="DPS" _scriptID=$script.id}
 				</div>

@@ -1,7 +1,7 @@
 <!-- DTD for RaW Digital Playout System -->
 <!ELEMENT audio (album,segment?)>
 	<!ATTLIST audio md5 CDATA #REQUIRED>
-	<!ATTLIST audio type (music|jingle|advert|user) #REQUIRED>
+	<!ATTLIST audio type (music|jingle|advert|prerec) #REQUIRED>
 	<!ATTLIST audio creation_date CDATA #IMPLIED>
 	<!ATTLIST audio user CDATA #IMPLIED>
 	<!ELEMENT album EMPTY>

@@ -254,7 +254,18 @@ INSERT INTO fieldvalidators VALUES (36, 'DPSUserShowitemEditValidator', 'Checks 
 INSERT INTO fieldvalidators VALUES (37, 'DPSUserShowEditValidator', 'Checks uer can edit a show', 'DPS');
 INSERT INTO fieldvalidators VALUES (38, 'DPSUserScriptDelValidator', 'Checks that a user can delete a script', 'DPS');
 INSERT INTO fieldvalidators VALUES (39, 'DPSUserScriptEditValidator', 'Checks that a user can edit a script', 'DPS');
-ALTER SEQUENCE fieldvalidators_ruleid_seq RESTART 40;
+INSERT INTO fieldvalidators VALUES (40, 'DPSSystemCartDirWriteValidator', 'Checks edit permissions on containing directory', 'DPS');
+INSERT INTO fieldvalidators VALUES (41, 'DPSSystemCartsetDirWriteValidator', 'Checks edit permissions on containing directory', 'DPS');
+INSERT INTO fieldvalidators VALUES (42, 'DPSSystemCartwallDirWriteValidator', 'Checks edit permissions on containing directory', 'DPS');
+INSERT INTO fieldvalidators VALUES (43, 'DPSUserAudioDirWriteValidator', 'Checks edit permissions on containing directory', 'DPS');
+INSERT INTO fieldvalidators VALUES (44, 'DPSUserCartDirWriteValidator', 'Checks edit permissions on containing directory', 'DPS');
+INSERT INTO fieldvalidators VALUES (45, 'DPSUserCartsetDirWriteValidator', 'Checks edit permissions on containing directory', 'DPS');
+INSERT INTO fieldvalidators VALUES (46, 'DPSUserCartwallDirWriteValidator', 'Checks edit permissions on containing directory', 'DPS');
+INSERT INTO fieldvalidators VALUES (47, 'DPSUserDirDirWriteValidator', 'Checks edit permissions on containing directory', 'DPS');
+INSERT INTO fieldvalidators VALUES (48, 'DPSUserScriptDirWriteValidator', 'Checks edit permissions on containing directory', 'DPS');
+INSERT INTO fieldvalidators VALUES (49, 'DPSUserShowDirWriteValidator', 'Checks edit permissions on containing directory', 'DPS');
+
+ALTER SEQUENCE fieldvalidators_ruleid_seq RESTART 50;
 
 -- forms
 INSERT INTO forms VALUES (1, 'regionModifyForm', 'EditContentModel', 'CMS', 2, NULL, NULL);

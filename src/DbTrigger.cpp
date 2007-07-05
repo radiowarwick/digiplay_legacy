@@ -1,18 +1,21 @@
-#include "DbTrigger.h"
+#include "Logger.h"
 #include "DataAccess.h"
+
+#include "DbTrigger.h"
 
 Connection* DbTrigger::Ctrig = 0;
 unsigned int DbTrigger::instanceCount = 0;
 
 DbTrigger::DbTrigger(const char* name, std::string trigger){ 
+    char* routine = "DbTrigger::DbTrigger";
+
 	++(DbTrigger::instanceCount);
     if (DbTrigger::instanceCount == 1) {
         try {
             Ctrig = new Connection( DataAccess::getConnectionString() );
         }
-        catch (...) {
-            cout << "DbTrigger::";
-            cout << "An error occured while trying to connect to DB" << endl;
+        catch (const exception &e) {
+            L_ERROR(LOG_DB,e.what());
             throw;
         }
     }
@@ -30,7 +33,6 @@ DbTrigger::~DbTrigger() throw() {
 }
 
 void DbTrigger::triggered() {
-    cout << "DbTrigger '" << trigname << "' triggered" << endl;
     emit trigger();
 }
 

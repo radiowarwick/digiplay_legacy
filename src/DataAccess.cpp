@@ -2,16 +2,20 @@
 #include <string>
 #include <map>
 
+#include <pqxx/pqxx>
+
 #include "Logger.h"
 
 #include "DataAccess.h"
 
-Connection* DataAccess::C = 0;
-Transaction* DataAccess::T = 0;
+PqxxConnection* DataAccess::C = 0;
+PqxxWork* DataAccess::W = 0;
 pthread_mutex_t* DataAccess::t_trans_mutex = 0;
 unsigned int DataAccess::instanceCount = 0;
 
 DataAccess::DataAccess() {
+    char* routine = "DataAccess::DataAccess";
+
 	// For each instance increment counter. We can only close the connection
 	// when the last instance is destroyed.
     DataAccess::instanceCount++;
@@ -20,16 +24,24 @@ DataAccess::DataAccess() {
     if (DataAccess::instanceCount == 1) {
         try {
 			// Create connection
-			C = new Connection( getConnectionString() );
+			C = new PqxxConnection( getConnectionString() );
+            L_INFO(LOG_DB,"Connected to database " + string(C->dbname()));
+            L_INFO(LOG_DB," -> Backend version: " 
+                            + dps_itoa(C->server_version()));
+            L_INFO(LOG_DB," -> Protocal version: " 
+                            + dps_itoa(C->protocol_version()));
 			// Init the transaction mutex
             t_trans_mutex = new pthread_mutex_t;
             pthread_mutex_init(t_trans_mutex,NULL);
-			T = 0;
+			W = 0;
+        }
+        catch (const exception &e) {
+            L_ERROR(LOG_DB,"Exception: " + string(e.what()));
+            throw;
         }
         catch (...) {
 			// Whoops! We can't connect to the DB
-            cout << "DataAccess::";
-            cout << "An error occured while trying to connect to DB" << endl;
+            L_CRITICAL(LOG_DB,"An unexpected error occured");
             throw;
         }
     }
@@ -40,42 +52,55 @@ DataAccess::~DataAccess() {
     DataAccess::instanceCount--;
     // Close connection on destruction of last instance
     if (DataAccess::instanceCount == 0) {
-        delete T;
+        delete W;
         delete C;
     }
 }
 
-Result DataAccess::exec(std::string query) {
+PqxxResult DataAccess::exec(std::string query) {
+    char* routine = "DataAccess::exec";
+
 	// Lock mutex to prevent multiple queries simultaneously
     pthread_mutex_lock(t_trans_mutex);
-    Result R;
+    PqxxResult R;
 
 	// If there isn't an active an active transaction, create one
     try {
-        if (!T) {
-            T = new Transaction(*C,"DataAccess");
+        if (!W) {
+            W = new PqxxWork(*C,"DataAccess");
         }
     }
-    catch (...) {
-		// Whoops! We can't have a transaction. This is bad.
+    catch (const exception &e) {
         pthread_mutex_unlock(t_trans_mutex);
-        cout << "DataAccess::";
-        cout << "Failed to create transaction!" << endl;
+        L_ERROR(LOG_DB,"Exception: " + string(e.what()));
+        throw;
+    }
+    catch (...) {
+        pthread_mutex_unlock(t_trans_mutex);
+        L_CRITICAL(LOG_DB,"Unexpected exception.");
         throw;
     }
 
 	// Perform the query
-//    try {
-        R = T->exec(query);
-//    }
-/*    catch (...) {
+    try {
+        R = W->exec(query);
+    }
+    catch (const sql_error &e) {
         pthread_mutex_unlock(t_trans_mutex);
-        cout << "DataAccess::";
-        cout << "Error occured in query: " << endl;
-        cout << query << endl;
+        L_ERROR(LOG_DB,e.what());
+        L_ERROR(LOG_DB,"SQL Query: " + e.query());
+    }
+    catch (const exception &e) {
+        pthread_mutex_unlock(t_trans_mutex);
+        L_ERROR(LOG_DB,"Exception: " + string(e.what()));
         throw;
     }
-*/
+    catch (...) {
+        pthread_mutex_unlock(t_trans_mutex);
+        L_CRITICAL(LOG_DB,"Unexpected exception.");
+        throw;
+    }
+
 	// Unlock the mutex and return data
     pthread_mutex_unlock(t_trans_mutex);
     return R;
@@ -83,27 +108,27 @@ Result DataAccess::exec(std::string query) {
 
 void DataAccess::commit() {
 	// We shouldn't try to commit when we've not done anything. Stupid.
-    if (!T) throw;
+    if (!W) throw;
 
 	// Lock the mutex, commit the changes, delete the transaction and unlock
 	// the mutex again.
     pthread_mutex_lock(t_trans_mutex);
-    T->commit();
-    delete T;
-    T = 0;
+    W->commit();
+    delete W;
+    W = 0;
     pthread_mutex_unlock(t_trans_mutex);
 }
 
 void DataAccess::abort() {
 	// We're kind, so we'll let it pass if someone tries to abort a transaction
 	// which doesn't exist.
-    if (!T) return;
+    if (!W) return;
 
 	// Lock mutex, abort transaction, delete transaction and unlock mutex
     pthread_mutex_lock(t_trans_mutex);
-    T->abort();
-    delete T;
-    T = 0;
+    W->abort();
+    delete W;
+    W = 0;
     pthread_mutex_unlock(t_trans_mutex);
 }
 

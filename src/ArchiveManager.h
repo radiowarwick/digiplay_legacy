@@ -49,13 +49,14 @@ class ArchiveManager {
 		archive spec();
 		
 		/* Track management */
-		track at(unsigned short location, unsigned int index);
-		unsigned int size(unsigned short location);
-		void clean(unsigned short location, unsigned int index);
+		track at(ARCHIVE_COMPONENT c, unsigned int index);
+		unsigned int size(ARCHIVE_COMPONENT);
+		void clean(ARCHIVE_COMPONENT c, unsigned int index);
 		void add(unsigned int index);
 		void remove(unsigned int index);
 		void recover(unsigned int index);
 		void backup(unsigned int index);
+        void merge(ArchiveManager *A);
 		
 		void writeXML(track t);
 		track readInfo(string filename);
@@ -69,6 +70,7 @@ class ArchiveManager {
         void addTrack(track t);
         void addJingle(track t);
         void addAdvert(track t);
+        void addPrerec(track t);
         void removeTrack(string id);
 
 		bool hasAudio(string md5);

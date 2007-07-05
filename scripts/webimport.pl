@@ -87,8 +87,8 @@ sub validate_pcm ($) {
 	my $channels = ascii_to_hex(`head -c 23 $file | tail -c 1`);
 	my $samplerate = ascii_to_hex(`head -c 28 $file | tail -c 4`);
 	my $bits = ascii_to_hex(`head -c 35 $file | tail -c 1`);
-	my $datalength = ascii_to_hex(`head -c 44 $file | tail -c 4`);
-	my $filelength = sprintf("%x",`cat $file | wc -c` - 44);
+#	my $datalength = ascii_to_hex(`head -c 44 $file | tail -c 4`);
+#	my $filelength = sprintf("%x",`cat $file | wc -c` - 44);
 	# First check we've actually got a RIFF Wav container
 	if ($container ne "RIFF") {
 		return "notwave_failed";
@@ -114,10 +114,10 @@ sub validate_pcm ($) {
 		exit;
 	}
 	# Finally check the file isn't corrupted by analysing the data block size
-	if ($datalength ne $filelength) {
-		return "badsize_failed";
-		exit;
-	}
+#	if ($datalength ne $filelength) {
+#		return "badsize_failed";
+#		exit;
+#	}
 	return "pcm";
 }
 

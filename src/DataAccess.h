@@ -1,16 +1,14 @@
 #ifndef CLASS_DATA_ACCESS
 #define CLASS_DATA_ACCESS
-
-#include <iostream>
 #include <string>
-using namespace std;
+
+#include <pqxx/pqxx>
 
 #include "pthread.h"
 
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h" 
-using namespace pqxx;
+typedef pqxx::connection    PqxxConnection;
+typedef pqxx::work          PqxxWork;
+typedef pqxx::result        PqxxResult;
 
 /**
  * Class to provide an application-wide database interface.
@@ -30,7 +28,7 @@ class DataAccess {
         ~DataAccess();
 
         /// Execute an SQL query and return the result.
-        Result exec(std::string query);
+        PqxxResult exec(std::string query);
         /// Commit the open transaction applying all changes to the database.
         void commit();
         /// Abort the open transaction rolling back any changes made in the
@@ -40,8 +38,8 @@ class DataAccess {
         static std::string getConnectionString();
 
     protected:
-        static Connection* C;
-        static Transaction* T;
+        static PqxxConnection* C;
+        static PqxxWork* W;
         static pthread_mutex_t* t_trans_mutex;
         static unsigned int instanceCount;
 };

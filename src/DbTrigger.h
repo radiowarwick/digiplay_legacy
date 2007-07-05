@@ -3,13 +3,11 @@
 
 #include <string>
 
-#include "pqxx/connection.h"
-#include "pqxx/trigger.h"
-using namespace pqxx;
-
 #include <qthread.h>
 #include <qobject.h>
 #include <qapplication.h>
+
+#include <pqxx/pqxx>
 
 /**
  * This is a helper class, which implements the actual trigger. This should not
@@ -22,7 +20,8 @@ class DbPqxxTrigger:    public QObject,
     Q_OBJECT
 
     public:
-        DbPqxxTrigger(const char* name, Connection *C, std::string trigger);
+        DbPqxxTrigger(const char* name, pqxx::connection *C, 
+                        std::string trigger);
         ~DbPqxxTrigger() throw();
         void operator()(int be_pid);
         
@@ -69,7 +68,7 @@ class DbTrigger:    public QObject,
         std::string trigname;
 		bool enabled;
         static unsigned int instanceCount;
-        static Connection* Ctrig;
+        static pqxx::connection* Ctrig;
 };
 
 

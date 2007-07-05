@@ -31,10 +31,6 @@ using namespace std;
 #include "pqxx/result.h"
 using namespace pqxx;
 
-#define DPS_DB 0
-#define DPS_INBOX 1
-#define DPS_TRASH 2
-
 // Error types
 enum LOG_TYPE {
 	LOG_DB = 0,
@@ -63,6 +59,19 @@ struct archive {
     string remotePath;
 };
 
+enum ARCHIVE_COMPONENT {
+    DPS_DB = 0,
+    DPS_INBOX = 1,
+    DPS_TRASH = 2
+};
+
+enum AUDIO_TYPE {
+    AUDIO_TYPE_MUSIC = 0,
+    AUDIO_TYPE_JINGLE = 1,
+    AUDIO_TYPE_ADVERT = 2,
+    AUDIO_TYPE_PREREC = 3
+};
+
 struct track {
     string id;
     bool isNull;
@@ -84,6 +93,7 @@ struct track {
     unsigned long trim_end_smpl;
     unsigned long fade_in_smpl;
     unsigned long fade_out_smpl;
+    enum AUDIO_TYPE type;
 };
 
 struct jingle {

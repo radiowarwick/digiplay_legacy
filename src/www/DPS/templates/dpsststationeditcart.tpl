@@ -8,7 +8,8 @@
 		{literal}
    	<script language="javascript">
 			var tree;
-			var xml1="{/literal}{$VIEWER.treeData}{literal}";
+			var siteRoot="{/literal}{$CONFIG.general.siteRoot}{literal}";
+			var treeType="{/literal}{$VIEWER.treeType}{literal}";
 			var browserType;
 
 			if (document.layers) {browserType = "nn4"}
@@ -16,11 +17,14 @@
 			if (window.navigator.userAgent.toLowerCase().match("gecko")) {browserType= "gecko"}
 
 			function loadTree(){
+				var hrefstr = siteRoot + "?" +
+					"templateID=65&treeType=" + treeType;
 				tree=new dhtmlXTreeObject(document.getElementById('toc_tree'),"100%","100%",0);
+				tree.setXMLAutoLoading(hrefstr);
 				tree.setImagePath("DPS/scripts/dhtmlxTree/imgs/");
 				tree.setOnClickHandler(doOnClick);
 				tree.enableTreeLines(false);
-				tree.loadXMLString(xml1);
+				tree.loadXML(hrefstr + "&id=dir1");
 			}
 
 			function doOnClick(id){

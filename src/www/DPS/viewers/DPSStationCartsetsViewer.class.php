@@ -34,6 +34,11 @@ class DPSStationCartsetsViewer extends Viewer {
 			} else {
 				$cartset['active'] = 'f';
 			}
+			$sql = "SELECT BIT_OR(permissions) 
+				FROM v_tree_dir 
+				WHERE v_tree_dir.id = {$cartset['parent']}
+					AND v_tree_dir.userid = {$cfg['DPS']['systemUserID']}";
+			$cartset['parentperm'] = $db->getOne($sql);
 		}
 
 		$this->assign('access_playlist',AuthUtil::getDetailedUserrealmAccess(

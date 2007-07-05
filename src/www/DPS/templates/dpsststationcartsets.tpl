@@ -1,11 +1,10 @@
 {include file="rfile:dpsstudiotopframe.tpl" title="RaW Digiplay Manager" studio="t" access_playlist=$VIEWER.access_playlist}
-	<br>
-	<br>
 <div class='bigTitle'>Station Cartwall Profiles</div>
-
-<div class='subTitle'>Currently there are following cartwalls available:</div>
+	{if $VIEWER.cartsets}
+	<div class='subTitle'>Currently there are following cartwalls available:</div>
+	{/if}
 	<table border=1 class='stationtable'>
-{foreach from=$VIEWER.cartsets item=cartset}
+	{foreach from=$VIEWER.cartsets item=cartset}
 		<tr>
 			<th class="userTableName">
 				{$cartset.name}
@@ -19,7 +18,7 @@
 				{/if}
 			</td>
 			<td class="userTableOption">
-				{if $cartset.permissions.1 == '1'}
+				{if $cartset.parentperm.1 == '1'}
 				{templateLink id=$VIEWER.templateID _cartset=$cartset.id text="delete" _cartset=$cartset.id _formName="dpsStationDelCartsetForm" _moduleName="DPS"}
 				{/if}
 			</td>
@@ -31,9 +30,9 @@
 				{/if}
 			</td>
 		</tr>
-{/foreach}
+	{/foreach}
 	</table>
-<div class='statiosubtitle'>Create new cartwall</div>
+<div class='subTitle'>Create new cartwall</div>
 <form name="dpsStationNewCartsetForm" method="post" action="{$CONFIG.general.siteRoot}">
 	<input type="hidden" name="formName" value="dpsStationNewCartsetForm" />
 	<input type="hidden" name="moduleName" value="DPS" />

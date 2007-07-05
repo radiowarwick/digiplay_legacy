@@ -50,20 +50,20 @@ class DPSStationAddCartModel extends Model {
 		//No invalid processing required
 		if($this->errors['text']) {
 		MVCUtils::redirect(
-			MVCUtils::getTemplateID('dpssteditcart.tpl'),
+			MVCUtils::getTemplateID('dpsststationeditcart.tpl'),
 			array("cartID" => "New",
 				"cartwallID" => $this->fieldData['cartwallID'],
 				"cartPos" => $this->fieldData['cartPos'], "error" => "text"));
 		} elseif($this->errors['style']) {
 			MVCUtils::redirect(
-				MVCUtils::getTemplateID('dpssteditcart.tpl'),
+				MVCUtils::getTemplateID('dpsststationeditcart.tpl'),
 				array("cartID" => "New",
 					"cartwallID" => $this->fieldData['cartwallID'],
 					"cartPos" => $this->fieldData['cartPos'],
 					"error" => "style"));
 		} elseif($this->errors['audioID']) {
 			MVCUtils::redirect(
-				MVCUtils::getTemplateID('dpssteditcart.tpl'),
+				MVCUtils::getTemplateID('dpsststationeditcart.tpl'),
 				array("cartID" => "New",
 					"cartwallID" => $this->fieldData['cartwallID'],
 					"cartPos" => $this->fieldData['cartPos'],

@@ -3,8 +3,8 @@
   <br>
   <div class='FloatL'><div class='bigTitle'>Edit Cartwall</div></div>
   <div class='cartwallinfoR'>
-    {templateLink id="30" text="<<< return to cartwall profiles"}<br>
-    {templateLink id="27" text="<<< preview cartwall" _cartset=$VIEWER.cartsetID _page=$VIEWER.cartwall.page}
+    {templateLink id="27" text="<<< return to cartwall profiles"}<br>
+    {templateLink id="30" text="<<< preview cartwall" _cartset=$VIEWER.cartsetID _page=$VIEWER.cartwall.page}
   </div>
   <br style='clear: both;'>
   {if $VIEWER.permError == 't'}

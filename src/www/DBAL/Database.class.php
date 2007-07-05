@@ -290,39 +290,42 @@ class Database {
 		$id = null;
        	 	//echo "<br> called insert: " . $tableName . print_r($arValues);
 		self::logQuery();
-		
-		$sFieldList = join(', ', array_keys($arValues));
-		
 		$arValueList = array();
-		foreach($arValues as &$value) {
+		$count = 0;
+		foreach($arValues as $key => &$value) {
 			if(strtolower($value) == '#id#') {
 				//we need to get the next value from this table's sequence
-				$value = $id = $this->conn->nextID($tableName . "_id");
+				$value = $id = $this->conn->nextID($tableName . "_" . $key);
+				//Fix as values are not updating correctly
+				//$id = $this->conn->nextID($tableName . "_id");
 				//echo "<br>" . $tableName . "_id : " . $value;
 				if(DB::isError($id)) {
 					throw new LoggedException($id->getMessage(), $id->getCode(), self::module);
 				}
-			}
-			$bin = false;
-			if(strtolower(substr($value,0,1)) == "b" && strtolower(substr($value,strlen($value)-1,1)) == "b") {
-				if(Database::binaryCheck(substr($value,1,strlen($value)-2))) {
-					$bin = true;
-				} else {
-					$bin = false;
+				//array_splice($arValues,$count,1);
+			}// else { //else added as part of fix for value insert
+				$bin = false;
+				if(strtolower(substr($value,0,1)) == "b" && strtolower(substr($value,strlen($value)-1,1)) == "b") {
+					if(Database::binaryCheck(substr($value,1,strlen($value)-2))) {
+						$bin = true;
+					} else {
+						$bin = false;
+					}
 				}
-			}
-			if($bin) {
-				$arValueList[] = "B'" . substr($value,1,strlen($value)-2) . "'";
-			} else {
-				$arValueList[] = $this->conn->quoteSmart($value);
-			}
+				if($bin) {
+					$arValueList[] = "B'" . substr($value,1,strlen($value)-2) . "'";
+				} else {
+					$arValueList[] = $this->conn->quoteSmart($value);
+				}
+			//}
+			$count++;
 		}
+		$sFieldList = join(', ', array_keys($arValues));
 		$sValueList = implode(', ', $arValueList);
 		//make sure the table name is properly escaped
 		$tableName = $this->conn->quoteIdentifier($tableName);
 		
 		if($prepare){
-			
 			$questionMarks = array_pad(array(), count($arValues), '?');
 			$qmString = join(', ', $questionMarks);
 			$sql = "INSERT INTO $tableName ( $sFieldList) VALUES ( $qmString )";

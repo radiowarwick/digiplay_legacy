@@ -24,7 +24,7 @@ class DPSStationEditCartViewer extends Viewer {
 			if($cartwallID != '' && is_numeric($cartwallID)) {
 				$sql = "SELECT count(*) from v_tree_cartset, cartwalls 
 				WHERE v_tree_cartset.userid = " . $cfg['DPS']['systemUserID'] . " 
-					AND v_tree_cartset.cartsetid = cartwalls.cartsetid 
+					AND v_tree_cartset.id = cartwalls.cartsetid 
 					AND cartwalls.id = $cartwallID 
 					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] .
 						"' = '" . $cfg['DPS']['fileR'] . "'";
@@ -48,7 +48,7 @@ class DPSStationEditCartViewer extends Viewer {
 				$sql = "SELECT count(*) from v_tree_cartset, cartwalls, cartsaudio 
 				WHERE v_tree_cartset.userid = " . $cfg['DPS']['systemUserID'] . " 
 					AND cartsaudio.cartwallid = cartwalls.id 
-					AND v_tree_cartset.cartsetid = cartwalls.cartsetid 
+					AND v_tree_cartset.id = cartwalls.cartsetid 
 					AND cartsaudio.id = $cartID 
 					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] .
 						"' = '" . $cfg['DPS']['fileR'] . "'";
@@ -74,7 +74,7 @@ class DPSStationEditCartViewer extends Viewer {
 		}
 
 		if($flag) {
-			$sql= "SELECT * FROM cartstyle ORDER BY name asc";
+			$sql= "SELECT * FROM cartstyles ORDER BY name asc";
 			$styles = $db->getAll($sql);
 
 			$auth = Auth::getInstance();
@@ -82,22 +82,41 @@ class DPSStationEditCartViewer extends Viewer {
 
 			//CHECK IF ANYONE ELSE CAN READ PERMS (IE NEED TO USE ALL USERS TREE)
 			if($cartID == "New") {
-				$sql = "SELECT count(*) FROM v_tree_cartset, cartwalls 
-				WHERE v_tree_cartset.userid != " . $cfg['DPS']['systemUserID'] . " 
-					AND v_tree_cartset.cartsetid = cartwalls.cartsetid 
-					AND cartwalls.id = $cartwallID 
-					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] .
+				$sql = "SELECT count(*) from v_tree_cartset_explicit, cartwalls 
+				WHERE v_tree_cartset_explicit.cause = {$cfg['DPS']['allusersgroupid']}
+					AND v_tree_cartset_explicit.id = cartwalls.cartsetid
+					AND cartwalls.id = $cartwallID
+					AND v_tree_cartset_explicit.causetype = 'group'
+					AND v_tree_cartset_explicit.permissions & B'" . $cfg['DPS']['fileR'] .
 						"' = '" . $cfg['DPS']['fileR'] . "'";
 				$user_count = $db->getOne($sql);
+				$sql = "SELECT count(*) from v_tree_cartset_inherited, cartwalls 
+				WHERE v_tree_cartset_inherited.cause = {$cfg['DPS']['allusersgroupid']}
+					AND v_tree_cartset_inherited.id = cartwalls.cartsetid
+					AND cartwalls.id = $cartwallID
+					AND v_tree_cartset_inherited.causetype = 'group'
+					AND v_tree_cartset_inherited.permissions & B'" . $cfg['DPS']['fileR'] .
+						"' = '" . $cfg['DPS']['fileR'] . "'";
+				$user_count = $user_count + $db->getOne($sql);
 			} else {
-				$sql = "SELECT count(*) FROM v_tree_cartset, cartwalls, cartsaudio 
-				WHERE v_tree_cartset.userid = " . $cfg['DPS']['systemUserID'] . " 
-					AND cartsaudio.cartwallid = cartwalls.id 
-					AND v_tree_cartset.cartsetid = cartwalls.cartsetid 
-					AND cartsaudio.id = $cartID 
-					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] .
+				$sql = "SELECT count(*) from v_tree_cartset_explicit, cartwalls, cartsaudio 
+				WHERE v_tree_cartset_explicit.cause = {$cfg['DPS']['allusersgroupid']}
+					AND v_tree_cartset_explicit.id = cartwalls.cartsetid
+					AND cartwalls.id = cartsaudio.cartwallid
+					AND cartsaudio.id = $cartID
+					AND v_tree_cartset_explicit.causetype = 'group'
+					AND v_tree_cartset_explicit.permissions & B'" . $cfg['DPS']['fileR'] .
 						"' = '" . $cfg['DPS']['fileR'] . "'";
 				$user_count = $db->getOne($sql);
+				$sql = "SELECT count(*) from v_tree_cartset_inherited, cartwalls 
+				WHERE v_tree_cartset_inherited.cause = {$cfg['DPS']['allusersgroupid']}
+					AND v_tree_cartset_inherited.id = cartwalls.cartsetid
+					AND cartwalls.id = cartsaudio.cartwallid
+					AND cartsaudio.id = $cartID
+					AND v_tree_cartset_inherited.causetype = 'group'
+					AND v_tree_cartset_inherited.permissions & B'" . $cfg['DPS']['fileR'] .
+						"' = '" . $cfg['DPS']['fileR'] . "'";
+				$user_count = $user_count + $db->getOne($sql);
 			}
 
 			if($user_count == 0) {

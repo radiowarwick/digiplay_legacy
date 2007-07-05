@@ -50,55 +50,58 @@ class DPSStationUpdateCartwallModel extends Model {
 			$cartwall['description'] = $desc;
 			$atWhere = "id = " . $cartwallID;
 			$db->update('cartwalls', $cartwall, $atWhere, true);
-			$sql = "SELECT COUNT(*) FROM cartsetsusers, cartwalls 
-				WHERE cartsetsusers.userid = " . $cfg['DPS']['systemUserID'] . "
-				AND cartsetsusers.cartsetid = cartwalls.cartsetid
-				AND cartwalls.ID = $cartwallID 
-				AND cartsetsusers.permissions & B' . "$cfg['DPS']['fileW'] . "
-				' = '" . $cfg['DPS']['fileW'] "'";
-			$check = $db->getOne($sql);
-		if($check > 0) {
+			
 			$sql = "SELECT cartsetid FROM cartwalls WHERE id = $cartwallID LIMIT 1";
 			$cartsetID = $db->getOne($sql);
-			$where = "cartsetid = $cartsetID AND groupid = " . $cfg['DPS']['allusersgroupid'];
-			$db->delete('cartsetsgroups',$where,true);
-			$sql = "SELECT COUNT(*) FROM cartsaudio, cartwalls 
-				WHERE cartsaudio.cartwallid = cartwalls.id
-				AND cartwalls.cartsetid = " . $cartsetID;
-			$cartcount = $db->getOne($sql);
-			$sql = "SELECT COUNT(*) FROM cartsaudio, cartwalls, audiodir, dirgroups
-				WHERE audiodir.dirid = dirgroups.dirid 
-				AND dirgroups.permissions & B '" . $cfg['DPS']['fileR'] . "
-				' = '" . $cfg['DPS']['fileR'] . " 
-				AND dirgroups.groupid = " . $cfg['DPS']['allusersgroupid'] . "
-				AND cartsaudio.audioid = audiodir.audioid
-				AND cartsaudio.cartwallid = cartwalls.id
-				AND cartwalls.cartsetid = " . $cartsetID;
-			$permCount = $db->getOne($sql);
-			if($permCount >= $cartcount) {
-				if($this->fieldData['readAll'] == "on"
-					&& $this->fieldData['writeAll'] == "on") {
-					$perm = array();
-					$perm['groupid'] = $cfg['DPS']['allusersgroupid'];
-					$perm['cartsetid'] = $cartsetID;
-					$perm['permissions'] = 'rw';
-					$db->insert('cartsetsgroups',$perm,true);
-				} elseif($this->fieldData['writeAll'] == "on") {
-					$perm = array();
-					$perm['groupid'] = $cfg['DPS']['allusersgroupid'];
-					$perm['cartsetid'] = $cartsetID;
-					$perm['permissions'] = 'rw';
-					$db->insert('cartsetsgroups',$perm,true);
-				} elseif($this->fieldData['readAll'] == "on") {
-					$perm = array();
-					$perm['groupid'] = $cfg['DPS']['allusersgroupid'];
-					$perm['cartsetid'] = $cartsetID;
-					$perm['permissions'] = 'r';
-					$db->insert('cartsetsgroups',$perm,true);
+			$sql = "SELECT count(*) 
+				FROM v_tree_dir 
+				WHERE v_tree_dir.id = $cartsetID
+					AND v_tree_dir.userid = {$cfg['DPS']['systemUserID']}
+					AND v_tree_dir.permissions & B'" . $cfg['DPS']['fileW'] .
+						"' = '" . $cfg['DPS']['fileW'] . "'";
+			$check = $db->getOne($sql);
+			if($check > 0) {
+				$where = "cartsetid = $cartsetID AND groupid = " . $cfg['DPS']['allusersgroupid'];
+				$db->delete('cartsetsgroups',$where,true);
+				
+				$sql = "SELECT COUNT(*) FROM cartsaudio, cartwalls 
+					WHERE cartsaudio.cartwallid = cartwalls.id
+					AND cartwalls.cartsetid = " . $cartsetID;
+				$cartcount = $db->getOne($sql);
+				$sql = "SELECT count(*) FROM (SELECT cartsaudio.audioid 
+					FROM cartsaudio, cartwalls, v_tree_audio
+					WHERE cartwalls.cartsetid = $cartsetID
+						AND cartsaudio.cartwallid = cartwalls.id
+						AND cartsaudio.audioid = v_tree_audio.id
+						AND v_tree_audio.permissions & B'" . $cfg['DPS']['fileR'] . "'
+					 = '" . $cfg['DPS']['fileR'] . "'
+					GROUP BY cartsaudio.audioid) as Q1";
+
+				$permCount = $db->getOne($sql);
+				if($permCount == $cartcount) {
+					if($this->fieldData['readAll'] == "on"
+						&& $this->fieldData['writeAll'] == "on") {
+						$perm = array();
+						$perm['groupid'] = $cfg['DPS']['allusersgroupid'];
+						$perm['cartsetid'] = $cartsetID;
+						$perm['permissions'] = $cfg['DPS']['fileRW'];
+						$db->insert('cartsetsgroups',$perm,false);
+					} elseif($this->fieldData['writeAll'] == "on") {
+						$perm = array();
+						$perm['groupid'] = $cfg['DPS']['allusersgroupid'];
+						$perm['cartsetid'] = $cartsetID;
+						$perm['permissions'] = $cfg['DPS']['fileRW'];
+						$db->insert('cartsetsgroups',$perm,false);
+					} elseif($this->fieldData['readAll'] == "on") {
+						$perm = array();
+						$perm['groupid'] = $cfg['DPS']['allusersgroupid'];
+						$perm['cartsetid'] = $cartsetID;
+						$perm['permissions'] = $cfg['DPS']['fileR'];
+						$db->insert('cartsetsgroups',$perm,false);
+					}
+				} else {
+					$this->errors['model'] = "All audio elements in this cartset must be public";
 				}
-			} else {
-				$this->errors['model'] = "All audio elements in this cartset must be public";
-			}
 			}
 		}
 	}

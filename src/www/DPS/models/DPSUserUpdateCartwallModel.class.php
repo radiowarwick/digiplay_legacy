@@ -64,16 +64,20 @@ class DPSUserUpdateCartwallModel extends Model {
 				$where = "cartsetid = $cartsetID 
 					AND groupid = " . $cfg['DPS']['allusersgroupid'];
 				$db->delete('cartsetsgroups',$where,true);
-				$sql = "SELECT COUNT(*) FROM cartsaudio, cartwalls
+				
+				$sql = "SELECT COUNT(*) FROM cartsaudio, cartwalls 
 					WHERE cartsaudio.cartwallid = cartwalls.id
 					AND cartwalls.cartsetid = " . $cartsetID;
 				$cartcount = $db->getOne($sql);
-				$sql = "SELECT COUNT(*) FROM cartsaudio, cartwalls, audiodir, dirgroups
-					WHERE audiodir.dirid = dirgroups.dirid
-					AND dirgroups.permissions & B'" . $cfg['DPS']['fileR'] . "' = '" . $cfg['DPS']['fileR'] . "'
-					AND cartsaudio.audioid = audiodir.audioid
-					AND cartsaudio.cartwallid = cartwalls.id
-					AND cartwalls.cartsetid = $cartsetID";
+				$sql = "SELECT count(*) FROM (SELECT cartsaudio.audioid 
+					FROM cartsaudio, cartwalls, v_tree_audio
+					WHERE cartwalls.cartsetid = $cartsetID
+						AND cartsaudio.cartwallid = cartwalls.id
+						AND cartsaudio.audioid = v_tree_audio.id
+						AND v_tree_audio.permissions & B'" . $cfg['DPS']['fileR'] . "'
+					 = '" . $cfg['DPS']['fileR'] . "'
+					GROUP BY cartsaudio.audioid) as Q1";
+					
 				$permCount = $db->getOne($sql);
 				if($permCount >= $cartcount) {
 					if($this->fieldData['readAll'] == "on"
@@ -82,19 +86,19 @@ class DPSUserUpdateCartwallModel extends Model {
 						$perm['groupid'] = $cfg['DPS']['allusersgroupid'];
 						$perm['cartsetid'] = $cartsetID;
 						$perm['permissions'] = $cfg['DPS']['fileRW'];
-						$db->insert('cartsetsgroups',$perm,true);
+						$db->insert('cartsetsgroups',$perm,false);
 					}elseif($this->fieldData['writeAll'] == "on") {
 						$perm = array();
 						$perm['groupid'] = $cfg['DPS']['allusersgroupid'];
 						$perm['cartsetid'] = $cartsetID;
 						$perm['permissions'] = $cfg['DPS']['fileRW'];
-						$db->insert('cartsetsgroups',$perm,true);
+						$db->insert('cartsetsgroups',$perm,false);
 					}elseif($this->fieldData['readAll'] == "on") {
 						$perm = array();
 						$perm['groupid'] = $cfg['DPS']['allusersgroupid'];
 						$perm['cartsetid'] = $cartsetID;
 						$perm['permissions'] = $cfg['DPS']['fileR'];
-						$db->insert('cartsetsgroups',$perm,true);
+						$db->insert('cartsetsgroups',$perm,false);
 					}
 				} else {
 					$this->errors['model'] =

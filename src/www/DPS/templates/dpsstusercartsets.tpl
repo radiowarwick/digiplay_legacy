@@ -22,7 +22,7 @@
 		</tr>
 	{else}
 		<tr>
-			<th colspan=4 class="stationTableName">
+			<th colspan=5 class="stationTableName">
 				no station cartset selected
 			</th>
 		</tr>
@@ -43,7 +43,7 @@
 				{/if}
 			</td>
 			<td class="userTableOption">
-				{if $cartset.permissions.2 == '1'}
+				{if $cartset.parentperm.1 == '1'}
 				{templateLink id=$VIEWER.templateID _cartset=$cartset.id text="delete" _cartset=$cartset.id _formName="dpsUserDelCartsetForm" _moduleName="DPS"}
 				{/if}
 			</td>

@@ -114,29 +114,48 @@ class DPSStationEditCartsetViewer extends Viewer {
 			}
 
 			//IF SYSTEM OWNS THIS, CHECK TO SEE IF OTHER PEOPLE HAVE READ/WRITE
-			$sql = "SELECT count(*) from v_tree_cartset 
-				WHERE v_tree_cartset.userid = " . $cfg['DPS']['systemUserID'] . " 
-					AND v_tree_cartset.id = $cartset 
-					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileO'] .
-						"' = '" . $cfg['DPS']['fileO'] . "'";
+			$sql = "SELECT parent FROM v_tree_cartset WHERE id = $cartset";
+			$dirID = $db->getOne($sql);
+			$sql = "SELECT count(*) 
+				FROM v_tree_dir 
+				WHERE v_tree_dir.id = $dirID
+					AND v_tree_dir.userid = {$cfg['DPS']['systemUserID']}
+					AND v_tree_dir.permissions & B'" . $cfg['DPS']['fileW'] .
+						"' = '" . $cfg['DPS']['fileW'] . "'";
 			$check = $db->getOne($sql);
 			if($check > 0) {
 				$this->assign('owner','t');
-				$sql = "SELECT count(*) from v_tree_cartset 
-				WHERE v_tree_cartset.userid != " . $cfg['DPS']['systemUserID'] . " 
-					AND v_tree_cartset.id = $cartset 
-					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] .
+				$sql = "SELECT count(*) from v_tree_cartset_explicit 
+				WHERE cause = {$cfg['DPS']['allusersgroupid']}
+					AND id = $cartset 
+					AND causetype = 'group'
+					AND permissions & B'" . $cfg['DPS']['fileR'] .
 						"' = '" . $cfg['DPS']['fileR'] . "'";
 				$check = $db->getOne($sql);
+				$sql = "SELECT count(*) from v_tree_cartset_inherited 
+				WHERE cause = {$cfg['DPS']['allusersgroupid']}
+					AND id = $cartset 
+					AND causetype = 'group'
+					AND permissions & B'" . $cfg['DPS']['fileR'] .
+						"' = '" . $cfg['DPS']['fileR'] . "'";
+				$check = $check + $db->getOne($sql);
 				if($check > 0) {
 					$this->assign('groupread','t');
 				}
-				$sql = "SELECT count(*) from v_tree_cartset 
-				WHERE v_tree_cartset.userid != " . $cfg['DPS']['systemUserID'] . " 
-					AND v_tree_cartset.id = $cartset 
-					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileW'] .
+				$sql = "SELECT count(*) from v_tree_cartset_explicit 
+				WHERE cause = {$cfg['DPS']['allusersgroupid']}
+					AND id = $cartset 
+					AND causetype = 'group'
+					AND permissions & B'" . $cfg['DPS']['fileW'] .
 						"' = '" . $cfg['DPS']['fileW'] . "'";
 				$check = $db->getOne($sql);
+				$sql = "SELECT count(*) from v_tree_cartset_inherited 
+				WHERE cause = {$cfg['DPS']['allusersgroupid']}
+					AND id = $cartset 
+					AND causetype = 'group'
+					AND permissions & B'" . $cfg['DPS']['fileW'] .
+						"' = '" . $cfg['DPS']['fileW'] . "'";
+				$check = $check + $db->getOne($sql);
 				if($check > 0) {
 					$this->assign('groupwrite','t');
 				}

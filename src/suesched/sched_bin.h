@@ -29,16 +29,12 @@
 #include <vector>
 using namespace std;
 
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h"
-using namespace pqxx;
-
 #include "dps.h"
+#include "DataAccess.h"
 
 class sched_bin {
 	public:
-		sched_bin(Transaction *T,string where_clause,unsigned short b);
+		sched_bin(string where_clause,unsigned short b);
 		~sched_bin();
 
 		unsigned int size();
@@ -47,7 +43,8 @@ class sched_bin {
 		track getShorter(track t, unsigned long min_smpl);
 
 	private:
-		Result bin;
+        DataAccess* DB;
+		PqxxResult bin;
 		unsigned short bin_id;
 		track t_null;
 };

@@ -29,16 +29,11 @@
 #include <unistd.h>
 using namespace std;
 
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h"
-using namespace pqxx;
-
 #include "dirent.h"
 #include "sys/types.h"
 
 #include "dps.h"
-#include "Config.h"
+#include "DataAccess.h"
 
 class ArchiveManager {
 	public:
@@ -80,8 +75,7 @@ class ArchiveManager {
 		bool initialised;
 		track t_null;
 		archive A;
-		Connection *C;
-		Transaction *T;
+        DataAccess *DB;
 		vector<track> *trackDB;
 		vector<track> *trackInbox;
 		vector<track> *trackTrash;

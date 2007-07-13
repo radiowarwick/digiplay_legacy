@@ -26,18 +26,14 @@
 #define DIRVIEW_H
 
 #include <string>
-using namespace std;
-
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h"
-using namespace pqxx;
 
 #include <qlistview.h>
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <qstring.h>
 #include <qtimer.h>
+
+#include "DataAccess.h"
 
 class QWidget;
 class QDragEnterEvent;
@@ -61,15 +57,15 @@ class FileItem : public QListViewItem {
 class Directory : public QListViewItem {
     public:
         Directory( QListView * parent, const int my_id, 
-                    const QString& filename, Connection *openC);
+                    const QString& filename, DataAccess *topDB);
         Directory( Directory * parent, const int my_id, 
-                    const QString& filename, Connection *openC);
+                    const QString& filename, DataAccess *topDB);
 
         QString text( int column ) const;
 
         QString fullName();
 
-        void setUid( string );
+        void setUid( std::string );
         void setOpen( bool );
         void setup();
 
@@ -77,14 +73,14 @@ class Directory : public QListViewItem {
         void setPixmap( QPixmap *p );
 
     private:
+        DataAccess* DB;
         QFile f;
         Directory * p;
         int id;
-        Connection *C;
         bool readable;
         bool showDirsOnly;
         QPixmap *pix;
-        string _uid;
+        std::string _uid;
 };
 
 class DirectoryView : public QListView {
@@ -95,7 +91,7 @@ class DirectoryView : public QListView {
                         FALSE );
         ~DirectoryView();
         bool showDirsOnly() { return dirsOnly; }
-        void setUser(string username);
+        void setUser(std::string username);
 
     public slots:
         void setDir( const QString & );
@@ -109,14 +105,15 @@ class DirectoryView : public QListView {
 
     private:
         void populate();
-        Connection *C;
+
+        DataAccess* DB;
         QString fullPath(QListViewItem* item);
         bool dirsOnly;
         QListViewItem *oldCurrent;
         QListViewItem *dropItem;
         QPoint presspos;
         bool mousePressed;
-        string _uid;
+        std::string _uid;
 };
 
 #endif

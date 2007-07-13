@@ -28,20 +28,25 @@ class DataAccess {
         ~DataAccess();
 
         /// Execute an SQL query and return the result.
-        PqxxResult exec(std::string query);
+        PqxxResult exec(std::string name, std::string query);
         /// Commit the open transaction applying all changes to the database.
-        void commit();
+        void commit(std::string name);
         /// Abort the open transaction rolling back any changes made in the
         /// open transaction.
-        void abort();
+        void abort(std::string name);
         /// Returns the connection string used to connect to database
         static std::string getConnectionString();
+        /// Escapes a string for use in SQL
+        std::string esc(std::string str);
 
     protected:
         static PqxxConnection* C;
         static PqxxWork* W;
         static pthread_mutex_t* t_trans_mutex;
+        static pthread_mutex_t* t_name_mutex;
         static unsigned int instanceCount;
+        static bool transActive;
+        static std::string transName;
 };
 
 #endif

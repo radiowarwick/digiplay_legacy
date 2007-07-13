@@ -28,13 +28,8 @@
 #include <string>
 using namespace std;
 
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h"
-using namespace pqxx;
-
 #include "dps.h"
-#include "Config.h"
+#include "DataAccess.h"
 #include "ArchiveManager.h"
 
 class SystemManager {
@@ -53,9 +48,8 @@ class SystemManager {
 	private:
 		void loadArchives();
 	
-		Connection *C;
-		Transaction *T;
-		vector<ArchiveManager*>* archives;
+		DataAccess* DB;
+        vector<ArchiveManager*>* archives;
 };
 
 #endif

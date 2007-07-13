@@ -1,9 +1,9 @@
 /*
- * Email module
- * modEmail.h
- * Retrieves and updates emails from the database
+ * Music logging module
+ * DpsMusicLog.h
+ * Logs music tracks played into the database
  *
- * Copyright (c) 2005-2006 Chris Cantwell
+ * Copyright (c) 2005-2007 Chris Cantwell
  * Copyright (c) 2005-2006 Ian Liverton
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,29 +21,38 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#ifndef CLASS_MODEMAIL
-#define CLASS_MODEMAIL
+#ifndef CLASS_DPS_MUSIC_LOG
+#define CLASS_DPS_MUSIC_LOG
 
-#include <iostream>
-#include <sstream>
-#include <vector>
 #include <string>
-using namespace std;
 
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h"
-using namespace pqxx;
+#include "dirent.h"
+#include "sys/types.h"
+#include "stdlib.h"
+#include <qstring.h>
+#include <sstream>
+#include <qlistview.h>
 
-#include "dps.h"
+class DataAccess;
 
-class modEmail {
+class DpsMusicLog {
 	public:
-		modEmail();
-		~modEmail();
-		vector<email>* getEmails(Connection *C);
-		const char* getEmailBody(Connection *C, string id);
-		void markRead(Connection *C, string id);
+		DpsMusicLog(int loc);
+		~DpsMusicLog();
+
+		// Logs a record using reclibid
+        int reclibid(int user, std::string id);
+
+		// Logs a record using md5 hash
+		int md5(int user, std::string hash);
+
+		// Logs a record by specifying artist and title
+		int details(int user, std::string artist, std::string title);
+		void getRecentlyLogged(QListView *parent);
+
+	private:
+		DataAccess* DB;
+		int location;
 };
 
 #endif

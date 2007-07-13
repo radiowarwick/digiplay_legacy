@@ -29,17 +29,13 @@
 #include <vector>
 using namespace std;
 
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h"
-using namespace pqxx;
-
 #include "sched_bin.h"
 #include "dps.h"
+#include "DataAccess.h"
 
 class schedule {
 	public:
-		schedule(Transaction *T_new);
+		schedule();
 		~schedule();
 		
 		void newSchedule();
@@ -58,7 +54,7 @@ class schedule {
 		void exportToDatabase();
 
 	private:
-		Transaction *T;
+        DataAccess* DB;
 		vector<track> *S;
 };
 

@@ -26,11 +26,6 @@
 #include <iostream>
 using namespace std;
 
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h"
-using namespace pqxx;
-
 #include "audio/Audio.h"
 #include "audio/InputRaw.h"
 #include "audio/OutputDsp.h"
@@ -42,6 +37,7 @@ using namespace Audio;
 #include "Config.h"
 #include "dps.h"
 #include "Logger.h"
+#include "DataAccess.h"
 
 #define min(a,b) (((a)<(b))?(a):(b))
 
@@ -52,22 +48,14 @@ int main(int argc, char *argv) {
 	cout << "Playback service started." << endl;
 	
 	string SQL_Item,SQL_Remove;
-	Result R;
+	PqxxResult R;
 	
 	cout << " -> Reading configuration file" << endl;
 	Config *Conf = new Config("digiplay");
-
-	cout << " -> Connecting to Database..." << flush;
-	Connection *C;
-	Transaction *T = NULL;
-	//Connect to database and get the first item on schedule
-	try {
-		C = new Connection( Conf->getDBConnectString() );
-	}
-	catch (...) {
-		cout << "Failed to connect to database" << endl;
-		exit(-1);
-	}
+	
+    cout << " -> Connecting to Database..." << flush;
+    DataAccess* DB = new DataAccess();
+	
 	SQL_Item = "SELECT archives.localpath AS path, audio.md5 AS md5, audio.title AS title, audio.length_smpl AS length_smpl, sustschedule.id AS id, sustschedule.trim_start_smpl AS start, sustschedule.trim_end_smpl AS end, sustschedule.fade_in AS fade_in, sustschedule.fade_out AS fade_out, v_audio_music.artist FROM sustschedule, audio, archives, v_audio_music WHERE sustschedule.audioid = audio.id AND archives.id = audio.archive AND audio.id = v_audio_music.id ORDER BY sustschedule.id LIMIT 1";
 	cout << "done." << endl;
 
@@ -101,8 +89,7 @@ int main(int argc, char *argv) {
 		// Keep trying until successfully loaded a file that exists!
 		do {
 			// Query database for next track to play
-			T = new Transaction(*C,"");
-			R = T->exec(SQL_Item);
+			R = DB->exec("SuePlay",SQL_Item);
 
 			// If no results, then schedule must have been depleated! Doh!
 			if (R.size() == 0) {
@@ -131,9 +118,8 @@ int main(int argc, char *argv) {
 			// Remove the entry from schedule once we've tried to load it
 			SQL_Remove = "DELETE FROM sustschedule WHERE id="
 			                        + (string)R[0]["id"].c_str();
-	        T->exec(SQL_Remove);
-			T->commit();
-			delete T;
+	        DB->exec("SuePlay",SQL_Remove);
+			DB->commit("SuePlay");
 			
 			path += "/" + md5.substr(0,1) + "/";
 			cout << "Attempting to load channel " << active << ": " 
@@ -194,23 +180,21 @@ int main(int argc, char *argv) {
 
 		char *routine = "sueplay::main";
 		int now = (int)time(NULL);
-		artist = sqlesc(artist);
-		title = sqlesc(title);
-		T = new Transaction(*C,"");
+		artist = DB->esc(artist);
+		title = DB->esc(title);
 		string SQL_Insert = "INSERT INTO log "
 			"(userid, datetime, track_title, track_artist, location) "
 			"VALUES (" + dps_itoa(1) + ", " + dps_itoa(now) + ", '"
 			+ title + "', '" + artist + "', " + dps_itoa(0) + ");";
 		try {
-			T->exec(SQL_Insert);
-			T->commit();
+			DB->exec("SuePlayLog",SQL_Insert);
+			DB->commit("SuePlayLog");
 		}
 		catch (...) {
+            DB->abort("SuePlayLog");
 			cout << "Failed to log record" << endl;
 			L_ERROR(LOG_TABLOGGING,"Failed to log record " + artist + " - " + title + ".");
 		}
-			delete T;
-		
 		active = abs(active - 1);
 		inactive = abs(inactive - 1);
 	}
@@ -221,4 +205,5 @@ int main(int argc, char *argv) {
 	delete mixer;
 	delete player;
 	delete Conf;
+    delete DB;
 }

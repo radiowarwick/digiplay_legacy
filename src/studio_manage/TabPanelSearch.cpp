@@ -62,7 +62,7 @@ TabPanelSearch::~TabPanelSearch() {
 void TabPanelSearch::draw() {
     SearchResults = 0;
 
-    library_engine = new libsearch();
+    library_engine = new DpsMusicSearch();
     lblSearch = new QLabel( getPanel(), "lblSearch" );
     lblSearch->setGeometry( QRect( 28, 10, 60, 20 ) );
     QFont lblSearch_font(  lblSearch->font() );

@@ -43,12 +43,12 @@ TabPanelLogging::TabPanelLogging(QTabWidget *parent, string text)
         : TabPanel(parent,text) {
     panelTag = "TabLogging";
     Config *conf = new Config("digiplay");
-		DB = new DataAccess();
+    DB = new DataAccess();
     location = atoi( conf->getParam("LOCATION").c_str() );
     delete conf;
 
-		triggerLog = new DbTrigger("triggerLog","trig_id4");
-	  triggerLog->start();
+    triggerLog = new DbTrigger("triggerLog","trig_id4");
+    triggerLog->start();
 
     draw();
 }
@@ -66,24 +66,24 @@ TabPanelLogging::~TabPanelLogging() {
 // this is called whenever the application reconfigures itself,
 // usually due to a change in authentication status (login, logoff)
 void TabPanelLogging::configure(Auth *authModule) {
-		char *routine = "TabPanelLogging::configure";
+    char *routine = "TabPanelLogging::configure";
 
-	  string SQL = "SELECT id FROM users WHERE username = '" 
+    string SQL = "SELECT id FROM users WHERE username = '" 
                         + authModule->getUser() + "' LIMIT 1";
-    Result R; 
-		try {
-			R = DB->exec(SQL);
-			DB->abort();
-		}
-		catch (...) {
-			L_ERROR(LOG_TABLOGGING,"Failed to query user ID in database.");
-		}
+    PqxxResult R; 
+    try {
+        R = DB->exec("LoggingGetUser", SQL);
+        DB->abort("LoggingGetUser");
+    }
+    catch (...) {
+        L_ERROR(LOG_TABLOGGING,"Failed to query user ID in database.");
+    }
     if (R.size() != 0) {
         userid=atoi(R[0]["id"].c_str());
     }
-	  else {
-			L_ERROR(LOG_TABLOGGING,"No user ID matching username.");
-	  }
+    else {
+        L_ERROR(LOG_TABLOGGING,"No user ID matching username.");
+    }
     getRecentlyLogged();
     TabPanel::configure(authModule);
 }
@@ -179,47 +179,48 @@ void TabPanelLogging::draw() {
 }
 
 int TabPanelLogging::logRecord(string artist, string title){
-		char *routine="TabPanelLogging::logRecord";
-		// Get current time
+    char *routine="TabPanelLogging::logRecord";
+    
+    // Get current time
     int now = (int)time(NULL);
 
     // Escape the artist and title
-    artist = sqlesc(artist);
-    title = sqlesc(title);
+    artist = DB->esc(artist);
+    title = DB->esc(title);
 
     // Try and insert into database
     string SQL = "INSERT INTO log "
                 "(userid, datetime, track_title, track_artist, location) "
                 "VALUES (" + dps_itoa(userid) + ", " + dps_itoa(now) + ", '"
                 + title + "', '" + artist + "', " + dps_itoa(location) + ");";
-		try {
-			DB->exec(SQL);
-			DB->commit();
-		}
-		catch (...) {
-			L_ERROR(LOG_TABLOGGING,"Failed to insert record " + artist +
+    try {
+        DB->exec("LoggingRecord", SQL);
+        DB->commit("LoggingRecord");
+    }
+    catch (...) {
+        L_ERROR(LOG_TABLOGGING,"Failed to insert record " + artist +
 								" - " + title + ".");
-		}
-		return 0;
+    }
+    return 0;
 }
 
 void TabPanelLogging::getRecentlyLogged() {
-		char *routine="TabPanelLogging::getRecentlyLogged";
-		QString artist, title, datestr;
+    char *routine="TabPanelLogging::getRecentlyLogged";
+    QString artist, title, datestr;
     tm *dte;
     char date[30];
 
     //TODO - Change the 1 in this SQL query to the System Define
     string SQL = "SELECT * FROM log WHERE userid != 1 ORDER BY datetime DESC LIMIT 50;";
     lstRecentlyLogged->clear();
-    Result R;
-		try {
-			R=DB->exec(SQL);
-			DB->abort();
-		}
-		catch (...) {
-			L_ERROR(LOG_TABLOGGING,"Couldn't get logged records from DB.");
-		}
+    PqxxResult R;
+    try {
+        R=DB->exec("LoggingGet", SQL);
+        DB->abort("LoggingGet");
+    }
+    catch (...) {
+        L_ERROR(LOG_TABLOGGING,"Couldn't get logged records from DB.");
+    }
     for (unsigned int i = 0; i < R.size(); i++) {
         time_t thetime(atoi(R[i]["datetime"].c_str()));
         dte = localtime(&thetime);
@@ -230,7 +231,7 @@ void TabPanelLogging::getRecentlyLogged() {
                 new QListViewItem(  lstRecentlyLogged, 
                                     lstRecentlyLogged->lastItem(), 
                                     date, artist, title   ));
-        }
+    }
 }
 
 void TabPanelLogging::buttonPressed() {

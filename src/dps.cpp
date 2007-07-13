@@ -24,25 +24,23 @@
 
 #include <iostream>
 #include <sstream>
-using namespace std;
+using std::cout;
+using std::endl;
 
-//#include <sys/types.h>
-//#include <pwd.h>
-//#include <unistd.h>
-//#include <stdlib.h>
+#include <pqxx/pqxx>
 
-track dps_getTrack(Connection *C, string md5) {
+track dps_getTrack(std::string md5) {
+    DataAccess DB;
     track t;
     t.isNull = true;
-    Result R;
-    string SQL, type;
-    Transaction T(*C,"");
+    PqxxResult R;
+    std::string SQL, type;
 	try {
 		SQL = "SELECT audiotypes.name AS type "
 				"FROM audio,audiotypes "
 				"WHERE audiotypes.id = audio.type "
 				"AND md5='" + md5 + "'";
-		type = T.exec(SQL)[0]["type"].c_str();
+		type = DB.exec("DpsGetTrack",SQL)[0]["type"].c_str();
 	}
 	catch (...) {
 		cout << "Cannot get track " + md5 << endl;
@@ -64,7 +62,7 @@ track dps_getTrack(Connection *C, string md5) {
 	                "AND audio.music_album = albums.id "
 	                "AND audio.md5 = '" + md5 + "' "
 	            "ORDER BY audio.md5";
-	        R = T.exec(SQL);
+	        R = DB.exec("DpsGetTrack",SQL);
 	    }
 	    catch (...) {
 	        cout << "SQL failed on getTrack." << endl;
@@ -103,7 +101,7 @@ track dps_getTrack(Connection *C, string md5) {
 	                "AND audio.music_album = albums.id "
 	                "AND audio.md5 = '" + md5 + "' "
 	            "ORDER BY audio.md5";
-	        R = T.exec(SQL);
+	        R = DB.exec("DpsGetTrack", SQL);
 	    }
 	    catch (...) {
 	        cout << "SQL failed on getTrack." << endl;
@@ -122,37 +120,22 @@ track dps_getTrack(Connection *C, string md5) {
 	        t.isNull = false;
 		}
 	}
-	T.abort();
+    DB.abort("DpsGetTrack");
 	return t;
 }   
 
-string dps_itoa(long num) {
-    stringstream S (stringstream::in | stringstream::out);
+std::string dps_itoa(long num) {
+    std::stringstream S (std::stringstream::in | std::stringstream::out);
     S << num;
     return S.str();
 }
 
-/*string dps_strTrim(string *Str) {
-    int i = Str->length();
-    if (i == 0) return *Str;
-    while (Str->substr(i - 1,1) == " ") {
-        Str->erase(i - 1);
-        i--;
-        if (i == 0) break;
-    }
-    if (i == 0) return *Str;
-    while (Str->substr(0,1) == " ") {
-        Str->erase(0);
-    }
-    return *Str;
-}*/
-
-string& dps_strTrim(string& s) {
-	string::size_type pos = s.find_last_not_of(' ');
-	if (pos != string::npos) {
+std::string& dps_strTrim(std::string& s) {
+    std::string::size_type pos = s.find_last_not_of(' ');
+	if (pos != std::string::npos) {
 		s.erase(pos + 1);
 		pos = s.find_first_not_of(' ');
-		if (pos != string::npos) s.erase(0,pos);
+		if (pos != std::string::npos) s.erase(0,pos);
 	}
 	else {
 		s.erase(s.begin(), s.end());
@@ -160,14 +143,16 @@ string& dps_strTrim(string& s) {
 	return s;
 }
 
-string& dps_strLcase(string& s) {
+// TODO: replace users of this function with stdlib version
+std::string& dps_strLcase(std::string& s) {
 	for (unsigned int i = 0; i < s.length(); i++) {
 		if (s[i] >= 'A' && s[i] <= 'Z') s[i] = s[i] + 32;
 	}
 	return s;
 }
 
-string dps_strPcase(string *Str) {
+
+std::string dps_strPcase(std::string *Str) {
     bool upper = true;
     bool punctuate = false;
     if (Str->length() < 1) return *Str;
@@ -208,8 +193,8 @@ string dps_strPcase(string *Str) {
     return *Str;
 }
 
-string dps_strNum(long num, unsigned int digits) {
-    string result = dps_itoa(num);
+std::string dps_strNum(long num, unsigned int digits) {
+    std::string result = dps_itoa(num);
     for (unsigned int i = 1; i < digits; i++) {
         if (result.length() < digits) {
             result = "0" + result;
@@ -218,8 +203,8 @@ string dps_strNum(long num, unsigned int digits) {
     return result;
 }
 
-string dps_prettyTime(long samples) {
-	string result = "";
+std::string dps_prettyTime(long samples) {
+    std::string result = "";
 	int hours = (int)(samples / 158760000);
 	if (hours > 0) {
 		result += dps_itoa(hours) + "h ";
@@ -250,48 +235,3 @@ string dps_prettyTime(long samples) {
 long dps_current_time() {
 	    return (long)time(NULL) - 946080000;
 }
-/*
-unsigned int getDigiplayUser() {
-	struct passwd *digiplay_user;
-	digiplay_user = getpwnam("digiplay");
-	return digiplay_user->pw_uid;
-}
-
-void dropPrivilage() {
-	if (ruid == -1) {
-		ruid = getuid();
-		euid = geteuid();
-	}
-	unsigned int newuid = getDigiplayUser();
-	#ifdef _POSIX_SAVED_IDS
-	int status = setuid(newuid);
-	#else
-	int status = setreuid(ruid,newuid);
-	#endif
-	if (status != 0) {
-		cout << "ERROR: Could not change to required unprivilaged user" << endl;
-		cout << " Make sure ownership is by unprivilaged user" << endl;
-		cout << " and the setuid bit is set, or run as root" << endl;
-		abort();
-	}
-}
-
-void gainPrivilage() {
-    #ifdef _POSIX_SAVED_IDS
-    int status = setuid(ruid);
-    #else
-    int status = setreuid(ruid,euid);
-    #endif
-	if (status != 0) {
-		cout << "ERROR: Could not regain privilages for some reason." << endl;
-	}
-}
-
-void showPrivilage() {
-	unsigned int x = getuid();
-	unsigned int y = geteuid();
-	struct passwd *z = getpwuid(x);
-	cout << "Real User: " << z->pw_name << endl;
-	z = getpwuid(y);
-	cout << "Effe User: " << z->pw_name << endl;
-}*/

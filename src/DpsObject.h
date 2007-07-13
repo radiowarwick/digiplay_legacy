@@ -26,17 +26,13 @@
 #include <string>
 #include <vector>
 #include <map>
-using namespace std;
-
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h"
-using namespace pqxx;
 
 #include "dps.h"
 
 #define DB_NOT_CONNECTED 1
 #define DB_NO_SUCH_TRACK 2
+
+class DataAccess;
 
 enum DpsObjectType {
     DPS_OBJECT, DPS_SHOWPLAN, DPS_SHOWITEM, 
@@ -52,20 +48,16 @@ class DpsObject {
         DpsObject();
         virtual ~DpsObject();
         
-        static void dbInit();
         virtual enum DpsObjectType getType() {return _type;}
 
     protected:
-        static Transaction* db();
-        void commit();
+        static DataAccess* DB;
         
         int _id;
         enum DpsObjectType _type;
 
     private:
-        static void dbConnect();
-        static Connection *C;
-        static Transaction *T;
+
 };
 
 // Forward declare DpsShowItem for DpsShowplan class
@@ -90,13 +82,13 @@ class DpsShowplan : public DpsObject {
         bool operator!=(const DpsShowplan& item);
         DpsShowplan& operator=(const DpsShowplan& item);
         DpsShowItem& operator[](unsigned int index);
-        DpsShowItem& operator[](string md5);
+        DpsShowItem& operator[](std::string md5);
 
         int getId();
-        string getName();
-        void setName(string name);
+        std::string getName();
+        void setName(std::string name);
         DpsShowItem* at(unsigned int index);
-        DpsShowItem* at(string md5);
+        DpsShowItem* at(std::string md5);
         unsigned int size() {return _items.size();}
         void save();
         void load(int id);
@@ -110,8 +102,8 @@ class DpsShowplan : public DpsObject {
         void drop(DpsShowItem* x);
 
         int _id;
-        string _name;
-        vector<DpsShowItem*> _items;
+        std::string _name;
+        std::vector<DpsShowItem*> _items;
 };
 
 /**
@@ -131,7 +123,7 @@ class DpsShowItem : public DpsObject {
         bool operator==(const DpsShowItem& item);
         bool operator!=(const DpsShowItem& item);
         DpsShowItem& operator=(const DpsShowItem& item);
-        string operator[](string item);
+        std::string operator[](std::string item);
 
         int getId();
         enum showPlanState getState();
@@ -139,11 +131,11 @@ class DpsShowItem : public DpsObject {
         DpsShowplan* parent();
 
     protected:
-        void setData(string name, string value);
+        void setData(std::string name, std::string value);
 
     private:
         enum showPlanState _state;
-        map<string,string> _data;
+        std::map<std::string,std::string> _data;
         DpsShowplan* _parent;
 };
 
@@ -152,15 +144,15 @@ class DpsShowItem : public DpsObject {
  */
 class DpsShowTrack : public DpsShowItem {
     public:
-        DpsShowTrack(string md5);
-        DpsShowTrack(const DpsShowplan& parent, string md5);
-        DpsShowTrack(const DpsShowplan& parent, const DpsShowItem& after, string md5);
+        DpsShowTrack(std::string md5);
+        DpsShowTrack(const DpsShowplan& parent, std::string md5);
+        DpsShowTrack(const DpsShowplan& parent, const DpsShowItem& after, std::string md5);
         virtual ~DpsShowTrack();
 
         
     private:
         DpsShowTrack();
-        void load(string md5);
+        void load(std::string md5);
 };
 
 /**
@@ -168,14 +160,14 @@ class DpsShowTrack : public DpsShowItem {
  */
 class DpsShowJingle : public DpsShowItem {
     public:
-        DpsShowJingle(string md5);
-        DpsShowJingle(const DpsShowplan& parent, string md5);
-        DpsShowJingle(const DpsShowplan& parent, const DpsShowItem& after, string md5);
+        DpsShowJingle(std::string md5);
+        DpsShowJingle(const DpsShowplan& parent, std::string md5);
+        DpsShowJingle(const DpsShowplan& parent, const DpsShowItem& after, std::string md5);
         virtual ~DpsShowJingle();
 
     private:
         DpsShowJingle();
-        void load(string md5);
+        void load(std::string md5);
 };
 
 /**
@@ -183,14 +175,14 @@ class DpsShowJingle : public DpsShowItem {
  */
 class DpsShowAdvert : public DpsShowItem {
     public:
-        DpsShowAdvert(string md5);
-        DpsShowAdvert(const DpsShowplan& parent, string md5);
-        DpsShowAdvert(const DpsShowplan& parent, const DpsShowItem& after, string md5);
+        DpsShowAdvert(std::string md5);
+        DpsShowAdvert(const DpsShowplan& parent, std::string md5);
+        DpsShowAdvert(const DpsShowplan& parent, const DpsShowItem& after, std::string md5);
         virtual ~DpsShowAdvert();
     
     private:
         DpsShowAdvert();
-        void load(string md5);
+        void load(std::string md5);
 };
 
 /**

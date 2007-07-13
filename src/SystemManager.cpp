@@ -23,21 +23,14 @@
 #include "SystemManager.h"
 
 SystemManager::SystemManager() {
-	Config *Conf = new Config("digiplay");
-	try {
-		C = new Connection(Conf->getDBConnectString());
-	}
-	catch (...) {
-		cout << "Failed to connect to database" << endl;
-		exit(-1);
-	}
-
+    DB = new DataAccess();
 	archives = new vector<ArchiveManager*>;
 
 	/* Load archives */
-	T = new Transaction(*C,"");
 	archive A;
-	Result R = T->exec("SELECT * FROM archives ORDER BY id");
+	PqxxResult R = DB->exec("SystemManager",
+            "SELECT * FROM archives ORDER BY id");
+	DB->abort("SystemManager");
 	for (unsigned short i = 0; i < R.size(); i++) {
 		A.id = atoi(R[i]["id"].c_str());
 		A.name = R[i]["name"].c_str();
@@ -45,8 +38,6 @@ SystemManager::SystemManager() {
 		A.remotePath = R[i]["remotePath"].c_str();
 		archives->push_back(new ArchiveManager(A));
 	}
-	T->abort();
-	delete T;
 }
 
 SystemManager::~SystemManager() {
@@ -82,16 +73,14 @@ void SystemManager::addArchive(string name, string localPath,
 		return;
 	}
 	try {
-		T = new Transaction(*C,"addArchive");
 		SQL = "INSERT INTO archives (name, localPath, remotePath) "
-			"VALUES ('" + escape_binary(name) + "','" 
-			+ escape_binary(localPath) + "','" + escape_binary(remotePath) 
+			"VALUES ('" + DB->esc(name) + "','" 
+			+ DB->esc(localPath) + "','" + DB->esc(remotePath) 
 			+ "')";
-		T->exec(SQL);
+		DB->exec("SystemManagerAddArchive",SQL);
 		SQL = "SELECT * FROM archives WHERE name='" + name + "'";
-		Result R = T->exec(SQL);
-		T->commit();
-		delete T;
+		PqxxResult R = DB->exec("SystemManagerAddArchive",SQL);
+		DB->commit("SystemManagerAddArchive");
 
 		archive A;
         A.id = atoi(R[0]["id"].c_str());
@@ -120,10 +109,8 @@ void SystemManager::dropArchive(unsigned int index) {
 	string SQL = "DELETE FROM archives WHERE name='" 
 						+ archives->at(index)->spec().name + "'";
 	try {
-		T = new Transaction(*C,"dropArchive");
-		T->exec(SQL);
-		T->commit();
-		delete T;
+		DB->exec("SystemManagerDropArchive",SQL);
+		DB->commit("SystemManagerDropArchive");
 
 		archives->erase(archives->begin() + index);
 	}

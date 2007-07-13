@@ -23,22 +23,18 @@
 #include "UserConfig.h"
 
 #include "Auth.h"
-#include "Config.h"
 #include "Logger.h"
 
 UserConfig::UserConfig(Auth *authModule) {
-    _userInfo.clear();
-    Config *conf = new Config("digiplay");
-    C = new Connection(conf->getDBConnectString());
-    delete conf;
+    DB = new DataAccess();
 
+    _userInfo.clear();
     _username = authModule->getUser();
     retrieveConfig();
 }
 
 UserConfig::~UserConfig() {
-    C->Disconnect();
-    delete C;
+
 }
 
 string UserConfig::get(string param) {
@@ -47,7 +43,6 @@ string UserConfig::get(string param) {
 
 void UserConfig::set(string param, string val) {
     char *routine = "UserConfig::set";
-    Transaction T(*C,"");
     string SQL =    "UPDATE usersconfigs "
                     "SET val=" + val +
                     "WHERE userid=(SELECT id FROM users WHERE username='"
@@ -55,28 +50,27 @@ void UserConfig::set(string param, string val) {
                     "AND configoption=(SELECT id FROM configs WHERE name='"
                         + param + "')";
     try {
-        T.exec(SQL);
-        T.commit();
+        DB->exec("UserConfigSet",SQL);
+        DB->commit("UserConfigSet");
         _userInfo[param] = val;
     }
     catch (...) {
         L_ERROR(LOG_DB,"Failed to update '" + param + "' to '" + val
                         + "' for user '" + _username + "'");
-        T.abort();
+        DB->abort("UserConfigSet");
     }
 }
 
 void UserConfig::retrieveConfig() {
     char *routine = "UserConfig::retrieveConfig";
-    Transaction T(*C,"");
     string SQL =    "SELECT configs.name AS name, usersconfigs.val AS value "
                     "FROM users, usersconfigs, configs "
                     "WHERE users.username = '" + _username + "' "
                     " AND usersconfigs.userid = users.id "
                     " AND usersconfigs.configoption = configs.id ";
     try {
-        Result R = T.exec(SQL);
-        T.abort();
+        PqxxResult R = DB->exec("UserConfigRetrieve",SQL);
+        DB->abort("UserConfigRetrieve");
         for (unsigned int i = 0; i < R.size(); i++) {
             _userInfo[R[i]["name"].c_str()] = R[i]["value"].c_str();
         }
@@ -84,6 +78,6 @@ void UserConfig::retrieveConfig() {
     catch (...) {
         L_ERROR(LOG_DB,"Failed to retrieve config for user '" 
                             + _username + "'");
-        T.abort();
+        DB->abort("UserConfigRetrieve");
     }
 }

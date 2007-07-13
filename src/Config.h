@@ -26,7 +26,6 @@
 #include <string>
 #include <vector>
 #include <map>
-using namespace std;
 
 #include "dirent.h"
 #include "sys/types.h"
@@ -41,23 +40,23 @@ class DataAccess;
  */
 class Config {
 	public:
-		Config(string filename);
+		Config(std::string filename);
 		~Config();
-		string getDBConnectString();
-		string getParam(string name);
-		void setParam(string name, string value);
+        std::string getDBConnectString();
+        std::string getParam(std::string name);
+		void setParam(std::string name, std::string value);
 		void requery();
 
 	private:
-		bool isDefined(string name);
+		bool isDefined(std::string name);
 		
-		vector<string> *names;
-		vector<string> *values;
-		map<string,string> _file;
-		map<string,string> _db;
+        std::vector<std::string> *names;
+        std::vector<std::string> *values;
+        std::map<std::string,std::string> _file;
+        std::map<std::string,std::string> _db;
 		bool setFlag;
-		string DB_CONNECT;
-		string LOCATION;
+        std::string DB_CONNECT;
+        std::string LOCATION;
         DataAccess *DB;
 };
 

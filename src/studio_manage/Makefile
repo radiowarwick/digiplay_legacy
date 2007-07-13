@@ -22,7 +22,7 @@ QT_MODS		=	frmStudioManage dlgLogin dlgWarn\
 				TabPanelSearch TabPanelPlaylist TabPanelLogging\
 				TabPanelScript TabPanelFileBrowser\
 				FileBrowser Showplan
-SHARED_MODS	=	Config libsearch dps clockThread \
+SHARED_MODS	=	Config DpsMusicSearch dps clockThread \
 				Auth Logger UserConfig DpsObject DataAccess Security
 SHARED_QT_MODS = DbTrigger
 

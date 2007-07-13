@@ -24,23 +24,19 @@
 #define CLASS_AUTH_PSQL
 
 #include <string>
-using namespace std;
-
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h"
-using namespace pqxx;
 
 #include "Auth.h"
+
+class DataAccess;
 
 class AuthPsql: public Auth {
 	public:
 		AuthPsql();
 		~AuthPsql();
-		void authSession(string username, string password);
+		void authSession(std::string username, std::string password);
 
 	private:
-		Connection *C;
+		DataAccess* DB;
 };
 
 #endif

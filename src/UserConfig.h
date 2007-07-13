@@ -22,12 +22,8 @@
  */
 #include <string>
 #include <map>
-using namespace std;
 
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h"
-using namespace pqxx;
+#include "DataAccess.h"
 
 class Auth;
 
@@ -35,12 +31,12 @@ class UserConfig {
     public:
         UserConfig(Auth *authModule);
         ~UserConfig();
-        string get(string param);
-        void set(string param, string val);
+        std::string get(std::string param);
+        void set(std::string param, std::string val);
 
     private:
-        Connection *C;
+        DataAccess* DB;
         void retrieveConfig();
-        string _username;
-        map<string,string> _userInfo;
+        std::string _username;
+        std::map<std::string,std::string> _userInfo;
 };

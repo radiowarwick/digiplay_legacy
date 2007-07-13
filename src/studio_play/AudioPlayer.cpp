@@ -92,8 +92,8 @@ void AudioPlayer::load() {
     
     string SQL = "SELECT * FROM v_audio WHERE md5='"
                     + conf->getParam("next_on_showplan") + "'";
-    Result R = DB->exec(SQL);
-    DB->abort();
+    PqxxResult R = DB->exec("AudioPlayerLoad",SQL);
+    DB->abort("AudioPlayerLoad");
     
     if (R.size() == 0) {
         cout << "No such track!" << endl;
@@ -164,16 +164,16 @@ void AudioPlayer::log() {
     int now = (int)time(NULL);
 
     // Escape the artist and title
-    string artist = sqlesc(lblArtist->text().ascii());
-    string title = sqlesc(lblTitle->text().ascii());
+    string artist = DB->esc(lblArtist->text().ascii());
+    string title = DB->esc(lblTitle->text().ascii());
 				
     // Try and insert into database
     string SQL = "INSERT INTO log "
                 "(userid, datetime, track_title, track_artist, location) "
                 "VALUES (" + dps_itoa(userid) + ", " + dps_itoa(now) + ", '"
                 + title + "', '" + artist + "', " + dps_itoa(location) + ");";
-    DB->exec(SQL);
-    DB->commit();
+    DB->exec("AudioPlayerLog",SQL);
+    DB->commit("AudioPlayerLog");
 }
 
 void AudioPlayer::play() {

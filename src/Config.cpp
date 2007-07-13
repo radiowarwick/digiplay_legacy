@@ -29,13 +29,17 @@
 
 #include "Config.h"
 
+/**
+ * Parse the configuration file and read in configuration parameters from the
+ * Database for this location.
+ */
 Config::Config(string application) {
 	char* routine = "config::config";
     DB = new DataAccess();
 	setFlag = false;
-	string f = "/etc/" + application + ".conf";
+    std::string f = "/etc/" + application + ".conf";
 	L_INFO(LOG_CONFIG,"Processing config file " + f);
-	ifstream config_file(f.c_str(), ios::in);
+ifstream config_file(f.c_str(), ios::in);
 	if (config_file.is_open() && config_file.good()) {
 		config_file.seekg(0);
 		string str;
@@ -100,14 +104,23 @@ string Config::getDBConnectString() {
 	return DB_CONNECT;
 }
 
+/**
+ * Return the value of a parameter from the database
+ */
 string Config::getParam(string name) {
 	char* routine = "config::getParam";
 	dps_strLcase(name);
-	if (isDefined(name)) return _db[name];
-	L_ERROR(LOG_CONFIG,"Requested config paramater '" + name + "' does not exist.");
+	if (isDefined(name)) {
+        return _db[name];
+    }
+	L_ERROR(LOG_CONFIG,"Requested config paramater '" + name 
+                        + "' does not exist.");
 	return "";
 }
 
+/**
+ * Set the value of a parameter in the database
+ */
 void Config::setParam(string name, string value) {
 	char* routine = "config::setParam";
 	if (isDefined(name)) {
@@ -116,11 +129,12 @@ void Config::setParam(string name, string value) {
 					+ "' AND location=" + LOCATION ;
 		try {
 			setFlag = true;
-            DB->exec(SQL);
-            DB->commit();
+            DB->exec("ConfigSetParam",SQL);
+            DB->commit("ConfigSetParam");
 			_db[name] = value;
 		}
 		catch (...) {
+            DB->abort("ConfigSetParam");
 			L_ERROR(LOG_CONFIG,"Failed to update parameter.");
 		}
 	}
@@ -129,25 +143,35 @@ void Config::setParam(string name, string value) {
 	}
 }
 
+/**
+ * Requery the database configuration relation and update current configuration
+ * values.
+ */
 void Config::requery() {
 	char* routine = "conf::requery";
+    L_INFO(LOG_CONFIG,"Requerying Configuration.");
+
 	if (setFlag) {
 		setFlag = false;
 		return;
 	}
 	_db.clear();
 	_db = _file;
-//	try {
-		Result R = DB->exec("SELECT * FROM configuration WHERE "
-							"location=" + LOCATION + " OR location=-1");
+	try {
+        cout << "Query database" << endl;
+		PqxxResult R = DB->exec("ConfigRequery",
+            "SELECT * FROM configuration WHERE location=" + LOCATION 
+                    + " OR location=-1");
+        DB->abort("ConfigRequery");
+        cout << "Finished with database" << endl;
 		for (unsigned int i = 0; i < R.size(); i++) {
 			_db[R[i]["parameter"].c_str()] = R[i]["val"].c_str();
 		}
-//	}
-//	catch (...) {
-//		L_CRITICAL(LOG_CONFIG,"Failed to retrieve configuration data.");
-//		exit(-1);
-//	}
+	}
+	catch (...) {
+		L_CRITICAL(LOG_CONFIG,"Failed to retrieve configuration data.");
+	}
+
 }
 
 // ====== PRIVATE =======

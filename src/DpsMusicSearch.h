@@ -1,9 +1,9 @@
 /*
- * Library search module
- * libsearch.h
+ * Music Library search module
+ * DpsMusicSearch.h
  * Provides music search functionality for applications
  *
- * Copyright (c) 2005-2006 Chris Cantwell
+ * Copyright (c) 2005-2007 Chris Cantwell
  * Copyright (c) 2005-2006 Ian Liverton
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,29 +21,21 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#ifndef CLASS_LIBSEARCH
-#define CLASS_LIBSEARCH
+#ifndef CLASS_DPS_MUSIC_SEARCH
+#define CLASS_DPS_MUSIC_SEARCH
 
 #include <string>
-#include <iostream>
 #include <vector>
-#include <sstream>
-using namespace std;
-
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h"
-using namespace pqxx;
 
 #include "dps.h"
 #include "DataAccess.h"
 #include "Config.h"
 
-class libsearch {
+class DpsMusicSearch {
     public:
-		libsearch();
-		~libsearch();
-		vector<track>* query(string search_string);
+		DpsMusicSearch();
+		~DpsMusicSearch();
+        std::vector<track>* query(std::string search_string);
 		bool searchTitle();
 		bool searchTitle(bool flag);
 		bool searchArtist();
@@ -52,18 +44,16 @@ class libsearch {
 		bool searchAlbum(bool flag);
 		int searchLimit();
 		int searchLimit(int value);
-		string lastQuery();
+        std::string lastQuery();
 
 	private:
-//		Connection* C;
-//		Transaction* T;
 		Config *conf;
-	        DataAccess* DB;
+	    DataAccess* DB;
 		bool searchTitle_flag;
 		bool searchArtist_flag;
 		bool searchAlbum_flag;
 		int searchLimit_value;
-		string lastQuery_string;
+        std::string lastQuery_string;
 };			
 
 #endif

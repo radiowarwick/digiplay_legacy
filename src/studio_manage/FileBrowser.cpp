@@ -58,13 +58,13 @@ QPixmap *fileCartset = 0;
 QPixmap *fileShowplan = 0;
 
 Directory::Directory( Directory * parent, const int my_id, 
-                        const QString& filename, Connection *openC )
+                        const QString& filename, DataAccess *topDB )
     : QListViewItem( parent ), f(filename),
       showDirsOnly( parent->showDirsOnly ),
-      pix( 0 )
-{
+      pix( 0 ) {
+
     p = parent;
-    C = openC;
+    DB = topDB;
     id = my_id;
     readable = QDir( fullName() ).isReadable();
 
@@ -76,20 +76,19 @@ Directory::Directory( Directory * parent, const int my_id,
 
 
 Directory::Directory( QListView * parent, const int my_id,
-                        const QString& filename, Connection *openC )
-    : QListViewItem( parent ), f(filename),
-      showDirsOnly( ( (DirectoryView*)parent )->showDirsOnly() ),
-      pix( 0 )
-{
+                        const QString& filename, DataAccess* topDB )
+        : QListViewItem( parent ), f(filename),
+          showDirsOnly( ( (DirectoryView*)parent )->showDirsOnly() ),
+        pix( 0 ) {
+
     p = 0;
-    C = openC;
+    DB = topDB;
     id = my_id;
     readable = QDir( fullName() ).isReadable();
 }
 
 
-void Directory::setPixmap( QPixmap *px )
-{
+void Directory::setPixmap( QPixmap *px ) {
     pix = px;
     setup();
     widthChanged( 0 );
@@ -98,19 +97,17 @@ void Directory::setPixmap( QPixmap *px )
 }
 
 
-const QPixmap *Directory::pixmap( int i ) const
-{
+const QPixmap *Directory::pixmap( int i ) const {
     if ( i )
         return 0;
     return pix;
 }
 
-void Directory::setUid( string u ) {
+void Directory::setUid( std::string u ) {
     _uid = u;
 }
 
-void Directory::setOpen( bool o )
-{
+void Directory::setOpen( bool o ) {
     if ( o ) {
         if (parent())
             setPixmap( folderOpen );
@@ -125,13 +122,12 @@ void Directory::setOpen( bool o )
     }
 
     if ( o && !childCount() ) {
-        Transaction T(*C,"");
-        string SQL;
+        std::string SQL;
         try {
             SQL =   "SELECT * FROM v_tree WHERE parent=" + dps_itoa(id)
                         + " AND userid=" + _uid;
-            Result R = T.exec(SQL);
-            T.abort();
+            PqxxResult R = DB->exec("FilebrowserGetContents", SQL);
+            DB->abort("FilebrowserGetContents");
             Directory *D;
             FileItem *F;
             for (unsigned int i = 0; i < R.size(); i++) {
@@ -139,7 +135,7 @@ void Directory::setOpen( bool o )
                 std::string id = R[i]["id"].c_str();
                 std::string name = R[i]["name"].c_str();
                 if (type == "dir") {
-                    D = new Directory(this,atoi(id.c_str()),name,C);
+                    D = new Directory(this,atoi(id.c_str()),name,DB);
                     D->setUid(_uid);
                     D->setPixmap( folderClosed );
                 }
@@ -173,22 +169,20 @@ void Directory::setOpen( bool o )
         }
         catch (...) {
             cout << "Caught exception on Directory::setOpen" << endl;
-            T.abort();
+            DB->abort("FilebrowserGetContents");
         }
     }
     QListViewItem::setOpen( o );
 }
 
 
-void Directory::setup()
-{
+void Directory::setup() {
     setExpandable( TRUE );
     QListViewItem::setup();
 }
 
 
-QString Directory::fullName()
-{
+QString Directory::fullName() {
     QString s;
     if ( p ) {
         s = p->fullName();
@@ -201,8 +195,7 @@ QString Directory::fullName()
 }
 
 
-QString Directory::text( int column ) const
-{
+QString Directory::text( int column ) const {
     if ( column == 0 )
         return f.name();
     else
@@ -216,11 +209,9 @@ QString Directory::text( int column ) const
  */
 DirectoryView::DirectoryView( QWidget *parent, const char *name, bool sdo )
     : QListView( parent, name ), dirsOnly( sdo ), oldCurrent( 0 ),
-      dropItem( 0 ), mousePressed( FALSE )
-{
-    Config *conf = new Config("digiplay");
-    C = new Connection(conf->getDBConnectString());
-    delete conf;
+      dropItem( 0 ), mousePressed( FALSE ) {
+
+    DB = new DataAccess();
     _uid = "2";
 
     if ( !folderLocked ) {
@@ -247,41 +238,37 @@ DirectoryView::DirectoryView( QWidget *parent, const char *name, bool sdo )
 }
 
 DirectoryView::~DirectoryView() {
-    if (C && C->is_open()) {
-        C->Disconnect();
-    }
-    delete C;
+    delete DB;
 }
 
 void DirectoryView::populate() {
     clear();
     Directory *D;
-    Transaction T(*C,"");
     try {
-        Result R = T.exec("SELECT * FROM v_tree WHERE parent<0 "
-                            "AND userid = " + _uid);
-        T.abort();
+        PqxxResult R = DB->exec("FilebrowserGetTopLevel",
+                "SELECT * FROM v_tree WHERE parent<0 AND userid = " + _uid);
+        DB->abort("FilebrowserGetTopLevel");
         for (unsigned int i = 0; i < R.size(); i++) {
             D = new Directory(this,atoi(R[i]["id"].c_str()),
-                            R[i]["name"].c_str(),C);
+                            R[i]["name"].c_str(),DB);
             D->setUid(_uid);
             D->setPixmap(folderTopClosed);
         }
     }
     catch (...) {
-        T.abort();
+        DB->abort("FilebrowserGetTopLevel");
     }
 }
 
-void DirectoryView::setUser(string username) {
+void DirectoryView::setUser(std::string username) {
     if (username == "") {
         _uid = "2";
         populate();
         return;
     }
-    Transaction T(*C,"");
-    Result R = T.exec("SELECT id FROM users WHERE username='" + username + "'");
-    T.abort();
+    PqxxResult R = DB->exec("FilebrowserGetUser",
+            "SELECT id FROM users WHERE username='" + username + "'");
+    DB->abort("FilebrowserGetUser");
     if (R.size() == 1) {
         _uid = R[0]["id"].c_str();
     }
@@ -291,8 +278,7 @@ void DirectoryView::setUser(string username) {
     populate();
 }
 
-void DirectoryView::slotFolderSelected( QListViewItem *i )
-{
+void DirectoryView::slotFolderSelected( QListViewItem *i ) {
     if ( !i || !showDirsOnly() )
         return;
 
@@ -300,16 +286,14 @@ void DirectoryView::slotFolderSelected( QListViewItem *i )
     emit folderSelected( dir->fullName() );
 }
 
-void DirectoryView::openFolder()
-{
+void DirectoryView::openFolder() {
     if ( dropItem && !dropItem->isOpen() ) {
         dropItem->setOpen( TRUE );
         dropItem->repaint();
     }
 }
 
-QString DirectoryView::fullPath(QListViewItem* item)
-{
+QString DirectoryView::fullPath(QListViewItem* item) {
     QString fullpath = item->text(0);
     while ( (item=item->parent()) ) {
         if ( item->parent() )
@@ -320,8 +304,7 @@ QString DirectoryView::fullPath(QListViewItem* item)
     return fullpath;
 }
 
-void DirectoryView::setDir( const QString &s )
-{
+void DirectoryView::setDir( const QString &s ) {
     QListViewItemIterator it( this );
     ++it;
     for ( ; it.current(); ++it ) {
@@ -349,8 +332,7 @@ void DirectoryView::setDir( const QString &s )
  * FileItem
  * =======================================================================
  */
-void FileItem::setPixmap( QPixmap *p )
-{
+void FileItem::setPixmap( QPixmap *p ) {
     pix = p;
     setup();
     widthChanged( 0 );
@@ -359,8 +341,7 @@ void FileItem::setPixmap( QPixmap *p )
 }
 
 
-const QPixmap *FileItem::pixmap( int i ) const
-{
+const QPixmap *FileItem::pixmap( int i ) const {
     if ( i )
         return 0;
     return pix;

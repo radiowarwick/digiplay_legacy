@@ -60,8 +60,8 @@ class TabPanelEmail : public TabPanel {
 		void clear();
 		void getEmail();
 		
-		bool flagUpdateDisabled;
         DataAccess* DB;
+		bool flagUpdateDisabled;
 		DbTrigger* triggerEmail;
 		QListView *lstEmail;
 		QTextBrowser *txtEmailBody;

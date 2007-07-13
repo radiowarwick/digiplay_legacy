@@ -92,13 +92,14 @@ void AuthLdap::authSession(string username, string password) {
         // Since we're using LDAP authentication, they may not.
         string SQL = "SELECT id FROM users WHERE username = '"
                         + username + "' LIMIT 1";
-		Result R;
+		PqxxResult R;
 		try {
-        	R = DB->exec(SQL);
-			DB->abort();
+        	R = DB->exec("AuthLdap",SQL);
 		}
 		catch (...) {
 			L_ERROR(LOG_AUTH,"Failed to check for user in database."); 
+            DB->abort("AuthLdap");
+            return;
 		}
 
         if (R.size() == 0) {
@@ -108,25 +109,27 @@ void AuthLdap::authSession(string username, string password) {
                 // Add the user
 		        SQL = "INSERT INTO users (username, password, enabled) "
        		           "VALUES ('" + username + "', '', 't'); ";
-                DB->exec(SQL);
+                DB->exec("AuthLdap",SQL);
                 // Get their new user id
 	     		SQL = "SELECT id FROM users WHERE username = '"
                               + username + "' LIMIT 1";
-                Result R = DB->exec(SQL);
-                DB->exec(SQL);
+                R = DB->exec("AuthLdap",SQL);
+                DB->exec("AuthLdap",SQL);
                 // Add them to the everyone group
                 SQL = "INSERT INTO usersgroups (userid, groupid) "
 						 "VALUES (" + string(R[0]["id"].c_str()) + "," 
                          + GROUP_EVERYONE + ")";
-    		    DB->exec(SQL);
-		        DB->commit();
+    		    DB->exec("AuthLdap",SQL);
+		        DB->commit("AuthLdap");
     		}
 		    catch (...) {
+                DB->abort("AuthLdap");
                 L_ERROR(LOG_AUTH,"Failed to insert user " + username +
 		                " into the database.");
    		    }
         }
 		else {
+            DB->abort("AuthLdap");
 			L_INFO(LOG_AUTH,"Username " + username 
                             + " already in the database so not adding.");
 		}

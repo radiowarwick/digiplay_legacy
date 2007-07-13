@@ -22,9 +22,9 @@
  */
 #include "schedule.h"
 
-schedule::schedule(Transaction *T_new) {
-	T = T_new;
-	S = new vector<track>;
+schedule::schedule() {
+	DB = new DataAccess();
+    S = new vector<track>;
 }
 
 schedule::~schedule() {
@@ -151,7 +151,8 @@ void schedule::exportToDatabase() {
             << t.trim_end_smpl << ","		// End trim
             << t.fade_in_smpl << "," 		// End point of fade in
             << t.fade_out_smpl << ")";		// Start point of fade out
-        T->exec(SQL.str());
+        DB->exec("SueSchedExport",SQL.str());
     }
+    DB->commit("SueSchedExport");
 }
 

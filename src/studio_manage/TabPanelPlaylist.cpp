@@ -125,13 +125,13 @@ void TabPanelPlaylist::getPlaylist(){
 	QListViewItem *new_playlist = 0, *new_track = 0, *last_track = 0;
 	string SQL = "SELECT id,name FROM playlists ORDER BY name DESC";
 
-	Result Playlists;
+	PqxxResult Playlists;
 	try {
-		Playlists = DB->exec(SQL);
+		Playlists = DB->exec("PlaylistRetrieve", SQL);
 	}
 	catch (...) {
 		L_ERROR(LOG_TABPLAYLIST,"Failed to get list of playlists");
-		DB->abort();
+		DB->abort("PlaylistRetrieve");
 		return;
 	}
 
@@ -143,9 +143,9 @@ void TabPanelPlaylist::getPlaylist(){
 		new_playlist->setPixmap (0, *pixExpanded);
 		SQL = "SELECT * FROM v_playlists WHERE playlistid = "
 				+ string(Playlists[j]["id"].c_str());
-		Result R;
+		PqxxResult R;
 		try {
-			R = DB->exec(SQL);
+			R = DB->exec("PlaylistRetrieve",SQL);
 			for (unsigned int i = 0; i < R.size(); i++) {
 				new_track = new QListViewItem(new_playlist,last_track,
 							R[i]["artist"].c_str(),
@@ -161,7 +161,7 @@ void TabPanelPlaylist::getPlaylist(){
 			L_ERROR(LOG_TABPLAYLIST,"Failed to get playlist '"+playlist+"'");
 		}
 	}
-	DB->abort();
+	DB->abort("PlaylistRetrieve");
 }
 
 void TabPanelPlaylist::playlistAdd(QListViewItem *current) {

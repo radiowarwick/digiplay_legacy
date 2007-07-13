@@ -66,10 +66,9 @@ clockThread *ck;
 
 void frmStudioManage::init() {
 	// Connect to database
-	cout << "Connecting to database..." << endl;
+	cout << "Processing configuration..." << flush;
 	conf = new Config("digiplay");
-    DpsObject::dbInit();
-	cout << "Connected." << endl;
+	cout << "complete!" << endl;
 
 	// Initialise modules
 	cout << "Initialising Core Modules..." << endl;

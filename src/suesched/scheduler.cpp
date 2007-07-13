@@ -31,25 +31,15 @@
  */
 scheduler::scheduler() {
 	// Read configuration from the /etc/digiplay config file
-	Config *Conf = new Config("digiplay");
-	try {
-	    C = new Connection( Conf->getDBConnectString() );
-	}
-	catch (...) {
-		cout << "Failed to connect to database" << endl;
-		exit(-1);
-	}
-
-	T = new Transaction( *C, "");
-	S = new schedule( T );
+	DB = new DataAccess();
+    S = new schedule();
 }
 
 /* Closes connection to database
  */
 scheduler::~scheduler() {
 	delete S;
-	delete T;
-	delete C;
+    delete DB;
 }
 
 /* Initiates scheduling for the required time
@@ -99,13 +89,13 @@ bool scheduler::initialise() {
 	srand(time(0));
 	
 	cout << " -> Loading audio data..." << endl;
-	bins->push_back(new sched_bin(T,BIN1_SQL,0));
-	bins->push_back(new sched_bin(T,BIN2_SQL,1));
-	bins->push_back(new sched_bin(T,BIN3_SQL,2));
-	bins->push_back(new sched_bin(T,BIN4_SQL,3));
-	bins->push_back(new sched_bin(T,BIN5_SQL,4));
-	bins->push_back(new sched_bin(T,BIN6_SQL,5));
-	bins->push_back(new sched_bin(T,BIN7_SQL,6));
+	bins->push_back(new sched_bin(BIN1_SQL,0));
+	bins->push_back(new sched_bin(BIN2_SQL,1));
+	bins->push_back(new sched_bin(BIN3_SQL,2));
+	bins->push_back(new sched_bin(BIN4_SQL,3));
+	bins->push_back(new sched_bin(BIN5_SQL,4));
+	bins->push_back(new sched_bin(BIN6_SQL,5));
+	bins->push_back(new sched_bin(BIN7_SQL,6));
 
     cout << " -> Getting Weightings..." << endl;
     bin_w[0] = atoi(getConfigParam("bin_weighting_1").c_str());
@@ -119,9 +109,7 @@ bool scheduler::initialise() {
 }
 
 bool scheduler::complete() {
-	T->commit();
-	delete T;
-	T = new Transaction(*C,"");
+//	DB->commit();
 
 	cout << " -> Cleaning up..." << endl;
 	for (unsigned int i = 0; i < bins->size(); i++)
@@ -134,7 +122,9 @@ bool scheduler::complete() {
  */
 unsigned int scheduler::getPlaylistSize() {
     string SQL = "SELECT count(id) FROM audio WHERE sustainer='t'";
-    return atoi(T->exec(SQL)[0][0].c_str());
+    unsigned int x = atoi(DB->exec("SchedulerPlaylistSize",SQL)[0][0].c_str());
+    DB->abort("SchedulerPlaylistSize");
+    return x;
 }   
 
 /* Returns the total length of the tracks in the playlist
@@ -142,7 +132,9 @@ unsigned int scheduler::getPlaylistSize() {
 unsigned long scheduler::getPlaylistLength() {
     string SQL = "SELECT sum(length_smpl) FROM audio "
         "WHERE sustainer='t'";
-    return atoi(T->exec(SQL)[0][0].c_str());
+    unsigned long x = atoi(DB->exec("SchedulerPlaylistLength", SQL)[0][0].c_str());
+    DB->abort("SchedulerPlaylistLength");
+    return x;
 }   
 
 /* Returns the number of tracks in the playout schedule which are still
@@ -150,7 +142,9 @@ unsigned long scheduler::getPlaylistLength() {
  */
 unsigned int scheduler::getScheduleRemainSize() {
     string SQL = "SELECT count(*) FROM sustschedule";
-    return atoi(T->exec(SQL)[0][0].c_str());
+    unsigned int x = atoi(DB->exec("SchedulerRemainSize",SQL)[0][0].c_str());
+    DB->abort("SchedulerRemainSize");
+    return x;
 }
 
 /* Returns the time until the playout engine will reach end of current
@@ -159,7 +153,9 @@ unsigned int scheduler::getScheduleRemainSize() {
 unsigned long scheduler::getScheduleRemainTime() {
     string SQL = "SELECT sum(audio.length) FROM sustschedule,audio "
         "WHERE sustschedule.audio=audio.id";
-    return atoi(T->exec(SQL)[0][0].c_str());
+    unsigned long x = atoi(DB->exec("SchedulerRemainTime",SQL)[0][0].c_str());
+    DB->abort("SchedulerRemainTime");
+    return x;
 }
 
 /* ====================================================
@@ -411,11 +407,13 @@ bool scheduler::doFadeOut() {
  */
 
 /* Gets a configuration parameter value from the database
+ * \todo: replace with config class
  */
 string scheduler::getConfigParam(string name) {
 	string SQL = "SELECT val FROM configuration WHERE parameter='"
 		+ name + "'";
-	Result R = T->exec(SQL);
+	PqxxResult R = DB->exec("SchedulerGetParam",SQL);
+    DB->abort("SchedulerGetParam");
 	if (R.size() > 0) {
 		return R[0][0].c_str();
 	}

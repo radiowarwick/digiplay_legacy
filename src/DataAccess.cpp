@@ -8,11 +8,23 @@
 
 #include "DataAccess.h"
 
+// Database Management
 PqxxConnection* DataAccess::C = 0;
 PqxxWork* DataAccess::W = 0;
 pthread_mutex_t* DataAccess::t_trans_mutex = 0;
 unsigned int DataAccess::instanceCount = 0;
 
+// Transaction management
+bool DataAccess::transActive = false;
+std::string DataAccess::transName = "";
+pthread_mutex_t* DataAccess::t_name_mutex = 0;
+
+/**
+ * Creates a new instance of the DataAccess class. Only one static connection
+ * is made to the database in each program using this class, which is shared by
+ * all instances. It is important to abort or commit transactions when they are
+ * finished with to prevent database deadlock.
+ */
 DataAccess::DataAccess() {
     char* routine = "DataAccess::DataAccess";
 
@@ -32,7 +44,9 @@ DataAccess::DataAccess() {
                             + dps_itoa(C->protocol_version()));
 			// Init the transaction mutex
             t_trans_mutex = new pthread_mutex_t;
+            t_name_mutex = new pthread_mutex_t;
             pthread_mutex_init(t_trans_mutex,NULL);
+            pthread_mutex_init(t_name_mutex,NULL);
 			W = 0;
         }
         catch (const exception &e) {
@@ -57,8 +71,22 @@ DataAccess::~DataAccess() {
     }
 }
 
-PqxxResult DataAccess::exec(std::string query) {
+/**
+ * Executes an SQL statement under the given name.
+ * If a differently named transaction is currently in progress, the calling
+ * thread will be blocked until that transaction has completed.
+ */
+PqxxResult DataAccess::exec(std::string name, std::string query) {
     char* routine = "DataAccess::exec";
+
+    // If it's a different transaction name to the current one open, make the
+    // calling thread wait until the existing transaction is complete.
+    if (transActive && transName != name) {
+        L_INFO(LOG_DB,"Attempted transaction '" + name + "' while transaction '"
+                + transName + "' is still active. Waiting");
+        pthread_mutex_lock(t_name_mutex);
+        L_INFO(LOG_DB,"Transaction '" + name + "' now commencing.");
+    }
 
 	// Lock mutex to prevent multiple queries simultaneously
     pthread_mutex_lock(t_trans_mutex);
@@ -67,7 +95,13 @@ PqxxResult DataAccess::exec(std::string query) {
 	// If there isn't an active an active transaction, create one
     try {
         if (!W) {
+            // Create a new transaction
             W = new PqxxWork(*C,"DataAccess");
+            transActive = true;
+            transName = name;
+            // Lock the name mutex to prevent different named transactions
+            // starting.
+            pthread_mutex_lock(t_name_mutex);
         }
     }
     catch (const exception &e) {
@@ -85,9 +119,9 @@ PqxxResult DataAccess::exec(std::string query) {
     try {
         R = W->exec(query);
     }
-    catch (const sql_error &e) {
+    catch (const pqxx::sql_error &e) {
         pthread_mutex_unlock(t_trans_mutex);
-        L_ERROR(LOG_DB,e.what());
+    L_ERROR(LOG_DB,e.what());
         L_ERROR(LOG_DB,"SQL Query: " + e.query());
     }
     catch (const exception &e) {
@@ -101,13 +135,25 @@ PqxxResult DataAccess::exec(std::string query) {
         throw;
     }
 
-	// Unlock the mutex and return data
+	// Unlock the transaction mutex and return data
     pthread_mutex_unlock(t_trans_mutex);
     return R;
 }
 
-void DataAccess::commit() {
-	// We shouldn't try to commit when we've not done anything. Stupid.
+/**
+ * Commits any changes to the database in the last transaction and unlocks the
+ * transaction lock.
+ */
+void DataAccess::commit(std::string name) {
+    char* routine = "DataAccess::commit";
+
+    // If we commit a different transaction, we must be stupid
+    if (transActive && transName != name) {
+        L_ERROR(LOG_DB,"Attempted to commit the wrong transaction!");
+        return;
+    }
+	
+    // We shouldn't try to commit when we've not done anything. Stupid.
     if (!W) throw;
 
 	// Lock the mutex, commit the changes, delete the transaction and unlock
@@ -117,10 +163,28 @@ void DataAccess::commit() {
     delete W;
     W = 0;
     pthread_mutex_unlock(t_trans_mutex);
+
+    transActive = false;
+    transName = "";
+
+    // We can start a differently named transaction if we like now
+    pthread_mutex_unlock(t_name_mutex);
 }
 
-void DataAccess::abort() {
-	// We're kind, so we'll let it pass if someone tries to abort a transaction
+/**
+ * Aborts any changes to the database in the last transaction and unlocks the
+ * transaction lock.
+ */
+void DataAccess::abort(std::string name) {
+    char* routine = "DataAccess::abort";
+
+    // If we abort a different transaction, we must be stupid
+    if (transActive && transName != name) {
+        L_ERROR(LOG_DB,"Attempted to abort the wrong transaction!");
+        return;
+    }
+	
+    // We're kind, so we'll let it pass if someone tries to abort a transaction
 	// which doesn't exist.
     if (!W) return;
 
@@ -130,8 +194,17 @@ void DataAccess::abort() {
     delete W;
     W = 0;
     pthread_mutex_unlock(t_trans_mutex);
+
+    transActive = false;
+    transName = "";
+
+    // We can start a differently named transaction if we like now
+    pthread_mutex_unlock(t_name_mutex);
 }
 
+/**
+ * Parses the configuration file to get database connection information.
+ */
 std::string DataAccess::getConnectionString() {
     char* routine = "DataAccess::getConnectionString";
     std::string f = "/etc/digiplay.conf";
@@ -180,4 +253,33 @@ std::string DataAccess::getConnectionString() {
     }
     config_file.close();
     return DB_CONNECT;
+}
+
+/**
+ * Wrapper routine to provide string escaping
+ */
+std::string DataAccess::esc(std::string str) {
+    char* routine = "DataAccess::esc";
+
+    // If there isn't an active an active transaction, create one
+    try {
+        if (!W) {
+            W = new PqxxWork(*C,"DataAccess");
+        }
+    }
+    catch (const exception &e) {
+        pthread_mutex_unlock(t_trans_mutex);
+        L_ERROR(LOG_DB,"Exception: " + string(e.what()));
+        throw;
+    }
+    catch (...) {
+        pthread_mutex_unlock(t_trans_mutex);
+        L_CRITICAL(LOG_DB,"Unexpected exception.");
+        throw;
+    }
+    
+    std::string result = W->esc(str);
+    W->abort();
+    delete W;
+    return result;
 }

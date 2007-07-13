@@ -24,12 +24,7 @@
 #define DPS_H
 
 #include <string>
-using namespace std;
-
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h"
-using namespace pqxx;
+#include "DataAccess.h"
 
 // Error types
 enum LOG_TYPE {
@@ -54,9 +49,9 @@ enum LOG_TYPE {
 struct archive {
     bool isNull;
     unsigned long id;
-    string name;
-    string localPath;
-    string remotePath;
+    std::string name;
+    std::string localPath;
+    std::string remotePath;
 };
 
 enum ARCHIVE_COMPONENT {
@@ -73,20 +68,20 @@ enum AUDIO_TYPE {
 };
 
 struct track {
-    string id;
+    std::string id;
     bool isNull;
     unsigned short bin;
     unsigned int index;
     unsigned long audio_id;
-    string md5;
+    std::string md5;
 	archive md5_archive;
-    string title;
-    string artist;
-	string album;
+    std::string title;
+    std::string artist;
+    std::string album;
 	unsigned short tracknum;
-	string reclibid;
-	string origin;
-	string release_date;
+    std::string reclibid;
+    std::string origin;
+    std::string release_date;
 	bool censor;
     unsigned long length_smpl;
     unsigned long trim_start_smpl;
@@ -98,10 +93,10 @@ struct track {
 
 struct jingle {
 	bool isNull;
-	string md5;
+    std::string md5;
 	archive md5_archive;
-	string title;
-	string package;
+    std::string title;
+    std::string package;
 	unsigned long length_smpl;
 	unsigned long trim_start_smpl;
 	unsigned long trim_end_smpl;
@@ -115,20 +110,20 @@ struct advert {
 
 struct script {
 	bool isNull;
-	string title;
-	string owner;
-	string summary;
-	string content;
+    std::string title;
+    std::string owner;
+    std::string summary;
+    std::string content;
 	unsigned long length_smpl;
 };
 
 struct email {
-    string from;
-    string subject;
-    string received;
-    string body;
+    std::string from;
+    std::string subject;
+    std::string received;
+    std::string body;
     bool flag;
-    string id;
+    std::string id;
 };
 
 enum eventType { 
@@ -151,19 +146,13 @@ enum showPlanState {
 	SHOWPLAN_STATE_LOADED,
 	SHOWPLAN_STATE_FINISHED};
 
-track dps_getTrack(Connection *C, string md5);
-string dps_itoa(long num);
-string& dps_strTrim(string& s);
-string& dps_strLcase(string& s);
-string dps_strPcase(string *Str);
-string dps_strNum(long num, unsigned int digits);
-string dps_prettyTime(long samples);
+track dps_getTrack(std::string md5);
+std::string dps_itoa(long num);
+std::string& dps_strTrim(std::string& s);
+std::string& dps_strLcase(std::string& s);
+std::string dps_strPcase(std::string *Str);
+std::string dps_strNum(long num, unsigned int digits);
+std::string dps_prettyTime(long samples);
 long dps_current_time();
-/*
-static int ruid = -1,euid = -1;
-unsigned int getDigiplayUser();
-void dropPrivilage();
-void gainPrivilage();
-void showPrivilage();
-*/
+
 #endif

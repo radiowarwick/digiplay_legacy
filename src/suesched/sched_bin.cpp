@@ -22,8 +22,10 @@
  */
 #include "sched_bin.h"
 
-sched_bin::sched_bin(Transaction *T, string SQL, unsigned short b) {
-	bin = T->exec(SQL);
+sched_bin::sched_bin(string SQL, unsigned short b) {
+    DB = new DataAccess();
+	bin = DB->exec("Sched_bin",SQL);
+    DB->abort("Sched_bin");
 	if (bin.size() == 0) {
 		cout << " -> WARNING: bin " << b << " is empty!" << endl;
 		cout << "   -> SQL: " << SQL << endl;

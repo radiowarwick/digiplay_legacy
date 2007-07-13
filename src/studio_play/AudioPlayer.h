@@ -27,11 +27,6 @@
 #include <qwidget.h>
 #include <qmutex.h>
 
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h" 
-using namespace pqxx;
-
 #include "audio/Audio.h"
 #include "audio/InputRaw.h"
 #include "audio/OutputDsp.h"

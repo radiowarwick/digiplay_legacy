@@ -31,13 +31,8 @@
 #include <vector>
 using namespace std;
 
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h"
-using namespace pqxx;
-
+#include "DataAccess.h"
 #include "schedule.h"
-#include "Config.h"
 
 #define BIN1_SQL "SELECT * from v_audio_music WHERE sustainer='t' ORDER BY title"
 #define BIN2_SQL "SELECT * from v_audio_music WHERE sustainer='t' ORDER BY title"
@@ -79,8 +74,7 @@ class scheduler {
 		unsigned long getScheduleRemainTime();
 
 	private:
-		Connection *C;
-		Transaction *T;
+        DataAccess* DB;
 		schedule *S;
 		vector<sched_bin*> *bins;
 		int bin_w[BINS];

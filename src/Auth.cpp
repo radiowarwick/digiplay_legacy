@@ -76,12 +76,12 @@ void Auth::authSession(string username, string password) {
     }
 
     // Get the users id
-	Result R;
-	string SQL, userid;
+	PqxxResult R;
+    std::string SQL, userid;
     try {
         SQL = "SELECT id FROM users WHERE username = '"
                         + username + "' LIMIT 1";
-		R = DB->exec(SQL);
+		R = DB->exec("AuthGetUser",SQL);
 		userid = string(R[0]["id"].c_str());
     }
     catch (...) {
@@ -95,11 +95,11 @@ void Auth::authSession(string username, string password) {
 		    SQL = "UPDATE configuration SET val='" + userid
 	    	    + "' WHERE parameter='userid' AND location=" 
                 + dps_itoa(location);
-			R = DB->exec(SQL);
-     		DB->commit();
+			R = DB->exec("AuthUser",SQL);
+     		DB->commit("AuthUser");
 		}
 		catch (...) {
-            DB->abort();
+            DB->abort("AuthUser");
 			L_ERROR(LOG_AUTH,"Failed to change userid in the configuration"
                             " table.");
 		}
@@ -109,42 +109,42 @@ void Auth::authSession(string username, string password) {
             // Get their home directory
    		    SQL = "SELECT id FROM dir WHERE name='" + username 
                     + "' AND parent = " + DIR_USERS + ";";
-       		R = DB->exec(SQL);
+       		R = DB->exec("AuthUser",SQL);
 		    if (R.size()==0) {
     			try {
                     // Create a directory for them
         			SQL = "INSERT INTO dir (name, parent, notes) VALUES "
         					"('" + username + "', " + DIR_USERS + ", '" 
                             + username + "\\'s home directory')";
-                    DB->exec(SQL);
+                    DB->exec("AuthUser",SQL);
                     // Assign permissions to that directory to them
                     SQL = "INSERT INTO dirusers (dirid, userid, permissions) "
                             "VALUES ((SELECT id FROM dir WHERE name='" 
                             + username + "' AND parent=" + DIR_USERS + ")," 
                             + userid + ", '11000000');";
-    				R = DB->exec(SQL);
-        		  	DB->commit();
+    				R = DB->exec("AuthUser",SQL);
+        		  	DB->commit("AuthUser");
     			}
      	  		catch (...) {
-                    DB->abort();
+                    DB->abort("AuthUser");
      		    	L_ERROR(LOG_AUTH,"Failed to add user's folder to "
                             "database and assign permissions.");
                     return;
         		}
 	    	}
 		    else {
-                DB->abort();
+                DB->abort("AuthUser");
 		    	L_INFO(LOG_AUTH,"User " + username + " already has a folder.");
 		    }
     	}
     	catch (...) {
-            DB->abort();
+            DB->abort("AuthUser");
         	L_ERROR(LOG_AUTH,"Failed to find user's folder in database.");
             return;
     	}
 	}
 	else {
-        DB->abort();
+        DB->abort("AuthUser");
 		L_ERROR(LOG_AUTH,"Failed to find user in database.");
         return;
 	}
@@ -172,8 +172,8 @@ void Auth::closeSession() {
 		  "SELECT id FROM users WHERE username='Guest'"
 	      ") WHERE parameter='userid' AND location=" + dps_itoa(location) + ";";
 	try {
-		Result R = DB->exec(SQL);
-   	 	DB->commit();
+		PqxxResult R = DB->exec("AuthCloseSession", SQL);
+   	 	DB->commit("AuthCloseSession");
 	}
 	catch (...) {
 		L_ERROR(LOG_AUTH,"Failed to change userid in the configuration table.");

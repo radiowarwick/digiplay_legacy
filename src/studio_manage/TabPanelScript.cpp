@@ -115,14 +115,14 @@ void TabPanelScript::loadScript( int id ) {
 	//showplan and shoul then load it.
 	string SQL = "SELECT name, contents, length FROM scripts " 
 				 "WHERE id=" + dps_itoa(id) +" LIMIT 1;";
-	Result R;
+	PqxxResult R;
 	try {
-		R = DB->exec(SQL);
-		DB->abort();
+		R = DB->exec("ScriptLoad", SQL);
 	}
 	catch(...) {
 		//Fuck up put an error here!
 	}
+    DB->abort("ScriptLoad");
 	if ( R.size() != 0 ) {
 		txtScriptBody->setText( R[0]["contents"].c_str() );
 		txtScriptName->setText( R[0]["name"].c_str() );
@@ -132,7 +132,6 @@ void TabPanelScript::loadScript( int id ) {
 	else {
 		//toss wank.  Something fucked up good.
 	}
-//	cout << "loading id: " << s->getId() << endl;
 }
 
 void TabPanelScript::clearScript() {

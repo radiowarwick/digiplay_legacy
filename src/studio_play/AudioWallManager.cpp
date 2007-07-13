@@ -50,9 +50,10 @@ void AudioWallManager::load(unsigned int cartset) {
 	}
 	_pages.resize(0);
 	
-	short pagecount = atoi(DB->exec("SELECT max(cartwalls.page) "
-                             "FROM cartwalls,cartsets "
-                             "WHERE cartwalls.cartsetid = " 
+	short pagecount = atoi(DB->exec("AudioWallManagerLoad",
+                            "SELECT max(cartwalls.page) "
+                            "FROM cartwalls,cartsets "
+                            "WHERE cartwalls.cartsetid = " 
 							 	+ dps_itoa(cartset))[0][0].c_str()) + 1;
 	for (int i = 0; i < pagecount; i++) {
 		_pages.push_back(new Page);
@@ -60,9 +61,10 @@ void AudioWallManager::load(unsigned int cartset) {
 			_pages[i]->items.push_back(new AudioWallItemSpec);
 		}
 	}
-    Result R = DB->exec("SELECT * FROM v_cartwalls WHERE cartset_id = "
+    PqxxResult R = DB->exec("AudioWallManagerLoad",
+                        "SELECT * FROM v_cartwalls WHERE cartset_id = "
                         + dps_itoa(cartset) + " ORDER BY page, prop_name");
-	DB->abort();
+	DB->abort("AudioWallManagerLoad");
 	
 	string file = "";
 	string md5 = "";

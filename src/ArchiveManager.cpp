@@ -34,12 +34,15 @@ ArchiveManager::ArchiveManager(archive new_A) {
 	trackDB = 0;
 	trackInbox = 0;
 	trackTrash = 0;
+
+    DB = new DataAccess();
 }
 
 ArchiveManager::~ArchiveManager() {
     delete trackDB;
     delete trackInbox;
     delete trackTrash;
+    delete DB;
 }
 
 /*
@@ -53,20 +56,15 @@ void ArchiveManager::load() {
 	delete trackTrash;
 
     try {
-        /* Get configuration and connect to database*/
-    	Config *Conf = new Config("digiplay");
-		C = new Connection(Conf->getDBConnectString());
-        delete Conf;
-
 	    /* Create a new transaction and load current DB data into memory */
         trackDB = new vector<track>;
         loadDB(trackDB);
     }
-	catch (broken_connection &e) {
-        L_ERROR(LOG_DB,"Failed to connect to database");
-        L_ERROR(LOG_DB,e.what());
-		return;
-	}
+//	catch (broken_connection &e) {
+//        L_ERROR(LOG_DB,"Failed to connect to database");
+//        L_ERROR(LOG_DB,e.what());
+//		return;
+//	}
 	catch (...) {
         L_ERROR(LOG_DB,"An unknown error has occured.");
 		return;
@@ -178,12 +176,12 @@ void ArchiveManager::add(unsigned int index) {
 	}
 
 	// escape data before adding to database
-	t.title = escape_binary(t.title);
-	t.artist = escape_binary(t.artist);
-	t.album = escape_binary(t.album);
-	t.origin = escape_binary(t.origin);
-	t.reclibid = escape_binary(t.reclibid);
-	t.release_date = escape_binary(t.release_date);
+	t.title = DB->esc(t.title);
+	t.artist = DB->esc(t.artist);
+	t.album = DB->esc(t.album);
+	t.origin = DB->esc(t.origin);
+	t.reclibid = DB->esc(t.reclibid);
+	t.release_date = DB->esc(t.release_date);
 
     // check what type of audio we have
     if (t.album.size() > 13
@@ -483,8 +481,8 @@ void ArchiveManager::loadDB(vector<track> *tracks) {
 	track t;
     string SQL = "SELECT * FROM v_audio WHERE archiveid = " + dps_itoa(A.id);
     try {
-        T = new Transaction(*C,"loadDB");
-    	Result R = T->exec(SQL);
+        PqxxResult R = DB->exec("ArchiveManagerLoadDB",SQL);
+        DB->abort("ArchiveManagerLoadDB");
     	for (unsigned int i = 0; i < R.size(); i++) {
     		t.md5 = R[i]["md5"].c_str();
     		t.md5_archive = A;
@@ -506,14 +504,11 @@ void ArchiveManager::loadDB(vector<track> *tracks) {
             }
     		tracks->push_back(t);
     	}
-        T->abort();
-        delete T;
     }
     catch (...) {
         cout << "ArchiveManager::loadDB: An error occured." << endl;
         cout << SQL << endl;
-        T->abort();
-        delete T;
+        DB->abort("ArchiveManagerLoadDB");
         return;
     }
 }
@@ -588,29 +583,28 @@ void ArchiveManager::loadTrash(vector<track> *tracks) {
  * Adds the track information from \a t into the database as a music item.
  */
 void ArchiveManager::addTrack(track t) {
-    Result R;
+    PqxxResult R;
     int artist_id = -1, album_id = -1, audio_id = -1;
     string SQL;
 
     try {
-        T = new Transaction(*C,"addtrack");
         // We need to check the track isn't already in the database
         // if it is, we remove it and all associated links
         SQL = "SELECT id FROM audio WHERE md5='" + t.md5 + "'";
-        R = T->exec(SQL);
+        R = DB->exec("ArchiveManagerAddTrack",SQL);
         if (R.size() == 1) removeTrack(R[0][0].c_str());
 
         // See if the artist already exists and use it if it does
         SQL = "SELECT id FROM artists WHERE name='" + t.artist + "' "
                 "OR alt_name LIKE '%" + t.artist + "%'";
-        R = T->exec(SQL);
+        R = DB->exec("ArchiveManagerAddTrack",SQL);
         if (R.size() > 0) artist_id = atoi(R[0][0].c_str());
         // Otherwise, add a new artist
         else {
             SQL = "INSERT INTO artists (name) VALUES ('" + t.artist + "')";
-            T->exec(SQL);
+            DB->exec("ArchiveManagerAddTrack",SQL);
             SQL = "SELECT last_value FROM artists_id_seq";
-            R = T->exec(SQL);
+            R = DB->exec("ArchiveManagerAddTrack",SQL);
             if (R.size() > 0) artist_id = atoi(R[0][0].c_str());
             else {
                 cout << "Failed to get the new artist!" << endl;
@@ -623,14 +617,14 @@ void ArchiveManager::addTrack(track t) {
         else {
             SQL = "SELECT * FROM albums WHERE name='" + t.album + "' "
                     "OR alt_name LIKE '%" + t.album + "%'";
-            R = T->exec(SQL);
+            R = DB->exec("ArchiveManagerAddTrack",SQL);
             if (R.size() > 0) album_id = atoi(R[0][0].c_str());
             else {
                 SQL = "INSERT INTO albums (name) "
                         "VALUES ('" + t.album + "')";
-                T->exec(SQL);
+                DB->exec("ArchiveManagerAddTrack",SQL);
                 SQL = "SELECT last_value FROM albums_id_seq";
-                R = T->exec(SQL);
+                R = DB->exec("ArchiveManagerAddTrack",SQL);
                 if (R.size() > 0) album_id = atoi(R[0][0].c_str());
                 else {
                     cout << "Failed to get the new albm!" << endl;
@@ -654,9 +648,9 @@ void ArchiveManager::addTrack(track t) {
                 + dps_itoa(album_id) + "," + dps_itoa(t.tracknum) + ","
                 + dps_itoa(atoi(t.release_date.c_str()))
                 + ",'f','f',1,'" + t.origin + "','" + t.reclibid + "','raw')";
-        T->exec(SQL);
+        DB->exec("ArchiveManagerAddTrack",SQL);
         SQL = "SELECT last_value FROM audio_id_seq";
-        R = T->exec(SQL);
+        R = DB->exec("ArchiveManagerAddTrack",SQL);
 
         // Connect audio to its artist
         if (R.size() > 0) {
@@ -664,7 +658,7 @@ void ArchiveManager::addTrack(track t) {
             SQL = "INSERT INTO audioartists (audioid, artistid) "
                   "VALUES (" + dps_itoa(audio_id) + "," 
                   + dps_itoa(artist_id) + ")";
-            T->exec(SQL);
+            DB->exec("ArchiveManagerAddTrack",SQL);
         }
         else {
             cout << "Failed to retrieve last audio id!" << endl;
@@ -674,14 +668,12 @@ void ArchiveManager::addTrack(track t) {
         // Add it to a directory
         SQL = "INSERT INTO audiodir (audioid, dirid, linktype) "
                 "VALUES (" + dps_itoa(audio_id) + ", 2, 0)";
-        T->exec(SQL);
+        DB->exec("ArchiveManagerAddTrack",SQL);
 
-        T->commit();
-        delete T;
+        DB->commit("ArchiveManagerAddTrack");
     }
     catch (...) {
-        T->abort();
-        delete T;
+        DB->abort("ArchiveManagerAddTrack");
         cout << "Failed to create transaction, or SQL error:" << endl;
         cout << SQL << endl;
         throw;
@@ -692,33 +684,32 @@ void ArchiveManager::addTrack(track t) {
  * Adds the information specified by \a t into the database as a jingle.
  */
 void ArchiveManager::addJingle(track t) {
-    Result R;
+    PqxxResult R;
     int pkg_id = -1, audio_id = -1;
     string SQL;
 
     try {
-        T = new Transaction(*C,"addjingle");
         // We need to check the track isn't already in the database
         // if it is, we remove it and all associated links
         SQL = "SELECT id FROM audio WHERE md5='" + t.md5 + "'";
-        R = T->exec(SQL);
+        R = DB->exec("ArchiveManagerAddJingle",SQL);
         if (R.size() == 1) removeTrack(R[0][0].c_str());
 
         // See if the jingle package exists
         SQL = "SELECT * FROM jinglepkgs WHERE name='" + t.album + "'";
-        R = T->exec(SQL);
+        R = DB->exec("ArchiveManagerAddJingle",SQL);
         if (R.size() > 0) pkg_id = atoi(R[0][0].c_str());
         // if not, create it
         else {
             SQL = "INSERT INTO jinglepkgs (name, description, enabled) "
                     "VALUES ('" + t.album + "','" + t.album + "','f')";
-            T->exec(SQL);
+            DB->exec("ArchiveManagerAddJingle",SQL);
             SQL = "SELECT last_value FROM jinglepkgs_id_seq";
-            R = T->exec(SQL);
+            R = DB->exec("ArchiveManagerAddJingle",SQL);
             if (R.size() > 0) pkg_id = atoi(R[0][0].c_str());
             else {
                 cout << "Failed to get the jingle package name!" << endl;
-                T->abort();
+                DB->abort("ArchiveManagerAddJingle");
                 return;
             }
         }
@@ -735,15 +726,15 @@ void ArchiveManager::addJingle(track t) {
                 +  ",2,1," + dps_itoa(dps_current_time()) + "," 
                 +dps_itoa(dps_current_time()) + ",'" + t.title 
                 + "','f','f',1,1)";
-        T->exec(SQL);
+        DB->exec("ArchiveManagerAddJingle",SQL);
         SQL = "SELECT last_value FROM audio_id_seq";
-        R = T->exec(SQL);
+        R = DB->exec("ArchiveManagerAddJingle",SQL);
         if (R.size() > 0) {
             audio_id = atoi(R[0][0].c_str());
         }
         else {
             cout << "Failed to add audio!"<< endl;
-            T->abort();
+            DB->abort("ArchiveManagerAddJingle");
             return;
         }
 
@@ -751,18 +742,18 @@ void ArchiveManager::addJingle(track t) {
         SQL = "INSERT INTO audiojinglepkgs (audioid, jinglepkgid, jingletypeid)"
                 " VALUES (" + dps_itoa(audio_id) + "," 
                 + dps_itoa(pkg_id) + ", 1)";
-        T->exec(SQL);
+        DB->exec("ArchiveManagerAddJingle",SQL);
 
         // Put the jingle in the jingles directory
         // TODO: Create subdirectories for jingle packages
         SQL = "INSERT INTO audiodir (audioid, dirid, linktype) "
                 "VALUES (" + dps_itoa(audio_id) + ",6, 0)";
-        T->exec(SQL);
+        DB->exec("ArchiveManagerAddJingle",SQL);
 
-        T->commit();
-        delete T;
+        DB->commit("ArchiveManagerAddJingle");
     }
     catch (...) {
+        DB->abort("ArchiveManagerAddJingle");
         cout << "SQL error:" << endl;
         cout << SQL << endl;
         return;
@@ -789,22 +780,23 @@ void ArchiveManager::addPrerec(track t) {
 void ArchiveManager::removeTrack(string id) {
     string SQL;
     try {
-        if (!T) throw;
         SQL = "DELETE FROM audioartists WHERE audioid=" + id;
-        T->exec(SQL);
+        DB->exec("ArchiveManagerRemoveTrack",SQL);
         SQL = "DELETE FROM audio WHERE id=" + id;
-        T->exec(SQL);
+        DB->exec("ArchiveManagerRemoveTrack",SQL);
         SQL = "DELETE FROM audiogroups WHERE audioid=" + id;
-        T->exec(SQL);
+        DB->exec("ArchiveManagerRemoveTrack",SQL);
         SQL = "DELETE FROM audiousers WHERE audioid=" + id;
-        T->exec(SQL);
+        DB->exec("ArchiveManagerRemoveTrack",SQL);
         SQL = "DELETE FROM audiokeywords WHERE audioid=" + id;
-        T->exec(SQL);
+        DB->exec("ArchiveManagerRemoveTrack",SQL);
         SQL = "DELETE FROM audiodir WHERE audioid=" + id;
-        T->exec(SQL);
+        DB->exec("ArchiveManagerRemoveTrack",SQL);
+        DB->commit("ArchiveManagerRemoveTrack");
         cout << "Old entry removed" << endl;
     }
     catch (...) {
+        DB->abort("ArchiveManagerRemoveTrack");
         cout << "No transaction, or failed on SQL: " << SQL << endl;
         throw;
     }

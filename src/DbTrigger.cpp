@@ -3,7 +3,7 @@
 
 #include "DbTrigger.h"
 
-Connection* DbTrigger::Ctrig = 0;
+pqxx::connection* DbTrigger::Ctrig = 0;
 unsigned int DbTrigger::instanceCount = 0;
 
 DbTrigger::DbTrigger(const char* name, std::string trigger){ 
@@ -12,7 +12,7 @@ DbTrigger::DbTrigger(const char* name, std::string trigger){
 	++(DbTrigger::instanceCount);
     if (DbTrigger::instanceCount == 1) {
         try {
-            Ctrig = new Connection( DataAccess::getConnectionString() );
+            Ctrig = new pqxx::connection( DataAccess::getConnectionString() );
         }
         catch (const exception &e) {
             L_ERROR(LOG_DB,e.what());
@@ -49,7 +49,7 @@ void DbTrigger::stop() {
 }
 
 // =================================
-DbPqxxTrigger::DbPqxxTrigger(const char* name, Connection * C, 
+DbPqxxTrigger::DbPqxxTrigger(const char* name, pqxx::connection * C, 
     std::string trigger) : pqxx::trigger(*C, trigger) {
 
 }

@@ -20,13 +20,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#include "pqxx/connection.h"
-#include "pqxx/transaction.h"
-#include "pqxx/result.h"
-using namespace pqxx;
-
+#include "DataAccess.h"
 #include "Logger.h"
-#include "Config.h"
 
 #include "DpsObject.h"
 
@@ -35,8 +30,7 @@ using namespace pqxx;
  * =======================================================================
  */
 // ----- DpsObject Constructors -----
-Connection* DpsObject::C = 0;
-Transaction* DpsObject::T = 0;
+DataAccess* DpsObject::DB = 0;
 
 DpsObject::DpsObject() {
     _type = DPS_OBJECT;
@@ -49,33 +43,6 @@ DpsObject::~DpsObject() {
 // ----- DpsObject Operators -----
 
 // ----- DpsObject Member routines -----
-void DpsObject::dbInit() {
-    dbConnect();
-}
-
-Transaction* DpsObject::db() {
-    if (!T) dbConnect();
-    return T;
-}
-
-void DpsObject::commit() {
-    if (!T) throw DB_NOT_CONNECTED;
-    T->commit();
-    delete T;
-    T = new Transaction(*C,"");
-}
-
-void DpsObject::dbConnect() {
-    try {
-        Config* conf = new Config("digiplay");
-        C = new Connection(conf->getDBConnectString());
-        delete conf;
-        T = new Transaction(*C,"");
-    }
-    catch (...) {
-        throw DB_NOT_CONNECTED;
-    };
-}
 
 /* =======================================================================
  * DpsShowplan
@@ -171,9 +138,11 @@ void DpsShowplan::save() {
 
 void DpsShowplan::load(int id) {
     _id = id;
-    string SQL;
-    SQL =   "SELECT * FROM v_showplan WHERE id=" + dps_itoa(id);
-    Result R = db()->exec(SQL);
+    
+    string SQL = "SELECT * FROM v_showplan WHERE id=" + dps_itoa(id);
+    PqxxResult R = DB->exec("DpsShowplanLoad",SQL);
+    DB->abort("DpsShowplanLoad");
+
     for (unsigned int i = 0; i < R.size(); i++) {
         if (string(R[i]["itemtype"].c_str()) == "audio") {
             if (string(R[i]["audiotype"].c_str()) == "music")
@@ -359,23 +328,26 @@ DpsShowTrack::~DpsShowTrack() {
 
 // ----- DpsShowTrack Operators -----
 
-// ----- DpsShowTRack Member routines -----
+// ----- DpsShowTrack Member routines -----
 void DpsShowTrack::load(string id) {
     char *routine = "DpsShowTrack::load";
     string SQL;
-    Result R;
+    PqxxResult R;
 
     try {
         SQL = "SELECT type FROM audio WHERE id='" + id + "'";
-        R = db()->exec(SQL);
+        R = DB->exec("DpsShowTrackLoad",SQL);
         if (R.size() == 0 || string(R[0]["type"].c_str()) != "1") {
+            DB->abort("DpsShowTrackLoad");
             L_ERROR(LOG_DB,"ID: " + id + " is not a music track.");
             throw DB_NO_SUCH_TRACK;
         }
         SQL = "SELECT * FROM v_audio_music WHERE id='" + id + "'";
-        R = db()->exec(SQL);
+        R = DB->exec("DpsShowTrackLoad",SQL);
+        DB->abort("DpsShowTrackLoad");
     }
     catch (int e) {
+        DB->abort("DpsShowTrackLoad");
         if (e == DB_NOT_CONNECTED) {
             L_ERROR(LOG_DB,"Unable to connect to database.");
         }
@@ -428,19 +400,22 @@ DpsShowJingle::~DpsShowJingle() {
 void DpsShowJingle::load(string id) {
     char *routine = "DpsShowJingle::load";
     string SQL;
-    Result R;
+    PqxxResult R;
 
     try {
         SQL = "SELECT type FROM audio WHERE id='" + id + "'";
-        R = db()->exec(SQL);
+        R = DB->exec("DpsShowJingleLoad",SQL);
         if (R.size() == 0 || string(R[0]["type"].c_str()) != "2") {
+            DB->abort("DpsShowJingleLoad");
             L_ERROR(LOG_DB,"ID: " + id + " is not a jingle.");
             throw DB_NO_SUCH_TRACK;
         }
         SQL = "SELECT * FROM v_audio_jingles WHERE id='" + id + "'";
-        R = db()->exec(SQL);
+        R = DB->exec("DpsShowJingleLoad",SQL);
+        DB->abort("DpsShowJingleLoad");
     }
     catch (int e) {
+        DB->abort("DpsShowJingleLoad");
         if (e == DB_NOT_CONNECTED) {
             L_ERROR(LOG_DB,"Unable to connect to database.");
         }
@@ -493,19 +468,21 @@ DpsShowAdvert::~DpsShowAdvert() {
 void DpsShowAdvert::load(string id) {
     char *routine = "DpsShowAdvert::load";
     string SQL;
-    Result R;
+    PqxxResult R;
 
     try {
         SQL = "SELECT type FROM audio WHERE id='" + id + "'";
-        R = db()->exec(SQL);
+        R = DB->exec("DpsShowAdvertLoad",SQL);
         if (R.size() == 0 || string(R[0]["type"].c_str()) != "3") {
             L_ERROR(LOG_DB,"ID: " + id + " is not an advert.");
             throw DB_NO_SUCH_TRACK;
         }
         SQL = "SELECT * FROM v_audio_adverts WHERE id='" + id + "'";
-        R = db()->exec(SQL);
+        R = DB->exec("DpsShowAdvertLoad",SQL);
+        DB->abort("DpsShowAdvertLoad");
     }
     catch (int e) {
+        DB->abort("DpsShowAdvertLoad");
         if (e == DB_NOT_CONNECTED) {
             L_ERROR(LOG_DB,"Unable to connect to database.");
         }
@@ -558,13 +535,15 @@ DpsShowScript::~DpsShowScript() {
 void DpsShowScript::load(unsigned int id) {
     char *routine = "DpsShowScript::load";
     string SQL;
-    Result R;
+    PqxxResult R;
 
     try {
         SQL = "SELECT * FROM v_scripts WHERE id=" + dps_itoa(id);
-        R = db()->exec(SQL);
+        R = DB->exec("DpsShowScriptLoad",SQL);
+        DB->abort("DpsShowScriptLoad");
     }
     catch (int e) {
+        DB->abort("DpsShowScriptLoad");
         if (e == DB_NOT_CONNECTED) {
             L_ERROR(LOG_DB,"Unable to connect to database.");
         }

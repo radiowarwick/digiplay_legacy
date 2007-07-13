@@ -20,15 +20,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "DataAccess.h"
 #include "Logger.h"
-#include "Config.h"
 
 #include "AuthPsql.h"
 
 AuthPsql::AuthPsql() {
-	Config* conf = new Config("digiplay");
-	C = new Connection(conf->getDBConnectString());
-	delete conf;
+    DB = new DataAccess();
 }
 
 AuthPsql::~AuthPsql() {
@@ -44,10 +42,10 @@ void AuthPsql::authSession(string username, string password) {
 		throw AUTH_INVALID_CREDENTIALS;
 	}
 
-	Transaction T(*C,"");
 	string SQL = "SELECT password FROM users WHERE username='" 
 					+ username + "'";
-	Result R = T.exec(SQL);
+	Result R = DB->exec(SQL);
+    DB->abort();
 
 	if (R.size() == 0) {
 		L_ERROR(LOG_AUTH,"No such user!");

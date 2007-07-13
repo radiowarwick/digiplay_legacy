@@ -30,7 +30,7 @@
 #include "Showplan.h"
 #include "TabPanel.h"
 #include "Config.h"
-#include "libsearch.h"
+#include "DpsMusicSearch.h"
 #include "dlgWarn.h"
 
 class QTabWidget;
@@ -62,7 +62,7 @@ class TabPanelSearch : public TabPanel {
 	
 		Config *conf;
 		vector<track> *SearchResults;
-		libsearch *library_engine;
+		DpsMusicSearch* library_engine;
 		QPushButton *btnLibrarySearch;
 		QListView *lstSearchResults;
 		QLineEdit *txtLibrarySearchText;

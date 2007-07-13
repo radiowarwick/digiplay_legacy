@@ -161,7 +161,7 @@ void TabPanelEmail::getEmail(){
     //Extract the most recent 20 emails
     string SQL = "SELECT * FROM email ORDER BY datetime DESC LIMIT 20;";
     try {
-        Result R = DB->exec(SQL);
+        PqxxResult R = DB->exec("EmailGet", SQL);
         string flag;
         // If there aren't any, we're done, but warn anyway
         if (R.size() == 0) {
@@ -207,7 +207,7 @@ void TabPanelEmail::getEmail(){
     catch (...) {
         L_ERROR(LOG_TABEMAIL,"Failed to get new e-mails.");
     }
-    DB->abort();
+    DB->abort("EmailGet");
     L_INFO(LOG_TABEMAIL,"Emails retrieved successfully.");
 }
 
@@ -218,8 +218,8 @@ void TabPanelEmail::getEmailBody(QListViewItem *current) {
     string id = current->text(4).ascii();
     string SQL = "SELECT * FROM email WHERE id = " + id;
     try {
-        Result R = DB->exec(SQL);
-        DB->abort();
+        PqxxResult R = DB->exec("EmailGetBody", SQL);
+        DB->abort("EmailGetBody");
         txtEmailBody->setCurrentFont(fntBody);
         txtEmailBody->setPointSize(pointSize);
         txtEmailBody->setText(R[0]["body"].c_str());
@@ -233,7 +233,7 @@ void TabPanelEmail::getEmailBody(QListViewItem *current) {
     catch (...) {
         L_ERROR(LOG_TABEMAIL,"Failed to get email body for id "
                                     + current->text(4));
-        DB->abort();
+        DB->abort("EmailGetBody");
     }
     L_INFO(LOG_TABEMAIL,"Email body for id " + current->text(4) 
                             + " retrieved successfully.");
@@ -256,12 +256,12 @@ void TabPanelEmail::markRead(string id) {
     flagUpdateDisabled = TRUE;
     string SQL = "UPDATE email SET new_flag='f' WHERE id=" + id;
     try {
-        DB->exec(SQL);
-        DB->commit();
+        DB->exec("EmailMarkRead",SQL);
+        DB->commit("EmailMarkRead");
     }
     catch (...) {
         L_ERROR(LOG_TABEMAIL,"Failed to set e-mail as read.");
-    	DB->abort();
+    	DB->abort("EmailMarkRead");
     }
     L_INFO(LOG_TABEMAIL,"Email id " + id + " now marked as read.");
 }

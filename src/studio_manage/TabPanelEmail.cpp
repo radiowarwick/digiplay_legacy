@@ -41,6 +41,7 @@
 #include "Config.h"
 #include "DataAccess.h"
 #include "DbTrigger.h"
+#include "DpsEmail.h"
 
 #include "TabPanelEmail.h"
 
@@ -48,6 +49,7 @@ TabPanelEmail::TabPanelEmail(QTabWidget *parent, string text)
         : TabPanel(parent,text) {
     panelTag = "TabEmail";
     DB = new DataAccess();
+    E = new DpsEmail();
 
     // Initislise object pointers
     lstEmail = 0;
@@ -60,7 +62,7 @@ TabPanelEmail::TabPanelEmail(QTabWidget *parent, string text)
     triggerEmail = new DbTrigger("triggerEmail","trig_id2");
     triggerEmail->start();
     connect(triggerEmail, SIGNAL(trigger()),
-                            this, SLOT(processEmailUpdate()));
+                            this, SLOT(getEmail()));
 }
 
 // clean up stuff
@@ -81,6 +83,86 @@ void TabPanelEmail::configure(Auth *authModule) {
         getEmail();
     }
     TabPanel::configure(authModule);
+}
+
+
+void TabPanelEmail::getEmailBody(QListViewItem *current) {
+    char *routine = "TabPanelEmail::getEmailBody";
+    L_INFO(LOG_TABEMAIL,"Get email body for id " + current->text(4));
+
+    // Find selected email and display email body
+    for (unsigned int i = 0; i < emails.size(); ++i) {
+        if (emails[i].id == string(current->text(4).ascii())) {
+            txtEmailBody->setCurrentFont(fntBody);
+            txtEmailBody->setPointSize(pointSize);
+            txtEmailBody->setText(emails[i].body);
+        }
+    }
+}
+
+/**
+ * Gets the latest emails from the DpsEmail module, and then redisplays the
+ * email list.
+ */
+void TabPanelEmail::getEmail(){
+    char *routine = "TabPanelEmail::getEmail";
+    L_INFO(LOG_TABEMAIL,"Getting emails.");
+   
+    // If we're not supposed to update, reset the flag and return.
+    if (flagUpdateDisabled) {
+        flagUpdateDisabled = false;
+        return;
+    }
+
+    tm *dte = 0;
+    char date[30];
+    QListViewItem *new_email = 0;
+    string last_id = "0";
+
+    if (lstEmail->childCount() > 0) {
+        last_id = lstEmail->firstChild()->text(4).ascii();
+    }
+
+    // Get the latest emails
+    emails = E->getEmails();
+    
+    // Iterate over all emails
+    for (unsigned int i = 0; i < emails.size(); i++) {
+        // Examine the emails from the oldest to the newest
+        //unsigned int j = emails.size() - i - 1;
+        int k = atoi(emails[i].id.c_str());
+        // If the email is already shown, just check it's read status
+        if (k <= atoi(last_id.c_str())) {
+            QListViewItem *x = lstEmail->findItem(emails[i].id.c_str(),4);
+            if ( emails[i].flag )
+                x->setPixmap(0,*pixEmailNew);
+            else
+                x->setPixmap(0,*pixEmailOld);
+            continue;
+        }
+        // if it's a new email, add it to the start of the list
+        time_t thetime(atoi(emails[i].received.c_str()));
+        dte = localtime(&thetime);
+        strftime(date, 30, "%Ex %H:%M", dte);
+        new_email = new QListViewItem(lstEmail, 
+                                "",
+                                emails[i].from.c_str(),
+                                emails[i].subject.c_str(),
+                                date,
+                                emails[i].id.c_str());
+        if ( emails[i].flag )
+            new_email->setPixmap(0, *pixEmailNew);
+        else
+            new_email->setPixmap(0, *pixEmailOld);
+        if (lstEmail->childCount() > 20) {
+            delete lstEmail->lastItem();
+        }
+    }
+}
+
+void TabPanelEmail::markRead(string id) {
+    flagUpdateDisabled = TRUE;
+    E->markRead(id);
 }
 
 // This handles drawing the contents of the form, and connecting slots,
@@ -144,127 +226,7 @@ void TabPanelEmail::draw() {
 }
 
 
-void TabPanelEmail::getEmail(){
-    char *routine = "TabPanelEmail::getEmail";
-    L_INFO(LOG_TABEMAIL,"Getting emails.");
-    
-    email e;
-    tm *dte = 0;
-    char date[30];
-    QListViewItem *new_email = 0;
-    string last_id = "0";
 
-    if (lstEmail->childCount() > 0) {
-        last_id = lstEmail->firstChild()->text(4).ascii();
-    }
-
-    //Extract the most recent 20 emails
-    string SQL = "SELECT * FROM email ORDER BY datetime DESC LIMIT 20;";
-    try {
-        PqxxResult R = DB->exec("EmailGet", SQL);
-        string flag;
-        // If there aren't any, we're done, but warn anyway
-        if (R.size() == 0) {
-            L_WARNING(LOG_TABEMAIL,"No emails have been returned.");
-        }
-        else {
-            // Iterate over all emails
-            for (unsigned int i = 0; i < R.size(); i++) {
-                // Examine the emails from the oldest to the newest
-                unsigned int j = R.size() - i - 1;
-                int k = atoi(R[j]["id"].c_str());
-                // If the email is already shown, just check it's read status
-                if (k <= atoi(last_id.c_str())) {
-                    QListViewItem *x = lstEmail->findItem(R[j]["id"].c_str(),4);
-                    string flag = R[j]["new_flag"].c_str();
-                    if ( !flag.compare("t"))
-                        x->setPixmap(0,*pixEmailNew);
-                    else
-                        x->setPixmap(0,*pixEmailOld);
-                    continue;
-                }
-                // if it's a new email, add it to the start of the list
-                time_t thetime(atoi(R[j]["datetime"].c_str()));
-                dte = localtime(&thetime);
-                strftime(date, 30, "%Ex %H:%M", dte);
-                new_email = new QListViewItem(lstEmail, 
-                                        "",
-                                        R[j]["sender"].c_str(),
-                                        R[j]["subject"].c_str(),
-                                        date,
-                                        R[j]["id"].c_str());
-                string flag = R[j]["new_flag"].c_str();
-                if (  !flag.compare("t")   )
-                    new_email->setPixmap(0, *pixEmailNew);
-                else
-                    new_email->setPixmap(0, *pixEmailOld);
-                if (lstEmail->childCount() > 20) {
-                    delete lstEmail->lastItem();
-                }
-            }
-        }
-    }
-    catch (...) {
-        L_ERROR(LOG_TABEMAIL,"Failed to get new e-mails.");
-    }
-    DB->abort("EmailGet");
-    L_INFO(LOG_TABEMAIL,"Emails retrieved successfully.");
-}
-
-void TabPanelEmail::getEmailBody(QListViewItem *current) {
-    char *routine = "TabPanelEmail::getEmailBody";
-    L_INFO(LOG_TABEMAIL,"Get email body for id " + current->text(4));
-
-    string id = current->text(4).ascii();
-    string SQL = "SELECT * FROM email WHERE id = " + id;
-    try {
-        PqxxResult R = DB->exec("EmailGetBody", SQL);
-        DB->abort("EmailGetBody");
-        txtEmailBody->setCurrentFont(fntBody);
-        txtEmailBody->setPointSize(pointSize);
-        txtEmailBody->setText(R[0]["body"].c_str());
-        string flag = R[0]["new_flag"].c_str();
-		L_INFO(LOG_TABEMAIL,"Selected email has new_flag=["+flag+"]");
-        if ( !flag.compare("t") ) {
-            markRead(id);
-        }
-        current->setPixmap(0, *pixEmailOld);
-    }
-    catch (...) {
-        L_ERROR(LOG_TABEMAIL,"Failed to get email body for id "
-                                    + current->text(4));
-        DB->abort("EmailGetBody");
-    }
-    L_INFO(LOG_TABEMAIL,"Email body for id " + current->text(4) 
-                            + " retrieved successfully.");
-}
-
-void TabPanelEmail::processEmailUpdate() {
-    char* routine = "TabPanelEmail::processEmailUpdate";
-    L_INFO(LOG_TABEMAIL,"A change to the email relation has occured.");
-    if (!flagUpdateDisabled)
-        getEmail();
-    else
-        flagUpdateDisabled=FALSE;
-    L_INFO(LOG_TABEMAIL,"Change to email relation processed.");
-}
-
-void TabPanelEmail::markRead(string id) {
-    char *routine = "TabPanelEmail::markRead";
-    L_INFO(LOG_TABEMAIL,"Marking email id " + id + " as read.");
-
-    flagUpdateDisabled = TRUE;
-    string SQL = "UPDATE email SET new_flag='f' WHERE id=" + id;
-    try {
-        DB->exec("EmailMarkRead",SQL);
-        DB->commit("EmailMarkRead");
-    }
-    catch (...) {
-        L_ERROR(LOG_TABEMAIL,"Failed to set e-mail as read.");
-    	DB->abort("EmailMarkRead");
-    }
-    L_INFO(LOG_TABEMAIL,"Email id " + id + " now marked as read.");
-}
 
 void TabPanelEmail::clear() {
     delete lstEmail;

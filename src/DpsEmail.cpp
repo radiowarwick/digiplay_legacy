@@ -25,25 +25,35 @@
 #include <vector>
 #include <time.h>
 
+#include "Logger.h"
+#include "DataAccess.h"
+
 #include "DpsEmail.h"
 
 DpsEmail::DpsEmail() {
-
+    DB = new DataAccess();
 }
 
 DpsEmail::~DpsEmail() {
-
+    delete DB;
 }
 
-std::vector<email>* DpsEmail::getEmails() {
+/**
+ * Extracts the most recent 50 emails from the database, and populates a vector
+ * of type \a email, and returns them.
+ */
+std::vector<email> DpsEmail::getEmails() {
+    char* routine = "DpsEmail::getEmails";
+
     email e;
     tm *dte;
     char date[30];
-	vector<email>* retVec = new std::vector<email>;
+    std::vector<email> retVec;
     std::string SQL = "SELECT * FROM email ORDER BY datetime DESC LIMIT 50;";
 	
     try {
-		PqxxResult R = DB.exec(SQL);
+		PqxxResult R = DB->exec("EmailGet",SQL);
+        DB->abort("EmailGet");
         unsigned int I = R.size() - 1;
 		for (unsigned int i = 0; i < R.size(); i++) {
 			time_t thetime(atoi(R[I-i]["datetime"].c_str()));
@@ -61,42 +71,29 @@ std::vector<email>* DpsEmail::getEmails() {
 			else
 				e.flag = false;
 
-			retVec->push_back(e);
+			retVec.push_back(e);
 		}
 	}
 	catch (...) {
-		cout << " -> ERROR: Failed to get new e-mails." << endl;
+        DB->abort("EmailGet");
+        L_ERROR(LOG_DB,"Failed to get new emails.");
 	}
 	return retVec;
-
 }
 
-const char* DpsEmail::getEmailBody(std::string id) {
-    std::string SQL = "SELECT * FROM email WHERE id='" + id
-		    + "' ORDER BY datetime DESC LIMIT 50;";
-
-    try {
-		PqxxResult R = DB.exec(SQL);
-        DB.abort();
-		return R[0]["body"].c_str();
-	}
-	catch (...) {
-		cout << " -> ERROR: Failed to get e-mail body." << endl;
-	}
-    DB.abort();
-	return NULL;
-}
-
+/**
+ * Marks a message as read in the database.
+ */
 void DpsEmail::markRead(std::string id) {
-    std::string SQL;
-    SQL << "UPDATE email SET new_flag='f' WHERE id='" + id + "';";
-        
+    char* routine = "DpsEmail::markRead";
+
+    std::string SQL = "UPDATE email SET new_flag='f' WHERE id='" + id + "';";
     try {
-        DB.exec(SQL.str());
-		DB.commit();
+        DB->exec("EmailMarkRead",SQL);
+		DB->commit("EmailMarkRead");
     }
     catch (...) {
-	    DB.abort();
-        cout << " -> ERROR: Failed to set e-mail read." << endl;
+	    DB->abort("EmailMarkRead");
+        L_ERROR(LOG_DB,"Filed to set email as read.");
     }
 }	

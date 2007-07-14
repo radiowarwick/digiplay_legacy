@@ -83,7 +83,7 @@ void AuthLdap::authSession(string username, string password) {
 	ldap_set_option(_myLdap, LDAP_OPT_PROTOCOL_VERSION, &version);
 	ret = ldap_simple_bind_s(_myLdap, dn.c_str(), password.c_str());
 	string retText = ldap_err2string(ret);
-
+    
     // If successful it will return the word "Success"
 	if (retText == "Success") {
 		L_INFO(LOG_AUTH," -> Success.  Checking for username in database.");

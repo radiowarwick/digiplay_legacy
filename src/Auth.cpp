@@ -81,7 +81,7 @@ void Auth::authSession(string username, string password) {
     try {
         SQL = "SELECT id FROM users WHERE username = '"
                         + username + "' LIMIT 1";
-		R = DB->exec("AuthGetUser",SQL);
+		R = DB->exec("AuthUser",SQL);
 		userid = string(R[0]["id"].c_str());
     }
     catch (...) {

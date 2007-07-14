@@ -28,18 +28,19 @@
 #include <string>
 
 #include "dps.h"
-#include "DataAccess.h"
+
+class DataAccess;
 
 class DpsEmail {
 	public:
-		modEmail();
-		~modEmail();
-        std::vector<email>* getEmails();
-		const char* getEmailBody(std::string id);
+		DpsEmail();
+		~DpsEmail();
+        std::vector<email> getEmails();
+//		const char* getEmailBody(std::string id);
 		void markRead(std::string id);
 
     private:
-        DataAccess DB;
+        DataAccess* DB;
 };
 
 #endif

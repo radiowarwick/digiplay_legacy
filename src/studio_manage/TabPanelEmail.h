@@ -29,6 +29,8 @@
 
 #include <qfont.h>
 
+#include "dps.h"
+
 #include "TabPanel.h"
 
 class QTabWidget;
@@ -40,6 +42,7 @@ class Auth;
 
 class DataAccess;
 class DbTrigger;
+class DpsEmail;
 
 class TabPanelEmail : public TabPanel {
 	Q_OBJECT
@@ -50,17 +53,18 @@ class TabPanelEmail : public TabPanel {
 
 	public slots:
 		virtual void getEmailBody(QListViewItem *current);		
-	
-  public slots:
-        void processEmailUpdate();
+		void getEmail();
 
 	private:
 		void markRead(string id);
 		void draw();
 		void clear();
-		void getEmail();
-		
+	
         DataAccess* DB;
+        DpsEmail* E;
+
+        std::vector<email> emails;
+
 		bool flagUpdateDisabled;
 		DbTrigger* triggerEmail;
 		QListView *lstEmail;

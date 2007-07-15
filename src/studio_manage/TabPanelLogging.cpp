@@ -76,7 +76,8 @@ void TabPanelLogging::configure(Auth *authModule) {
         DB->abort("LoggingGetUser");
     }
     catch (...) {
-        L_ERROR(LOG_TABLOGGING,"Failed to query user ID in database.");
+        DB->abort("LoggingGetUser");
+        L_ERROR(LOG_TABLOGGING,"Failed to query user ID in database.");        
     }
     if (R.size() != 0) {
         userid=atoi(R[0]["id"].c_str());
@@ -219,6 +220,7 @@ void TabPanelLogging::getRecentlyLogged() {
         DB->abort("LoggingGet");
     }
     catch (...) {
+        DB->abort("LoggingGet");
         L_ERROR(LOG_TABLOGGING,"Couldn't get logged records from DB.");
     }
     for (unsigned int i = 0; i < R.size(); i++) {

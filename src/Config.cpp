@@ -169,6 +169,7 @@ void Config::requery() {
 		}
 	}
 	catch (...) {
+        DB->abort("ConfigRequery");
 		L_CRITICAL(LOG_CONFIG,"Failed to retrieve configuration data.");
 	}
 

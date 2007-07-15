@@ -67,7 +67,7 @@ void UserConfig::retrieveConfig() {
                     "FROM users, usersconfigs, configs "
                     "WHERE users.username = '" + _username + "' "
                     " AND usersconfigs.userid = users.id "
-                    " AND usersconfigs.configoption = configs.id ";
+                    " AND usersconfigs.configid = configs.id ";
     try {
         PqxxResult R = DB->exec("UserConfigRetrieve",SQL);
         DB->abort("UserConfigRetrieve");

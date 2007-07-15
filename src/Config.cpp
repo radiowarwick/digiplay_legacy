@@ -126,7 +126,7 @@ void Config::setParam(string name, string value) {
 	if (isDefined(name)) {
 		string SQL = "UPDATE configuration SET val='" + value 
 					+ "' WHERE parameter='" + name 
-					+ "' AND location=" + LOCATION ;
+					+ "' AND location=" + LOCATION + ";" ;
 		try {
 			setFlag = true;
             DB->exec("ConfigSetParam",SQL);
@@ -161,7 +161,7 @@ void Config::requery() {
         cout << "Query database" << endl;
 		PqxxResult R = DB->exec("ConfigRequery",
             "SELECT * FROM configuration WHERE location=" + LOCATION 
-                    + " OR location=-1");
+                    + " OR location=-1;");
         DB->abort("ConfigRequery");
         cout << "Finished with database" << endl;
 		for (unsigned int i = 0; i < R.size(); i++) {

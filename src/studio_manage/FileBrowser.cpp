@@ -125,7 +125,7 @@ void Directory::setOpen( bool o ) {
         std::string SQL;
         try {
             SQL =   "SELECT * FROM v_tree WHERE parent=" + dps_itoa(id)
-                        + " AND userid=" + _uid;
+                        + " AND userid=" + _uid + ";";
             PqxxResult R = DB->exec("FilebrowserGetContents", SQL);
             DB->abort("FilebrowserGetContents");
             Directory *D;

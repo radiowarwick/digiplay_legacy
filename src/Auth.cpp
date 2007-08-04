@@ -27,6 +27,7 @@ using namespace std;
 #include "Logger.h"
 #include "Config.h"
 #include "DbDefine.h"
+#include "dps.h"
 
 #include "Auth.h"
 

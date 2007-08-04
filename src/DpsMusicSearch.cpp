@@ -119,7 +119,7 @@ std::vector<track>* DpsMusicSearch::query(std::string search_string) {
     Q->resize(R.size());
     for (unsigned int i = 0; i < R.size(); i++) {
 	    Q->at(i).title = R[i]["title"].c_str();
-	    Q->at(i).artist = R[i]["artist"].c_str();
+	    Q->at(i).artists.push_back(R[i]["artist"].c_str());
 	    Q->at(i).album = R[i]["album"].c_str();
 	    Q->at(i).md5 = R[i]["md5"].c_str();
 	    Q->at(i).id = R[i]["id"].c_str();

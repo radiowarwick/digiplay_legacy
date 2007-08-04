@@ -49,9 +49,11 @@ class XmlElement {
 		xmlAttribute get_attribute(string name);
 		void remove_attribute(unsigned int index);
 		void remove_attribute(string name);
+        bool has_attribute(string name);
 		unsigned int count_attributes();
 
 		XmlElement *add_element(string name);
+        XmlElement *add_element(std::string name, std::string cdata);
 		XmlElement *add_element(XmlElement *elem);
 		XmlElement *get_element(unsigned int index);
 		XmlElement *get_element(string name);

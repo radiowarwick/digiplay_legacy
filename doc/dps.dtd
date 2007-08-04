@@ -1,23 +1,28 @@
 <!-- DTD for RaW Digital Playout System -->
-<!ELEMENT audio (album,segment?)>
+<!ELEMENT audio (segment?)>
 	<!ATTLIST audio md5 CDATA #REQUIRED>
+    <!ATTLIST audio filetype (raw|flac|wav) #REQUIRED>
+	<!ATTLIST audio creationdate CDATA #REQUIRED>
+    <!ATTLIST audio creator CDATA #IMPLIED>
+    <!ATTLIST audio importdate CDATA #IMPLIED>
+    <!ATTLIST audio ripresult CDATA #IMPLIED>
 	<!ATTLIST audio type (music|jingle|advert|prerec) #REQUIRED>
-	<!ATTLIST audio creation_date CDATA #IMPLIED>
-	<!ATTLIST audio user CDATA #IMPLIED>
-	<!ELEMENT album EMPTY>
-		<!ATTLIST album name CDATA #REQUIRED>
-		<!ATTLIST album origin CDATA #REQUIRED>
-		<!ATTLIST album released CDATA #IMPLIED>
-		<!ATTLIST album reclibid CDATA #IMPLIED>
-	<!ELEMENT segment (title,artist+,jingle?,advert?,smpl,classification?)>
+	<!ELEMENT segment (title,album?,artist+,jingle?,advert?,smpl)>
 		<!ELEMENT title (#PCDATA)>
 		<!ELEMENT artist (role*,keyword*)>
 			<!ATTLIST artist name CDATA #REQUIRED>
 			<!ATTLIST artist true_name CDATA #IMPLIED>
 			<!ELEMENT role (#PCDATA)>
 			<!ELEMENT keyword (#PCDATA)>
+	    <!ELEMENT album EMPTY>
+    		<!ATTLIST album name CDATA #REQUIRED>
+    		<!ATTLIST album origin CDATA #REQUIRED>
+    		<!ATTLIST album released CDATA #IMPLIED>
+    		<!ATTLIST album reclibid CDATA #IMPLIED>
+        <!ELEMENT tracknum (#PCDATA)>
+        <!ELEMENT censor (#PCDATA)>
 		<!ELEMENT jingle (package+)>
-			<!ATTLIST jingle type (generic|idents|contact|news|shows) #REQUIRED>
+			<!ATTLIST jingle type (generic|ident|contact|news|show) #REQUIRED>
 			<!ELEMENT package EMPTY>
 				<!ATTLIST package name CDATA #REQUIRED>
 				<!ATTLIST package description CDATA #IMPLIED>
@@ -30,9 +35,4 @@
 			<!ATTLIST smpl trim_end CDATA #REQUIRED>
 			<!ATTLIST smpl fade_in CDATA #REQUIRED>
 			<!ATTLIST smpl fade_out CDATA #REQUIRED>
-		<!ELEMENT classification (volume?,speed?,mood?,keyword*)>
-			<!ATTLIST classification volume CDATA #IMPLIED>
-			<!ATTLIST classification speed CDATA #IMPLIED>
-			<!ATTLIST classification mood CDATA #IMPLIED>
-			<!ATTLIST classification censor (yes|no) "no">
-			<!ELEMENT keyword (#PCDATA)>
+        <!ELEMENT notes (#PCDATA)>

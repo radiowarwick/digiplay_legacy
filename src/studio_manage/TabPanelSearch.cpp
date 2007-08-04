@@ -202,7 +202,7 @@ void TabPanelSearch::Library_Search() {
 	for (unsigned int i = 0; i < SearchResults->size(); i++) {
 		x = new QListViewItem(  lstSearchResults, lstSearchResults->lastItem(),
 			SearchResults->at(i).title,
-			SearchResults->at(i).artist,
+			SearchResults->at(i).artists.at(0),
 			SearchResults->at(i).album,
 			SearchResults->at(i).id 
                          );

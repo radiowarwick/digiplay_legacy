@@ -55,7 +55,7 @@ track sched_bin::at(unsigned int index) {
 	t.audio_id = atoi(bin[index]["id"].c_str());
 	t.md5 = bin[index]["md5"].c_str();
 	t.title = bin[index]["title"].c_str();
-	if (bin_id < 5) t.artist = bin[index]["artist"].c_str();
+	if (bin_id < 5) t.artists.push_back(bin[index]["artist"].c_str());
 	t.trim_start_smpl = atoi(bin[index]["start_smpl"].c_str());
 	t.trim_end_smpl = atoi(bin[index]["end_smpl"].c_str());
 	t.length_smpl = t.trim_end_smpl - t.trim_start_smpl;

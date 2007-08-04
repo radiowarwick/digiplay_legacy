@@ -53,6 +53,7 @@ if [ ! -f /etc/digiplay.conf ]; then
 	DBHOST="127.0.0.1"
 	DBPORT="5432"
     DBUSER=digiplay_user
+    DBPASS=abcdef
 else
 	printf "Parsed /etc/digiplay.conf\n"
 	# parse the following values from the configuration file
@@ -60,6 +61,7 @@ else
 	DBHOST=`cat /etc/digiplay.conf | grep DB_HOST | cut -d "=" -f 2`
 	DBPORT=`cat /etc/digiplay.conf | grep DB_PORT | cut -d "=" -f 2`
     DBUSER=`cat /etc/digiplay.conf | grep DB_USER | cut -d "=" -f 2`
+    DBPASS=`cat /etc/digiplay.conf | grep DB_PASS | cut -d "=" -f 2`
 fi
 WWWUSER=www
 
@@ -67,7 +69,8 @@ WWWUSER=www
 printf "Database: $DBNAME\n"
 printf "Host:     $DBHOST\n"
 printf "Port:     $DBPORT\n"
-printf "Username: $DBUSER \n\n"
+printf "Username: $DBUSER \n"
+printf "Password: (hidden) \n\n"
 
 # compile the psql command with host and port specification if necessary
 if [[ $DBHOST != "127.0.0.1" ]]; then 
@@ -132,7 +135,7 @@ printf "done.\n"
 # already exist
 printf "Creating digiplay database users..."
 if [ ! `$PSQL -tqc "select usename from pg_user where usename='$DBUSER';" template1` ]; then
-	$PSQL -qc "CREATE USER $DBUSER;" template1
+	$PSQL -qc "CREATE USER $DBUSER ENCRYPTED PASSWORD '$DBPASS';" template1
 fi
 if [ ! `$PSQL -tqc "select usename from pg_user where usename='$WWWUSER';" template1` ]; then
 	$PSQL -qc "CREATE USER $WWWUSER;" template1

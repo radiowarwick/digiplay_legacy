@@ -31,6 +31,7 @@ using namespace std;
 #include <qslider.h>
 
 #include "Logger.h"
+#include "dps.h"
 
 #include "AudioPlayer.h"
 

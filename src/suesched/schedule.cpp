@@ -128,7 +128,7 @@ void schedule::printToScreen() {
 		<< "--------------------" << endl;
 	for (unsigned short i = 0; i < S->size(); i++) {
 		t = S->at(i);
-		string desc = t.title + " (" + t.artist + ")";
+		string desc = t.title + " (" + t.artists.at(0) + ")";
 		printf("%02i) %-50.50s [%10i] {%6i}\n",
 				(int)i, desc.c_str(), (int)t.length_smpl, (int)t.audio_id);
 	}

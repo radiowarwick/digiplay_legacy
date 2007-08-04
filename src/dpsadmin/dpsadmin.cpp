@@ -30,6 +30,8 @@ using namespace std;
 
 #include "SystemManager.h"
 #include "ArchiveManager.h"
+#include "UserManager.h"
+#include "GroupManager.h"
 #include "Logger.h"
 
 #define VERSION 0.95
@@ -57,21 +59,25 @@ static struct option long_options[] = {
     {"add",         required_argument,  0,  'a'},
 	{"drop",        required_argument,  0,  'd'},
 	{"list",        no_argument,        0,  'l'},
+    {"upgrade",     required_argument,  0,  'u'},
     {"merge",       required_argument,  0,  'm'},
     {"create",      required_argument,  0,  'c'},
+    {"add-to",      required_argument,  0,  't'},
     {"import",      no_argument,        0,  'i'},
     {"import-md5",  required_argument,  0,  'j'},
     {"purge-deleted", no_argument,      0,  'p'},
-    {"set-password",required_argument,  0,  's'},
+    {"set-passwd",  required_argument,  0,  's'},
     // parameters
-    {"local-path",   required_argument, 0,  'x'},
-	{"remote-path",  required_argument, 0,  'y'},
-    {"dest-archive", required_argument, 0,  'e'},
-    {"with-password",required_argument, 0,  'w'},
+    {"local-path",  required_argument,  0,  'x'},
+	{"remote-path", required_argument,  0,  'y'},
+    {"dest-archive",required_argument,  0,  'e'},
+    {"with-passwd", required_argument,  0,  'w'},
+    {"stdin",       no_argument,        0,  'z'},
+    {"username",    required_argument,  0,  'q'},
 	{0,0,0,0}
 };
 
-static char* short_options = "AMLUGa:d:lm:pc:i:se:w:hiv";
+static char* short_options = "AMLUGa:d:lm:u:pc:i:se:w:hiv";
 
 // Function prototypes
 void parseCommand(int argc, char *argv[]);
@@ -93,7 +99,8 @@ int main(int argc, char *argv[]) {
 
     // configure logging
     Logger::setAppName("dpsadmin");
-    Logger::setLogLevel(3);
+    Logger::initLogDir();
+    Logger::setLogLevel(INFO);
     Logger::setDisplayLevel(WARNING);
     if (verbose) Logger::setDisplayLevel(INFO);
     if (quiet) Logger::setDisplayLevel(CRITICAL);
@@ -139,15 +146,19 @@ void parseCommand(int argc, char *argv[]) {
             case 'd': options["drop"] = optarg; c++; break;
             case 'l': options["list"] = "yes"; c++; break;
             case 'm': options["merge"] = optarg; c++; break;
+            case 'u': options["upgrade"] = optarg; c++; break;
             case 'c': options["create"] = optarg; c++; break;
+            case 't': options["add-to"] = optarg; c++; break;
             case 'i': options["import"] = "yes"; c++; break;
             case 'j': options["import-md5"] = optarg; c++; break;
             case 'p': options["purge-deleted"] = "yes"; c++; break;
-            case 's': options["set-password"] = optarg; c++; break;
+            case 's': options["set-passwd"] = optarg; c++; break;
             case 'x': options["local-path"] = optarg; break;
             case 'y': options["remote-path"] = optarg; break;
             case 'e': options["dest-archive"] = optarg; break;
-            case 'w': options["with-password"] = optarg; break;
+            case 'w': options["with-passwd"] = optarg; break;
+            case 'q': options["username"] = optarg; break;
+            case 'z': options["stdin"] = "yes"; break;
             case 'h': options["help"] = "yes"; break;
             case 'v': options["version"] = "yes"; break;
 		}
@@ -185,6 +196,8 @@ cout <<
 "   -c, --create <name>     create a new archive and add it\n"
 "   -d, --drop <name>       remove archive (not deleted)\n"
 "   -l, --list              list the available archives\n"
+"   -m, --merge <name>      merge <name> with a --dest-archive\n"
+"   -u, --upgrade <name>    upgrades all INFO files to XML in inbox\n"
 "\n"
 "Music management commands:\n"
 "   -i, --import-all        imports all new audio in all archive\n"
@@ -210,6 +223,7 @@ cout <<
 "Group management commands:\n"
 "   -a, --add <group>       add a new group\n"
 "   -d, --drop <group>      drop a group\n"
+"   --add-to <group>        add a user to group as given by --username\n"
 "   -l, --list              list groups on the system\n"
 "\n"
 "Command parameters:\n"
@@ -217,6 +231,8 @@ cout <<
 "   --remote-path           the remote path of the new archive to add/create\n"
 "   --dest-archive          destination archive for archive merge\n"
 "   --with-passwd           specify a users password instead of prompt\n"
+"   --stdin                 specify a users password will be read from stdin\n"
+"   --username              specify a username to add to a group\n"
 << endl;
 }
 
@@ -257,7 +273,7 @@ void processArchive() {
             L_ERROR(LOG_DB,"No 'local-path' specified");
             exit(-1);
         }
-        if (options["remote-path"] == "") {
+    if (options["remote-path"] == "") {
             L_ERROR(LOG_DB,"No 'remote-path' specified");
             exit(-1);
         }
@@ -316,11 +332,39 @@ void processArchive() {
 
     // Create archive
     else if (options["create"] != "") {
+        string name = options["create"];
+        if (options["local-path"] == "") {
+            L_ERROR(LOG_DB,"No 'local-path' specified");
+            exit(-1);
+        }
+        if (options["remote-path"] == "") {
+            L_ERROR(LOG_DB,"No 'remote-path' specified");
+            exit(-1);
+        }
+        L_INFO(LOG_DB,"Creating archive '" + name + "'...");
+
+        if (Sys->atArchive(name)) {
+            L_ERROR(LOG_DB,"'" + name + "' already exists");
+            exit(-1);
+        }
+        
+        Sys->createArchive(name,options["local-path"],options["remote-path"]);
+        L_INFO(LOG_DB,"Complete!");
     
     }
 
     else if (options["merge"] != "") {
     
+    }
+
+    else if (options["upgrade"] != "") {
+        string name = options["upgrade"];
+        if (!Sys->atArchive(name)) {
+            L_ERROR(LOG_DB,"Archive '" + name + "' doesn't exist.");
+            exit(-1);
+        }
+
+        Sys->atArchive(name)->upgradeInfo();
     }
 
     // Other
@@ -407,12 +451,116 @@ void processLocation() {
  * Process user management
  */
 void processUser() {
+    char* routine = "dpsadmin::processUser";
 
+    UserManager* U = new UserManager();
+    User u;
+
+    if (options["add"] != "") {
+        u.username = options["add"];
+        u.isAdmin = false;
+        try {
+            U->add(u);
+        }
+        catch (...) {
+            L_ERROR(LOG_DB,"Unable to add user.");
+        }
+    }
+    else if (options["drop"] != "") {
+        try {
+            u = U->get(options["drop"]);
+            U->remove(u);
+        }
+        catch (...) {
+            L_ERROR(LOG_DB,"Unable to remove user.");
+        }
+    }
+    else if (options["list"] != "") {
+        cout << "          Username    Admin?" << endl;
+        cout << "----------------------------" << endl;
+        for (unsigned int i = 0; i < U->count(); i++) {
+            u = U->get(i);
+            cout.width(18);
+            cout << u.username << "    ";
+            if (u.isAdmin) cout << "Yes";
+            else cout << "No";
+            cout << endl;
+        }
+    }
+    else if (options["set-passwd"] != "") {
+        try {
+            u = U->get(options["set-passwd"]);
+            std::string password;
+            if (options["with-passwd"] != "") {
+                password = options["with-passwd"];
+            }
+            else if (options["stdin"] != "") {
+                cin >> password;
+            }
+            else {
+                cout << "Enter new password: ";
+                cin >> password;
+            }
+            U->setPassword(u,password);
+        }
+        catch (...) {
+            L_ERROR(LOG_DB,"Unable to set password.");
+        }
+    }
 }
 
 /**
  * Process group management
  */
 void processGroup() {
+    char* routine = "dpsadmin::processGroup";
 
+    GroupManager *G = new GroupManager();
+    Group g;
+
+    if (options["add"] != "") {
+        g.name = options["add"];
+        try {
+            G->add(g);
+        }
+        catch (...) {
+            L_ERROR(LOG_DB,"Unable to add group.");
+        }
+    }
+    else if (options["drop"] != "") {
+        try {
+            g = G->get(options["drop"]);
+            G->remove(g);
+        }
+        catch (...) {
+            L_ERROR(LOG_DB,"Unable to remove group.");
+        }
+    }
+    else if (options["list"] != "") {
+        cout << "         Groupname" << endl;
+        cout << "------------------" << endl;
+        for (unsigned int i = 0; i < G->count(); ++i) {
+            g = G->get(i);
+            cout.width(18);
+            cout << g.name;
+            cout << endl;
+        }
+    }
+    else if (options["add-to"] != "") {
+        if (options["username"] == "") {
+            L_ERROR(LOG_DB,"Username to add to group must be supplied.");
+            return;
+        }
+        UserManager *U = new UserManager();
+        User u;
+
+        try {
+            g = G->get(options["add-to"]);
+            u = U->get(options["username"]);
+            G->addToGroup(u,g);
+        }
+        catch (...) {
+            L_ERROR(LOG_DB,"Unable to add user to group.");
+        }
+    }
 }

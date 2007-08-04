@@ -158,13 +158,11 @@ void Config::requery() {
 	_db.clear();
 	_db = _file;
 	try {
-        cout << "Query database" << endl;
         //+ LOCATION
         std::string SQL = "SELECT * FROM configuration WHERE location=" + 
             LOCATION + " OR location=-1;";
         PqxxResult R = DB->exec("ConfigRequery", SQL);
         DB->abort("ConfigRequery");
-        cout << "Finished with database" << endl;
 		for (unsigned int i = 0; i < R.size(); i++) {
 			_db[R[i]["parameter"].c_str()] = R[i]["val"].c_str();
 		}

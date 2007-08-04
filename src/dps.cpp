@@ -72,7 +72,7 @@ track dps_getTrack(std::string md5) {
 	    if (R.size() > 0) {
 	        t.md5 = R[0]["md5"].c_str();
 	        t.title = R[0]["title"].c_str();
-	        t.artist = R[0]["artist"].c_str();
+	        t.artists.push_back(R[0]["artist"].c_str());
 	        t.album = R[0]["album"].c_str();
 	        t.release_date = R[0]["released"].c_str();
 	        t.tracknum = atoi(R[0]["track"].c_str());

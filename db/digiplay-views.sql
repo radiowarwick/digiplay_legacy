@@ -779,7 +779,7 @@ AS
     SELECT  audio.id AS id, 
             audio.md5 AS md5, 
             audio.title AS title, 
-            array_to_string(array_accum(artists.name),', ') AS artist, 
+            array_to_string(array_accum(artists.name),'; ') AS artist, 
             albums.name AS album, 
             archives.id AS archiveid, 
             archives.name AS archive,

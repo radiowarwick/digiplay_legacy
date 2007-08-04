@@ -24,27 +24,9 @@
 #define DPS_H
 
 #include <string>
+#include <vector>
 #include "DataAccess.h"
-
-// Error types
-enum LOG_TYPE {
-	LOG_DB = 0,
-	LOG_AUDIOHW = 1,
-	LOG_AUDIOPROC = 2,
-	LOG_PLAYOUT = 4,
-	LOG_CONFIG = 8,
-	LOG_AUTH = 16,
-	LOG_SHOWPLAN = 32,
-	LOG_TAB = 64,
-	LOG_TABINFO = 128,
-	LOG_TABSEARCH = 256,
-	LOG_TABEMAIL = 512,
-	LOG_TABLOGGING = 1024,
-	LOG_TABPLAYLIST = 2048,
-	LOG_TABFILES = 4096,
-	LOG_TABSCRIPT = 8192,
-	LOG_XML = 16384
-};
+#include "DbDefine.h"
 
 struct archive {
     bool isNull;
@@ -60,37 +42,55 @@ enum ARCHIVE_COMPONENT {
     DPS_TRASH = 2
 };
 
-enum AUDIO_TYPE {
-    AUDIO_TYPE_MUSIC = 0,
-    AUDIO_TYPE_JINGLE = 1,
-    AUDIO_TYPE_ADVERT = 2,
-    AUDIO_TYPE_PREREC = 3
-};
-
+/**
+ * Structure used to store information about audio within the program
+ * The fields are used in various circumstances and thus not all will be used
+ * simultaneously.
+ */
 struct track {
-    std::string id;
-    bool isNull;
-    unsigned short bin;
-    unsigned int index;
-    unsigned long audio_id;
-    std::string md5;
-	archive md5_archive;
-    std::string title;
-    std::string artist;
-    std::string album;
-	unsigned short tracknum;
-    std::string reclibid;
-    std::string origin;
-    std::string release_date;
-	bool censor;
+    // General
+    bool isNull;                        // True if contents invalid
+    std::string id;                     // id from audio relation
+    enum AUDIO_TYPE type;               // type of audio: music, jingle, etc
+    enum AUDIO_FILETYPE ftype;          // file type of audio: raw, flac, wav
+    std::string md5;                    // MD5 hash of audio
+	archive md5_archive;                // Archive structure defining archive
+    std::string title;                  // Title
+    std::string origin;                 // Origin of audio
+    unsigned long creation_date;          // Date audio was created
+    std::string creator;                // Owner of audio, if any
+    unsigned long import_date;            // Date audio imported, if done so
+	bool censor;                        // True if audio contains explitives
+    std::string rip_result;             // Output from CDParanoia
+
+    // Audio data specification
     unsigned long length_smpl;
     unsigned long trim_start_smpl;
     unsigned long trim_end_smpl;
     unsigned long fade_in_smpl;
     unsigned long fade_out_smpl;
-    enum AUDIO_TYPE type;
-};
 
+    // Music track
+    std::vector<std::string> artists;   // Artists
+	unsigned short tracknum;            // Track number
+    std::string album;                  // Album title
+    std::string reclibid;               // Reclib ID
+    std::string release_date;           // Release date
+
+    // Jingle
+    enum JINGLE_TYPE jtype;
+    std::string package;
+    std::string package_desc;
+
+    // Advert
+    std::string company;
+
+    // Sustainer specific data
+    unsigned short bin;
+    unsigned int index;
+    unsigned long audio_id;
+};
+/*
 struct jingle {
 	bool isNull;
     std::string md5;
@@ -107,7 +107,7 @@ struct jingle {
 struct advert {
 	bool isNull;
 };
-
+*/
 struct script {
 	bool isNull;
     std::string title;

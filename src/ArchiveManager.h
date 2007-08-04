@@ -47,15 +47,28 @@ class ArchiveManager {
 		track at(ARCHIVE_COMPONENT c, unsigned int index);
 		unsigned int size(ARCHIVE_COMPONENT);
 		void clean(ARCHIVE_COMPONENT c, unsigned int index);
+
+        /// Adds a track from the inbox to the database
 		void add(unsigned int index);
+        /// Remove a track from the database back to the inbox
 		void remove(unsigned int index);
+        /// Move a track from the database to the trash
+        void trash(unsigned int index);
+        /// Recover a track from the trash back into the database
 		void recover(unsigned int index);
+
+        /// Upgrades INFO files to XML documents
+        void upgradeInfo();
+        /// Backup the database information into an XML file
 		void backup(unsigned int index);
+
+        /// Merge two another archive into this archive.
         void merge(ArchiveManager *A);
-		
-		void writeXML(track t);
-		track readInfo(string filename);
-		track readXML(string filename);
+	
+        // Read and write XML and info
+        std::vector<track> readXML(std::string filename);
+		void writeXML(std::string filename, track t);
+		track readInfo(std::string filename);
 
 	private:
 		void loadDB(vector<track> *tracks);
@@ -66,9 +79,8 @@ class ArchiveManager {
         void addJingle(track t);
         void addAdvert(track t);
         void addPrerec(track t);
-        void removeTrack(string id);
+        void removeTrack(std::string md5);
 
-		bool hasAudio(string md5);
 		void cleanInfo(track *t);
 		void trimAudio(track *t);
 

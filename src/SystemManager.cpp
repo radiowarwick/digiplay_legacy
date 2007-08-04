@@ -20,6 +20,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "Logger.h"
+
 #include "SystemManager.h"
 
 SystemManager::SystemManager() {
@@ -67,6 +69,8 @@ short SystemManager::sizeArchive() {
 
 void SystemManager::addArchive(string name, string localPath, 
 										string remotePath) {
+    char* routine = "SystemManager::addArchive";
+
 	string SQL;
 	if (atArchive(name)) {
 		cout << "SystemManager::addArchive: Named archive exists!" << endl;
@@ -78,11 +82,12 @@ void SystemManager::addArchive(string name, string localPath,
 			+ DB->esc(localPath) + "','" + DB->esc(remotePath) 
 			+ "')";
 		DB->exec("SystemManagerAddArchive",SQL);
+
 		SQL = "SELECT * FROM archives WHERE name='" + name + "'";
 		PqxxResult R = DB->exec("SystemManagerAddArchive",SQL);
 		DB->commit("SystemManagerAddArchive");
 
-		archive A;
+        archive A;
         A.id = atoi(R[0]["id"].c_str());
         A.name = R[0]["name"].c_str();
 	    A.localPath = R[0]["localPath"].c_str();
@@ -90,17 +95,31 @@ void SystemManager::addArchive(string name, string localPath,
         archives->push_back(new ArchiveManager(A));							
 	}
 	catch (...) {
-		cout << "SystemManager::addArchive: Failed to add archive" << endl;
-		cout << " -> SQL: " << SQL << endl;
+        L_ERROR(LOG_DB,"Failed to add archive");
+        L_ERROR(LOG_DB," -> SQL: " + SQL);
 	}
 }
 
 void SystemManager::createArchive(string name, string localPath, 
 										string remotePath) {
+    char* routine = "SystemManager::createArchive";
 
+    // Change to the localPath and try to create the directory structure
+    std::string command = "cd " + localPath + "; ";
+    command += "mkdir -p 0 1 2 3 4 5 6 7 8 9 a b c d e f inbox trash";
+    int rv = system(command.c_str());
+    if (rv != 0) {
+        L_ERROR(LOG_DB,"Unable to create archive directory structure.");
+        L_ERROR(LOG_DB," -> shell code is " + dps_itoa(rv));
+    }
+
+    // Now add this archive to the system.
+    addArchive(name, localPath, remotePath);
 }
 
 void SystemManager::dropArchive(unsigned int index) {
+    char* routine = "SystemManager::dropArchive";
+// need to remove all the tracks and stuff first!
 	if (index > archives->size() - 1) {
 		cout << "SystemManager::dropArchive: Index out of range!" << endl;
 		return;

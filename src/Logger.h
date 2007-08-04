@@ -32,7 +32,27 @@
 #include <iostream>
 using namespace std;
 
-#include "dps.h"
+//#include "dps.h"
+
+// Error types
+enum LOG_TYPE {
+	LOG_DB = 0,
+	LOG_AUDIOHW = 1,
+	LOG_AUDIOPROC = 2,
+	LOG_PLAYOUT = 4,
+	LOG_CONFIG = 8,
+	LOG_AUTH = 16,
+	LOG_SHOWPLAN = 32,
+	LOG_TAB = 64,
+	LOG_TABINFO = 128,
+	LOG_TABSEARCH = 256,
+	LOG_TABEMAIL = 512,
+	LOG_TABLOGGING = 1024,
+	LOG_TABPLAYLIST = 2048,
+	LOG_TABFILES = 4096,
+	LOG_TABSCRIPT = 8192,
+	LOG_XML = 16384
+};
 
 // Define Logging macros based on DEBUG level (0...4)
 // First set default value for DEBUG

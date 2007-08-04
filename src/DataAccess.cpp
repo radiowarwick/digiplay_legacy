@@ -4,6 +4,7 @@
 
 #include <pqxx/pqxx>
 
+#include "dps.h"
 #include "Logger.h"
 
 #include "DataAccess.h"
@@ -261,10 +262,21 @@ std::string DataAccess::getConnectionString() {
 std::string DataAccess::esc(std::string str) {
     char* routine = "DataAccess::esc";
 
+    std::string result;
+
     // If there isn't an active an active transaction, create one
     try {
         if (!W) {
             W = new PqxxWork(*C,"DataAccess");
+            result = W->esc(str);
+            W->abort();
+            delete W;
+            W = 0;
+            return result;
+        }
+        else {
+            result = W->esc(str);
+            return result;
         }
     }
     catch (const exception &e) {
@@ -277,9 +289,5 @@ std::string DataAccess::esc(std::string str) {
         L_CRITICAL(LOG_DB,"Unexpected exception.");
         throw;
     }
-    
-    std::string result = W->esc(str);
-    W->abort();
-    delete W;
-    return result;
+    return str;
 }

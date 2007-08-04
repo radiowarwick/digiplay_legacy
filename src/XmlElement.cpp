@@ -166,6 +166,16 @@ void XmlElement::remove_attribute(string name) {
 	L_ERROR(LOG_XML,S.str());
 }
 
+bool XmlElement::has_attribute(string name) {
+    char* routine = "XmlElement::has_attribute";
+    for (unsigned int i = 0; i < attributes->size(); i++) {
+        if (attributes->at(i).name == name) {
+            return true;
+        }
+    }
+    return false;
+}
+
 unsigned int XmlElement::count_attributes() {
 	return attributes->size();
 }
@@ -173,6 +183,12 @@ unsigned int XmlElement::count_attributes() {
 XmlElement *XmlElement::add_element(string name) {
 	XmlElement *E = new XmlElement(name);
 	return add_element(E);
+}
+
+XmlElement* XmlElement::add_element(std::string name, std::string cdata) {
+    XmlElement *E = new XmlElement(name);
+    E->set_cdata(cdata);
+    return add_element(E);
 }
 
 XmlElement *XmlElement::add_element(XmlElement *elem) {

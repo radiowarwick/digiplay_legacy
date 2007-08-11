@@ -365,7 +365,7 @@ void AudioPlayer::drawCreate() {
     lblEnd->setText( tr( "--:--:--" ) );
 
     btnLog = new QPushButton( grpFrame, "btnLog" );
-    btnLog->setGeometry( QRect( 390, 10, 140, 50 ) );
+    btnLog->setGeometry( QRect( 390, 20, 140, 40 ) );
     QFont btnLog_font(  btnLog->font() );
     btnLog_font.setPointSize( 18 );
     btnLog->setFont( btnLog_font );
@@ -374,7 +374,7 @@ void AudioPlayer::drawCreate() {
     connect(btnLog,SIGNAL(pressed()),this,SLOT(log()));
 
     btnLoad = new QPushButton( grpFrame, "btnLoad" );
-    btnLoad->setGeometry( QRect( 390, 60, 140, 50 ) );
+    btnLoad->setGeometry( QRect( 390, 60, 140, 40 ) );
     QFont btnLoad_font(  btnLoad->font() );
     btnLoad_font.setPointSize( 18 );
     btnLoad->setFont( btnLoad_font );
@@ -383,33 +383,33 @@ void AudioPlayer::drawCreate() {
 
     btnStop = new QPushButton( grpFrame, "btnStop" );
     btnStop->setEnabled( FALSE );
-    btnStop->setGeometry( QRect( 10, 159, 110, 80 ) );
+    btnStop->setGeometry( QRect( 10, 159, 110, 70 ) );
     btnStop->setText( QString::null );
     btnStop->setPixmap( QPixmap(path + "/images/stop.png") );
     connect( btnStop, SIGNAL(pressed()), this, SLOT(stop()) );
 
     btnPlay = new QPushButton( grpFrame, "btnPlay" );
     btnPlay->setEnabled( FALSE );
-    btnPlay->setGeometry( QRect( 130, 159, 110, 80 ) );
+    btnPlay->setGeometry( QRect( 130, 159, 110, 70 ) );
     btnPlay->setText( QString::null );
     btnPlay->setPixmap( *pixPlay );
     connect( btnPlay, SIGNAL(pressed()), this, SLOT(play()) );
 
     btnReset = new QPushButton( grpFrame, "btnReset" );
     btnReset->setEnabled( FALSE );
-    btnReset->setGeometry( QRect( 290, 159, 80, 80 ) );
+    btnReset->setGeometry( QRect( 290, 159, 80, 70 ) );
     btnReset->setText( QString::null );
     btnReset->setPixmap( QPixmap(path + "/images/reset.png") );
 
     btnSeekBack = new QPushButton( grpFrame, "btnSeekBack" );
     btnSeekBack->setEnabled( FALSE );
-    btnSeekBack->setGeometry( QRect( 370, 159, 80, 80 ) );
+    btnSeekBack->setGeometry( QRect( 370, 159, 80, 70 ) );
     btnSeekBack->setText( QString::null );
     btnSeekBack->setPixmap( QPixmap(path + "/images/fastbackward.png") );
 
     btnSeekForward = new QPushButton( grpFrame, "btnSeekForward" );
     btnSeekForward->setEnabled( FALSE );
-    btnSeekForward->setGeometry( QRect( 450, 159, 80, 80 ) );
+    btnSeekForward->setGeometry( QRect( 450, 159, 80, 70 ) );
     btnSeekForward->setText( QString::null );
     btnSeekForward->setPixmap( QPixmap(path + "/images/fastforward.png") );
 

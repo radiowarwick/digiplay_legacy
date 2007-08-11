@@ -138,19 +138,18 @@ void DpsShowplan::save() {
 
 void DpsShowplan::load(int id) {
     _id = id;
-    
     string SQL = "SELECT * FROM v_showplan WHERE id=" + dps_itoa(id);
     PqxxResult R = DB->exec("DpsShowplanLoad",SQL);
     DB->abort("DpsShowplanLoad");
-
+    
     for (unsigned int i = 0; i < R.size(); i++) {
         if (string(R[i]["itemtype"].c_str()) == "audio") {
-            if (string(R[i]["audiotype"].c_str()) == "music")
-                new DpsShowTrack(*this,string(R[i]["md5"].c_str()));
-            if (string(R[i]["audiotype"].c_str()) == "jingle")
-                new DpsShowJingle(*this,string(R[i]["md5"].c_str()));
-            if (string(R[i]["audiotype"].c_str()) == "advert")
-                new DpsShowAdvert(*this,string(R[i]["md5"].c_str()));
+            if (string(R[i]["audiotype"].c_str()) == "Music")
+                new DpsShowTrack(*this,string(R[i]["key"].c_str()));
+            if (string(R[i]["audiotype"].c_str()) == "Jingle")
+                new DpsShowJingle(*this,string(R[i]["key"].c_str()));
+            if (string(R[i]["audiotype"].c_str()) == "Advert")
+                new DpsShowAdvert(*this,string(R[i]["key"].c_str()));
         }
         if (string(R[i]["itemtype"].c_str()) == "script") {
             new DpsShowScript(*this,atoi(R[i]["key"].c_str()));

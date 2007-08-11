@@ -42,8 +42,8 @@ class DataAccess {
     protected:
         static PqxxConnection* C;
         static PqxxWork* W;
-        static pthread_mutex_t* t_trans_mutex;
         static pthread_mutex_t* t_name_mutex;
+        static pthread_mutex_t* t_routine_mutex;
         static unsigned int instanceCount;
         static bool transActive;
         static std::string transName;

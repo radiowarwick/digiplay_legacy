@@ -54,6 +54,7 @@ std::vector<email> DpsEmail::getEmails() {
     try {
 		PqxxResult R = DB->exec("EmailGet",SQL);
         DB->abort("EmailGet");
+        
         unsigned int I = R.size() - 1;
 		for (unsigned int i = 0; i < R.size(); i++) {
 			time_t thetime(atoi(R[I-i]["datetime"].c_str()));
@@ -75,7 +76,9 @@ std::vector<email> DpsEmail::getEmails() {
 		}
 	}
 	catch (...) {
+        cout << "Catch error" << endl;
         DB->abort("EmailGet");
+        cout << "After Catch errorabort" << endl;
         L_ERROR(LOG_DB,"Failed to get new emails.");
 	}
 	return retVec;

@@ -12,13 +12,14 @@
 // Database Management
 PqxxConnection* DataAccess::C = 0;
 PqxxWork* DataAccess::W = 0;
-pthread_mutex_t* DataAccess::t_trans_mutex = 0;
 unsigned int DataAccess::instanceCount = 0;
 
 // Transaction management
 bool DataAccess::transActive = false;
 std::string DataAccess::transName = "";
 pthread_mutex_t* DataAccess::t_name_mutex = 0;
+pthread_mutex_t* DataAccess::t_routine_mutex = 0;
+
 
 /**
  * Creates a new instance of the DataAccess class. Only one static connection
@@ -44,10 +45,10 @@ DataAccess::DataAccess() {
             L_INFO(LOG_DB," -> Protocal version: " 
                             + dps_itoa(C->protocol_version()));
 			// Init the transaction mutex
-            t_trans_mutex = new pthread_mutex_t;
             t_name_mutex = new pthread_mutex_t;
-            pthread_mutex_init(t_trans_mutex,NULL);
+            t_routine_mutex = new pthread_mutex_t;
             pthread_mutex_init(t_name_mutex,NULL);
+            pthread_mutex_init(t_routine_mutex,NULL);
 			W = 0;
         }
         catch (const exception &e) {
@@ -62,6 +63,7 @@ DataAccess::DataAccess() {
     }
 }
 
+
 DataAccess::~DataAccess() {
 	// Decrement the instance count
     DataAccess::instanceCount--;
@@ -71,6 +73,7 @@ DataAccess::~DataAccess() {
         delete C;
     }
 }
+
 
 /**
  * Executes an SQL statement under the given name.
@@ -88,12 +91,14 @@ PqxxResult DataAccess::exec(std::string name, std::string query) {
         pthread_mutex_lock(t_name_mutex);
         L_INFO(LOG_DB,"Transaction '" + name + "' now commencing.");
     }
-
-	// Lock mutex to prevent multiple queries simultaneously
-    pthread_mutex_lock(t_trans_mutex);
+	
+    // Only one routine at a time.
+    pthread_mutex_lock(t_routine_mutex);
+    
+    // Lock mutex to prevent multiple queries simultaneously
     PqxxResult R;
-
-	// If there isn't an active an active transaction, create one
+	
+    // If there isn't an active an active transaction, create one
     try {
         if (!W) {
             // Create a new transaction
@@ -106,12 +111,12 @@ PqxxResult DataAccess::exec(std::string name, std::string query) {
         }
     }
     catch (const exception &e) {
-        pthread_mutex_unlock(t_trans_mutex);
+        pthread_mutex_unlock(t_routine_mutex);
         L_ERROR(LOG_DB,"Exception: " + string(e.what()));
         throw;
     }
     catch (...) {
-        pthread_mutex_unlock(t_trans_mutex);
+        pthread_mutex_unlock(t_routine_mutex);
         L_CRITICAL(LOG_DB,"Unexpected exception.");
         throw;
     }
@@ -121,25 +126,27 @@ PqxxResult DataAccess::exec(std::string name, std::string query) {
         R = W->exec(query);
     }
     catch (const pqxx::sql_error &e) {
-        pthread_mutex_unlock(t_trans_mutex);
+        pthread_mutex_unlock(t_routine_mutex);
     L_ERROR(LOG_DB,e.what());
         L_ERROR(LOG_DB,"SQL Query: " + e.query());
+        throw;
     }
     catch (const exception &e) {
-        pthread_mutex_unlock(t_trans_mutex);
+        pthread_mutex_unlock(t_routine_mutex);
         L_ERROR(LOG_DB,"Exception: " + string(e.what()));
         throw;
     }
     catch (...) {
-        pthread_mutex_unlock(t_trans_mutex);
+        pthread_mutex_unlock(t_routine_mutex);
         L_CRITICAL(LOG_DB,"Unexpected exception.");
         throw;
     }
 
-	// Unlock the transaction mutex and return data
-    pthread_mutex_unlock(t_trans_mutex);
+	// Unlock routine mutex
+    pthread_mutex_unlock(t_routine_mutex);
     return R;
 }
+
 
 /**
  * Commits any changes to the database in the last transaction and unlocks the
@@ -147,6 +154,9 @@ PqxxResult DataAccess::exec(std::string name, std::string query) {
  */
 void DataAccess::commit(std::string name) {
     char* routine = "DataAccess::commit";
+    
+    // Lock routine mutex
+    pthread_mutex_lock(t_routine_mutex);
 
     // If we commit a different transaction, we must be stupid
     if (transActive && transName != name) {
@@ -159,18 +169,20 @@ void DataAccess::commit(std::string name) {
 
 	// Lock the mutex, commit the changes, delete the transaction and unlock
 	// the mutex again.
-    pthread_mutex_lock(t_trans_mutex);
     W->commit();
     delete W;
     W = 0;
-    pthread_mutex_unlock(t_trans_mutex);
 
     transActive = false;
     transName = "";
 
     // We can start a differently named transaction if we like now
     pthread_mutex_unlock(t_name_mutex);
+
+    // Unlock routine mutex
+    pthread_mutex_unlock(t_routine_mutex);
 }
+
 
 /**
  * Aborts any changes to the database in the last transaction and unlocks the
@@ -178,30 +190,39 @@ void DataAccess::commit(std::string name) {
  */
 void DataAccess::abort(std::string name) {
     char* routine = "DataAccess::abort";
+    
+    // Lock routine mutex
+    pthread_mutex_lock(t_routine_mutex);
 
     // If we abort a different transaction, we must be stupid
     if (transActive && transName != name) {
+        pthread_mutex_unlock(t_routine_mutex);
         L_ERROR(LOG_DB,"Attempted to abort the wrong transaction!");
         return;
     }
 	
     // We're kind, so we'll let it pass if someone tries to abort a transaction
 	// which doesn't exist.
-    if (!W) return;
+    if (!W) {
+        pthread_mutex_unlock(t_routine_mutex);
+        return;
+    }
 
 	// Lock mutex, abort transaction, delete transaction and unlock mutex
-    pthread_mutex_lock(t_trans_mutex);
     W->abort();
     delete W;
     W = 0;
-    pthread_mutex_unlock(t_trans_mutex);
 
     transActive = false;
     transName = "";
 
     // We can start a differently named transaction if we like now
     pthread_mutex_unlock(t_name_mutex);
+
+    // Unlock routine mutex
+    pthread_mutex_unlock(t_routine_mutex);
 }
+
 
 /**
  * Parses the configuration file to get database connection information.
@@ -256,11 +277,15 @@ std::string DataAccess::getConnectionString() {
     return DB_CONNECT;
 }
 
+
 /**
  * Wrapper routine to provide string escaping
  */
 std::string DataAccess::esc(std::string str) {
     char* routine = "DataAccess::esc";
+
+    // lock routine mutex
+    pthread_mutex_lock(t_routine_mutex);
 
     std::string result;
 
@@ -280,14 +305,15 @@ std::string DataAccess::esc(std::string str) {
         }
     }
     catch (const exception &e) {
-        pthread_mutex_unlock(t_trans_mutex);
+        pthread_mutex_unlock(t_routine_mutex);
         L_ERROR(LOG_DB,"Exception: " + string(e.what()));
         throw;
     }
     catch (...) {
-        pthread_mutex_unlock(t_trans_mutex);
+        pthread_mutex_unlock(t_routine_mutex);
         L_CRITICAL(LOG_DB,"Unexpected exception.");
         throw;
     }
+    pthread_mutex_unlock(t_routine_mutex);
     return str;
 }

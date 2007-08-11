@@ -307,7 +307,9 @@ void ArchiveManager::recover(unsigned int index) {
         L_ERROR(LOG_DB," -> mv returned code " + rv);
         return;
     }
-    // \todo add track to database.    
+
+    trackInbox->push_back(t);
+    add(trackInbox->size() - 1);
 }
 
 

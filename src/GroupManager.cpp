@@ -134,7 +134,31 @@ void GroupManager::addToGroup(User u, Group g, std::string T) {
  * Removes the user from the group.
  */
 void GroupManager::removeFromGroup(User u, Group g, std::string T) {
+    char* routine = "GroupManager::removeFromGroup";
 
+    bool standalone = false;
+    if (T == "GMRemoveFromGroup") standalone = true;
+
+    std::string SQL;
+
+    try {
+        SQL = "SELECT id FROM usersgroups WHERE userid=" + u.id
+                + " AND groupid=" + g.id;
+        if (DB->exec(T,SQL).size() == 0) {
+            L_ERROR(LOG_DB,"User '" + u.username + "' is not in group '"
+                            + g.name + "'");
+            throw;
+        }
+        SQL = "DELETE FROM usersgroups WHERE userid=" + u.id
+                + " AND groupid=" + g.id;
+        DB->exec(T,SQL);
+        if (standalone) DB->commit(T);
+    }
+    catch (...) {
+        if (standalone) DB->abort(T);
+        L_ERROR(LOG_DB,"Failed to remove user from group.");
+        throw;
+    }
 }
 
 

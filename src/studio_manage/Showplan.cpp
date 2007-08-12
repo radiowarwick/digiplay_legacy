@@ -85,7 +85,7 @@ void Showplan::loadShowplan(DpsShowplan& S) {
                 new ShowPlanScript( lstShowPlan, lstShowPlan->lastItem(), S[i]);
                 break;
             case DPS_SHOWNOTE:
-                // TODO
+                new ShowPlanNote( lstShowPlan, lstShowPlan->lastItem(), S[i]);
                 break;
             default:
                 break;
@@ -187,6 +187,13 @@ void Showplan::addScript(DpsShowScript& S) {
     L_INFO(LOG_DB,"Playlist add complete.");
 }
 
+void Showplan::addNote(DpsShowNote& N) {
+    char* routine = "Showplan::addNote";
+    L_INFO(LOG_SHOWPLAN,"Adding note to showplan");
+    new ShowPlanNote( lstShowPlan, lstShowPlan->lastItem(), N);
+    L_INFO(LOG_DB,"Playlist add complete");
+}
+
 void Showplan::clear(bool prompt) {
     if (lstShowPlan->childCount() == 0) return;
     if (prompt) {
@@ -209,20 +216,28 @@ void Showplan::remove() {
     if (lstShowPlan->childCount() == 0) return;
     QListViewItem *x = lstShowPlan->selectedItem();
     QListViewItem *y;
+    // Check something is selected.
     if ( x ) {
+        // Get the next item
         y = x->nextSibling();
-        delete x;
-        selectedItem = 0;
+        // If we're not at the end of the list, select the next item
         if ( y ) {
             lstShowPlan->setSelected(y,true);
         }
+        // Otherwise get the item before the selected item
         else {
-            y = lstShowPlan->lastItem();
-            lstShowPlan->setSelected(y,true);
+            y = lstShowPlan->lastItem()->itemAbove();
+            // If there is such an item, select it, otherwise y is 0
+            if ( y ) {
+                lstShowPlan->setSelected(y,true);
+            }
         }
+        // Change selection to the new item
         selectionChanged(y);
-
+        // Delete the originally selected item
+        delete x;
     }
+    // Update the next track (in case we deleted the existing one)
     updateNextTrack();
 }
 
@@ -293,26 +308,34 @@ void Showplan::clicked(QListViewItem *x) {
         btnMoveUp->setEnabled(false);
         btnMoveTop->setEnabled(false);
         btnDelete->setEnabled(false);
+        selectionChanged(0);
     }
 }
 
 void Showplan::selectionChanged(QListViewItem* x) {
+    // If x is null, we're not having anything selected.
     if ( ! x ) {
-        if ( selectedItem && selectedItem->getType() == 1
-                && selectedItem->getState() == SHOWPLAN_STATE_LOADED ) {
+	    if ( selectedItem && selectedItem->getType() == 1 &&
+		     	selectedItem->getState() == SHOWPLAN_STATE_LOADED ) {
             emit scriptDeselected();
-            selectedItem->setState(SHOWPLAN_STATE_UNLOADED);
+		    selectedItem->setState(SHOWPLAN_STATE_UNLOADED);
         }
         selectedItem = 0;
         return;
     }
 
+    // Type cast to a ShowPlanItem.
     ShowPlanItem *y = (ShowPlanItem*)x;
+
+    // Check if the currently selected item is a script
+    // Need to clear script tab, and set item to unloaded state.
 	if ( selectedItem && selectedItem->getType() == 1 &&
 		 	selectedItem->getState() == SHOWPLAN_STATE_LOADED ) {
 		emit scriptDeselected();
 		selectedItem->setState(SHOWPLAN_STATE_UNLOADED);
 	}
+
+    // If item is unloaded, activate applicable move buttons
     if ( y && y->getState() == SHOWPLAN_STATE_UNLOADED ) {
         ShowPlanItem *z = (ShowPlanItem*)y->itemAbove();
         if ( z && z->getState() == SHOWPLAN_STATE_UNLOADED) {
@@ -332,12 +355,14 @@ void Showplan::selectionChanged(QListViewItem* x) {
             btnMoveDown->setEnabled(true);
         }
         btnDelete->setEnabled(true);
+        // If item is a script, load the script into the script tab
+        // Then set item as loaded.
 		if (y->getType() == 1) {
-			//Script!!
 			ShowPlanScript *s = (ShowPlanScript*)y;
-			y->setState( SHOWPLAN_STATE_LOADED );
 			emit scriptSelected( s->getScript().getId() );
+			y->setState( SHOWPLAN_STATE_LOADED );
 		}
+        // Change the selected item pointer to the new item.
 		selectedItem = y;
     }
 }
@@ -783,6 +808,50 @@ void ShowPlanScript::init() {
     backBrushUnloadedSel = new QBrush(QColor(0,233,249));
     backBrushLoadedSel = new QBrush(QColor(0,233,249));
     backBrushFinishedSel = new QBrush(QColor(208,208,208));
+    pixUnloaded = new QPixmap(path + "/images/script32.png");
+    pixLoaded = new QPixmap(path + "/images/scriptLoaded32.png");
+    pixFinished = new QPixmap(path + "/images/scriptGrey32.png");
+    ShowPlanItem::init();
+}
+
+
+/* =======================================================================
+ * ShowPlanNote
+ *  - derived from ShowPlanItem
+ * =======================================================================
+ */
+ShowPlanNote::ShowPlanNote( QListView *parent, QListViewItem *after )
+        : ShowPlanItem(parent,after) {
+    rootElement = true;
+    init();
+}
+
+ShowPlanNote::ShowPlanNote( QListViewItem *parent, QListViewItem *after )
+        : ShowPlanItem(parent,after) {
+    rootElement = false;
+    init();
+}
+
+ShowPlanNote::ShowPlanNote( QListView *parent, QListViewItem *after,        DpsShowItem& n )
+        : ShowPlanItem(parent, after) {
+    if (n.getType() != DPS_SHOWNOTE) throw;
+    rootElement = false;
+    setText(0,n["comment"]);
+    setText(1,"");
+    setText(2,"");
+    setText(3,"");
+    _n = n;
+    init();
+}
+
+void ShowPlanNote::init() {
+    string path = qApp->applicationDirPath();
+    backBrushUnloaded = new QBrush(QColor(0,103,209));
+    backBrushLoaded = new QBrush(QColor(0,103,209));
+    backBrushFinished = new QBrush(QColor(168,168,168));
+    backBrushUnloadedSel = new QBrush(QColor(0,153,255));
+    backBrushLoadedSel = new QBrush(QColor(0,153,255));
+    backBrushFinishedSel = new QBrush(QColor(228,228,228));
     pixUnloaded = new QPixmap(path + "/images/script32.png");
     pixLoaded = new QPixmap(path + "/images/scriptLoaded32.png");
     pixFinished = new QPixmap(path + "/images/scriptGrey32.png");

@@ -144,17 +144,26 @@ void DpsShowplan::load(int id) {
     
     for (unsigned int i = 0; i < R.size(); i++) {
         if (string(R[i]["itemtype"].c_str()) == "audio") {
-            if (string(R[i]["audiotype"].c_str()) == "Music")
+            if (string(R[i]["audiotype"].c_str()) == "Music") {
                 new DpsShowTrack(*this,string(R[i]["key"].c_str()));
-            if (string(R[i]["audiotype"].c_str()) == "Jingle")
+                lastItem().setData("comment",R[i]["comment"].c_str());
+            }
+            if (string(R[i]["audiotype"].c_str()) == "Jingle") {
                 new DpsShowJingle(*this,string(R[i]["key"].c_str()));
-            if (string(R[i]["audiotype"].c_str()) == "Advert")
+                lastItem().setData("comment",R[i]["comment"].c_str());
+            }
+            if (string(R[i]["audiotype"].c_str()) == "Advert") {
                 new DpsShowAdvert(*this,string(R[i]["key"].c_str()));
+                lastItem().setData("comment",R[i]["comment"].c_str());
+            }
         }
         if (string(R[i]["itemtype"].c_str()) == "script") {
             new DpsShowScript(*this,atoi(R[i]["key"].c_str()));
+            lastItem().setData("comment",R[i]["comment"].c_str());
         }
         if (string(R[i]["itemtype"].c_str()) == "note") {
+            new DpsShowNote(*this,atoi(R[i]["key"].c_str()));
+            lastItem().setData("comment",R[i]["comment"].c_str());
         }
     }
 }
@@ -562,4 +571,48 @@ void DpsShowScript::load(unsigned int id) {
     }
 }
 
+DpsShowNote::DpsShowNote(unsigned int id)
+        : DpsShowItem() {
+    load(id);
+    _type = DPS_SHOWNOTE;
+}
 
+DpsShowNote::DpsShowNote(const DpsShowplan& parent, unsigned int id)
+        : DpsShowItem(parent) {
+    load(id);
+    _type = DPS_SHOWNOTE;
+}
+
+DpsShowNote::DpsShowNote(const DpsShowplan& parent, const DpsShowItem& after, unsigned int id) : DpsShowItem(parent, after) {
+    load(id);
+    _type = DPS_SHOWNOTE;
+}
+
+DpsShowNote::~DpsShowNote() {
+
+}
+
+void DpsShowNote::load(unsigned int id) {
+    char* routine = "DpsShowNote::load";
+    string SQL;
+    PqxxResult R;
+
+    try {
+        SQL = "SELECT key,comment FROM v_showplan WHERE key=" + dps_itoa(id);
+        R = DB->exec("DpsShowNoteLoad",SQL);
+        DB->abort("DpsShowNoteLoad");
+    }
+    catch (...){
+        DB->abort("DpsShowNoteLoad");
+    }
+    if (R.size() > 0) {
+        for (unsigned int i = 0; i < R[0].size(); ++i) {
+            if (string(R[0][i].name()) == "key") {
+                _id = atoi(R[0][i].c_str());
+            }
+            else {
+                setData(R[0][i].name(), R[0][i].c_str());
+            }
+        }
+    }    
+}

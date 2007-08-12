@@ -71,6 +71,7 @@ class Showplan : public QWidget {
         void addJingle(QString md5);
         void addAdvert(QString md5);
         void addScript(DpsShowScript& S);
+        void addNote(DpsShowNote& N);
         void scriptDone();
         void clear(bool prompt = true);
         void remove();
@@ -177,6 +178,21 @@ class ShowPlanScript : public ShowPlanItem {
     private:
         void init();
         DpsShowItem _s;
+};
+
+class ShowPlanNote : public ShowPlanItem {
+    public:
+        ShowPlanNote( QListView *parent, QListViewItem *after );
+        ShowPlanNote( QListViewItem *parent, QListViewItem *after );
+        ShowPlanNote( QListView *parent, QListViewItem *after, 
+                            DpsShowItem&   s);
+        
+        int getType() {return 1;}
+        DpsShowItem& getNote() {return _n;}
+
+    private:
+        void init();
+        DpsShowItem _n;
 };
 
 #endif

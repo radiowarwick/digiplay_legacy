@@ -129,9 +129,10 @@ class DpsShowItem : public DpsObject {
         enum showPlanState getState();
         void setState(enum showPlanState state);
         DpsShowplan* parent();
+        void setData(std::string name, std::string value);
 
     protected:
-        void setData(std::string name, std::string value);
+
 
     private:
         enum showPlanState _state;
@@ -205,10 +206,14 @@ class DpsShowScript: public DpsShowItem {
  */
 class DpsShowNote : public DpsShowItem {
     public:
-        DpsShowNote(DpsShowplan* parent);
+        DpsShowNote(unsigned int id);
+        DpsShowNote(const DpsShowplan& parent, unsigned int id);
+        DpsShowNote(const DpsShowplan& parent, const DpsShowItem& after, unsigned int id);
         virtual ~DpsShowNote();
 
     private:
+        DpsShowNote();
+        void load(unsigned int id);
 };
 
 /**

@@ -758,7 +758,8 @@ AS
             audio.id AS key,
             audio.md5 AS md5,
             'audio'::text AS itemtype,
-            audiotypes.name as audiotype
+            audiotypes.name AS audiotype,
+            showitems.comment AS comment
     FROM    audio,audiotypes,showitems
     WHERE   (showitems.audioid = audio.id)
         AND (audiotypes.id = audio.type)
@@ -768,9 +769,21 @@ AS
             scripts.id AS key,
             ''::text AS md5,
             'script'::text AS itemtype,
-            ''::text AS audiotype
+            ''::text AS audiotype,
+            showitems.comment AS comment
     FROM    scripts, showitems
     WHERE   (showitems.scriptid = scripts.id)
+    UNION
+    SELECT  showitems.showplanid AS id,
+            showitems.position AS position,
+            showitems.id AS key,
+            ''::text AS md5,
+            'note'::text AS itemtype,
+            ''::text AS audiotype,
+            showitems.comment AS comment
+    FROM    showitems
+    WHERE   (showitems.audioid IS NULL)
+        AND (showitems.scriptid IS NULL)
     ORDER BY position;
 
 -- v_audio_track

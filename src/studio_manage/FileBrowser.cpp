@@ -27,7 +27,6 @@ using std::cout;
 using std::endl;
 
 #include "FileBrowser.h"
-#include "Config.h"
 #include "dps.h"
 
 #include <qdir.h>

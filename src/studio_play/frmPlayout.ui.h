@@ -44,6 +44,7 @@ AudioWallManager* usrAudioWallMan;
 Config *conf;
 
 void frmPlayout::init() {
+    // Create audio players
     audioPlayer1 = new AudioPlayer(this,"audioPlayer1",1);
     audioPlayer1->setGeometry(10,10,540,240);
     audioPlayer2 = new AudioPlayer(this,"audioPlayer2",2);
@@ -60,25 +61,33 @@ void frmPlayout::init() {
     connect(triggerConfig, SIGNAL(trigger()),
                                 audioPlayer3, SLOT(processConfigUpdate()));
 
+    // Get the active station and user cartset id from config
     conf = new Config("digiplay");
-//	remoteStartThread *remotes = new remoteStartThread(this);
+    unsigned int stnCartsetId = atoi(conf->getParam("station_cartset").c_str());
+    unsigned int usrCartsetId = atoi(conf->getParam("user_cartset").c_str());
+    delete conf;
 
-	stnAudioWall = new AudioWall(this,"stnAudioWall",4,3);
+	// Creae the station audio wall
+    stnAudioWall = new AudioWall(this,"stnAudioWall",4,3);
 	stnAudioWall->setGeometry(560,0,460,373);
 	stnAudioWallMan = new AudioWallManager(stnAudioWall);
-	stnAudioWallMan->load(atoi(conf->getParam("station_cartset").c_str()));
+	stnAudioWallMan->load(stnCartsetId);
 	
+    // Create the user audio wall
 	usrAudioWall = new AudioWall(this,"usrAudioWall",4,3);
 	usrAudioWall->setGeometry(560,373,460,373);
 	usrAudioWallMan = new AudioWallManager(usrAudioWall);
-	usrAudioWallMan->load(atoi(conf->getParam("user_cartset").c_str()));
+	usrAudioWallMan->load(usrCartsetId);
 
+    // Link the audio walls to the fourth channel
     audioWallOutput = new AudioWallDriver(4);
     audioWallOutput->addAudioWall(stnAudioWall);
     audioWallOutput->addAudioWall(usrAudioWall);
 
-    delete conf;
-	usleep(500000);
+//	usleep(500000);
+
+    // Initialise remote starts
+//	remoteStartThread *remotes = new remoteStartThread(this);
 //	remotes->start();
 
 	cout << "Finished init" << endl;

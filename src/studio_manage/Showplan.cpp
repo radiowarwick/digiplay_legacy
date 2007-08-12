@@ -93,6 +93,7 @@ void Showplan::loadShowplan(DpsShowplan& S) {
     }
     lstShowPlan->setUpdatesEnabled(true);
     lstShowPlan->repaint();
+    updateNextTrack();
 }
 
 DpsShowplan Showplan::getShowplan() {
@@ -198,8 +199,8 @@ void Showplan::clear(bool prompt) {
         }
         delete dlg;
     }
-    lstShowPlan->clear();
     selectionChanged(0);
+    lstShowPlan->clear();
     activePoint = 0;
     updateNextTrack();
 }
@@ -296,6 +297,16 @@ void Showplan::clicked(QListViewItem *x) {
 }
 
 void Showplan::selectionChanged(QListViewItem* x) {
+    if ( ! x ) {
+        if ( selectedItem && selectedItem->getType() == 1
+                && selectedItem->getState() == SHOWPLAN_STATE_LOADED ) {
+            emit scriptDeselected();
+            selectedItem->setState(SHOWPLAN_STATE_UNLOADED);
+        }
+        selectedItem = 0;
+        return;
+    }
+
     ShowPlanItem *y = (ShowPlanItem*)x;
 	if ( selectedItem && selectedItem->getType() == 1 &&
 		 	selectedItem->getState() == SHOWPLAN_STATE_LOADED ) {
@@ -353,6 +364,10 @@ void Showplan::processConfigUpdate() {
         else {
             activePoint->setState(SHOWPLAN_STATE_FINISHED);
             activePoint = (ShowPlanItem*)activePoint->nextSibling();
+            while (activePoint->getType() == 1
+                    && activePoint != lstShowPlan->lastItem()) {
+                activePoint = (ShowPlanItem*)activePoint->nextSibling();
+            }
         }
         activePoint->setState(SHOWPLAN_STATE_LOADED);
         lstShowPlan->ensureItemVisible(activePoint);

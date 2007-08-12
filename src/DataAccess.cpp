@@ -17,7 +17,6 @@ unsigned int DataAccess::instanceCount = 0;
 // Transaction management
 bool DataAccess::transActive = false;
 std::string DataAccess::transName = "";
-pthread_mutex_t* DataAccess::t_name_mutex = 0;
 pthread_mutex_t* DataAccess::t_routine_mutex = 0;
 
 
@@ -45,9 +44,7 @@ DataAccess::DataAccess() {
             L_INFO(LOG_DB," -> Protocal version: " 
                             + dps_itoa(C->protocol_version()));
 			// Init the transaction mutex
-            t_name_mutex = new pthread_mutex_t;
             t_routine_mutex = new pthread_mutex_t;
-            pthread_mutex_init(t_name_mutex,NULL);
             pthread_mutex_init(t_routine_mutex,NULL);
 			W = 0;
         }
@@ -71,6 +68,7 @@ DataAccess::~DataAccess() {
     if (DataAccess::instanceCount == 0) {
         delete W;
         delete C;
+        delete t_routine_mutex;
     }
 }
 
@@ -88,7 +86,11 @@ PqxxResult DataAccess::exec(std::string name, std::string query) {
     if (transActive && transName != name) {
         L_INFO(LOG_DB,"Attempted transaction '" + name + "' while transaction '"
                 + transName + "' is still active. Waiting");
-        pthread_mutex_lock(t_name_mutex);
+        while (transActive && transName != name) {
+            L_INFO(LOG_DB,"Transaction '" + transName + "' is still active.");
+            L_INFO(LOG_DB,"Want to start transaction '" + name + "'");
+            sleep(1);
+        }
         L_INFO(LOG_DB,"Transaction '" + name + "' now commencing.");
     }
 	
@@ -102,12 +104,10 @@ PqxxResult DataAccess::exec(std::string name, std::string query) {
     try {
         if (!W) {
             // Create a new transaction
+            L_INFO(LOG_DB,"Beginning transaction '" + name + "'");
             W = new PqxxWork(*C,"DataAccess");
             transActive = true;
             transName = name;
-            // Lock the name mutex to prevent different named transactions
-            // starting.
-            pthread_mutex_lock(t_name_mutex);
         }
     }
     catch (const exception &e) {
@@ -127,7 +127,7 @@ PqxxResult DataAccess::exec(std::string name, std::string query) {
     }
     catch (const pqxx::sql_error &e) {
         pthread_mutex_unlock(t_routine_mutex);
-    L_ERROR(LOG_DB,e.what());
+        L_ERROR(LOG_DB,e.what());
         L_ERROR(LOG_DB,"SQL Query: " + e.query());
         throw;
     }
@@ -160,6 +160,7 @@ void DataAccess::commit(std::string name) {
 
     // If we commit a different transaction, we must be stupid
     if (transActive && transName != name) {
+        pthread_mutex_unlock(t_routine_mutex);
         L_ERROR(LOG_DB,"Attempted to commit the wrong transaction!");
         return;
     }
@@ -169,15 +170,13 @@ void DataAccess::commit(std::string name) {
 
 	// Lock the mutex, commit the changes, delete the transaction and unlock
 	// the mutex again.
+    L_INFO(LOG_DB,"Committing transaction '" + transName + "'");
     W->commit();
     delete W;
     W = 0;
 
     transActive = false;
     transName = "";
-
-    // We can start a differently named transaction if we like now
-    pthread_mutex_unlock(t_name_mutex);
 
     // Unlock routine mutex
     pthread_mutex_unlock(t_routine_mutex);
@@ -209,15 +208,13 @@ void DataAccess::abort(std::string name) {
     }
 
 	// Lock mutex, abort transaction, delete transaction and unlock mutex
+    L_INFO(LOG_DB,"Aborting transaction '" + transName + "'");
     W->abort();
     delete W;
     W = 0;
 
     transActive = false;
     transName = "";
-
-    // We can start a differently named transaction if we like now
-    pthread_mutex_unlock(t_name_mutex);
 
     // Unlock routine mutex
     pthread_mutex_unlock(t_routine_mutex);
@@ -297,10 +294,12 @@ std::string DataAccess::esc(std::string str) {
             W->abort();
             delete W;
             W = 0;
+            pthread_mutex_unlock(t_routine_mutex);
             return result;
         }
         else {
             result = W->esc(str);
+            pthread_mutex_unlock(t_routine_mutex);
             return result;
         }
     }

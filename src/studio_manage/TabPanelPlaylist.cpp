@@ -130,12 +130,14 @@ void TabPanelPlaylist::getPlaylist(){
 		Playlists = DB->exec("PlaylistRetrieve", SQL);
 	}
 	catch (...) {
-		L_ERROR(LOG_TABPLAYLIST,"Failed to get list of playlists");
 		DB->abort("PlaylistRetrieve");
+		L_ERROR(LOG_TABPLAYLIST,"Failed to get list of playlists");
 		return;
 	}
 
 	lstPlaylist->clear();
+
+
 	for (unsigned int j = 0; j < Playlists.size(); j++) {
 		last_track = 0;
 		string playlist = Playlists[j]["name"].c_str();
@@ -146,6 +148,7 @@ void TabPanelPlaylist::getPlaylist(){
 		PqxxResult R;
 		try {
 			R = DB->exec("PlaylistRetrieve",SQL);
+
 			for (unsigned int i = 0; i < R.size(); i++) {
 				new_track = new QListViewItem(new_playlist,last_track,
 							R[i]["artist"].c_str(),
@@ -155,13 +158,17 @@ void TabPanelPlaylist::getPlaylist(){
 				new_track->setPixmap(0,*pixTrack);
 				last_track = new_track;
 			}
+            L_INFO(LOG_TABPLAYLIST,"Before open");
 			new_playlist->setOpen(true);
+            L_INFO(LOG_TABPLAYLIST,"After open");
 		}
 		catch (...) {
+	        DB->abort("PlaylistRetrieve");
 			L_ERROR(LOG_TABPLAYLIST,"Failed to get playlist '"+playlist+"'");
+            return;
 		}
 	}
-	DB->abort("PlaylistRetrieve");
+    DB->abort("PlaylistRetrieve");
 }
 
 void TabPanelPlaylist::playlistAdd(QListViewItem *current) {

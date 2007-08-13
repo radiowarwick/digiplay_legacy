@@ -318,6 +318,11 @@ void Showplan::selectionChanged(QListViewItem* x) {
             emit scriptDeselected();
 		    selectedItem->setState(SHOWPLAN_STATE_UNLOADED);
         }
+        btnMoveUp->setEnabled(false);
+        btnMoveDown->setEnabled(false);
+        btnMoveTop->setEnabled(false);
+        btnMoveBottom->setEnabled(false);
+        btnDelete->setEnabled(false);
         selectedItem = 0;
         return;
     }

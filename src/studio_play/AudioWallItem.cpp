@@ -72,7 +72,7 @@ void AudioWallItem::updateButton() {
     }
     switch (_state) {
         case STATE_STOP:
-            QPushButton::setText(text);
+            QPushButton::setText(text + "\n" + dps_prettyTime(_totalSamples));
             QPushButton::setPaletteForegroundColor(fgColour);
             QPushButton::setPaletteBackgroundColor(bgColour);
             QPushButton::setEnabled(true);

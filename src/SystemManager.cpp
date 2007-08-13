@@ -121,7 +121,7 @@ void SystemManager::dropArchive(unsigned int index) {
     char* routine = "SystemManager::dropArchive";
 // need to remove all the tracks and stuff first!
 	if (index > archives->size() - 1) {
-		cout << "SystemManager::dropArchive: Index out of range!" << endl;
+        L_ERROR(LOG_DB,"Index out of range!");
 		return;
 	}
 	

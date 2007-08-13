@@ -108,15 +108,17 @@ void AudioWall::setButton(unsigned short page, unsigned short index,
     // Get the AudioWallItem we're updating
     AudioWallItem* I = _pages[page]->items[index];
 
+    // If the button has audio, load the audio
+	if (newItem.file != "") {
+        I->load(newItem.file.ascii(), newItem.start, newItem.end);
+	}
+
     // Configure cosmetic properties
     I->setBackgroundColour(newItem.bgColour);
     I->setForegroundColour(newItem.fgColour);
     I->setText(newItem.text);
 
-    // If the button has audio, load the audio
-	if (newItem.file != "") {
-        I->load(newItem.file.ascii(), newItem.start, newItem.end);
-	}
+
 }
 
 /**

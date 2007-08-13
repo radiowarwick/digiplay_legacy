@@ -143,15 +143,6 @@ void GroupManager::removeFromGroup(User u, Group g, std::string T) {
 
     try {
         SQL = "SELECT id FROM usersgroups WHERE userid=" + u.id
-                + " AND groupid=" + g.id;
-        if (DB->exec(T,SQL).size() == 0) {
-            L_ERROR(LOG_DB,"User '" + u.username + "' is not in group '"
-                            + g.name + "'");
-            throw;
-        }
-        SQL = "DELETE FROM usersgroups WHERE userid=" + u.id
-                + " AND groupid=" + g.id;
-        DB->exec(T,SQL);
         if (standalone) DB->commit(T);
     }
     catch (...) {

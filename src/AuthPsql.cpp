@@ -22,6 +22,7 @@
  */
 #include "DataAccess.h"
 #include "Logger.h"
+#include "dps.h"
 
 #include "AuthPsql.h"
 
@@ -42,17 +43,29 @@ void AuthPsql::authSession(string username, string password) {
 		throw AUTH_INVALID_CREDENTIALS;
 	}
 
-	string SQL = "SELECT password FROM users WHERE username='" 
+    std::string SQL;
+    PqxxResult R;
+
+    try {
+	    SQL = "SELECT password FROM users WHERE username='" 
 					+ username + "'";
-	Result R = DB->exec(SQL);
-    DB->abort();
+    	R = DB->exec("AuthPsql",SQL);
+        DB->abort("AuthPsql");
+    }
+    catch (...) {
+        DB->abort("AuthPsql");
+        throw;
+    }
 
 	if (R.size() == 0) {
 		L_ERROR(LOG_AUTH,"No such user!");
 		throw AUTH_FAILED;
 	}
 
-	if (string(R[0]["password"].c_str()) == password) {
+    std::string db_pass = R[0]["password"].c_str();
+    dps_strTrim(db_pass);
+
+	if (db_pass == password) {
 		L_INFO(LOG_AUTH," -> Success.");
 		Auth::authSession(username,password);
 	}

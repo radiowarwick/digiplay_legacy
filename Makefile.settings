@@ -3,5 +3,5 @@ LIBDIR		=	/usr/local/lib
 LOGDIR		=	/var/log/dps
 
 # Available flags: LDAP, PSQL
-AUTH		=	LDAP
+AUTH		=	PSQL
 

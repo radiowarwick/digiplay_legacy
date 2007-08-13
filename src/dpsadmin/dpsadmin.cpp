@@ -409,6 +409,7 @@ void processMusic() {
             // get the current archive and process each track in the inbox
             ArchiveManager *A = Sys->atArchive(i);
             unsigned int count = A->size(DPS_INBOX);
+            unsigned int offset = 0;
             for (unsigned short j = 0; j < count; j++){
                 // if we're looking for one track, and found it, add it and quit
                 // we won't be importing every track, so it'll be the j'th entry
@@ -424,7 +425,13 @@ void processMusic() {
                 else if (target_md5 == "") {
                     L_INFO(LOG_DB,"Importing " + A->at(DPS_INBOX,0).md5 + " ["
                                     + A->at(DPS_INBOX,0).title + "]");
-                    A->add(0);
+                    try {
+                        A->add(offset);
+                    }
+                    catch (...) {
+                        // skip this track
+                        offset++;
+                    }
                 }
             }
             L_INFO(LOG_DB,"Finished importing from '" + A->spec().name + "'");

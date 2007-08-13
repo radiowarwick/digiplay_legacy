@@ -185,7 +185,7 @@ void ArchiveManager::add(unsigned int index) {
 	// detect if the audio file is completely blank and cancel if it is
     if (t.trim_end_smpl <= t.trim_start_smpl) {
 		L_WARNING(LOG_DB,"No non-zero samples, so track ignored.");
-		return;
+		throw;
 	}
 
     // Save a copy for writing out XML later

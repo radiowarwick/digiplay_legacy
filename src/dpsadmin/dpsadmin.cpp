@@ -63,6 +63,7 @@ static struct option long_options[] = {
     {"merge",       required_argument,  0,  'm'},
     {"create",      required_argument,  0,  'c'},
     {"add-to",      required_argument,  0,  't'},
+    {"remove-from", required_argument,  0,  'f'},
     {"import",      no_argument,        0,  'i'},
     {"import-md5",  required_argument,  0,  'j'},
     {"purge-deleted", no_argument,      0,  'p'},
@@ -149,6 +150,7 @@ void parseCommand(int argc, char *argv[]) {
             case 'u': options["upgrade"] = optarg; c++; break;
             case 'c': options["create"] = optarg; c++; break;
             case 't': options["add-to"] = optarg; c++; break;
+            case 'f': options["remove-from"] = optarg; c++; break;
             case 'i': options["import"] = "yes"; c++; break;
             case 'j': options["import-md5"] = optarg; c++; break;
             case 'p': options["purge-deleted"] = "yes"; c++; break;
@@ -224,6 +226,7 @@ cout <<
 "   -a, --add <group>       add a new group\n"
 "   -d, --drop <group>      drop a group\n"
 "   --add-to <group>        add a user to group as given by --username\n"
+"   --remove-from <group>   remove the user given by --username from group\n"
 "   -l, --list              list groups on the system\n"
 "\n"
 "Command parameters:\n"

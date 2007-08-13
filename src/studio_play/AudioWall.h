@@ -75,15 +75,16 @@ class AudioWall :   public QWidget,
 		bool isMultipage();
 		unsigned short getSize() {return _rows*_cols;}
 		bool isPlaying(unsigned short index);
+        
+        void addPage();
+        void deletePage(unsigned int index);
+        void displayPage(unsigned int index);
 
 	private slots:
 		void nextPage();
 		void prevPage();
 	
 	private:
-        void addPage();
-        void deletePage(unsigned int index);
-        void displayPage(unsigned int index);
         void resizePage(unsigned int index);
 		void configurePageList();
 		void configurePageNav();

@@ -94,16 +94,16 @@ void AudioWall::setButton(unsigned short page, unsigned short index,
 							AudioWallItemSpec newItem) {
 	char *routine = "AudioWall::setButton";
     cout << "Set button: page=" << page  << ", index=" << index << endl;
+
+    // Sanity checks
+    if (page >= _pages.size()) {
+        L_ERROR(LOG_PLAYOUT,"Button page out of range");
+        throw AUDIOWALL_BUTTON_OUT_OF_RANGE;
+    }
 	if (index > _pageSize) {
         L_ERROR(LOG_PLAYOUT,"Button index out of range");
 		throw AUDIOWALL_BUTTON_OUT_OF_RANGE;
 	}
-
-    // Add any pages necessary to accomodate this button's page
-	for (unsigned short i = 0; i <= page; i++) {
-		if (_pages.size() <= i) addPage();
-	}
-	configurePageNav();
 
     // Get the AudioWallItem we're updating
     AudioWallItem* I = _pages[page]->items[index];
@@ -138,6 +138,11 @@ void AudioWall::addPage() {
     AudioWallItem* I;
 
     P->items.clear();
+    P->items.resize(_rows*_cols);
+    for (unsigned int i = 0; i < _rows*_cols; ++i) P->items.at(i) = 0;
+
+    // Create a new page of buttons/AudioWallItems
+    qApp->lock();
 	for (unsigned int i = 0; i < _rows; i++) {
 		for (unsigned int j = 0; j < _cols; j++) {
             I = new AudioWallItem(this,"button" 
@@ -147,25 +152,52 @@ void AudioWall::addPage() {
                 _pages.size()*_pageSize + i*_cols + j + 1, I, OUT0);
             I->hide();
             I->setEnabled(false);
-            P->items.push_back(I);
+            P->items.at(i*_cols + j) = I;
 		}
     }
     _pages.push_back(P);
+    qApp->unlock();
+
+    // Resize the buttons on the page to the correct layout
+    resizePage(_pages.size() - 1);
+    
+    // Configure the page navigation buttons
+    configurePageNav();
 }
 
 /**
  * Deletes the specified cartwall (and buttons) from the wall list
  */
 void AudioWall::deletePage(unsigned int index) {
+    // Sanity check
     if (index > _pages.size() - 1) {
         cout << "Tried to delete page " << index << " out of range" << endl;
         throw;
     }
+
+    // Delete the page
+    qApp->lock();
     for (unsigned int i = 0; i < _pages.at(index)->items.size(); i++) {
         delete _pages.at(index)->items.at(i);
     }
     delete _pages.at(index);
     _pages.erase(_pages.begin() + index);
+    qApp->unlock();
+
+    if (_currentPage == index) {
+        if (index + 1 < _pages.size()) {
+            displayPage(index + 1);
+        }
+        else if (index > 0) {
+            displayPage(index - 1);
+        }
+        else {
+		    grpFrame->setTitle("");
+        }
+    }
+
+    // Configure page navigation
+    configurePageNav();
 }
 
 /**
@@ -173,23 +205,38 @@ void AudioWall::deletePage(unsigned int index) {
  */
 void AudioWall::displayPage(unsigned int index) {
     cout << "Display page " << index+1 << " of " << _pages.size() << endl;
+
+    // Sanity check
     if (index > _pages.size() - 1) {
         cout << "Tried to set active page " << index << " out of range" << endl;
         throw;
     }
-    if (index == _currentPage) return;
+    
+    qApp->lock();
+
+    // Hide the currently displayed page
     cout << "Hiding old page " << _currentPage << endl;
     if (_currentPage < _pages.size()) {
         for (unsigned int i = 0; i < _pages[_currentPage]->items.size(); i++) {
             _pages[_currentPage]->items[i]->hide();
         }
     }
+
+    // Change page number
     _currentPage = index;
+
+    // Show the new page
     cout << "Showing new page" << endl;
     for (unsigned int i = 0; i < _pages[_currentPage]->items.size(); i++) {
         _pages[_currentPage]->items[i]->show();
     }
+
+    qApp->unlock();
+    
+    // Set title
     grpFrame->setTitle(_pages[_currentPage]->title);
+
+    // Configure naviagation buttons
     configurePageNav();
 }
 
@@ -197,18 +244,15 @@ void AudioWall::displayPage(unsigned int index) {
  * Resize the specified page buttons based on parent geometry
  */
 void AudioWall::resizePage(unsigned int index) {
-	// Set properties for the buttons and connect them up
-    // TODO: Implement resize of all page buttons
-//	QFont f = btnAudio[0]->font();
-//	f.setPointSize(14);
+    qApp->lock();
     AudioWallPage* P = _pages[index];
 	for (unsigned int i = 0; i < _rows; i++) {
 		for (unsigned int j = 0; j < _cols; j++) {
             P->items[i*_cols+j]->setGeometry(j*wCell+border, i*hCell+2*border,
                                             wCell, hCell);
-//			btnAudio[i*_cols+j]->setFont(f);
 		}
 	}
+    qApp->unlock();
 }
 
 /**
@@ -216,6 +260,7 @@ void AudioWall::resizePage(unsigned int index) {
  * Also enabled/disables buttons which aren't available
  */
 void AudioWall::configurePageNav() {
+    qApp->lock();
 	if (_currentPage == _pages.size() - 1) {
 		btnPageNext->setEnabled(false);
 	}
@@ -230,7 +275,7 @@ void AudioWall::configurePageNav() {
 	}
 	lblPageNum->setText("Page " + QString::number(_currentPage+1) + "/"
 							+ QString::number(_pages.size()));
-
+    qApp->unlock();
 }
 
 // ========================================================================
@@ -242,9 +287,10 @@ void AudioWall::drawCreate() {
 	clean();
 	string path = qApp->applicationDirPath();
 
+    qApp->lock();
 	// Create frame, and page next, previous buttons and page num label
 	grpFrame = new QGroupBox( this, "grpFrame" );
-	grpFrame->setTitle("No title");
+	grpFrame->setTitle("");
 	QFont f;
 	f.setFamily( "Sans Serif" );
 	f.setPointSize( 16 );
@@ -266,10 +312,7 @@ void AudioWall::drawCreate() {
 
 	lblCounter = new QLabel( grpFrame, "lblCounter" );
 	lblCounter->setEnabled( false );
-	
-	// Create the audio buttons and keep a handle to them in a vector
-    addPage();
-    displayPage(0);
+	qApp->unlock();
 }
 
 /**
@@ -283,7 +326,8 @@ void AudioWall::drawResize() {
 	wCell = int((wFrame - 2*border) / _cols);
 	hCell = int((hFrame - 3*border) / (_rows+1));
 	if (wCell <= 0 || hCell <= 0) return;
-	
+
+    qApp->lock();
 	grpFrame->setGeometry( QRect( 0, 0, wFrame, hFrame ));
 	btnPagePrev->setGeometry( QRect( border, 2*border + _rows*hCell, wCell, hCell ));
 	lblPageNum->setGeometry( QRect( border + wCell, 2*border + _rows*hCell + hCell/2, wCell, hCell / 2 ) );
@@ -291,6 +335,8 @@ void AudioWall::drawResize() {
 	lblCounter->setGeometry( QRect( border + wCell, 2*border + _rows*hCell,wCell, hCell / 2 ) );
 	lblCounter->setAlignment( int( QLabel::AlignCenter ) );
 	btnPageNext->setGeometry( QRect( border + 2*wCell, 2*border + _rows*hCell, wCell, hCell ) );
+    qApp->unlock();
+
     for (unsigned int i = 0; i < _pages.size(); i++) {
         resizePage(i);
     }

@@ -212,6 +212,7 @@ void frmStudioManage::btnLoginClicked()
 		    
 		    try {
 			    authModule->authSession(username, password);
+                conf->setParam("user_cartset","0");
 			    if ( authModule->isAuthenticated() ) {
                     delete userConfig;
                     userConfig = new UserConfig(authModule);

@@ -30,7 +30,8 @@ InputRaw::InputRaw() {
 }
 
 InputRaw::~InputRaw() {
-
+    delete[] cacheStart;
+    delete[] audioBuffer;
 }
 
 void InputRaw::getAudio(AudioPacket* audioData) {

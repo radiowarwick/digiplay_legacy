@@ -50,12 +50,11 @@
 <variables>
 </variables>
 <slots>
+    <slot>configChanged()</slot>
 </slots>
 <functions>
     <function access="private" specifier="non virtual">init()</function>
     <function specifier="non virtual">destroy()</function>
-    <function specifier="non virtual">customEvent( QCustomEvent * event )</function>
-    <function access="private" specifier="non virtual" returnType="QString">getTime( long smpl )</function>
 </functions>
 <pixmapinproject/>
 <layoutdefaults spacing="6" margin="11"/>

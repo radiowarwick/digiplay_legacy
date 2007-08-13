@@ -1,3 +1,5 @@
+#include <qapplication.h>
+
 #include "AudioWallItem.h"
 
 AudioWallItem::AudioWallItem(QWidget* parent, const char* name) :
@@ -59,11 +61,13 @@ void AudioWallItem::onSetTotalSamples() {
 
 void AudioWallItem::updateButton() {
     unsigned long smpl = Audio::Counter::_currentSample;
+    qApp->lock();
     if (text == "") {
         QPushButton::setText("");
         QPushButton::setPaletteForegroundColor(QColor(QRgb(0)));
         QPushButton::setPaletteBackgroundColor(QColor(QRgb(12632256)));
         QPushButton::setEnabled(false);
+        qApp->unlock();
         return;
     }
     switch (_state) {
@@ -83,4 +87,5 @@ void AudioWallItem::updateButton() {
         case STATE_PAUSE:
             break;
     }
+    qApp->unlock();
 }

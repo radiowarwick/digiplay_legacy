@@ -212,12 +212,11 @@ void frmStudioManage::btnLoginClicked()
 		    
 		    try {
 			    authModule->authSession(username, password);
-                conf->setParam("user_cartset","0");
 			    if ( authModule->isAuthenticated() ) {
-                    delete userConfig;
                     userConfig = new UserConfig(authModule);
                     conf->setParam("user_cartset",
                                     userConfig->get("default_cartset"));
+                    delete userConfig;
 					btnLogin->setText("Log Out");
 			    }
 			}
@@ -259,6 +258,7 @@ void frmStudioManage::btnLoginClicked()
 		dlg->setWarning("Are you sure you wish to logout?");
 		if ( dlg->exec() == QDialog::Accepted ){
 		    authModule->closeSession();
+            conf->setParam("user_cartset","0");
             sp->clear(false);
             tabManage->setCurrentPage(0);
 		    btnLogin->setText("Log In");

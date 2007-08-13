@@ -65,12 +65,12 @@ void AudioWallManager::load(unsigned int cartset) {
     cout << "ID is " << cartset << endl;
     cout << "Pagecount: " << pagecount << endl;
     cout << "Current pages: " << _pages.size() << endl;
-    for (int i = _pages.size() - 1; i > pagecount; i--) {
+    for (int i = _pages.size() - 1; i > pagecount - 1; i--) {
         for (int j = 0; j < _A->getSize(); j++) {
-            cout << "Delete page " <<  i << endl;
-            _A->deletePage(i);
             delete _pages[i]->items[j];
         }
+        cout << "Delete page " <<  i << endl;
+        _A->deletePage(i);
     }
     cout << "2" << endl;
 	for (int i = _pages.size(); i < pagecount; i++) {
@@ -149,7 +149,7 @@ void AudioWallManager::load(unsigned int cartset) {
                 << endl;
             _A->setButton(page,item,*I);
 		}
-        _A->displayPage(0);
+        //_A->displayPage(0);
 	}
     cout << "completed update" << endl;
 }

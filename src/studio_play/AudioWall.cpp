@@ -40,10 +40,11 @@ using namespace std;
 AudioWall::AudioWall(QWidget *parent, const char* name, unsigned short rows, unsigned short cols)
 		: QWidget(parent,name) {
 	// default to a single empty page
+    _loaded = false;
 	_rows = rows;
 	_cols = cols;
 	_pageSize = _rows * _cols;
-	_currentPage = 1;
+	_currentPage = 0;
 	_activePage = 0;
 	_activeIndex = 0;
 
@@ -161,7 +162,13 @@ void AudioWall::addPage() {
 
     // Resize the buttons on the page to the correct layout
     resizePage(_pages.size() - 1);
-    
+   
+    // If we're loading from an empty cartwall, display first page
+    if ( ! _loaded ) {
+        _loaded = true;
+        displayPage(0);
+    }
+
     // Configure the page navigation buttons
     configurePageNav();
 }
@@ -195,6 +202,11 @@ void AudioWall::deletePage(unsigned int index) {
         else {
 		    grpFrame->setTitle("");
         }
+    }
+
+    // if there are no pages left, we've not got an audiowall loaded.
+    if (_pages.size() == 0) {
+        _loaded = false;
     }
 
     // Configure page navigation
@@ -274,8 +286,13 @@ void AudioWall::configurePageNav() {
 	else {
 		btnPagePrev->setEnabled(true);
 	}
-	lblPageNum->setText("Page " + QString::number(_currentPage+1) + "/"
+    if (_pages.size() == 0) {
+        lblPageNum->setText("No AudioWall\nLoaded");
+    }
+    else {
+    	lblPageNum->setText("Page " + QString::number(_currentPage+1) + "/"
 							+ QString::number(_pages.size()));
+    }
     qApp->unlock();
 }
 

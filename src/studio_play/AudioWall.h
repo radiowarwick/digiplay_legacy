@@ -97,6 +97,7 @@ class AudioWall :   public QWidget,
         OutputDsp *_audioPlayer;
         ProcessMixer *_audioMixer;
 
+        bool _loaded;
 		unsigned short _rows;
 		unsigned short _cols;
 		unsigned short _pageSize;

@@ -69,10 +69,8 @@ void Showplan::configure(Auth *authModule) {
 }
 
 void Showplan::loadShowplan(DpsShowplan& S) {
-    lstShowPlan->clear();
-    activePoint = 0;
-    selectionChanged(0);
-    updateNextTrack();
+    clear(false);
+    
     lstShowPlan->setUpdatesEnabled(false);
     for (unsigned int i = 0; i < S.size(); i++) {
         switch (S[i].getType()) {

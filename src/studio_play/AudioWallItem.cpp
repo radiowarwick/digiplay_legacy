@@ -56,7 +56,7 @@ void AudioWallItem::onSetState() {
 }
 
 void AudioWallItem::onSetTotalSamples() {
-
+    updateButton();
 }
 
 void AudioWallItem::updateButton() {

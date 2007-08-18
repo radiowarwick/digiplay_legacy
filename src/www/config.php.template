@@ -5,9 +5,6 @@ $cfg = array();
 ## General Config
 ######################
 
-// The settings in this section concern general site-wide information. 
-
-
 /*
  * An example for the $cfg['general']['domain'] and 
  * $cfg['general']['siteRoot'] settings:
@@ -21,66 +18,133 @@ $cfg = array();
  * then this should be appended to $cfg['general']['siteRoot']. Eg:
  * $cfg['general']['siteRoot'] = '/path/to/my/site/mypage.php'
  */
-$cfg['general']['domain'] = 'hosts.companyname.com'; #CHECK
-/*
- * This is the path to the site. For example, if the url to your index.php 
- * file is:
- * http://www.mysite.com/toolkit/
- * then this would be set to:
- * /toolkit/
- * 
- * Note: This is may be overidden by different config files if required
-*/
-$cfg['general']['siteRoot'] = '/path/to/my/site/'; #CHECK
-	
+$cfg['general']['domain'] = 'hosts.companyname.com';
+$cfg['general']['siteRoot'] = '/path/to/my/site';
 
-//The protocol to be used. Normally 'http://' (or 'https://' if using SSL)
-$cfg['general']['protocol'] = 'http://'; #CHECK
+// If you're using an Apache proxypass, set this true.
+$cfg['general']['proxypass'] = 't';
 
-// The path to the toolkit root directory
-$cfg['general']['toolkitRoot'] = '/var/www'; #CHANGE
+// The protocol to be used. 
+// Normally 'http://' (or 'https://' if using SSL)
+$cfg['general']['protocol'] = 'https://';
+
+// The filesystem path to the toolkit root directory
+// e.g '/var/www'
+$cfg['general']['toolkitRoot'] = '/var/www';
 
 // The URL to the toolkit. This will need to be changed if 
 // $cfg['general']['siteRoot'] ends in a file name (because this 
 // option should specifiy the directory)
 $cfg['general']['toolkitRootURL'] = $cfg['general']['protocol'] . $cfg['general']['domain'] . $cfg['general']['siteRoot'];
 
+
 ######################
 ## Module Config
 ######################
 
-//This section specifies which modules are to be loaded.
-
-//Place any optional modules here
-//$cfg['modules'][] = 'CMS';
-//$cfg['modules'][] = 'TKFile';
-//$cfg['modules'][] = 'TKWiki';
-
-//Core modules, do not remove any lines
+// Module list - do not remove any lines
 $cfg['modules'][] = 'DBAL'; //Needs to be first due to use in config checking
 $cfg['modules'][] = 'MVC';
 $cfg['modules'][] = 'Logger';
 $cfg['modules'][] = 'Session';
 $cfg['modules'][] = 'Auth';
 $cfg['modules'][] = 'tkfecommon';
-
-//Place any optional modules here
 $cfg['modules'][] = 'CMS';
 $cfg['modules'][] = 'DPS';
-//$cfg['modules'][] = 'TKFile';
 
-###################################
-## DO NOT MODIFY BELOW THIS LINE ##
-###################################
 
-//Include config files in other modules
+#######################################
+## LOAD DEFAULT MODULE CONFIGURATION ##
+#######################################
+
 foreach($cfg['modules'] as $module){
 	$cfgFile = $cfg['general']['toolkitRoot'] . '/' . $module . '/config.php';
 	
 	if (file_exists($cfgFile)) {
-		include_once($cfg['general']['toolkitRoot'] . '/' . $module . '/config.php');
+		include_once($cfgFile);
 	}
 }
+
+#################################
+## SITE SPECIFIC MODIFICATIONS ##
+#################################
+// Connection to the DPS database
+$cfg['DBAL']['dsn']     = 'pgsql://www@localhost/digiplay';
+
+// The path to the Smarty package if not using the Debian packaged version
+$cfg['smarty']['dir']['root'] = '/usr/share/php/smarty';
+
+// Should exception info be shown in the browser when an exception occurs?
+// This should be set to false for production sites
+$cfg['smarty']['showExceptionInfo'] = true;
+
+// Should the execution time for a request be appended to each page?
+// This should only realy be used in debugging as it produces invalid html
+$cfg['smarty']['showExecTime'] = false;
+
+// This will cause smarty's template cache to be cleared each time a 
+// request is made. This is usefull in debugging when making many changes, 
+// but should be set to false when in production as it results in much 
+// better performance.
+$cfg['smarty']['debug'] = true;
+
+// The directory in which smarty should compile its templates. Write permissions
+// are required for this directory. For security reasons, this directory should
+// be readable by only the user that apache runs as (i.e. not /tmp).
+// Also, it should idealy be outside of the web root.
+$cfg['smarty']['compiledir'] = $cfg['general']['toolkitRoot'] . '/Smarty/tmp';
+
+
+// The file to log to.
+// This should not be the temp directory if on a shared server, as it is 
+// publicly accessable
+$cfg['Logger']['File']['logfile'] = $cfg['general']['toolkitRoot'] .'/logs/testLog';
+
+// The logging level the site should run at. Logged messages with lower 
+// priority (as set by $cfg['Logger']['levels']) will not be logged.
+// ('debug', 'info', 'notice', 'warning', 'error', 'critical', 'none')
+$cfg['Logger']['level'] = 'notice';
+
+// The default log level if none was specified
+$cfg['Logger']['defaultlevel'] = 'warning';
+
+// The path that sessions should be restricted to. If you site is hosted 
+// under a directory, then this should be set to that directory. This 
+// prevents other sites reading/writing your cookies
+$cfg['Session']['path'] = $cfg['general']['siteRoot'];
+
+// The lifetime of each session in seconds. If you are very security 
+// concious you should should set this to the lowest possible, but 
+// this is not essential
+$cfg['Session']['lifetime'] = 3600;
+
+// Random data used in storing of session data in cookies. Please change this 
+// for each install that your perform.
+$cfg['Session']['randomdata'] = 'g9YU9Cnbt3xvL0jrZKr3v5xoW2pLhCpzDc';
+
+// LDAP Authentication
+$cfg['Auth']['LDAPDS']="ldapserver";
+$cfg['Auth']['LDAPsr']="ou=People,dc=example,dc=com";
+
+// The path to the FCKeditor directory
+$cfg['CMS']['fckPath'] = $cfg['general']['toolkitRoot'] . '/FCKeditor';
+
+// The URL of the FCKEditor directory
+$cfg['CMS']['fckURL'] = $cfg['general']['toolkitRootURL'] . '/FCKeditor';
+
+// DPS database configuration
+$cfg['DPS']['dsn_web']      = 'pgsql://tcp(dbserver:5433)/dbname';
+
+// Homepage of your site
+$cfg['DPS']['HomeSite'] = $cfg['general']['protocol'] 
+                                            . $cfg['general']['domain'];
+
+// Temporary path to upload files to.
+$cfg['DPS']['dir']['uploadDir'] = $cfg['DPS']['dir']['root'] . "/uploads";
+
+// Scripts path (containing import script)
+$cfg['DPS']['dir']['scriptsDir'] = "/usr/local/bin";
+
 
 ######################################
 ## DO NOT PLACE ANYTHING BELOW HERE ##

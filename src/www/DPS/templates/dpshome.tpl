@@ -33,7 +33,7 @@
 			{templateLink id="34" text="<img src='DPS/images/homenavshow.png' alt='Show Planning'>"}
 					</div>
 					<div class="home_showNavDesc">
-			{templateLink id="34" text="Plan and schedule your show"}
+			{templateLink id="34" text="Plan your show"}
 					</div>
 				</div>
 				<div class="home_sueNav">
@@ -41,7 +41,7 @@
 			{templateLink id="32" text="<img src='DPS/images/homenavsue.png' alt='Sue Stamp'>"}
 					</div>
 					<div class="home_sueNavDesc">
-			{templateLink id="32" text="view and edit Sue playlist"}
+			{templateLink id="32" text="View and edit Sue playlist"}
 					</div>
 				</div>
 				<div class="home_studioNav">
@@ -93,7 +93,7 @@
 					{use func="CMS::showRegion" regionID=8}
 					<!--  <b>Other Features</b><br>
 						<a href="https://www.radio.warwick.ac.uk/digilog">Audio Archive</a><br>
-						{templateLink id="59" text="Requested Tracks"}<br>
+						{templateLink id="19" text="Requested Tracks"}<br>
 						{templateLink id="52" text="Censored Tracks"}<br>
 					</div>-->
 			</div>

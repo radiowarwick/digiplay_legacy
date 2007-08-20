@@ -21,15 +21,16 @@
  *
  */
 #include "dps.h"
+#include "Logger.h"
 
 #include <iostream>
 #include <sstream>
-using std::cout;
 using std::endl;
 
 #include <pqxx/pqxx>
 
 track dps_getTrack(std::string md5) {
+    char *routine = "dps::dps_getTrack";
     DataAccess DB;
     track t;
     t.isNull = true;
@@ -43,7 +44,7 @@ track dps_getTrack(std::string md5) {
 		type = DB.exec("DpsGetTrack",SQL)[0]["type"].c_str();
 	}
 	catch (...) {
-		cout << "Cannot get track " + md5 << endl;
+		L_ERROR(LOG_DB, "Cannot get track " + md5);
 		return t;
 	}
 	if (type == "music") {
@@ -65,8 +66,8 @@ track dps_getTrack(std::string md5) {
 	        R = DB.exec("DpsGetTrack",SQL);
 	    }
 	    catch (...) {
-	        cout << "SQL failed on getTrack." << endl;
-	        cout << " -> SQL: " << SQL << endl;
+	        L_ERROR(LOG_DB, "SQL failed on getTrack.");
+	        L_ERROR(LOG_DB, " -> SQL: " + SQL );
 	    }
     
 	    if (R.size() > 0) {
@@ -104,8 +105,8 @@ track dps_getTrack(std::string md5) {
 	        R = DB.exec("DpsGetTrack", SQL);
 	    }
 	    catch (...) {
-	        cout << "SQL failed on getTrack." << endl;
-	        cout << " -> SQL: " << SQL << endl;
+	        L_ERROR(LOG_DB, "SQL failed on getTrack.");
+	        L_ERROR(LOG_DB, " -> SQL: " + SQL);
 	    }
     
 	    if (R.size() > 0) {

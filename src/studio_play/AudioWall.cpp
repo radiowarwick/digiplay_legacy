@@ -39,6 +39,7 @@ using namespace std;
  */
 AudioWall::AudioWall(QWidget *parent, const char* name, unsigned short rows, unsigned short cols)
 		: QWidget(parent,name) {
+    char *routine = "AudioWall::AudioWall";
 	// default to a single empty page
     _loaded = false;
 	_rows = rows;
@@ -53,7 +54,7 @@ AudioWall::AudioWall(QWidget *parent, const char* name, unsigned short rows, uns
 	btnPagePrev = 0;
 	lblPageNum = 0;
     drawCreate();
-    cout << "Completed AudioWall constructor" << endl;
+    L_INFO(LOG_PLAYOUT, "Completed AudioWall constructor");
 }
 
 /**
@@ -94,7 +95,8 @@ void AudioWall::resizeEvent (QResizeEvent *e) {
 void AudioWall::setButton(unsigned short page, unsigned short index,
 							AudioWallItemSpec newItem) {
 	char *routine = "AudioWall::setButton";
-    cout << "Set button: page=" << page  << ", index=" << index << endl;
+    L_INFO(LOG_PLAYOUT, "Set button: page=" + dps_itoa(page)  +
+            ", index=" + dps_itoa(index));
 
     // Sanity checks
     if (page >= _pages.size()) {
@@ -177,9 +179,11 @@ void AudioWall::addPage() {
  * Deletes the specified cartwall (and buttons) from the wall list
  */
 void AudioWall::deletePage(unsigned int index) {
+    char *routine = "AudioWall::deletePage";
     // Sanity check
     if (index > _pages.size() - 1) {
-        cout << "Tried to delete page " << index << " out of range" << endl;
+        L_ERROR(LOG_PLAYOUT, "Tried to delete page " + dps_itoa(index) + 
+                " out of range");
         throw;
     }
 
@@ -217,18 +221,21 @@ void AudioWall::deletePage(unsigned int index) {
  * Displays the specified cartwall buttons, hiding any other buttons
  */
 void AudioWall::displayPage(unsigned int index) {
-    cout << "Display page " << index+1 << " of " << _pages.size() << endl;
+    char *routine = "AudioWall::displayPage";
+    L_INFO(LOG_PLAYOUT, "Display page " + dps_itoa(index+1) + " of " +
+            dps_itoa(_pages.size()));
 
     // Sanity check
     if (index > _pages.size() - 1) {
-        cout << "Tried to set active page " << index << " out of range" << endl;
+        L_ERROR(LOG_PLAYOUT, "Tried to set active page " + dps_itoa(index) +
+                " out of range");
         throw;
     }
     
     qApp->lock();
 
     // Hide the currently displayed page
-    cout << "Hiding old page " << _currentPage << endl;
+    L_INFO(LOG_PLAYOUT, "Hiding old page " + dps_itoa(_currentPage));
     if (_currentPage < _pages.size()) {
         for (unsigned int i = 0; i < _pages[_currentPage]->items.size(); i++) {
             _pages[_currentPage]->items[i]->hide();
@@ -239,7 +246,7 @@ void AudioWall::displayPage(unsigned int index) {
     _currentPage = index;
 
     // Show the new page
-    cout << "Showing new page" << endl;
+    L_INFO(LOG_PLAYOUT, "Showing new page");
     for (unsigned int i = 0; i < _pages[_currentPage]->items.size(); i++) {
         _pages[_currentPage]->items[i]->show();
     }

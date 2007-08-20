@@ -47,9 +47,10 @@ SystemManager::~SystemManager() {
 }
 
 ArchiveManager* SystemManager::atArchive(unsigned int index) {
+    char* routine = "SystemManager::atArchive";
     if (index > archives->size() - 1) {
-        cout << "ArchiveManager::atArchive: index " << index 
-                        << " out of range." << endl;
+        L_CRITICAL(LOG_ARCHIVE, "ArchiveManager::atArchive: index "
+                + itoa(index) + " out of range.");
     	return NULL;
 	}
     return archives->at(index);
@@ -73,7 +74,7 @@ void SystemManager::addArchive(string name, string localPath,
 
 	string SQL;
 	if (atArchive(name)) {
-		cout << "SystemManager::addArchive: Named archive exists!" << endl;
+		L_ERROR(LOG_ARCHIVE, "Named archive exists!");
 		return;
 	}
 	try {
@@ -134,8 +135,7 @@ void SystemManager::dropArchive(unsigned int index) {
 		archives->erase(archives->begin() + index);
 	}
 	catch (...) {
-		cout << "SystemManager::dropArchive: Failed to delete archive" << endl;
-		cout << SQL << endl;
+		L_ERROR(LOG_ARCHIVE, "Failed to delete archive");
 	}
 }
 

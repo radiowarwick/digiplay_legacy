@@ -85,6 +85,7 @@ void AudioPlayer::customEvent(QCustomEvent *event) {
 
 
 void AudioPlayer::load() {
+    char *routine = "AudioPlayer::load";
     btnLoad->setEnabled(false);
     
     if (conf->getParam("next_on_showplan") == "") {
@@ -97,7 +98,7 @@ void AudioPlayer::load() {
     DB->abort("AudioPlayerLoad");
     
     if (R.size() == 0) {
-        cout << "No such track!" << endl;
+        L_ERROR(LOG_PLAYOUT, "No such track!");
         return;
     }
     string f = R[0]["path"].c_str() + string("/") 
@@ -211,14 +212,15 @@ void AudioPlayer::setTimeDisplay() {
 }
 
 void AudioPlayer::processConfigUpdate() {
+    char *routine = "AudioPlayer::processConfigUpdate";
     conf->requery();
     qApp->lock();
     if (conf->getParam("next_on_showplan") == "") {
-        cout << "Config updated: DISABLED LOAD" << endl;
+        L_INFO(LOG_PLAYOUT, "Config updated: DISABLED LOAD");
         btnLoad->setEnabled(false);
     }
     else {
-        cout << "Config updated: ENABLED LOAD" << endl;
+        L_INFO(LOG_PLAYOUT, "Config updated: ENABLED LOAD");
         btnLoad->setEnabled(true);
     }
     qApp->unlock();

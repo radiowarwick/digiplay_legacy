@@ -76,9 +76,7 @@ std::vector<email> DpsEmail::getEmails() {
 		}
 	}
 	catch (...) {
-        cout << "Catch error" << endl;
         DB->abort("EmailGet");
-        cout << "After Catch errorabort" << endl;
         L_ERROR(LOG_DB,"Failed to get new emails.");
 	}
 	return retVec;

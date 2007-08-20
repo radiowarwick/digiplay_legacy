@@ -38,7 +38,7 @@ XmlDocument::XmlDocument(string filename) {
 
 	ifstream *f_in = new ifstream(filename.c_str());
 	if (!f_in->is_open() || !f_in->good()) {
-		cout << "Failed to open file: " << filename << endl;
+		L_ERROR(LOG_XML, "Failed to open file: " + filename);
 		delete this;
 	}
 	getline((*f_in),header);
@@ -102,8 +102,6 @@ void XmlDocument::read_element(XmlElement *E, string *content, unsigned int star
 	}
 	E->set_name(dps_strTrim(text));
 	text = "";
-//	cout << "[" << E->get_name() << "]" << endl;
-//	cout << " -> " << (*content).substr(start, end - start) << endl;
 
 	// Extract attributes
 	while (i < end) {
@@ -120,7 +118,6 @@ void XmlDocument::read_element(XmlElement *E, string *content, unsigned int star
 					|| content->at(i) == '>') && !quotes) {
 			// if it's actually an attribute, add it
 			if (attr_name != "") {
-//				cout << attr_name << " == " << text << endl;
 				E->add_attribute(attr_name, text);
 				attr_equals = false;
 			}
@@ -154,8 +151,7 @@ void XmlDocument::read_element(XmlElement *E, string *content, unsigned int star
 	}
 	E->set_cdata(dps_strTrim(text));
 	if (E->get_cdata() != "") {
-	//	cout << "CDATA: [" << E->get_cdata() << "]" << endl;
-		return;
+	//	return;
 	}
 	
 	// If there's no CDATA, look for subelements

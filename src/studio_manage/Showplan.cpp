@@ -736,6 +736,7 @@ ShowPlanAudio::ShowPlanAudio( QListViewItem *parent, QListViewItem *after )
 
 ShowPlanAudio::ShowPlanAudio( QListView *parent, QListViewItem *after, 
         DpsShowItem& t ) : ShowPlanItem(parent, after) {
+    char *routine = "ShowPlanAudio::ShowPlanAudio";
     rootElement = false;
     setText(0,t["title"]);
     setText(2,dps_prettyTime(atoi(t["end_smpl"].c_str()) 
@@ -751,7 +752,7 @@ ShowPlanAudio::ShowPlanAudio( QListView *parent, QListViewItem *after,
             setText(1,t["company"]);
             break;
         default:
-            cout << "Unknown type: " << t.getType() << endl;
+            L_WARNING(LOG_SHOWPLAN, "Unknown type: " + t.getType());
             break;
     }
     setText(3,"");

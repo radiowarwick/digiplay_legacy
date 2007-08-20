@@ -64,9 +64,7 @@ std::vector<track>* DpsMusicSearch::query(std::string search_string) {
  		    "WHERE dir = 2";
 
     int censor_start = atoi(conf->getParam("censor_start").c_str());
-    //cout << "censor_start = " << censor_start << endl;
     int censor_end   = atoi(conf->getParam("censor_end").c_str());
-    //cout << "censor_end = " << censor_end << endl;
     time_t tim=time(NULL);
     tm *now=localtime(&tim);
 

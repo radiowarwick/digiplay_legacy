@@ -51,7 +51,9 @@ enum LOG_TYPE {
 	LOG_TABPLAYLIST = 2048,
 	LOG_TABFILES = 4096,
 	LOG_TABSCRIPT = 8192,
-	LOG_XML = 16384
+	LOG_XML = 16384,
+    LOG_ARCHIVE = 32768,
+    LOG_SECURITY = 65536
 };
 
 // Define Logging macros based on DEBUG level (0...4)

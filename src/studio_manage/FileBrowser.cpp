@@ -23,10 +23,10 @@
  */
 
 #include <iostream>
-using std::cout;
 using std::endl;
 
 #include "FileBrowser.h"
+#include "Logger.h"
 #include "dps.h"
 
 #include <qdir.h>
@@ -107,6 +107,7 @@ void Directory::setUid( std::string u ) {
 }
 
 void Directory::setOpen( bool o ) {
+    char *routine = "Directory::setOpen";
     if ( o ) {
         if (parent())
             setPixmap( folderOpen );
@@ -167,7 +168,7 @@ void Directory::setOpen( bool o ) {
             }
         }
         catch (...) {
-            cout << "Caught exception on Directory::setOpen" << endl;
+            L_ERROR(LOG_TABFILES, "Caught exception on Directory::setOpen");
             DB->abort("FilebrowserGetContents");
         }
     }

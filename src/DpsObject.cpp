@@ -278,8 +278,9 @@ DpsShowItem& DpsShowItem::operator=(const DpsShowItem& item) {
 }
 
 string DpsShowItem::operator[](string item) {
+    char *routine = "DpsShowItem::operator[]";
     if (_data.count(item) == 0) {
-        cout << "Item " << item << " doesn't exist!" << endl;;
+        L_ERROR(LOG_SHOWPLAN, "Item " + item + " doesn't exist!");
         return "";
     }
     return _data[item];

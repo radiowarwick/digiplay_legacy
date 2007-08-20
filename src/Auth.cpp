@@ -190,9 +190,10 @@ void Auth::closeSession() {
 }
 
 void Auth::addPrivilage(string privilage) {
+    char *routine="Auth::addPrivilage";
 	for (unsigned int i = 0; i < _privilages.size(); i++) {
 		if (_privilages.at(i) == privilage) {
-			cout << "WARNING: Privilage is already present" << endl;
+			L_WARNING(LOG_AUTH, "Privilage is already present");
 			return;
 		}
 	}

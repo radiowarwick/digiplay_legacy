@@ -64,8 +64,8 @@ int DpsMusicLog::details(int user, std::string artist, std::string title){
 		DB.commit();
 	}
 	catch (...) {
-		cout << "ERROR: Failed to log record." << endl;
-		cout << " -> " << SQL << endl;
+		L_ERROR(LOG_DB, "Failed to log record.");
+	    L_ERROR(LOG_DB, " -> " + SQL);
 		return 1;
 	}
 	return 0;
@@ -92,6 +92,6 @@ void DpsMusicLog::getRecentlyLogged(QListView *parent) {
 
 	}
 	catch (...) {
-		cout << " -> ERROR: Failed to get recently logged records." << endl;
+		L_ERROR(LOG_DB, " -> ERROR: Failed to get recently logged records.");
 	}
 }

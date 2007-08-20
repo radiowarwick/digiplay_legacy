@@ -237,12 +237,13 @@ void TabPanelLogging::getRecentlyLogged() {
 }
 
 void TabPanelLogging::buttonPressed() {
+    char *routine = "TabPanelLogging::buttonPressed";
     string artist = txtArtist->text().ascii();
     string title = txtTitle->text().ascii();
     string reclibid = txtReclibID->text().ascii();
 
     if (logRecord(artist, title) != 0)
-        cout << "Logging failed" << endl;
+        L_ERROR(LOG_TABLOGGING, "Logging failed");
     txtReclibID->setText("");
     txtArtist->setText("");
     txtTitle->setText("");

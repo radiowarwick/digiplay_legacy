@@ -21,6 +21,7 @@
  *
  */
 #include "remoteStartThread.h"
+#include "Logger.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -36,6 +37,7 @@ remoteStartThread::remoteStartThread(QObject *o) {
 }
 
 void remoteStartThread::run() {
+    char *routine = "remoteStartThread::run";
 	// Look up normal user in config and drop privilages
 	mutex.lock();
 	stopped = FALSE;
@@ -44,8 +46,9 @@ void remoteStartThread::run() {
 	showPrivilage();
 	if (ioperm(ADDRESS,2,1)) {
 	    dropPrivilage();
-		cout << "Couldn't open port at address ";
-		printf("%x\n",ADDRESS);
+        char *error;
+        sprintf(error, "Couldn't open port at address %x\n", ADDRESS);
+		L_ERROR(LOG_AUDIOHW, error);
 	}
 	else {
 	    dropPrivilage();
@@ -91,7 +94,6 @@ void remoteStartThread::run() {
 		}
 	}
 
-	cout << "Finished thread" << endl;
 }
 
 void remoteStartThread::stop() {

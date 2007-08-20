@@ -42,6 +42,7 @@ using namespace Audio;
 #define min(a,b) (((a)<(b))?(a):(b))
 
 int main(int argc, char *argv) {
+    char *routine = "sueplay::main";
 	system("clear");
 	cout << "Radio Warwick Sustainer" << endl;
 	cout << "-----------------------" << endl;
@@ -50,14 +51,14 @@ int main(int argc, char *argv) {
 	string SQL_Item,SQL_Remove;
 	PqxxResult R;
 	
-	cout << " -> Reading configuration file" << endl;
+	L_INFO(LOG_SUEPLAY, " -> Reading configuration file");
 	Config *Conf = new Config("digiplay");
 	
-    cout << " -> Connecting to Database..." << flush;
+    L_INFO(LOG_SUEPLAY, " -> Connecting to Database...");
     DataAccess* DB = new DataAccess();
 	
 	SQL_Item = "SELECT archives.localpath AS path, audio.md5 AS md5, audio.title AS title, audio.length_smpl AS length_smpl, sustschedule.id AS id, sustschedule.trim_start_smpl AS start, sustschedule.trim_end_smpl AS end, sustschedule.fade_in AS fade_in, sustschedule.fade_out AS fade_out, v_audio_music.artist FROM sustschedule, audio, archives, v_audio_music WHERE sustschedule.audioid = audio.id AND archives.id = audio.archive AND audio.id = v_audio_music.id ORDER BY sustschedule.id LIMIT 1";
-	cout << "done." << endl;
+	L_INFO(LOG_SUEPLAY, "done.");
 
 	// Create components
 	InputRaw* ch[] = {new InputRaw(), new InputRaw()};
@@ -85,7 +86,7 @@ int main(int argc, char *argv) {
 	
 	// Process schedule table until empty
 	while (true) {
-		cout << "BEGIN LOOP" << endl;
+		L_INFO(LOG_SUEPLAY, "BEGIN LOOP");
 		// Keep trying until successfully loaded a file that exists!
 		do {
 			// Query database for next track to play
@@ -95,7 +96,7 @@ int main(int argc, char *argv) {
 			if (R.size() == 0) {
 				if (warn_flag) {
 					warn_flag = false;
-					cout << "WARNING: Schedule is depleated!" << endl;
+					L_WARNING(LOG_SUEPLAY, "WARNING: Schedule is depleated!");
 				}
 				continue;
 			}
@@ -111,10 +112,10 @@ int main(int argc, char *argv) {
 			fade_in = atoi(R[0]["fade_in"].c_str());
 			fade_out = atoi(R[0]["fade_out"].c_str());
 			length_smpl = atoi(R[0]["length_smpl"].c_str());
-			cout << "DB START: " << start << endl;
-			cout << "DB END: " << end << endl;
-			cout << "DB FADEIN: " << fade_in << endl;
-			cout << "DB FADEOUT: " << fade_out << endl;
+			L_INFO(LOG_SUEPLAY, "DB START: " + dps_itoa(start));
+			L_INFO(LOG_SUEPLAY, "DB END: " + dps_itoa(end));
+			L_INFO(LOG_SUEPLAY, "DB FADEIN: " + dps_itoa(fade_in));
+			L_INFO(LOG_SUEPLAY, "DB FADEOUT: " + dps_itoa(fade_out));
 			// Remove the entry from schedule once we've tried to load it
 			SQL_Remove = "DELETE FROM sustschedule WHERE id="
 			                        + (string)R[0]["id"].c_str();
@@ -122,17 +123,17 @@ int main(int argc, char *argv) {
 			DB->commit("SuePlay");
 			
 			path += "/" + md5.substr(0,1) + "/";
-			cout << "Attempting to load channel " << active << ": " 
-					<< artist << " - " << title << endl;
-			cout << " -> Start: " << start << endl;
-			cout << " -> End: " << end << endl;
+			L_INFO(LOG_SUEPLAY, "Attempting to load channel " +
+                    dps_itoa(active) + ": " + artist + " - " + title);
+			L_INFO(LOG_SUEPLAY, " -> Start: " + dps_itoa(start));
+			L_INFO(LOG_SUEPLAY, " -> End: " + dps_itoa(end));
 			// Try and load the track
 			try {
 				ch[active]->load( path + md5, start, end );
 				break;
 			}
 			catch (...) {
-				cout << "Error loading track" << endl;
+				L_ERROR(LOG_SUEPLAY, "Error loading track");
 			}
 			sleep(1);
 		} while (1);
@@ -148,33 +149,33 @@ int main(int argc, char *argv) {
 			fade_in = fade_in - offset;
 		else
 			fade_in = 256;
-		cout << "Fade in length: " << fade_in << endl;
+		L_INFO(LOG_SUEPLAY, "Fade in length: " + dps_itoa(fade_in));
 		fader[active]->addNode(0,0.0);
 		fader[active]->addNode(fade_in,1.0);
 	
-		cout << "BEFORE fadeout computation: " << endl;
-		cout << "Fadeout = " << fade_out << endl;
-		cout << "End = " << end << endl;
+		L_INFO(LOG_SUEPLAY, "BEFORE fadeout computation: ");
+		L_INFO(LOG_SUEPLAY, "Fadeout = " + dps_itoa(fade_out));
+		L_INFO(LOG_SUEPLAY, "End = " + dps_itoa(end));
 		if (fade_out < end)
 			fade_out = fade_out - offset;
 		else
 			fade_out = end - 256 - offset;
 		end = end - offset;
-		cout << "Fade out length: " << end - fade_out << endl;
+		L_INFO(LOG_SUEPLAY, "Fade out length: " + dps_itoa(end - fade_out));
 		fader[active]->addNode(fade_out,1.0);
 		fader[active]->addNode(end,0.0);
-		cout << "Added fades" << endl;
+		L_INFO(LOG_SUEPLAY, "Added fades");
 
 		trig[active]->setTriggerSample(min(fade_out,end));
-		cout << "Added trigger" << endl;
+		L_INFO(LOG_SUEPLAY, "Added trigger");
 		// Wait until last track has been played before we load the next
 		if (ch[inactive]->isLoaded()) {
-			cout << "Waiting for channel " << inactive << endl << endl;
+			L_INFO(LOG_SUEPLAY, "Waiting for channel " + dps_itoa(inactive));
 			trig[inactive]->waitStop();
-			cout << "Finished waiting" << endl;
+			L_INFO(LOG_SUEPLAY, "Finished waiting");
 		}
 		else {
-			cout << "Playing channel " << active << endl << endl;
+			L_INFO(LOG_SUEPLAY, "Playing channel " + dps_itoa(active));
 			ch[active]->play();
 		}
 
@@ -192,7 +193,6 @@ int main(int argc, char *argv) {
 		}
 		catch (...) {
             DB->abort("SuePlayLog");
-			cout << "Failed to log record" << endl;
 			L_ERROR(LOG_TABLOGGING,"Failed to log record " + artist + " - " + title + ".");
 		}
 		active = abs(active - 1);

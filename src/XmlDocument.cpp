@@ -21,6 +21,7 @@
  *
  */
 #include "XmlDocument.h"
+#include "Logger.h"
 
 #include <iostream>
 using namespace std;
@@ -34,6 +35,7 @@ XmlDocument::XmlDocument() {
 }
 
 XmlDocument::XmlDocument(string filename) {
+    char *routine = "XmlDocument::XmlDocument";
 	root = new XmlElement();
 
 	ifstream *f_in = new ifstream(filename.c_str());

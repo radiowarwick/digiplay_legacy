@@ -50,7 +50,7 @@ ArchiveManager* SystemManager::atArchive(unsigned int index) {
     char* routine = "SystemManager::atArchive";
     if (index > archives->size() - 1) {
         L_CRITICAL(LOG_ARCHIVE, "ArchiveManager::atArchive: index "
-                + itoa(index) + " out of range.");
+                + dps_itoa(index) + " out of range.");
     	return NULL;
 	}
     return archives->at(index);

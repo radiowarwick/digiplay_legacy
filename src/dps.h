@@ -84,6 +84,7 @@ struct track {
 
     // Advert
     std::string company;
+    std::string advert_desc;
 
     // Sustainer specific data
     unsigned short bin;

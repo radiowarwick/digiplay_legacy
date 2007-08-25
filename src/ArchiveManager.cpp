@@ -829,7 +829,50 @@ void ArchiveManager::loadInbox(vector<track> *tracks) {
  * Loads the information about tracks currently in the trash directory.
  */
 void ArchiveManager::loadTrash(vector<track> *tracks) {
+	char* routine = "ArchiveManager::loadTrash";
+    
+    DIR *dirp;
+    struct dirent *dp;
+    string fn, md5, path, test;
+    std::vector<track> t;
+	ifstream f_test_xml, f_test_info;
 
+	path = A.localPath + "/trash";
+    dirp = opendir(path.c_str());
+    while (dirp) {
+        if ((dp = readdir(dirp)) != NULL) {
+            fn = path + "/" + dp->d_name;
+
+			//we want only tracks that have audio files so use audio filename
+			//as a base for searching for info files
+			if (string(dp->d_name).size() != 32) continue;
+			md5 = fn.substr(path.length() + 1, 32);
+
+			test = fn + ".xml";
+			f_test_xml.open(test.c_str());
+			if (f_test_xml.good()) {
+				L_INFO(LOG_DB,"Reading XML " + fn + ".xml");
+				t = readXML(fn + ".xml");
+			}
+			f_test_xml.close();
+			
+			if (t.empty()) {
+                L_WARNING(LOG_DB,"Failed to read XML for '" + md5 + "'");
+                L_WARNING(LOG_DB," -> ignoring this track");
+				continue;
+			}
+			else {
+                for (unsigned int i = 0; i < t.size(); i++) {
+    				cleanInfo(&(t.at(i)));
+    				tracks->push_back(t.at(i));
+                }
+			}
+        }
+        else {
+            closedir(dirp);
+            break;
+        }
+    }
 }
 
 
@@ -1033,7 +1076,74 @@ void ArchiveManager::addJingle(track t) {
  * Adds the information in \a t to the database as an advert.
  */
 void ArchiveManager::addAdvert(track t) {
+    char* routine = "ArchiveManager::addAdvert";
 
+    PqxxResult R;
+    std::string SQL;
+    std::string audioid;
+    std::string companyid;
+
+    try {
+        // We need to check the track isn't already in the database
+        // if it is, we remove it and all associated links
+        removeTrack(t.md5);
+
+        // See if the jingle package exists
+        SQL = "SELECT * FROM companies WHERE name='" + t.company + "'";
+        R = DB->exec("ArchiveManagerAddAdvert",SQL);
+        if (R.size() > 0) companyid = R[0][0].c_str();
+        // if not, create it
+        else {
+            SQL = "INSERT INTO companies (name) "
+                    "VALUES ('" + t.company + "')";
+            DB->exec("ArchiveManagerAddAdvert",SQL);
+            SQL = "SELECT last_value FROM companies_id_seq";
+            R = DB->exec("ArchiveManagerAddAdvert",SQL);
+            if (R.size() > 0) companyid = R[0][0].c_str();
+            else {
+                DB->abort("ArchiveManagerAddAdvert");
+                L_ERROR(LOG_DB, "Failed to get the adverts company name");
+                return;
+            }
+        }
+
+        // Now add the audio entry
+        SQL = "INSERT INTO audio (md5, archive, length_smpl, start_smpl, "
+                "end_smpl, intro_smpl, extro_smpl, type, creator, "
+                "creation_date, import_date, title, sustainer, censor, "
+                "lifespan, music_album, advert_company, advert_description) "
+                "VALUES ('" + t.md5 + "'," + dps_itoa(t.md5_archive.id) + "," 
+                + dps_itoa(t.length_smpl) + "," + dps_itoa(t.trim_start_smpl) 
+                + "," + dps_itoa(t.trim_end_smpl) + "," 
+                + dps_itoa(t.fade_in_smpl) + "," + dps_itoa(t.fade_out_smpl) 
+                +  ",2,1," + dps_itoa(dps_current_time()) + "," 
+                +dps_itoa(dps_current_time()) + ",'" + t.title 
+                + "','f','f',1,1," + companyid + ",'" + t.advert_desc + "')";
+        DB->exec("ArchiveManagerAddAdvert",SQL);
+        SQL = "SELECT last_value FROM audio_id_seq";
+        R = DB->exec("ArchiveManagerAddAdvert",SQL);
+        if (R.size() > 0) {
+            audioid = R[0][0].c_str();
+        }
+        else {
+            DB->abort("ArchiveManagerAddAdvert");
+            L_ERROR(LOG_DB,"Failed to add audio for advert");
+            return;
+        }
+
+        // Put the jingle in the jingles directory
+        // TODO: Create subdirectories for jingle packages
+        SQL = "INSERT INTO audiodir (audioid, dirid, linktype) "
+                "VALUES (" + audioid + "," + DIR_ADVERTS + ", 0)";
+        DB->exec("ArchiveManagerAddAdvert",SQL);
+
+        DB->commit("ArchiveManagerAddAdvert");
+    }
+    catch (...) {
+        DB->abort("ArchiveManagerAddAdvert");
+        L_ERROR(LOG_DB,"Error occured. SQL: " + SQL);
+        return;
+    }
 }
 
 
@@ -1041,7 +1151,73 @@ void ArchiveManager::addAdvert(track t) {
  * Adds the information in \a t to the database as a users prerec.
  */
 void ArchiveManager::addPrerec(track t) {
+    char* routine = "ArchiveManager::addPrerec";
 
+    PqxxResult R;
+    vector<int> artist_ids;
+    std::string SQL;
+    std::string dirid;
+    std::string audioid;
+
+    try {
+        L_INFO(LOG_DB,"Adding track " + t.md5);
+        // We need to check the track isn't already in the database
+        // if it is, we remove it and all associated links
+        removeTrack(t.md5);
+
+        // Get the users home directory
+        if (t.album == "") {
+            L_ERROR(LOG_DB,"No creator specified for prerec.");
+            throw;
+        }
+        SQL = "SELECT id FROM dir WHERE name='" + t.creator
+            + "' AND parent=" + DIR_USERS;
+        R = DB->exec("ArchiveManagerAddPrerec",SQL);
+        if (R.size() == 0) {
+            L_ERROR(LOG_DB,"No such user '" + t.creator + "'");
+            throw;
+        }
+        else {
+            dirid = R[0][0].c_str();
+        }
+
+        // Now add the audio
+        SQL = "INSERT INTO audio (md5, archive, length_smpl, start_smpl, "
+                    "end_smpl, intro_smpl, extro_smpl, type, creator, "
+                    "creation_date, import_date, title, "
+                    "sustainer, censor, "
+                    "lifespan, origin, filetype) "
+                "VALUES ('" + t.md5 + "'," + dps_itoa(t.md5_archive.id) + ","
+                + dps_itoa(t.length_smpl) + "," + dps_itoa(t.trim_start_smpl) 
+                + "," + dps_itoa(t.trim_end_smpl) + "," 
+                + dps_itoa(t.fade_in_smpl) + "," + dps_itoa(t.fade_out_smpl) 
+                +  ",1,1,"  + dps_itoa(t.creation_date) + "," 
+                + dps_itoa(t.import_date) + ",'" + t.title + "',"
+                + ",'f','f',1,'" + t.origin + "','" + "','raw')";
+        DB->exec("ArchiveManagerAddPrerec",SQL);
+        SQL = "SELECT last_value FROM audio_id_seq";
+        R = DB->exec("ArchiveManagerAddPrerec",SQL);
+        if (R.size() > 0) {
+            audioid = R[0][0].c_str();
+        }
+        else {
+            DB->abort("ArchiveManagerAddPrerec");
+            L_ERROR(LOG_DB,"Failed to add audio");
+            return;
+        }
+
+        // Add it to a directory
+        SQL = "INSERT INTO audiodir (audioid, dirid, linktype) "
+                "VALUES (" + audioid + ", " + dirid + ", 0)";
+        DB->exec("ArchiveManagerAddPrerec",SQL);
+
+        DB->commit("ArchiveManagerAddPrerec");
+    }
+    catch (...) {
+        DB->abort("ArchiveManagerAddPrerec");
+        L_ERROR(LOG_DB,"Error occured. SQL: " + SQL);
+        throw;
+    }
 }
 
 

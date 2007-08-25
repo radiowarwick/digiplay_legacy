@@ -11,17 +11,17 @@ OUTPUT      =   $(OUT_BASE)
 # Configuration specific stuff
 include $(ROOT)/Makefile.settings
 # If we need authentication, use requested authentication type
-ifneq (,$(findstring Auth,$(SHARED_MODS)))
-  ifneq (,$(findstring LDAP,$(AUTH)))
+#ifneq (,$(findstring Auth,$(SHARED_MODS)))
+#  ifneq (,$(findstring LDAP,$(AUTH)))
     SHARED_MODS += AuthLdap
-    LIBS += -lldap
-    DPSFLAGS = -DAUTH_LDAP
-  endif
-  ifneq (,$(findstring PSQL,$(AUTH)))
+#    LIBS += -lldap
+#    DPSFLAGS = -DAUTH_LDAP
+#  endif
+#  ifneq (,$(findstring PSQL,$(AUTH)))
     SHARED_MODS += AuthPsql
-    DPSFLAGS = -DAUTH_PSQL
-  endif
-endif
+#    DPSFLAGS = -DAUTH_PSQL
+#  endif
+#endif
 
 # Generate object list from the modules provided
 # Note: addsuffix might not be portable

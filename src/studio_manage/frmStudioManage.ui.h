@@ -39,12 +39,8 @@
 #include "dlgLogin.h"
 #include "dlgWarn.h"
 #include "Auth.h"
-#ifdef AUTH_LDAP
-	#include "AuthLdap.h"
-#endif
-#ifdef AUTH_PSQL
-	#include "AuthPsql.h"
-#endif
+#include "AuthLdap.h"
+#include "AuthPsql.h"
 
 #include "clockThread.h"
 #include "Config.h"
@@ -72,16 +68,23 @@ void frmStudioManage::init() {
 
 	// Initialise modules
 	cout << "Initialising Core Modules..." << endl;
-	cout << " -> Authentication subsystem...";
+	
+    cout << " -> Authentication subsystem...";
 	btnLogin->setEnabled(true);
-#ifdef AUTH_LDAP
-	authModule = new AuthLdap(conf->getParam("ldap_host"),
+    // Load the appropriate authentication module as per config
+    if (conf->getParam("auth_method") == "LDAP") {
+    	authModule = new AuthLdap(conf->getParam("ldap_host"),
 								atoi(conf->getParam("ldap_port").c_str()),
 								conf->getParam("ldap_dn"));
-#endif
-#ifdef AUTH_PSQL
-	authModule = new AuthPsql();
-#endif
+    }
+    else if (conf->getParam("auth_method") == "PSQL") {
+    	authModule = new AuthPsql();
+    }
+    else {
+        cout << "unknown authentication method: ";
+        cout << conf->getParam("auth_method") << endl;
+        exit(-1);
+    }
     userConfig = new UserConfig(authModule);
 	cout << "success." << endl;
 	

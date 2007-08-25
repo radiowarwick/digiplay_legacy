@@ -20,6 +20,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include <dlfcn.h>
+
 #include "Logger.h"
 #include "DataAccess.h"
 #include "DbDefine.h"
@@ -28,7 +30,23 @@
 
 AuthLdap::AuthLdap(string host, unsigned int port, string baseDn) {
 	char* routine = "AuthLdap::AuthLdap";
-	
+
+    // Attempt to load the ldap shared library
+    ldap_handle = dlopen("libldap.so", RTLD_LAZY);
+    if (!ldap_handle) {
+        L_CRITICAL(LOG_AUTH,"Cannot open LDAP library");
+        L_CRITICAL(LOG_AUTH,string(dlerror()));
+        throw AUTH_LDAP_CONNECT_FAILED;
+    }
+
+    // Load the symbols we need
+    ldap_init = (ldap_init_t) dlsym(ldap_handle, "ldap_init");
+    ldap_set_option = (ldap_set_option_t) dlsym(ldap_handle, "ldap_set_option");
+    ldap_simple_bind_s 
+        = (ldap_simple_bind_s_t) dlsym(ldap_handle, "ldap_simple_bind_s");
+    ldap_err2string = (ldap_err2string_t) dlsym(ldap_handle, "ldap_err2string");
+    // Now ready to use these routines
+
 	_myLdap = NULL;
 	if (host == "") {
 		L_ERROR(LOG_AUTH,"No host specified.");

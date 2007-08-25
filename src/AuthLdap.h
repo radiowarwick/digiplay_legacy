@@ -26,6 +26,7 @@
 #include <string>
 using namespace std;
 
+// Include ldap header to get all the structures and types
 #include <ldap.h>
 
 #include "Auth.h"
@@ -33,6 +34,18 @@ using namespace std;
 #define AUTH_LDAP_INVALID_PARAM		10100
 #define AUTH_LDAP_CONNECT_FAILED 	10101
 #define AUTH_LDAP_PROTOCOL_ERROR	10102
+
+// Define function pointers for the routines we are going to load at runtime
+typedef LDAP_F( LDAP * ) 
+        (*ldap_init_t)(LDAP_CONST char *host, int port);
+typedef LDAP_F( int ) 
+        (*ldap_set_option_t)(LDAP *ld,int option,LDAP_CONST void *invalue);
+typedef LDAP_F( int ) 
+        (*ldap_simple_bind_s_t)(LDAP *ld,LDAP_CONST char *who,LDAP_CONST char *passwd);
+typedef LDAP_F( char * ) 
+        (*ldap_err2string_t)(int err);
+
+
 class AuthLdap : public Auth {
 	public:
 		AuthLdap(string host, unsigned int port, string baseDn);
@@ -40,6 +53,12 @@ class AuthLdap : public Auth {
 		void authSession(string username, string password);
 
 	private:
+        void* ldap_handle;
+        ldap_init_t ldap_init;
+        ldap_set_option_t ldap_set_option;
+        ldap_simple_bind_s_t ldap_simple_bind_s;
+        ldap_err2string_t ldap_err2string;
+
 		string _host;
 		DataAccess *DB;
 		unsigned int _port;

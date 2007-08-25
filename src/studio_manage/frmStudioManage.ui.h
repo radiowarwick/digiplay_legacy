@@ -172,6 +172,9 @@ void frmStudioManage::init() {
                 sp, SLOT( scriptDone() ) );
 
 	cout << "Interface initialisation complete." << endl;
+    cout << "Setting initial configuration values..." << flush;
+    conf->setParam("next_on_showplan","");
+    cout << "done." << endl;
 }
 
 void frmStudioManage::destroy() {

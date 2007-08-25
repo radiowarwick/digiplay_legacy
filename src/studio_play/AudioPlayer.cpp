@@ -43,6 +43,7 @@ AudioPlayer::AudioPlayer(QWidget *parent, const char* name, unsigned short playe
     conf = new Config("digiplay");
     std::string device = conf->getParam("channel_" + id);
 	location = atoi( conf->getParam("LOCATION").c_str() );
+    conf->setParam("player" + id + "_md5","");
     grpFrame = 0;
 
     ck = new clockThread(this);
@@ -107,6 +108,7 @@ void AudioPlayer::load() {
     audioFilereader->load(f, atoi(R[0]["start_smpl"].c_str()),
                                     atoi(R[0]["end_smpl"].c_str()));
     conf->setParam("next_on_showplan","");
+    conf->setParam("player" + id + "_md5", string(R[0]["md5"].c_str()));
     lblTitle->setText(R[0]["title"].c_str());
     lblArtist->setText(R[0]["artist"].c_str());
     btnPlay->setEnabled(true);

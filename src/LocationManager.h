@@ -22,7 +22,8 @@ class LocationManager {
                 std::string value, std::string T = "LMSetValue");
 
         unsigned int count(std::string T = "LMCount");
-        Location get(unsigned int index, std::string T = "LMGet");
+        unsigned int get(unsigned int index, std::string T = "LMGet");
+        Location getLocation(unsigned int loc_index, std::string T = "LMGetLoc");
 
     private:
         void getLocations();

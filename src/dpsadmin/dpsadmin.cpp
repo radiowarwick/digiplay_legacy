@@ -32,6 +32,8 @@ using namespace std;
 #include "ArchiveManager.h"
 #include "UserManager.h"
 #include "GroupManager.h"
+#include "MusicManager.h"
+#include "LocationManager.h"
 #include "Logger.h"
 
 #define VERSION 0.95
@@ -68,6 +70,7 @@ static struct option long_options[] = {
     {"import-md5",  required_argument,  0,  'j'},
     {"purge-deleted", no_argument,      0,  'p'},
     {"set-passwd",  required_argument,  0,  's'},
+    {"display",     required_argument,  0,  'b'},
     // parameters
     {"local-path",  required_argument,  0,  'x'},
 	{"remote-path", required_argument,  0,  'y'},
@@ -155,6 +158,7 @@ void parseCommand(int argc, char *argv[]) {
             case 'j': options["import-md5"] = optarg; c++; break;
             case 'p': options["purge-deleted"] = "yes"; c++; break;
             case 's': options["set-passwd"] = optarg; c++; break;
+            case 'b': options["display"] = optarg; c++; break;
             case 'x': options["local-path"] = optarg; break;
             case 'y': options["remote-path"] = optarg; break;
             case 'e': options["dest-archive"] = optarg; break;
@@ -214,6 +218,7 @@ cout <<
 "   -a, --add <number>      add configuration for a new location\n"
 "   -d, --drop <number>     remove configuration for a location\n"
 "   -l, --list              list the configured locations\n"
+"   --display <number>      display a location\n"
 "   --set <number>          set a parameter for a location\n"
 "\n"
 "User management commands:\n"
@@ -454,7 +459,55 @@ void processMusic() {
  * Process location management
  */
 void processLocation() {
+    char* routine = "dpsadmin::processLocation";
 
+    LocationManager* L = new LocationManager();
+    Location l;
+
+    if (options["add"] != "") {
+        try {
+            L->add(atoi(options["add"].c_str()));
+        }
+        catch (...) {
+            L_ERROR(LOG_DB,"Failed to add location " + options["add"]);
+        }
+    }
+    if (options["drop"] != "") {
+        try {
+            L->remove(atoi(options["drop"].c_str()));
+        }
+        catch (...) {
+            L_ERROR(LOG_DB,"Failed to drop location " + options["drop"]);
+        }
+    }
+    if (options["list"] != "") {
+        cout << "Configured locations: ";
+        for (unsigned int i = 0; i < L->count(); ++i) {
+            cout << L->get(i) << "  ";
+        }
+        cout << endl;
+    }
+    if (options["display"] != "") {
+        try {
+            l = L->getLocation(atoi(options["display"].c_str()));
+            cout << "Location " << l.location << " configuration values";
+            cout << endl;
+            cout << "           Parameter  Value";
+            cout << endl;
+            cout << "------------------------------------------------------";
+            cout << endl;
+            std::map<std::string,std::string>::iterator x;
+            for (x = l.data.begin(); x != l.data.end(); x++) {
+                cout.width(20);
+                cout << x->first << "  ";
+                cout << x->second;
+                cout << endl;
+            }
+        }
+        catch (...) {
+            L_ERROR(LOG_DB,"Failed to display location " + options["display"]);
+        }
+    }   
 }
 
 /**

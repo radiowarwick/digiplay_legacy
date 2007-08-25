@@ -131,22 +131,27 @@ unsigned int LocationManager::count(std::string T) {
     return locations.size();
 }
 
-Location LocationManager::get(unsigned int index, std::string T) {
+unsigned int LocationManager::get(unsigned int index, std::string T) {
     char* routine = "LocationManager::get";
 
     if (index >= locations.size()) {
         L_ERROR(LOG_DB,"Location index " + dps_itoa(index) + " out of range.");
         throw;
     }
+    return atoi(locations[index].c_str());
+}
+
+Location LocationManager::getLocation(unsigned int loc_index, std::string T) {
+    char* routine = "LocationManager::getLocation";
 
     bool standalone = false;
     if (T == "LMGet") standalone = true;
 
     PqxxResult R;
     std::string SQL;
-    std::string loc = locations[index];
+    std::string loc = dps_itoa(loc_index);
     Location L;
-    L.location = atoi(locations[index].c_str());
+    L.location = loc_index;
 
     try {
         SQL = "SELECT parameter, val FROM configuration WHERE location=" + loc;
@@ -175,7 +180,7 @@ void LocationManager::getLocations() {
 
     try {
         SQL = "SELECT DISTINCT location FROM configuration "
-              "WHERE NOT location=0 AND NOT location=1";
+              "WHERE NOT location=0 AND NOT location=-1";
         R = DB->exec(T,SQL);
         DB->abort(T);
         locations.resize(R.size());

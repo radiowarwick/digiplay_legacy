@@ -1,3 +1,5 @@
+#include <openssl/md5.h>
+
 #include "Logger.h"
 #include "DataAccess.h"
 #include "DbDefine.h"
@@ -206,10 +208,22 @@ void UserManager::setPassword(User u, std::string password, std::string T) {
         throw;
     }
 
+    // MD5 hash user-supplied password
+    MD5_CTX context;
+    unsigned char digest[16];
+    char encrypt[32];
+    MD5_Init(&context);
+    MD5_Update(&context, password.c_str(), password.size());
+    MD5_Final(digest, &context);
+    for (unsigned int i = 0; i < 16; ++i) {
+        sprintf(encrypt + i*2, "%02x", digest[i]);
+    }
+    std::string hash(encrypt);
+
     std::string SQL;
 
     try {
-        SQL = "UPDATE users SET password='" + password + "' "
+        SQL = "UPDATE users SET password='" + hash + "' "
               "WHERE username='" + u.username + "'";
         DB->exec(T,SQL);
         if (standalone) DB->commit(T);

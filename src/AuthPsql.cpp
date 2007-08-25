@@ -20,6 +20,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include <openssl/md5.h>
+
 #include "DataAccess.h"
 #include "Logger.h"
 #include "dps.h"
@@ -63,9 +65,21 @@ void AuthPsql::authSession(string username, string password) {
 	}
 
     std::string db_pass = R[0]["password"].c_str();
-    dps_strTrim(db_pass);
 
-	if (db_pass == password) {
+    // MD5 hash user-supplied password
+    MD5_CTX context;
+    unsigned char digest[16];
+    char encrypt[32];
+    MD5_Init(&context);
+    MD5_Update(&context, password.c_str(), password.size());
+    MD5_Final(digest, &context);
+    for (unsigned int i = 0; i < 16; ++i) {
+        sprintf(encrypt + i*2, "%02x", digest[i]);
+    }
+    std::string hash(encrypt);
+	
+    // Check users password hash matches
+    if (db_pass == hash) {
 		L_INFO(LOG_AUTH," -> Success.");
 		Auth::authSession(username,password);
 	}

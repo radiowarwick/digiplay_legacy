@@ -13,12 +13,12 @@ include $(ROOT)/Makefile.settings
 # If we need authentication, use requested authentication type
 #ifneq (,$(findstring Auth,$(SHARED_MODS)))
 #  ifneq (,$(findstring LDAP,$(AUTH)))
-    SHARED_MODS += AuthLdap
+#    SHARED_MODS += AuthLdap
 #    LIBS += -lldap
 #    DPSFLAGS = -DAUTH_LDAP
 #  endif
 #  ifneq (,$(findstring PSQL,$(AUTH)))
-    SHARED_MODS += AuthPsql
+#    SHARED_MODS += AuthPsql
 #    DPSFLAGS = -DAUTH_PSQL
 #  endif
 #endif

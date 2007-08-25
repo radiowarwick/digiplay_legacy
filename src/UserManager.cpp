@@ -22,7 +22,7 @@ UserManager::~UserManager() {
 void UserManager::add(User u, std::string T) {
     char* routine = "UserManager::add";
 
-    bool standalone;
+    bool standalone = false;
     if (T == "UMAdd") standalone = true;
 
     std::string SQL;

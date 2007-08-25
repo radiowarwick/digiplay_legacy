@@ -18,7 +18,7 @@ QT_ENABLED 	=	no
 MODS		=	dpsadmin
 QT_MODS		=
 SHARED_MODS	=	SystemManager ArchiveManager UserManager GroupManager \
-				MusicManager Config XmlDocument XmlElement \
+				MusicManager LocationManager Config XmlDocument XmlElement \
 				dps Logger DataAccess Security
 
 # Global header files on which dependance exists

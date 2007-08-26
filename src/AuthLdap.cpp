@@ -113,6 +113,7 @@ void AuthLdap::authSession(string username, string password) {
 		PqxxResult R;
 		try {
         	R = DB->exec("AuthLdap",SQL);
+            DB->abort("AuthLdap");
 		}
 		catch (...) {
 			L_ERROR(LOG_AUTH,"Failed to check for user in database."); 
@@ -121,7 +122,9 @@ void AuthLdap::authSession(string username, string password) {
 		}
 
         if (R.size() == 0) {
-            L_INFO(LOG_AUTH,"No user ID matching username. "
+            L_ERROR(LOG_AUTH,"User is not in database. Login denied.");
+            throw AUTH_INVALID_CREDENTIALS;            
+/*            L_INFO(LOG_AUTH,"No user ID matching username. "
                             "Adding to database.");
 		    try {
                 // Add the user
@@ -145,9 +148,8 @@ void AuthLdap::authSession(string username, string password) {
                 L_ERROR(LOG_AUTH,"Failed to insert user " + username +
 		                " into the database.");
    		    }
-        }
+*/        }
 		else {
-            DB->abort("AuthLdap");
 			L_INFO(LOG_AUTH,"Username " + username 
                             + " already in the database so not adding.");
             if (string(R[0]["enabled"].c_str()) == "f") {

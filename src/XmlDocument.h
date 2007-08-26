@@ -25,28 +25,29 @@
 
 #include <string>
 #include <fstream>
-using namespace std;
 
 #include "XmlElement.h"
 
 class XmlDocument {
 	public:
 		XmlDocument();
-		XmlDocument(string filename);
+		XmlDocument(std::string filename);
 		~XmlDocument();
 
-		void set_header(string text);
-		void set_doctype(string text);
+		void set_header(std::string text);
+		void set_doctype(std::string text);
 		XmlElement *get_root();
-		void write_file(string filename);
+		void write_file(std::string filename);
 
 	private:
-		string header;
-		string doctype;
+        std::string header;
+        std::string doctype;
 		XmlElement *root;
 
-		void read_element(XmlElement *E, string *content, unsigned int start, unsigned int end);
-		void write_element(XmlElement *E, ofstream *f_out, unsigned int indent);
+		void read_element(XmlElement *E, std::string *content, 
+                            unsigned int start, unsigned int end);
+		void write_element(XmlElement *E, std::ofstream *f_out, 
+                            unsigned int indent);
 };
 
 #endif

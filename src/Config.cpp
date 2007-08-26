@@ -33,16 +33,16 @@
  * Parse the configuration file and read in configuration parameters from the
  * Database for this location.
  */
-Config::Config(string application) {
+Config::Config(std::string application) {
 	char* routine = "config::config";
     DB = new DataAccess();
 	setFlag = false;
     std::string f = "/etc/" + application + ".conf";
 	L_INFO(LOG_CONFIG,"Processing config file " + f);
-ifstream config_file(f.c_str(), ios::in);
+    std::ifstream config_file(f.c_str(), std::ios::in);
 	if (config_file.is_open() && config_file.good()) {
 		config_file.seekg(0);
-		string str;
+        std::string str;
 		int y = 0;
 		
 		while (!config_file.eof()) {
@@ -50,11 +50,11 @@ ifstream config_file(f.c_str(), ios::in);
 			getline(config_file, str);
 			if (str.substr(0,1) == "#") continue;
 			unsigned int x = str.find_first_of("=",0);
-			if (x == string::npos) {
+			if (x == std::string::npos) {
 			}
 			else {
-				string name = str.substr(0,x);
-				string val = str.substr(x+1,str.length());
+                std::string name = str.substr(0,x);
+                std::string val = str.substr(x+1,str.length());
 				dps_strTrim(name);
 				dps_strTrim(val);
 				dps_strLcase(name);
@@ -100,14 +100,14 @@ Config::~Config() {
     delete DB;
 }
 
-string Config::getDBConnectString() {
+std::string Config::getDBConnectString() {
 	return DB_CONNECT;
 }
 
 /**
  * Return the value of a parameter from the database
  */
-string Config::getParam(string name) {
+std::string Config::getParam(std::string name) {
 	char* routine = "config::getParam";
 	dps_strLcase(name);
 	if (isDefined(name)) {
@@ -121,10 +121,10 @@ string Config::getParam(string name) {
 /**
  * Set the value of a parameter in the database
  */
-void Config::setParam(string name, string value) {
+void Config::setParam(std::string name, std::string value) {
 	char* routine = "config::setParam";
 	if (isDefined(name)) {
-		string SQL = "UPDATE configuration SET val='" + value 
+        std::string SQL = "UPDATE configuration SET val='" + value 
 					+ "' WHERE parameter='" + name 
 					+ "' AND location=" + LOCATION + ";" ;
 		try {
@@ -175,7 +175,7 @@ void Config::requery() {
 }
 
 // ====== PRIVATE =======
-bool Config::isDefined(string name) {
+bool Config::isDefined(std::string name) {
 	dps_strLcase(name);
 	if (_db.find(name) != _db.end()) {
 		return true;

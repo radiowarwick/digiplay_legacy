@@ -1,4 +1,6 @@
+#include <string>
 #include <vector>
+using namespace std;
 
 #include <openssl/md5.h>
 #include <dlfcn.h>

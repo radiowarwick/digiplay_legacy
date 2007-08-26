@@ -14,7 +14,7 @@ DbTrigger::DbTrigger(const char* name, std::string trigger){
         try {
             Ctrig = new pqxx::connection( DataAccess::getConnectionString() );
         }
-        catch (const exception &e) {
+        catch (const std::exception &e) {
             L_ERROR(LOG_DB,e.what());
             throw;
         }

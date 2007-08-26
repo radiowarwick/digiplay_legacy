@@ -24,7 +24,6 @@
 #define CLASS_AUTH_LDAP
 
 #include <string>
-using namespace std;
 
 // Include ldap header to get all the structures and types
 #include "DpsLdap.h"
@@ -36,15 +35,16 @@ using namespace std;
 
 class AuthLdap : public Auth {
 	public:
-		AuthLdap(string host, unsigned int port, string baseDn, string filter);
+		AuthLdap(std::string host, unsigned int port, std::string baseDn,
+                    std::string filter);
 		~AuthLdap();
-        void reconnect(string host, unsigned int port, string baseDn, 
-                string filter);
-		void authSession(string username, string password);
+        void reconnect(std::string host, unsigned int port, std::string baseDn, 
+                std::string filter);
+		void authSession(std::string username, std::string password);
 
 	private:
-        void connect(string host, unsigned int port, string baseDn,
-                string filter);
+        void connect(std::string host, unsigned int port, std::string baseDn,
+                std::string filter);
 
         void* ldap_handle;
         ldap_init_t ldap_init;
@@ -56,11 +56,11 @@ class AuthLdap : public Auth {
         ldap_unbind_s_t ldap_unbind_s;
         ldap_msgfree_t ldap_msgfree;
 
-		string _host;
+        std::string _host;
 		DataAccess *DB;
 		unsigned int _port;
-		string _baseDn;
-        string _filter;
+        std::string _baseDn;
+        std::string _filter;
 		LDAP *_myLdap;
 };
 

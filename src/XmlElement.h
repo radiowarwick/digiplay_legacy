@@ -25,47 +25,46 @@
 
 #include <string>
 #include <vector>
-using namespace std;
 
 struct xmlAttribute {
-	string name;
-	string value;
+    std::string name;
+    std::string value;
 };
 
 class XmlElement {
 	public:
 		XmlElement();
-		XmlElement(string name);
+		XmlElement(std::string name);
 		~XmlElement();
 
-		void set_name(string text);
-		void set_cdata(string text);
-		string get_name();
-		string get_cdata();
+		void set_name(std::string text);
+		void set_cdata(std::string text);
+        std::string get_name();
+        std::string get_cdata();
 
-		xmlAttribute add_attribute(string name, string value);
+		xmlAttribute add_attribute(std::string name, std::string value);
 		xmlAttribute add_attribute(xmlAttribute attr);
 		xmlAttribute get_attribute(unsigned int index);
-		xmlAttribute get_attribute(string name);
+		xmlAttribute get_attribute(std::string name);
 		void remove_attribute(unsigned int index);
-		void remove_attribute(string name);
-        bool has_attribute(string name);
+		void remove_attribute(std::string name);
+        bool has_attribute(std::string name);
 		unsigned int count_attributes();
 
-		XmlElement *add_element(string name);
+		XmlElement *add_element(std::string name);
         XmlElement *add_element(std::string name, std::string cdata);
 		XmlElement *add_element(XmlElement *elem);
 		XmlElement *get_element(unsigned int index);
-		XmlElement *get_element(string name);
+		XmlElement *get_element(std::string name);
 		void remove_element(unsigned int index);
-		void remove_element(string name);
+		void remove_element(std::string name);
 		unsigned int count_elements();
 		
 	private:
-		string name;
-		string cdata;
-		vector<xmlAttribute> *attributes;
-		vector<XmlElement*> *elements;
+        std::string name;
+        std::string cdata;
+        std::vector<xmlAttribute> *attributes;
+        std::vector<XmlElement*> *elements;
 };
 
 #endif

@@ -23,10 +23,8 @@
 #ifndef CLASS_SYSTEMMANAGER
 #define CLASS_SYSTEMMANAGER
 
-#include <iostream>
 #include <vector>
 #include <string>
-using namespace std;
 
 #include "dps.h"
 #include "DataAccess.h"
@@ -39,17 +37,19 @@ class SystemManager {
 
         /* Track management */
         ArchiveManager* atArchive(unsigned int index);
-		ArchiveManager* atArchive(string name);
+		ArchiveManager* atArchive(std::string name);
         short sizeArchive();
-        void addArchive(string name, string localPath, string remotePath);
-		void createArchive(string name, string localPath, string remotePath);	
+        void addArchive(std::string name, std::string localPath, 
+                        std::string remotePath);
+		void createArchive(std::string name, std::string localPath, 
+                            std::string remotePath);	
         void dropArchive(unsigned int index);
 
 	private:
 		void loadArchives();
 	
 		DataAccess* DB;
-        vector<ArchiveManager*>* archives;
+        std::vector<ArchiveManager*>* archives;
 };
 
 #endif

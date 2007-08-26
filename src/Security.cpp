@@ -82,9 +82,9 @@ void showPrivilage() {
     unsigned int x = getuid();
     unsigned int y = geteuid();
     struct passwd *z = getpwuid(x);
-    L_INFO(LOG_SECURITY, "Real User: " + string(z->pw_name));
+    L_INFO(LOG_SECURITY, "Real User: " + std::string(z->pw_name));
     z = getpwuid(y);
-    L_INFO(LOG_SECURITY, "Effe User: " + string(z->pw_name));
+    L_INFO(LOG_SECURITY, "Effe User: " + std::string(z->pw_name));
 }
 
 bool isRoot() {

@@ -37,13 +37,13 @@ UserConfig::~UserConfig() {
 
 }
 
-string UserConfig::get(string param) {
+std::string UserConfig::get(std::string param) {
     return _userInfo[param];
 }
 
-void UserConfig::set(string param, string val) {
+void UserConfig::set(std::string param, std::string val) {
     char *routine = "UserConfig::set";
-    string SQL =    "UPDATE usersconfigs "
+    std::string SQL = "UPDATE usersconfigs "
                     "SET val=" + val +
                     "WHERE userid=(SELECT id FROM users WHERE username='"
                         + _username + "') "
@@ -63,7 +63,8 @@ void UserConfig::set(string param, string val) {
 
 void UserConfig::retrieveConfig() {
     char *routine = "UserConfig::retrieveConfig";
-    string SQL =    "SELECT configs.name AS name, usersconfigs.val AS value "
+    std::string SQL = "SELECT configs.name AS name, "
+                        "usersconfigs.val AS value "
                     "FROM users, usersconfigs, configs "
                     "WHERE users.username = '" + _username + "' "
                     " AND usersconfigs.userid = users.id "

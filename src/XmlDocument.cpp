@@ -23,6 +23,7 @@
 #include "XmlDocument.h"
 #include "Logger.h"
 
+#include <string>
 #include <iostream>
 using namespace std;
 

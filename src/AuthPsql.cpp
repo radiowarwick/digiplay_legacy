@@ -36,7 +36,7 @@ AuthPsql::~AuthPsql() {
 
 }
 
-void AuthPsql::authSession(string username, string password) {
+void AuthPsql::authSession(std::string username, std::string password) {
 	char* routine = "AuthPsql:authenticate";
 	L_INFO(LOG_AUTH,"Authenticating user " + username);
 
@@ -81,7 +81,7 @@ void AuthPsql::authSession(string username, string password) {
     // Check users password hash matches
     if (db_pass == hash) {
 		L_INFO(LOG_AUTH," -> Success.");
-        if (string(R[0]["enabled"].c_str()) == "f") {
+        if (std::string(R[0]["enabled"].c_str()) == "f") {
             L_ERROR(LOG_AUTH,"Permission denied for '" + username + "'");
             throw AUTH_PERMISSION_DENIED;
         }

@@ -27,7 +27,6 @@
 #include <string>
 #include <vector>
 #include <map>
-using namespace std;
 
 #include "DataAccess.h"
 
@@ -40,22 +39,23 @@ class Auth {
 	public:
 		Auth();
 		virtual ~Auth() = 0;
-		bool isPermitted(string privilage);
+		bool isPermitted(std::string privilage);
 		bool isAuthenticated();
-		string getUser();
-		virtual void authSession(string username, string password) = 0;
+        std::string getUser();
+		virtual void authSession(std::string username, 
+                                        std::string password) = 0;
 		void closeSession();
 
 	protected:
-		void addPrivilage(string privilage);
-		void addUserInfo(string item, string value);
+		void addPrivilage(std::string privilage);
+		void addUserInfo(std::string item, std::string value);
 
 	private:
 		Auth(Auth &A);
 		DataAccess *DB;
 		int location;
-		vector<string> _privilages;
-		map<string,string> _userInfo;
+        std::vector<std::string> _privilages;
+        std::map<std::string,std::string> _userInfo;
 		bool isAuthenticatedFlag;
 };	
 #endif

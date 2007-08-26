@@ -38,7 +38,7 @@ DataAccess::DataAccess() {
         try {
 			// Create connection
 			C = new PqxxConnection( getConnectionString() );
-            L_INFO(LOG_DB,"Connected to database " + string(C->dbname()));
+            L_INFO(LOG_DB,"Connected to database " + std::string(C->dbname()));
             L_INFO(LOG_DB," -> Backend version: " 
                             + dps_itoa(C->server_version()));
             L_INFO(LOG_DB," -> Protocal version: " 
@@ -48,8 +48,8 @@ DataAccess::DataAccess() {
             pthread_mutex_init(t_routine_mutex,NULL);
 			W = 0;
         }
-        catch (const exception &e) {
-            L_ERROR(LOG_DB,"Exception: " + string(e.what()));
+        catch (const std::exception &e) {
+            L_ERROR(LOG_DB,"Exception: " + std::string(e.what()));
             throw;
         }
         catch (...) {
@@ -110,9 +110,9 @@ PqxxResult DataAccess::exec(std::string name, std::string query) {
             transName = name;
         }
     }
-    catch (const exception &e) {
+    catch (const std::exception &e) {
         pthread_mutex_unlock(t_routine_mutex);
-        L_ERROR(LOG_DB,"Exception: " + string(e.what()));
+        L_ERROR(LOG_DB,"Exception: " + std::string(e.what()));
         throw;
     }
     catch (...) {
@@ -131,9 +131,9 @@ PqxxResult DataAccess::exec(std::string name, std::string query) {
         L_ERROR(LOG_DB,"SQL Query: " + e.query());
         throw;
     }
-    catch (const exception &e) {
+    catch (const std::exception &e) {
         pthread_mutex_unlock(t_routine_mutex);
-        L_ERROR(LOG_DB,"Exception: " + string(e.what()));
+        L_ERROR(LOG_DB,"Exception: " + std::string(e.what()));
         throw;
     }
     catch (...) {
@@ -231,10 +231,10 @@ std::string DataAccess::getConnectionString() {
     std::map<std::string,std::string> _file;
 
     L_INFO(LOG_CONFIG,"Processing config file " + f);
-    std::ifstream config_file(f.c_str(), ios::in);
+    std::ifstream config_file(f.c_str(), std::ios::in);
     if (config_file.is_open() && config_file.good()) {
         config_file.seekg(0);
-        string str;
+        std::string str;
         int y = 0;
 
         while (!config_file.eof()) {
@@ -242,11 +242,11 @@ std::string DataAccess::getConnectionString() {
             getline(config_file, str);
             if (str.substr(0,1) == "#") continue;
             unsigned int x = str.find_first_of("=",0);
-            if (x == string::npos) {
+            if (x == std::string::npos) {
             }
             else {
-                string name = str.substr(0,x);
-                string val = str.substr(x+1,str.length());
+                std::string name = str.substr(0,x);
+                std::string val = str.substr(x+1,str.length());
                 dps_strTrim(name);
                 dps_strTrim(val);
                 dps_strLcase(name);
@@ -303,9 +303,9 @@ std::string DataAccess::esc(std::string str) {
             return result;
         }
     }
-    catch (const exception &e) {
+    catch (const std::exception &e) {
         pthread_mutex_unlock(t_routine_mutex);
-        L_ERROR(LOG_DB,"Exception: " + string(e.what()));
+        L_ERROR(LOG_DB,"Exception: " + std::string(e.what()));
         throw;
     }
     catch (...) {

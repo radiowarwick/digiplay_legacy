@@ -30,7 +30,6 @@
 #include <string>
 #include <fstream>
 #include <iostream>
-using namespace std;
 
 //#include "dps.h"
 
@@ -102,20 +101,20 @@ enum MESSAGE_LEVEL {CRITICAL,GENERAL,ERROR,WARNING,INFO};
  */
 class Logger {
 	public:
-		static void log(LOG_TYPE type, char* routine, string message,
+		static void log(LOG_TYPE type, char* routine, std::string message,
 														MESSAGE_LEVEL level);
 		static void setLogLevel(unsigned short level){logLevel=level;}
 		static void setDisplayLevel(unsigned short level){displayLevel=level;}
-		static void setAppName(string name){appName=name;}
+		static void setAppName(std::string name){appName=name;}
         static void initLogDir();
 
 	private:
 		Logger();
 		~Logger();
-		static ofstream *logFile;
+		static std::ofstream *logFile;
 		static unsigned short logLevel;
 		static unsigned short displayLevel;
-		static string appName;
+		static std::string appName;
 };
 
 #endif

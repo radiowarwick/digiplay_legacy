@@ -23,11 +23,9 @@
 #ifndef CLASS_ARCHIVEMANAGER
 #define CLASS_ARCHIVEMANAGER
 
-#include <iostream>
 #include <vector>
 #include <string>
 #include <unistd.h>
-using namespace std;
 
 #include "dirent.h"
 #include "sys/types.h"
@@ -71,9 +69,9 @@ class ArchiveManager {
 		track readInfo(std::string filename);
 
 	private:
-		void loadDB(vector<track> *tracks);
-		void loadInbox(vector<track> *tracks);
-		void loadTrash(vector<track> *tracks);
+		void loadDB(std::vector<track> *tracks);
+		void loadInbox(std::vector<track> *tracks);
+		void loadTrash(std::vector<track> *tracks);
 
         void addTrack(track t);
         void addJingle(track t);
@@ -88,9 +86,9 @@ class ArchiveManager {
 		track t_null;
 		archive A;
         DataAccess *DB;
-		vector<track> *trackDB;
-		vector<track> *trackInbox;
-		vector<track> *trackTrash;
+        std::vector<track> *trackDB;
+        std::vector<track> *trackInbox;
+        std::vector<track> *trackTrash;
 };
 
 #endif

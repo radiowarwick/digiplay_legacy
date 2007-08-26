@@ -35,6 +35,7 @@ using namespace std;
 #include "MusicManager.h"
 #include "LocationManager.h"
 #include "Logger.h"
+#include "Config.h"
 
 #define VERSION 0.95
 
@@ -71,6 +72,7 @@ static struct option long_options[] = {
     {"purge-deleted", no_argument,      0,  'p'},
     {"set-passwd",  required_argument,  0,  's'},
     {"display",     required_argument,  0,  'b'},
+    {"parse-ldap",  no_argument,        0,  'g'},
     // parameters
     {"local-path",  required_argument,  0,  'x'},
 	{"remote-path", required_argument,  0,  'y'},
@@ -159,6 +161,7 @@ void parseCommand(int argc, char *argv[]) {
             case 'p': options["purge-deleted"] = "yes"; c++; break;
             case 's': options["set-passwd"] = optarg; c++; break;
             case 'b': options["display"] = optarg; c++; break;
+            case 'g': options["parse-ldap"] = "yes"; c++; break;
             case 'x': options["local-path"] = optarg; break;
             case 'y': options["remote-path"] = optarg; break;
             case 'e': options["dest-archive"] = optarg; break;
@@ -226,6 +229,7 @@ cout <<
 "   -d, --drop <username>   drop a user\n"
 "   -l, --list              list users on the system\n"
 "   --set-passwd <username> set a users password (prompt)\n"
+"   --parse-ldap            parse user list from LDAP directory\n"
 "\n"
 "Group management commands:\n"
 "   -a, --add <group>       add a new group\n"
@@ -569,6 +573,42 @@ void processUser() {
         catch (...) {
             L_ERROR(LOG_DB,"Unable to set password.");
         }
+    }
+    else if (options["parse-ldap"] != "") {
+        Config* C = 0;
+        try {
+            C = new Config("digiplay");
+            std::string host = C->getParam("ldap_host");
+            unsigned int port = atoi(C->getParam("ldap_port").c_str());
+            std::string dn = C->getParam("ldap_dn");
+            std::string filter = C->getParam("ldap_filter");
+            std::vector<std::string> userlist;
+            userlist = U->parseLdap(host, port, dn, filter);
+            for (unsigned int i = 0; i < userlist.size(); ++i) {
+                try {
+                    User u = U->get(userlist[i]);
+                    L_INFO(LOG_DB,"User " + userlist[i] + " already exists.");
+                    continue;
+                }
+                catch (...) {
+                    L_INFO(LOG_DB,"Found new LDAP user: " + userlist[i]);
+                }
+                try {
+                    User u;
+                    u.username = userlist[i];
+                    U->add(u);
+                }
+                catch (...) {
+                    L_ERROR(LOG_DB,"Failed to add new user from LDAP.");
+                    throw;
+                }
+                L_INFO(LOG_DB,"User " + userlist[i] + " created successfully.");
+            }
+        }
+        catch (...) {
+            L_ERROR(LOG_DB,"Error occured parsing ldap");
+        }
+        delete C;
     }
 }
 

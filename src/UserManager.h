@@ -30,6 +30,8 @@ class UserManager {
                                     std::string T = "UMSetPassword");
         void grantAdmin(User u, std::string T = "UMGrantAdmin");
         void revokeAdmin(User u, std::string T = "UMRevokeAdmin");
+        std::vector<std::string> parseLdap(std::string host, int port, 
+            std::string dn, std::string filter, std::string T = "UMParseLdap");
 
     private:
         void refresh(std::string T = "UMRefresh");

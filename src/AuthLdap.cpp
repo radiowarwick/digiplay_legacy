@@ -108,7 +108,7 @@ void AuthLdap::authSession(string username, string password) {
 
         // Check whether user exists in the database.
         // Since we're using LDAP authentication, they may not.
-        string SQL = "SELECT id FROM users WHERE username = '"
+        string SQL = "SELECT id, enabled FROM users WHERE username = '"
                         + username + "' LIMIT 1";
 		PqxxResult R;
 		try {
@@ -150,6 +150,10 @@ void AuthLdap::authSession(string username, string password) {
             DB->abort("AuthLdap");
 			L_INFO(LOG_AUTH,"Username " + username 
                             + " already in the database so not adding.");
+            if (string(R[0]["enabled"].c_str()) == "f") {
+                L_ERROR(LOG_AUTH,"User account " + username + " is disabled.");
+                throw AUTH_INVALID_CREDENTIALS;
+            }
 		}
 		Auth::authSession(username,password);
 	}

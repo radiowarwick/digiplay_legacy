@@ -1,8 +1,12 @@
+#include <vector>
+
 #include <openssl/md5.h>
+#include <dlfcn.h>
 
 #include "Logger.h"
 #include "DataAccess.h"
 #include "DbDefine.h"
+#include "DpsLdap.h"
 
 #include "UserManager.h"
 
@@ -30,6 +34,7 @@ void UserManager::add(User u, std::string T) {
     std::string SQL;
     std::string user_id;
     std::string dir_id;
+    u.username = DB->esc(u.username);
 
     if (userExists(u,T)) {
         L_ERROR(LOG_DB,"User '" + u.username + "' already exists.");
@@ -182,15 +187,12 @@ User UserManager::get(unsigned int index) {
  * Returns the user named \a username
  */
 User UserManager::get(std::string username) {
-    char* routine = "UserManager::get";
-
     for (unsigned int i = 0; i < users.size(); i++) {
         if (users.at(i).username == username) {
             return users.at(i);
         }
     }
-    L_ERROR(LOG_DB,"Unknown user '" + username + "'");
-    throw;
+    throw 0;
 }
 
 
@@ -307,6 +309,127 @@ void UserManager::revokeAdmin(User u, std::string T) {
         throw;
     }
 }
+
+
+/**
+ * Parses an LDAP directory and adds users to the database.
+ */
+std::vector<std::string> UserManager::parseLdap(std::string host, int port,
+        std::string dn, std::string filter, std::string T) {
+    char* routine = "UserManager::parseLdap";
+   
+    // LDAP structure
+    LDAP* _myLdap;
+    
+    // Handle on libldap.so
+    void* ldap_h;
+    
+    // Declare local ldap function names
+    // These will point to the dynamically loaded symbols from libldap.so
+    ldap_init_t ldap_init;
+    ldap_set_option_t ldap_set_option;
+    ldap_simple_bind_s_t ldap_simple_bind_s;
+    ldap_err2string_t ldap_err2string;
+    ldap_search_s_t ldap_search_s;
+    ldap_count_entries_t ldap_count_entries;
+    ldap_first_entry_t ldap_first_entry;
+    ldap_next_entry_t ldap_next_entry;
+    ldap_first_attribute_t ldap_first_attribute;
+    ldap_next_attribute_t ldap_next_attribute;
+    ldap_get_values_t ldap_get_values;
+    ldap_value_free_t ldap_value_free;
+    ldap_memfree_t ldap_memfree;
+
+    // Attempt to load the ldap shared library
+    ldap_h = dlopen("libldap.so", RTLD_LAZY);
+    if (!ldap_h) {
+        L_CRITICAL(LOG_AUTH,"Cannot open LDAP library");
+        L_CRITICAL(LOG_AUTH,string(dlerror()));
+        throw;
+    }
+
+    // Load the symbols we need
+    ldap_init = (ldap_init_t) dlsym(ldap_h, "ldap_init");
+    ldap_set_option = (ldap_set_option_t) dlsym(ldap_h, "ldap_set_option");
+    ldap_simple_bind_s
+        = (ldap_simple_bind_s_t) dlsym(ldap_h, "ldap_simple_bind_s");
+    ldap_err2string = (ldap_err2string_t) dlsym(ldap_h, "ldap_err2string");
+    ldap_search_s = (ldap_search_s_t) dlsym(ldap_h, "ldap_search_s");
+    ldap_count_entries 
+        = (ldap_count_entries_t) dlsym(ldap_h,"ldap_count_entries");
+    ldap_first_entry = (ldap_first_entry_t) dlsym(ldap_h, "ldap_first_entry");
+    ldap_next_entry = (ldap_next_entry_t) dlsym(ldap_h, "ldap_next_entry");
+    ldap_first_attribute 
+        = (ldap_first_attribute_t) dlsym(ldap_h, "ldap_first_attribute");
+    ldap_next_attribute
+        = (ldap_next_attribute_t) dlsym(ldap_h, "ldap_next_attribute");
+    ldap_get_values
+        = (ldap_get_values_t) dlsym(ldap_h, "ldap_get_values");
+    ldap_value_free = (ldap_value_free_t) dlsym(ldap_h, "ldap_value_free");
+    ldap_memfree = (ldap_memfree_t) dlsym(ldap_h, "ldap_memfree");
+    // Now the ldap routines can be used as if linked as normal
+
+    // Initiate a connection to the LDAP server
+    try {
+        _myLdap = ldap_init(host.c_str(),port);
+    }
+    catch (...) {
+        L_ERROR(LOG_AUTH,"Failed to create LDAP connection.");
+        throw;
+    }
+
+    // Bind as an anonymous user
+    int version = LDAP_VERSION3;
+    int ret = 0;
+    ldap_set_option(_myLdap, LDAP_OPT_PROTOCOL_VERSION, &version);
+    if ((ret = ldap_simple_bind_s(_myLdap, NULL, NULL)) != LDAP_SUCCESS) {
+        L_ERROR(LOG_DB,"Failed to connect to LDAP server anonymously.");
+        L_ERROR(LOG_DB,"Server returned: " + string(ldap_err2string(ret)));
+        throw;
+    }
+
+    // Search for all users matching provided filter
+    LDAPMessage *res;
+    if ((ret = ldap_search_s(_myLdap, dn.c_str(), LDAP_SCOPE_SUBTREE,
+                    filter.c_str(), NULL, 0, &res)) != LDAP_SUCCESS) {
+        L_ERROR(LOG_DB,"Failed while searching for usernames.");
+        L_ERROR(LOG_DB,"Server returned: " + string(ldap_err2string(ret)));
+        throw;
+    }
+
+    // Get all the uid's for the list of users returned
+    // Declare some pointers
+    LDAPMessage* e;
+    BerElement* ber;
+    char* a;
+    char** vals;
+    // store usernames in a vector
+    std::vector<std::string> userlist;
+    // Process each entry from the results
+    for (e = ldap_first_entry(_myLdap, res); e != 0; 
+            e = ldap_next_entry(_myLdap, e)) {
+        // Process each attribute in the entry
+        for (a = ldap_first_attribute(_myLdap, e, &ber); a != 0;
+                a = ldap_next_attribute(_myLdap, e, ber)) {
+            // Unless it's the uid field, continue to next entry
+            if (strcmp(a,"uid")) continue;
+            // Get the value of the uid field and add it to vector
+            if ((vals = ldap_get_values(_myLdap, e, a)) != 0) {
+                for (unsigned int i = 0; vals[i] != 0; i++) {
+                    userlist.push_back(string(vals[i]));
+                }
+            }
+            // free the memory
+            ldap_value_free(vals);
+            // no need to keep looking at this entry
+            break;
+        }
+        // free the attribute
+        ldap_memfree(a);
+    }
+    return userlist;
+}
+
 
 /*
  * ------------------------------------------------------------------

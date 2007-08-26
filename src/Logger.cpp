@@ -55,7 +55,6 @@ void Logger::log(LOG_TYPE type, char* routine, string message,
 	    outLine << local.tm_min << ":";
         if (local.tm_sec < 10) outLine << "0";
 	    outLine << local.tm_sec << "] ";
-	    outLine << routine << ": " << endl << " -> ";
 		switch (level) {
 			case INFO:
 				outLine << "INFO: ";
@@ -75,6 +74,7 @@ void Logger::log(LOG_TYPE type, char* routine, string message,
 			default:
 				break;
 		}
+	    outLine << routine << ": ";
 	    outLine << message << endl;
 	    (*logFile) << outLine.str() << flush;
 	}

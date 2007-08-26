@@ -28,21 +28,30 @@ using namespace std;
 #include "SystemManager.h"
 
 SystemManager::SystemManager() {
+    char* routine = "SystemManager::SystemManager";
+
     DB = new DataAccess();
 	archives = new vector<ArchiveManager*>;
 
 	/* Load archives */
-	archive A;
-	PqxxResult R = DB->exec("SystemManager",
-            "SELECT * FROM archives ORDER BY id");
-	DB->abort("SystemManager");
-	for (unsigned short i = 0; i < R.size(); i++) {
-		A.id = atoi(R[i]["id"].c_str());
-		A.name = R[i]["name"].c_str();
-		A.localPath = R[i]["localPath"].c_str();
-		A.remotePath = R[i]["remotePath"].c_str();
-		archives->push_back(new ArchiveManager(A));
-	}
+    try {
+    	archive A;
+    	PqxxResult R = DB->exec("SystemManager",
+                "SELECT * FROM archives ORDER BY id");
+    	DB->abort("SystemManager");
+    	for (unsigned short i = 0; i < R.size(); i++) {
+    		A.id = atoi(R[i]["id"].c_str());
+    		A.name = R[i]["name"].c_str();
+    		A.localPath = R[i]["localPath"].c_str();
+    		A.remotePath = R[i]["remotePath"].c_str();
+    		archives->push_back(new ArchiveManager(A));
+    	}
+    }
+    catch (...) {
+        DB->abort("SystemManager");
+        L_ERROR(LOG_DB,"Failed to load system archives.");
+        throw;
+    }
 }
 
 SystemManager::~SystemManager() {

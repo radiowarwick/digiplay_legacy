@@ -27,6 +27,7 @@
 
 #include "DataAccess.h"
 #include "DpsMusicSearch.h"
+#include "Logger.h"
 
 DpsMusicSearch::DpsMusicSearch() {
     // Create a configuration object
@@ -45,6 +46,8 @@ DpsMusicSearch::~DpsMusicSearch() {
  * to return results incrementally as the search progresses.
  */
 std::vector<track>* DpsMusicSearch::query(std::string search_string) {
+    char* routine = "DpsMusicSearch::query";
+
     std::string SQL;
     
     // Convert to lowercase
@@ -111,8 +114,17 @@ std::vector<track>* DpsMusicSearch::query(std::string search_string) {
     if (searchLimit_value > 0) {
         SQL += " LIMIT " + dps_itoa(searchLimit_value);
     }
-    PqxxResult R = DB->exec("MusicSearch",SQL);
-    DB->abort("MusicSearch");
+
+    PqxxResult R;
+    try {
+        R = DB->exec("MusicSearch",SQL);
+        DB->abort("MusicSearch");
+    }
+    catch (...) {
+        DB->abort("MusicSearch");
+        L_ERROR(LOG_DB,"Failed to search for music.");
+        throw;
+    }
 
     Q->resize(R.size());
     for (unsigned int i = 0; i < R.size(); i++) {

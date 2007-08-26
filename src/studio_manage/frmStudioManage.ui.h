@@ -44,6 +44,7 @@
 
 #include "clockThread.h"
 #include "Config.h"
+#include "DbTrigger.h"
 #include "dps.h"
 
 Auth *authModule;
@@ -58,12 +59,18 @@ TabPanelLogging *tabPanelLogging;
 TabPanelScript *tabPanelScript;
 
 Config *conf;
+DbTrigger* triggerConfig;
 clockThread *ck;
 
 void frmStudioManage::init() {
 	// Connect to database
 	cout << "Processing configuration..." << flush;
 	conf = new Config("digiplay");
+    
+    triggerConfig = new DbTrigger("triggerConfig","trig_id1");
+    triggerConfig->start();
+    connect(triggerConfig, SIGNAL(trigger()), 
+                            this, SLOT(processConfigUpdate()));
 	cout << "complete!" << endl;
 
 	// Initialise modules
@@ -179,7 +186,7 @@ void frmStudioManage::init() {
 }
 
 void frmStudioManage::destroy() {
-
+    delete conf;
 }
 
 void frmStudioManage::customEvent(QCustomEvent *event) {
@@ -201,6 +208,18 @@ void frmStudioManage::customEvent(QCustomEvent *event) {
 			break;
 		}
 	}
+}
+
+void frmStudioManage::processConfigUpdate() {
+    AuthLdap* a;
+    if ((a = dynamic_cast<AuthLdap*>(authModule)) != 0) {
+        conf->requery();
+        std::string host = conf->getParam("ldap_host");
+        unsigned int port = atoi(conf->getParam("ldap_port").c_str());
+        std::string baseDn = conf->getParam("ldap_dn");
+        std::string filter = conf->getParam("ldap_filter");
+        a->reconnect(host, port, baseDn, filter);
+    }
 }
 
 void frmStudioManage::updateCartset( QString index ) {

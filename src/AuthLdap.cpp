@@ -48,43 +48,26 @@ AuthLdap::AuthLdap(string host, unsigned int port, string baseDn,
     ldap_err2string = (ldap_err2string_t) dlsym(ldap_handle, "ldap_err2string");
     ldap_search_s = (ldap_search_s_t) dlsym(ldap_handle, "ldap_search_s");
     ldap_count_entries = (ldap_count_entries_t) dlsym(ldap_handle, "ldap_count_entries");
+    ldap_unbind_s = (ldap_unbind_s_t) dlsym(ldap_handle, "ldap_unbind_s");
+    ldap_msgfree = (ldap_msgfree_t) dlsym(ldap_handle, "ldap_msgfree");
     // Now ready to use these routines
 
-	_myLdap = NULL;
-	if (host == "") {
-		L_ERROR(LOG_AUTH,"No host specified.");
-		throw AUTH_LDAP_INVALID_PARAM;
-	}
-	if (port == 0 || port >= 65536) {
-		L_ERROR(LOG_AUTH,"Invalid port.");
-		throw AUTH_LDAP_INVALID_PARAM;
-	}
-	if (baseDn == "") {
-		L_ERROR(LOG_AUTH,"No Base DN specified.");
-		throw AUTH_LDAP_INVALID_PARAM;
-	}
-	_host = host;
-	_port = port;
-	_baseDn = baseDn;
-    _filter = filter;
 	DB = new DataAccess();
-
-	L_INFO(LOG_AUTH,"Creating connection to LDAP server...");
-	L_INFO(LOG_AUTH," -> server: " + host);
-	L_INFO(LOG_AUTH," -> base DN: " + baseDn);
-
-	try {
-		_myLdap = ldap_init(host.c_str(),port);
-	}
-	catch (...) {
-		L_ERROR(LOG_AUTH,"Failed to create LDAP connection.");
-		throw AUTH_LDAP_CONNECT_FAILED;
-	}
-	L_INFO(LOG_AUTH,"LDAP initialisation successful.");
+    _myLdap = 0;
+    this->connect(host, port, baseDn, filter);
 }
 
 AuthLdap::~AuthLdap() {
 
+}
+
+void AuthLdap::reconnect(string host, unsigned int port, string baseDn,
+                        string filter) {
+    if (host == _host && port == _port && baseDn == _baseDn 
+            && filter == _filter) {
+        return;
+    }
+    this->connect(host, port, baseDn, filter);
 }
 
 void AuthLdap::authSession(string username, string password) {
@@ -119,6 +102,7 @@ void AuthLdap::authSession(string username, string password) {
                 L_INFO(LOG_AUTH," -> User denied by filter.");
                 throw AUTH_PERMISSION_DENIED;
             }
+            ldap_msgfree(res);
 		    L_INFO(LOG_AUTH," -> Success.  Checking for username in database.");
 
             // Check whether user exists in the database.
@@ -190,4 +174,41 @@ void AuthLdap::authSession(string username, string password) {
 			
 		}
 	}*/
+}
+
+void AuthLdap::connect(string host, unsigned int port, string baseDn, 
+                        string filter) {
+    char* routine = "AuthLdap::connect";
+    if (_myLdap) {
+        ldap_unbind_s(_myLdap);
+    }
+    _myLdap = 0; 
+    if (host == "") {
+        L_ERROR(LOG_AUTH,"No host specified.");
+        throw AUTH_LDAP_INVALID_PARAM;
+    }
+    if (port == 0 || port >= 65536) {
+        L_ERROR(LOG_AUTH,"Invalid port.");
+        throw AUTH_LDAP_INVALID_PARAM;
+    }
+    if (baseDn == "") {
+        L_ERROR(LOG_AUTH,"No Base DN specified.");
+        throw AUTH_LDAP_INVALID_PARAM;
+    }
+    _host = host;
+    _port = port;
+    _baseDn = baseDn;
+    _filter = filter;
+
+    L_INFO(LOG_AUTH,"Creating connection to LDAP server...");
+    L_INFO(LOG_AUTH," -> server: " + host);
+    L_INFO(LOG_AUTH," -> base DN: " + baseDn);
+    try {
+        _myLdap = ldap_init(host.c_str(),port);
+    }
+    catch (...) {
+        L_ERROR(LOG_AUTH,"Failed to create LDAP connection.");
+        throw AUTH_LDAP_CONNECT_FAILED;
+    }
+    L_INFO(LOG_AUTH,"LDAP initialisation successful.");
 }

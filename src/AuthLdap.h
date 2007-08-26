@@ -38,9 +38,14 @@ class AuthLdap : public Auth {
 	public:
 		AuthLdap(string host, unsigned int port, string baseDn, string filter);
 		~AuthLdap();
+        void reconnect(string host, unsigned int port, string baseDn, 
+                string filter);
 		void authSession(string username, string password);
 
 	private:
+        void connect(string host, unsigned int port, string baseDn,
+                string filter);
+
         void* ldap_handle;
         ldap_init_t ldap_init;
         ldap_set_option_t ldap_set_option;
@@ -48,6 +53,8 @@ class AuthLdap : public Auth {
         ldap_err2string_t ldap_err2string;
         ldap_search_s_t ldap_search_s;
         ldap_count_entries_t ldap_count_entries;
+        ldap_unbind_s_t ldap_unbind_s;
+        ldap_msgfree_t ldap_msgfree;
 
 		string _host;
 		DataAccess *DB;

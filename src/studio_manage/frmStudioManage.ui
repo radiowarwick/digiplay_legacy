@@ -766,6 +766,7 @@
 </includes>
 <slots>
     <slot>customEvent( QCustomEvent * event )</slot>
+    <slot>processConfigUpdate()</slot>
     <slot>btnLoginClicked()</slot>
     <slot>updateCartset( QString index )</slot>
 </slots>

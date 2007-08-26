@@ -49,7 +49,7 @@ void AuthPsql::authSession(string username, string password) {
     PqxxResult R;
 
     try {
-	    SQL = "SELECT password FROM users WHERE username='" 
+	    SQL = "SELECT password,enabled FROM users WHERE username='" 
 					+ username + "'";
     	R = DB->exec("AuthPsql",SQL);
         DB->abort("AuthPsql");
@@ -81,9 +81,14 @@ void AuthPsql::authSession(string username, string password) {
     // Check users password hash matches
     if (db_pass == hash) {
 		L_INFO(LOG_AUTH," -> Success.");
+        if (string(R[0]["enabled"].c_str()) == "f") {
+            L_ERROR(LOG_AUTH,"Permission denied for '" + username + "'");
+            throw AUTH_PERMISSION_DENIED;
+        }
 		Auth::authSession(username,password);
 	}
 	else {
+        L_ERROR(LOG_AUTH,"Incorrect username or password for " + username);
 		throw AUTH_INVALID_CREDENTIALS;
 	}
 }

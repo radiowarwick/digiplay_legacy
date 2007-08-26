@@ -105,7 +105,7 @@ void Auth::authSession(string username, string password) {
                             " table.");
 		}
 
-        // See if the user has a directory and add it if necessary
+/*        // See if the user has a directory and add it if necessary
    	 	try {
             // Get their home directory
    		    SQL = "SELECT id FROM dir WHERE name='" + username 
@@ -143,7 +143,7 @@ void Auth::authSession(string username, string password) {
         	L_ERROR(LOG_AUTH,"Failed to find user's folder in database.");
             return;
     	}
-	}
+*/	}
 	else {
         DB->abort("AuthUser");
 		L_ERROR(LOG_AUTH,"Failed to find user in database.");

@@ -36,7 +36,7 @@ using namespace std;
 
 class AuthLdap : public Auth {
 	public:
-		AuthLdap(string host, unsigned int port, string baseDn);
+		AuthLdap(string host, unsigned int port, string baseDn, string filter);
 		~AuthLdap();
 		void authSession(string username, string password);
 
@@ -46,11 +46,14 @@ class AuthLdap : public Auth {
         ldap_set_option_t ldap_set_option;
         ldap_simple_bind_s_t ldap_simple_bind_s;
         ldap_err2string_t ldap_err2string;
+        ldap_search_s_t ldap_search_s;
+        ldap_count_entries_t ldap_count_entries;
 
 		string _host;
 		DataAccess *DB;
 		unsigned int _port;
 		string _baseDn;
+        string _filter;
 		LDAP *_myLdap;
 };
 

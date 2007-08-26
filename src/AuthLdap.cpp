@@ -28,7 +28,8 @@
 
 #include "AuthLdap.h"
 
-AuthLdap::AuthLdap(string host, unsigned int port, string baseDn) {
+AuthLdap::AuthLdap(string host, unsigned int port, string baseDn, 
+                        string filter) {
 	char* routine = "AuthLdap::AuthLdap";
 
     // Attempt to load the ldap shared library
@@ -45,6 +46,8 @@ AuthLdap::AuthLdap(string host, unsigned int port, string baseDn) {
     ldap_simple_bind_s 
         = (ldap_simple_bind_s_t) dlsym(ldap_handle, "ldap_simple_bind_s");
     ldap_err2string = (ldap_err2string_t) dlsym(ldap_handle, "ldap_err2string");
+    ldap_search_s = (ldap_search_s_t) dlsym(ldap_handle, "ldap_search_s");
+    ldap_count_entries = (ldap_count_entries_t) dlsym(ldap_handle, "ldap_count_entries");
     // Now ready to use these routines
 
 	_myLdap = NULL;
@@ -63,6 +66,7 @@ AuthLdap::AuthLdap(string host, unsigned int port, string baseDn) {
 	_host = host;
 	_port = port;
 	_baseDn = baseDn;
+    _filter = filter;
 	DB = new DataAccess();
 
 	L_INFO(LOG_AUTH,"Creating connection to LDAP server...");
@@ -93,85 +97,75 @@ void AuthLdap::authSession(string username, string password) {
 	}
 
 	string dn = "uid=" + username + "," + _baseDn;
+    string filter = "(&" + _filter + "(uid=" + username + "))";
 	L_INFO(LOG_AUTH," -> bind DN is '" + dn + "'");
+    L_INFO(LOG_AUTH," -> user filter is '" + filter + "'");
 
     // Bind to LDAP as user
 	int ret = 0;
 	int version = LDAP_VERSION3;
 	ldap_set_option(_myLdap, LDAP_OPT_PROTOCOL_VERSION, &version);
 	ret = ldap_simple_bind_s(_myLdap, dn.c_str(), password.c_str());
-	string retText = ldap_err2string(ret);
     
-    // If successful it will return the word "Success"
-	if (retText == "Success") {
-		L_INFO(LOG_AUTH," -> Success.  Checking for username in database.");
-
-        // Check whether user exists in the database.
-        // Since we're using LDAP authentication, they may not.
-        string SQL = "SELECT id, enabled FROM users WHERE username = '"
-                        + username + "' LIMIT 1";
-		PqxxResult R;
-		try {
-        	R = DB->exec("AuthLdap",SQL);
-            DB->abort("AuthLdap");
-		}
-		catch (...) {
-			L_ERROR(LOG_AUTH,"Failed to check for user in database."); 
-            DB->abort("AuthLdap");
-            return;
-		}
-
-        if (R.size() == 0) {
-            L_ERROR(LOG_AUTH,"User is not in database. Login denied.");
-            throw AUTH_INVALID_CREDENTIALS;            
-/*            L_INFO(LOG_AUTH,"No user ID matching username. "
-                            "Adding to database.");
-		    try {
-                // Add the user
-		        SQL = "INSERT INTO users (username, password, enabled) "
-       		           "VALUES ('" + username + "', '', 't'); ";
-                DB->exec("AuthLdap",SQL);
-                // Get their new user id
-	     		SQL = "SELECT id FROM users WHERE username = '"
-                              + username + "' LIMIT 1";
-                R = DB->exec("AuthLdap",SQL);
-                DB->exec("AuthLdap",SQL);
-                // Add them to the everyone group
-                SQL = "INSERT INTO usersgroups (userid, groupid) "
-						 "VALUES (" + string(R[0]["id"].c_str()) + "," 
-                         + GROUP_EVERYONE + ")";
-    		    DB->exec("AuthLdap",SQL);
-		        DB->commit("AuthLdap");
-    		}
-		    catch (...) {
-                DB->abort("AuthLdap");
-                L_ERROR(LOG_AUTH,"Failed to insert user " + username +
-		                " into the database.");
-   		    }
-*/        }
-		else {
-			L_INFO(LOG_AUTH,"Username " + username 
-                            + " already in the database so not adding.");
-            if (string(R[0]["enabled"].c_str()) == "f") {
-                L_ERROR(LOG_AUTH,"User account " + username + " is disabled.");
-                throw AUTH_INVALID_CREDENTIALS;
+    switch (ret) {
+	    case LDAP_SUCCESS: {
+            L_INFO(LOG_AUTH," -> Bind successful.");
+            LDAPMessage* res;
+            if (ldap_search_s(_myLdap, dn.c_str(), LDAP_SCOPE_SUBTREE,
+                        filter.c_str(), NULL, 0, &res) != LDAP_SUCCESS) {
+                L_ERROR(LOG_AUTH, "Unable to query for user.");
             }
-		}
-		Auth::authSession(username,password);
-	}
-	else if (retText == "Invalid credentials") {
-		L_ERROR(LOG_AUTH," -> Invalid credentials.");
-		throw AUTH_INVALID_CREDENTIALS;
-	}
-	else if (retText == "Protocol error") {
-		L_ERROR(LOG_AUTH," -> Protocol error");
-		throw AUTH_LDAP_PROTOCOL_ERROR;
-	}
-	else {
-		L_INFO(LOG_AUTH," -> return status: " + retText);
-		throw AUTH_FAILED;
-	}
+            if (ldap_count_entries(_myLdap, res) == 0) {
+                L_INFO(LOG_AUTH," -> User denied by filter.");
+                throw AUTH_PERMISSION_DENIED;
+            }
+		    L_INFO(LOG_AUTH," -> Success.  Checking for username in database.");
 
+            // Check whether user exists in the database.
+            // Since we're using LDAP authentication, they may not.
+            string SQL = "SELECT id, enabled FROM users WHERE username = '"
+                            + username + "' LIMIT 1";
+    		PqxxResult R;
+    		try {
+            	R = DB->exec("AuthLdap",SQL);
+                DB->abort("AuthLdap");
+    		}
+    		catch (...) {
+    			L_ERROR(LOG_AUTH,"Failed to check for user in database."); 
+                DB->abort("AuthLdap");
+                return;
+    		}
+    
+            if (R.size() == 0) {
+                L_ERROR(LOG_AUTH,"User is not in database. Login denied.");
+                throw AUTH_PERMISSION_DENIED;            
+            }
+    		else {
+    			L_INFO(LOG_AUTH,"Username " + username 
+                                + " already in the database so not adding.");
+                if (string(R[0]["enabled"].c_str()) == "f") {
+                    L_ERROR(LOG_AUTH,"User account " + username 
+                            + " is disabled.");
+                    throw AUTH_PERMISSION_DENIED;
+                }
+		    }
+		    Auth::authSession(username,password);
+            break;
+        }
+        case LDAP_INVALID_CREDENTIALS: {
+		    L_ERROR(LOG_AUTH," -> Invalid credentials.");
+    		throw AUTH_INVALID_CREDENTIALS;
+    	}
+        case LDAP_PROTOCOL_ERROR: {
+		    L_ERROR(LOG_AUTH," -> Protocol error");
+    		throw AUTH_LDAP_PROTOCOL_ERROR;
+    	}
+        default: {
+		    L_INFO(LOG_AUTH," -> return status: " 
+                                + string(ldap_err2string(ret)));
+    		throw AUTH_FAILED;
+	    }
+    }
 	return;
 
 	//TODO: Get information about user

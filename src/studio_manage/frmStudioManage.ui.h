@@ -75,7 +75,8 @@ void frmStudioManage::init() {
     if (conf->getParam("auth_method") == "LDAP") {
     	authModule = new AuthLdap(conf->getParam("ldap_host"),
 								atoi(conf->getParam("ldap_port").c_str()),
-								conf->getParam("ldap_dn"));
+								conf->getParam("ldap_dn"),
+                                conf->getParam("ldap_filter"));
     }
     else if (conf->getParam("auth_method") == "PSQL") {
     	authModule = new AuthPsql();
@@ -228,19 +229,28 @@ void frmStudioManage::btnLoginClicked()
 			}
 			catch (int e) {
 			    if ( e==AUTH_INVALID_CREDENTIALS ) {
-					cout << "failed: Incorrect username or password." << endl;
 					dlgWarn *warning = new dlgWarn(this, "");
-					warning->setTitle("Error");
+					warning->setTitle("Failed");
 					warning->setWarning("Incorrect username or password.");
 					warning->setQuestion(false);
 					warning->exec();
 					delete warning;
 			    }
+                else if (e == AUTH_PERMISSION_DENIED ) {
+                    dlgWarn *warning = new dlgWarn(this, "");
+                    warning->setTitle("Failed");
+                    warning->setWarning("Permission Denied. "
+                        "If you believe this is in error, please contact "
+                        "the system administrator.");
+                    warning->setQuestion(false);
+                    warning->exec();
+                    delete warning;
+                }
 			    else {
-					cout << "failed: Error code " << e << endl;
 					dlgWarn *warning = new dlgWarn(this, "");
 					warning->setTitle("Error");
-					warning->setWarning("Problem connecting to the server. Please check your settings.");
+					warning->setWarning("Problem authenticating with server. "
+                                        "Please check your settings.");
 					warning->setQuestion(false);
 					warning->exec();
 					delete warning;

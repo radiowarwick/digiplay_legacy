@@ -33,6 +33,7 @@ using namespace std;
 
 #define AUTH_FAILED					10000
 #define AUTH_INVALID_CREDENTIALS 	10001
+#define AUTH_PERMISSION_DENIED      10002
 
 
 class Auth {

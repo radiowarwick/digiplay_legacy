@@ -103,7 +103,7 @@ alter sequence albums_id_seq restart 2;
 insert into configuration values ( 1,'ldap_host','localhost',-1 ) ;
 insert into configuration values ( 2,'ldap_port','389',-1 ) ;
 insert into configuration values ( 3,'ldap_dn','ou=People,dc=example,dc=com',-1 ) ;
-insert into configuration values ( 4,'ldap_filter','(objectClass=posixAccount)') ;
+insert into configuration values ( 4,'ldap_filter','(objectClass=*)') ;
 insert into configuration values ( 5,'auth_method','PSQL',-1 ) ;
 insert into configuration values ( 6,'channel_1','/dev/dsp',0 ) ;
 insert into configuration values ( 7,'bin_weighting_1','5',0 ) ;

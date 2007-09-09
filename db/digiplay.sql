@@ -9,7 +9,7 @@
 --                      See http://tedia2sql.tigris.org/AUTHORS.html for tedia2sql author information
 -- 
 --   Target Database:   postgres
---   Generated at:      Sat Jun 23 15:17:47 2007
+--   Generated at:      Sun Sep  9 12:31:11 2007
 --   Input Files:       usersgroupsdir.dia cartsets.dia audio.dia scripts.dia showplans.dia sustainer.dia website.dia digiplay.dia
 -- 
 -- ================================================================================
@@ -783,6 +783,56 @@ create table patches (
   constraint pk_Patches primary key (id)
 ) ;
 
+-- txschedule
+create table txschedule (
+  id                        serial not null,
+  txshowid                  integer not null,
+  starttime                 integer not null,
+  endtime                   integer not null,
+  constraint pk_Txschedule primary key (id)
+) ;
+
+-- txshows
+create table txshows (
+  id                        serial not null,
+  name                      character varying not null,
+  description               character varying,
+  picture                   character varying,
+  blurb                     character varying,
+  txcategoryid              integer not null,
+  constraint pk_Txshows primary key (id)
+) ;
+
+-- txcategories
+create table txcategories (
+  id                        serial not null,
+  name                      character varying,
+  description               character varying,
+  bgcolour                  character(6) not null,
+  constraint pk_Txcategories primary key (id)
+) ;
+
+-- txshowskeywords
+create table txshowskeywords (
+  id                        serial not null,
+  txshowid                  integer,
+  keywordid                 integer,
+  constraint pk_Txshowskeywords primary key (id)
+) ;
+
+-- txshowsusers
+create table txshowsusers (
+  id                        serial not null,
+  txshowid                  integer,
+  userid                    integer,
+  constraint pk_Txshowsusers primary key (id)
+) ;
+
+
+
+
+
+
 
 
 
@@ -1154,6 +1204,24 @@ alter table requests add constraint fk_requests_userid
   foreign key (userid)
   references users (id)  ;
 alter table changelog add constraint fk_changelog_userid
+  foreign key (userid)
+  references users (id)  ;
+alter table txschedule add constraint fk_txschedule_showid
+  foreign key (txshowid)
+  references txshows (id)  ;
+alter table txshows add constraint fk_txshows_txcategoryid
+  foreign key (txcategoryid)
+  references txcategories (id)  ;
+alter table txshowskeywords add constraint fk_txshowskeywords_txshowid
+  foreign key (txshowid)
+  references txshows (id)  ;
+alter table txshowskeywords add constraint fk_txshowskeywords
+  foreign key (keywordid)
+  references keywords (id)  ;
+alter table txshowsusers add constraint fk_txshowsusers_txshowid
+  foreign key (txshowid)
+  references txshows (id)  ;
+alter table txshowsusers add constraint fk_txshowsusers_userid
   foreign key (userid)
   references users (id)  ;
 

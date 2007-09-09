@@ -3,7 +3,7 @@
  * ArchiveManager.cpp
  * Provides management operations on a DPS archive
  *
- * Copyright (c) 2005-2006 Chris Cantwell
+ * Copyright (c) 2005-2007 Chris Cantwell
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ using namespace std;
 
 /**
  * Initialise archive manager.
+ * @param   new_A   Archive structure describing this archive.
  */
 ArchiveManager::ArchiveManager(archive new_A) {
 	A = new_A;
@@ -98,7 +99,9 @@ archive ArchiveManager::spec() {
 
 /**
  * Returns a track struct describing track \a index in the location.
- * Location specifies: DB, inbox, trash
+ * @param   c       Specifies component of archive to access.
+ * @param   index   Specifies index within this component to return.
+ * @returns         Track at \a index in component \a c.
  */
 track ArchiveManager::at(ARCHIVE_COMPONENT c, unsigned int index) {
     char* routine = "ArchiveManager::at";
@@ -120,6 +123,8 @@ track ArchiveManager::at(ARCHIVE_COMPONENT c, unsigned int index) {
 
 /**
  * Returns the size of the specified component of the archive 
+ * @param   c       Specifies component of archive for which size is requested.
+ * @returns         Size of specified component.
  */
 unsigned int ArchiveManager::size(ARCHIVE_COMPONENT c) {
     char* routine = "ArchiveManager::size";
@@ -139,6 +144,8 @@ unsigned int ArchiveManager::size(ARCHIVE_COMPONENT c) {
 /**
  * Clean up the info and formatting for the track at index \a index
  * in the specified location.
+ * @param   c       Specifies a component of the archive
+ * @param   index   Specifies the index to clean
  */
 void ArchiveManager::clean(ARCHIVE_COMPONENT c, unsigned int index) {
     char* routine = "ArchiveManager::clean";
@@ -234,7 +241,8 @@ void ArchiveManager::add(unsigned int index) {
 
 
 /**
- * Remove a track from the database back into the inbox
+ * Remove a track from the database back into the inbox.
+ * @param   index   The index of the track in the database to remove.
  */
 void ArchiveManager::remove(unsigned int index) {
     char* routine = "ArchiveManager::remove";
@@ -264,7 +272,8 @@ void ArchiveManager::remove(unsigned int index) {
 
 
 /**
- * Delete a track - move it from the database into the trash directory
+ * Delete a track - move it from the database into the trash directory.
+ * @param   index   The index of the track in the database to trash.
  */
 void ArchiveManager::trash(unsigned int index) {
     char* routine = "ArchiveManager::trash";
@@ -294,7 +303,8 @@ void ArchiveManager::trash(unsigned int index) {
 
 
 /**
- * Recover a track from the trash back into the database
+ * Recover a track from the trash back into the database.
+ * @param   index   The index of the track in the trash folder to recover.
  */
 void ArchiveManager::recover(unsigned int index) {
     char* routine = "ArchiveManager::recover";
@@ -323,7 +333,7 @@ void ArchiveManager::recover(unsigned int index) {
  * required by users other than Radio Warwick.
  *
  * After upgrading an INFO file, the .info file is moved into the trash
- * directory to be cleaned out manually.
+ * directory to be cleaned out manually if desired.
  */
 void ArchiveManager::upgradeInfo() {
     char* routine = "ArchiveManager::upgradeInfo";
@@ -374,8 +384,8 @@ void ArchiveManager::upgradeInfo() {
 
 
 /**
- * Backs up the information from the database into the associated XML file
- * This backs up the database track \a index
+ * Backs up the information from the database into the associated XML file.
+ * @param   index   Index of the track in the database to backup to XML.
  */
 void ArchiveManager::backup(unsigned int index) {
     char* routine = "ArchiveManager::backup";
@@ -394,6 +404,7 @@ void ArchiveManager::backup(unsigned int index) {
 
 /**
  * Merges another archive into this archive.
+ * @param   A       ArchiveManager for archive to merge into this archive.
  */
 void ArchiveManager::merge(ArchiveManager *A) {
     for (unsigned int i = 0; i < A->size(DPS_DB); i++) {
@@ -411,6 +422,8 @@ void ArchiveManager::merge(ArchiveManager *A) {
 
 /**
  * Reads the track information from an XML document into a track structure.
+ * @param   filename    File to read into XML
+ * @returns             Vector of tracks - one for each audio segment in file.
  */
 std::vector<track> ArchiveManager::readXML(string filename) {
     char* routine = "ArchiveManager::readXML";
@@ -522,6 +535,8 @@ std::vector<track> ArchiveManager::readXML(string filename) {
 
 /**
  * Writes out an XML document containing the information in \a t.
+ * @param   filename    Name of file to write XML data to.
+ * @param   t           Track information to convert to XML.
  */
 void ArchiveManager::writeXML(std::string filename, track t) {
 	XmlDocument *D = new XmlDocument();
@@ -611,6 +626,8 @@ void ArchiveManager::writeXML(std::string filename, track t) {
  * Reads in the info from a .info into a track structure. The INFO format is
  * now depreciated and this routine is only kept to allow the upgrade of INFO
  * to XML formats.
+ * @param   filename    Name of INFO file to read.
+ * @returns             Track containing contents of INFO file.
  */
 track ArchiveManager::readInfo(std::string filename) {
     char* routine = "ArchiveManager::readInfo";
@@ -737,6 +754,8 @@ track ArchiveManager::readInfo(std::string filename) {
 /**
  * Loads the database entries for this archive into the \a tracks vector.
  * \todo handle multiple artists properly
+ * @param   tracks  Pointer to a vector of tracks into which the information
+ *                  from the database is to be stored.
  */
 void ArchiveManager::loadDB(vector<track> *tracks) {
     char* routine = "ArchiveManager::loadDB";
@@ -779,6 +798,8 @@ void ArchiveManager::loadDB(vector<track> *tracks) {
 
 /**
  * Loads the information from tracks currently in the inbox into \a tracks.
+ * @param   tracks  Vector of tracks into which the files in the inbox will
+ *                  be read.
  */
 void ArchiveManager::loadInbox(vector<track> *tracks) {
 	char* routine = "ArchiveManager::loadInbox";
@@ -830,6 +851,8 @@ void ArchiveManager::loadInbox(vector<track> *tracks) {
 
 /**
  * Loads the information about tracks currently in the trash directory.
+ * @param   tracks  Vector of tracks into which the files in the trash will
+ *                  be read.
  */
 void ArchiveManager::loadTrash(vector<track> *tracks) {
 	char* routine = "ArchiveManager::loadTrash";
@@ -884,6 +907,7 @@ void ArchiveManager::loadTrash(vector<track> *tracks) {
  * routine handles the addition of a music track into the database,
  * automatically checking and creating artist and album entries where
  * necessary.
+ * @param   t       Track information to add to the database.
  */
 void ArchiveManager::addTrack(track t) {
     char* routine = "ArchiveManager::addTrack";
@@ -895,11 +919,7 @@ void ArchiveManager::addTrack(track t) {
 
     try {
         L_INFO(LOG_DB,"Adding track " + t.md5);
-        // We need to check the track isn't already in the database
-        // if it is, we remove it and all associated links
-        //SQL = "SELECT md5 FROM audio WHERE md5='" + t.md5 + "'";
-        //R = DB->exec("ArchiveManagerAddTrack",SQL);
-        //if (R.size() == 1) removeTrack(t.md5);
+        // Remove track if it already exists and add it afresh.
         removeTrack(t.md5);
 
         // See if the artists already exists and use them if they do
@@ -997,6 +1017,7 @@ void ArchiveManager::addTrack(track t) {
  * Adds the information specified by \a t into the database as a jingle. This
  * inserts a jingle item into the database, creating the jingle package entries
  * where necessary.
+ * @param   t       Track information to add to database.
  */
 void ArchiveManager::addJingle(track t) {
     char* routine = "ArchiveManager::addJingle";
@@ -1076,7 +1097,9 @@ void ArchiveManager::addJingle(track t) {
 
 
 /**
- * Adds the information in \a t to the database as an advert.
+ * Adds the information in \a t to the database as an advert. This adds company
+ * and company description information.
+ * @param   t       Track information to add to database.
  */
 void ArchiveManager::addAdvert(track t) {
     char* routine = "ArchiveManager::addAdvert";
@@ -1151,7 +1174,9 @@ void ArchiveManager::addAdvert(track t) {
 
 
 /**
- * Adds the information in \a t to the database as a users prerec.
+ * Adds the information in \a t to the database as a users prerec. This places
+ * the audio in the users home directory in the virtual file system as well.
+ * @param   t       Track information to add to database.
  */
 void ArchiveManager::addPrerec(track t) {
     char* routine = "ArchiveManager::addPrerec";
@@ -1227,6 +1252,7 @@ void ArchiveManager::addPrerec(track t) {
 /**
  * Clean out directory, user, group and any artist or jinglepackage links such
  * that the track can be removed. The track is then removed.
+ * @param   md5     MD5 hash specifying a track to remove from the database.
  */
 void ArchiveManager::removeTrack(string md5) {
     char* routine = "ArchiveManager::removeTrack";
@@ -1270,6 +1296,7 @@ void ArchiveManager::removeTrack(string md5) {
 
 /**
  * Cleans up the track information stored in \a t
+ * @param   t       Pointer to a track which needs cleaning.
  */
 void ArchiveManager::cleanInfo(track *t) {
     char* routine = "ArchiveManager::cleanInfo";
@@ -1334,6 +1361,7 @@ void ArchiveManager::cleanInfo(track *t) {
 
 /**
  * Scans the audio data associated with \a t to determine trim points.
+ * @param   t       Pointer to track information to which trim points are added.
  */
 void ArchiveManager::trimAudio(track *t) {
     char* routine = "ArchiveManager::trimAudio";

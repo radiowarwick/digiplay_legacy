@@ -3,7 +3,7 @@
  * ArchiveManager.h
  * Provides management operations on a DPS archive
  *
- * Copyright (c) 2005-2006 Chris Cantwell
+ * Copyright (c) 2005-2007 Chris Cantwell
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,9 +41,12 @@ class ArchiveManager {
 		void load();
 		archive spec();
 		
-		/* Track management */
+		/// Returns the track \a index from archive component \a c
 		track at(ARCHIVE_COMPONENT c, unsigned int index);
+        /// Returns the number of tracks in archive component \a c
 		unsigned int size(ARCHIVE_COMPONENT);
+        /// Cleans the meta data associated with track \a index in archive
+        /// component \a c
 		void clean(ARCHIVE_COMPONENT c, unsigned int index);
 
         /// Adds a track from the inbox to the database
@@ -63,23 +66,35 @@ class ArchiveManager {
         /// Merge two another archive into this archive.
         void merge(ArchiveManager *A);
 	
-        // Read and write XML and info
+        /// Read an XML file specified by \a filename
         std::vector<track> readXML(std::string filename);
+        /// Writes track \a t to the file \a filename
 		void writeXML(std::string filename, track t);
+        /// Read an INFO file specified by \a filename
 		track readInfo(std::string filename);
 
 	private:
+        /// Loads the database component of the archive
 		void loadDB(std::vector<track> *tracks);
+        /// Loads the inbox component of the archive
 		void loadInbox(std::vector<track> *tracks);
+        /// Loads the trash component of the archive
 		void loadTrash(std::vector<track> *tracks);
 
+        /// Adds a music track \a t to the database
         void addTrack(track t);
+        /// Adds a jingle \a t to the database
         void addJingle(track t);
+        /// Adds an advert \a t to the database
         void addAdvert(track t);
+        /// Adds user prerecorded content \a t to the database
         void addPrerec(track t);
+        /// Removes the track \a md5 and all metadata from the database
         void removeTrack(std::string md5);
 
+        /// Cleans track information (trim whitespace, etc)
 		void cleanInfo(track *t);
+        /// Determines trim points for the audio data
 		void trimAudio(track *t);
 
 		bool initialised;

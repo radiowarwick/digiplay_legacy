@@ -3,7 +3,7 @@
  * AuthLdap.h
  * Provides authentication of users against an LDAP server
  *
- * Copyright (c) 2006 Chris Cantwell
+ * Copyright (c) 2006-2007 Chris Cantwell
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

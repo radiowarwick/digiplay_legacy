@@ -107,9 +107,12 @@ void frmStudioManage::init() {
 	QString path = qApp->applicationDirPath();
 
 	//Load Images
-	cout << " -> Loading Images... ";
+	cout << " -> Loading Images and setting contact information... ";
 	pixFade->setPixmap(QPixmap(path + "/images/fade.png"));
 	pixLogo->setPixmap(QPixmap(path + "/images/rawdigiplay.png"));
+    lblContactPhone->setText(QString(conf->getParam("contact_phone")));
+    lblContactSms->setText(QString(conf->getParam("contact_sms")));
+    lblContactEmail->setText(QString(conf->getParam("contact_email")));
 	cout << "success." << endl;
 	
 	// Load tab panels after removing the template tab.	

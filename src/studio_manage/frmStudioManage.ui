@@ -532,85 +532,6 @@
         </property>
         <widget class="QLabel">
             <property name="name">
-                <cstring>textLabel2_3</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>184</x>
-                    <y>31</y>
-                    <width>660</width>
-                    <height>20</height>
-                </rect>
-            </property>
-            <property name="paletteForegroundColor">
-                <color>
-                    <red>208</red>
-                    <green>208</green>
-                    <blue>208</blue>
-                </color>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>3</red>
-                    <green>157</green>
-                    <blue>189</blue>
-                </color>
-            </property>
-            <property name="font">
-                <font>
-                    <family>Sans Serif</family>
-                    <bold>1</bold>
-                </font>
-            </property>
-            <property name="text">
-                <string>studio@radio.warwick.ac.uk     |     07789 100 666     |     024 765 73077</string>
-            </property>
-            <property name="alignment">
-                <set>AlignCenter</set>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>lblDate</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>430</x>
-                    <y>3</y>
-                    <width>320</width>
-                    <height>30</height>
-                </rect>
-            </property>
-            <property name="paletteForegroundColor">
-                <color>
-                    <red>255</red>
-                    <green>255</green>
-                    <blue>255</blue>
-                </color>
-            </property>
-            <property name="paletteBackgroundColor">
-                <color>
-                    <red>3</red>
-                    <green>157</green>
-                    <blue>189</blue>
-                </color>
-            </property>
-            <property name="font">
-                <font>
-                    <family>Sans Serif</family>
-                    <pointsize>16</pointsize>
-                    <bold>1</bold>
-                </font>
-            </property>
-            <property name="text">
-                <string>Wednesday 26th September 2004</string>
-            </property>
-            <property name="alignment">
-                <set>AlignVCenter|AlignRight</set>
-            </property>
-        </widget>
-        <widget class="QLabel">
-            <property name="name">
                 <cstring>lblClock</cstring>
             </property>
             <property name="geometry">
@@ -697,6 +618,124 @@
                 <bool>false</bool>
             </property>
         </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblDate</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>430</x>
+                    <y>3</y>
+                    <width>320</width>
+                    <height>30</height>
+                </rect>
+            </property>
+            <property name="paletteForegroundColor">
+                <color>
+                    <red>255</red>
+                    <green>255</green>
+                    <blue>255</blue>
+                </color>
+            </property>
+            <property name="paletteBackgroundColor">
+                <color>
+                    <red>3</red>
+                    <green>157</green>
+                    <blue>189</blue>
+                </color>
+            </property>
+            <property name="font">
+                <font>
+                    <family>Sans Serif</family>
+                    <pointsize>16</pointsize>
+                    <bold>1</bold>
+                </font>
+            </property>
+            <property name="text">
+                <string>Wednesday 26th September 2004</string>
+            </property>
+            <property name="alignment">
+                <set>AlignVCenter|AlignRight</set>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblContactPhone</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>610</x>
+                    <y>28</y>
+                    <width>140</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="paletteForegroundColor">
+                <color>
+                    <red>208</red>
+                    <green>208</green>
+                    <blue>208</blue>
+                </color>
+            </property>
+            <property name="paletteBackgroundColor">
+                <color>
+                    <red>3</red>
+                    <green>157</green>
+                    <blue>189</blue>
+                </color>
+            </property>
+            <property name="font">
+                <font>
+                    <family>Sans Serif</family>
+                    <bold>1</bold>
+                </font>
+            </property>
+            <property name="text">
+                <string>01234567890</string>
+            </property>
+            <property name="alignment">
+                <set>AlignVCenter|AlignRight</set>
+            </property>
+        </widget>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>lblContactEmail</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>270</x>
+                    <y>30</y>
+                    <width>210</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="paletteForegroundColor">
+                <color>
+                    <red>208</red>
+                    <green>208</green>
+                    <blue>208</blue>
+                </color>
+            </property>
+            <property name="paletteBackgroundColor">
+                <color>
+                    <red>3</red>
+                    <green>157</green>
+                    <blue>189</blue>
+                </color>
+            </property>
+            <property name="font">
+                <font>
+                    <family>Sans Serif</family>
+                    <bold>1</bold>
+                </font>
+            </property>
+            <property name="text">
+                <string>studio@example.com</string>
+            </property>
+            <property name="alignment">
+                <set>AlignVCenter|AlignLeft</set>
+            </property>
+        </widget>
     </widget>
     <widget class="QFrame">
         <property name="name">
@@ -747,6 +786,45 @@
             <string></string>
         </property>
     </widget>
+    <widget class="QLabel">
+        <property name="name">
+            <cstring>lblContactSms</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>470</x>
+                <y>740</y>
+                <width>140</width>
+                <height>20</height>
+            </rect>
+        </property>
+        <property name="paletteForegroundColor">
+            <color>
+                <red>208</red>
+                <green>208</green>
+                <blue>208</blue>
+            </color>
+        </property>
+        <property name="paletteBackgroundColor">
+            <color>
+                <red>3</red>
+                <green>157</green>
+                <blue>189</blue>
+            </color>
+        </property>
+        <property name="font">
+            <font>
+                <family>Sans Serif</family>
+                <bold>1</bold>
+            </font>
+        </property>
+        <property name="text">
+            <string>01234567890</string>
+        </property>
+        <property name="alignment">
+            <set>AlignCenter</set>
+        </property>
+    </widget>
 </widget>
 <images>
     <image name="image0">
@@ -767,8 +845,8 @@
 <slots>
     <slot>customEvent( QCustomEvent * event )</slot>
     <slot>processConfigUpdate()</slot>
-    <slot>btnLoginClicked()</slot>
     <slot>updateCartset( QString index )</slot>
+    <slot>btnLoginClicked()</slot>
 </slots>
 <functions>
     <function access="private" specifier="non virtual">init()</function>

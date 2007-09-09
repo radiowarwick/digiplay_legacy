@@ -166,7 +166,7 @@ if [[ ! -f digiplay-data.sql ]]; then
 fi
 
 printf " -> Creating objects..."
-$PSQL -qf digiplay.sql $DBNAME #2>/dev/null
+$PSQL -qf digiplay.sql $DBNAME 2>/dev/null
 if [[ $? > 0 ]]; then
 	printf " -> Failed to generate database objects\n"
 	printf "Installation Aborted. Empty database remains.\n"

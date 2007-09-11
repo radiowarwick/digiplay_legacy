@@ -1,7 +1,9 @@
 #include "Counter.h"
 #include <iostream>
 Audio::Counter::Counter() {
-
+    _totalSamples = 0;
+    _currentSample = 0;
+    _state = STATE_STOP;
 }
 
 Audio::Counter::~Counter() {

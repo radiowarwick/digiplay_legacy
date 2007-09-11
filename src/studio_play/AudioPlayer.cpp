@@ -37,6 +37,7 @@ using namespace std;
 
 AudioPlayer::AudioPlayer(QWidget *parent, const char* name, unsigned short playerId) 
         : QWidget(parent,name) {
+
     drawCreate();
     id = dps_itoa(playerId);
     DB = new DataAccess();
@@ -46,19 +47,22 @@ AudioPlayer::AudioPlayer(QWidget *parent, const char* name, unsigned short playe
     conf->setParam("player" + id + "_md5","");
     grpFrame = 0;
 
+    // Setup track end counter
     ck = new clockThread(this);
     ck->start();
     processConfigUpdate();
 
+    // Setup audio
+    _lastSample = 0;
     audioFilereader = new Audio::InputRaw();
     audioPlayer = new Audio::OutputDsp(device);
-
     audioFilereader->connect(OUT0,audioPlayer,IN0);
     audioFilereader->addCounter(this);
 
     length_hours = 0;
     length_mins = 0;
     length_secs = 0;
+
 }
 
 AudioPlayer::~AudioPlayer() {

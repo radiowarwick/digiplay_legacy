@@ -32,7 +32,6 @@ using namespace std;
 AudioWallManager::AudioWallManager( AudioWall *A ) {
 	_A = A;
     DB = new DataAccess();
-    cout << "Completed AudioWallManager constructor" << endl;
 }
 
 AudioWallManager::~AudioWallManager() {

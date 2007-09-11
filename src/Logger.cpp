@@ -117,11 +117,11 @@ void Logger::initLogDir() {
 	        system(string("chown dps:adm " + filename).c_str());
 	        system(string("chmod 640 " + filename).c_str());
 		}
-		else {
+/*		else {
             cout << "WARNING: This program is not currently running as root."; 
 			cout << endl;
         }
-	    logFile = new ofstream(filename.c_str(), ios::app);
+*/	    logFile = new ofstream(filename.c_str(), ios::app);
 		if ( ! (logFile->is_open() && logFile->good())) {
 			cout << "WARNING: Unable to open log file for writing." << endl;
 			cout << "    The current user may not have permissions to" << endl;

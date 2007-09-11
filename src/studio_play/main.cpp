@@ -19,23 +19,72 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include <iostream>
+
 #include <qapplication.h>
 #include <qstring.h>
 #include "frmPlayout.h"
+
+#include "sys/stat.h"
+#include "getopt.h"
 
 #include "Logger.h"
 #include "Config.h"
 #include "Security.h"
 
-int main( int argc, char ** argv )
+static int logDebug = 0;
+static int logVerbose = 0;
+static int logQuiet = 0;
+
+static struct option long_options[] = {
+    {"debug",   no_argument,    &logDebug, 1},
+    {"verbose", no_argument,    &logVerbose, 1},
+    {"quiet",   no_argument,    &logQuiet, 1},
+    {"help",    no_argument,    0, 'h'},
+    {"version", no_argument,    0, 'v'},
+    {0,0,0,0}
+};
+
+static char* short_options = "hv";
+
+int main( int argc, char * argv[] )
 {
 	char* routine = "studio_play::main";
 
     // Configure logging
-    Logger::setAppName("studio_play");
+    Logger::setAppName("studio_manage");
+    Logger::setLogLevel(INFO);
+    Logger::setDisplayLevel(ERROR);
     Logger::initLogDir();
-    Logger::setLogLevel(5);
-    Logger::setDisplayLevel(0);
+    while (1) {
+        int v;
+        int option_index = 0;
+        v = getopt_long (argc, argv, short_options,long_options, &option_index);
+        if (v == -1) break;
+        switch (v) {
+            case 'h': {
+                std::cout << "USAGE: " << argv[0] 
+                        << " [--debug|--verbose|--quiet] [-h|--help]" 
+                        << " [-v|--version]" << std::endl;
+                exit(0);
+                break;
+            }
+            case 'v': {
+                std::cout.precision(1);
+                std::cout << "DPS Studio Playout Application Version "
+                            << VERSION << std::endl;
+                exit(0);
+                break;
+            }
+        }
+    }
+    if (logDebug + logVerbose + logQuiet > 1) {
+        L_ERROR(LOG_DB,"Only one verbosity level may be specified");
+        exit(-1);
+    }
+    if (logDebug) Logger::setDisplayLevel(INFO);
+    if (logVerbose) Logger::setDisplayLevel(WARNING);
+    if (logQuiet) Logger::setDisplayLevel(CRITICAL);
 
 	if (isRoot()) {
 		L_INFO(LOG_DB,"Attempting to drop to unprivilaged user.");

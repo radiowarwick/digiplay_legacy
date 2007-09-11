@@ -40,15 +40,18 @@ using namespace std;
 #define VERSION 0.95
 
 // Global flags
-static int verbose = 0;
-static int quiet = 0;
+static int logDebug = 0;
+static int logVerbose = 0;
+static int logQuiet = 0;
 static map<string,string> options;
 
 static struct option long_options[] = {
     // Be verbose about what we do
-	{"verbose",     no_argument,    &verbose,1},
+	{"verbose",     no_argument,    &logVerbose,1},
+    // Be very verbose about what we do
+    {"debug",       no_argument,    &logDebug,1},
     // Be brief about what we do
-	{"quiet",       no_argument,    &quiet,  1},
+	{"quiet",       no_argument,    &logQuiet,  1},
     // Display help
     {"help",        no_argument,        0,  'h'},
     {"version",     no_argument,        0,  'v'},
@@ -98,8 +101,8 @@ void processGroup();
 int main(int argc, char *argv[]) {
     // Parse the command line parameters
 	parseCommand(argc,argv);
-    if (verbose && quiet) {
-        cerr << "ERROR     > Can't be verbose and quiet!" << endl;
+    if (logVerbose + logDebug + logQuiet > 1) {
+        cerr << "ERROR: Only one verbosity level should be specified." << endl;
         exit(-1);
     }
 
@@ -107,8 +110,9 @@ int main(int argc, char *argv[]) {
     Logger::setAppName("dpsadmin");
     Logger::initLogDir();
     Logger::setLogLevel(INFO);
-    Logger::setDisplayLevel(WARNING);
-    if (verbose) Logger::setDisplayLevel(INFO);
+    Logger::setDisplayLevel(ERROR);
+    if (debug) Logger::setLogLevel(INFO);
+    if (verbose) Logger::setDisplayLevel(WARNING);
     if (quiet) Logger::setDisplayLevel(CRITICAL);
 
     // Display version if requested

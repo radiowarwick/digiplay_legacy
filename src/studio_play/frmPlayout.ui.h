@@ -89,8 +89,6 @@ void frmPlayout::init() {
     // Initialise remote starts
 //	remoteStartThread *remotes = new remoteStartThread(this);
 //	remotes->start();
-
-	cout << "Finished init" << endl;
 }
 
 void frmPlayout::destroy() {

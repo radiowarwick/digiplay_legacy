@@ -8,20 +8,10 @@ UIC			?=	@/usr/share/qt3/bin/uic
 DEST		=	$(ROOT)/bin
 OUTPUT      =   $(OUT_BASE)
 
+VERSION		=	"0.0"
+
 # Configuration specific stuff
 include $(ROOT)/Makefile.settings
-# If we need authentication, use requested authentication type
-#ifneq (,$(findstring Auth,$(SHARED_MODS)))
-#  ifneq (,$(findstring LDAP,$(AUTH)))
-#    SHARED_MODS += AuthLdap
-#    LIBS += -lldap
-#    DPSFLAGS = -DAUTH_LDAP
-#  endif
-#  ifneq (,$(findstring PSQL,$(AUTH)))
-#    SHARED_MODS += AuthPsql
-#    DPSFLAGS = -DAUTH_PSQL
-#  endif
-#endif
 
 # Generate object list from the modules provided
 # Note: addsuffix might not be portable
@@ -43,8 +33,9 @@ QT_HDRS		=
 # Define compiler and linker flags depending on whether we're
 # compiling a standard executable or a shared library
 CCINC		:=	-I$(ROOT)/src -I$(ROOT)/components -I/usr/include/postgresql -DDEBUG=4
-CCFLAGS		:=	$(DPSFLAGS) -Wall -O3 -D_THREAD_SAFE 
+CCFLAGS		:=	$(DPSFLAGS) -Wall -O3 -D_THREAD_SAFE -DVERSION="\"$(VERSION)\""
 LDFLAGS		:=	-L$(ROOT)/lib -o $(DEST)/$(OUTPUT) 
+
 # if QT is enabled, we need to include the necessary compiler and 
 # linker options. We also need to make a few more objects and generate
 # the necessary header files

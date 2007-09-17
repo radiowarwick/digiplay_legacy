@@ -33,8 +33,8 @@ HDRS		=
 # Compiler and linker options
 LIBS		=	-lpq /usr/lib/libpqxx.a -lm -lpthread
 
-POSTCOMPILE	=	if [ ! -e $(ROOT)/bin/images ]; \
-					then mkdir $(ROOT)/bin/images; fi; \
-					cp -R images/* $(ROOT)/bin/images
+#POSTCOMPILE	=	if [ ! -e $(ROOT)/bin/images ]; \
+#					then mkdir $(ROOT)/bin/images; fi; \
+#					cp -R images/* $(ROOT)/bin/images
 
 include $(ROOT)/src/Makefile.in

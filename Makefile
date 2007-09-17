@@ -1,17 +1,57 @@
-STUDIO		=	audio studio_play studio_manage
-SUE			=	audio sueplay suesched
-ADMIN		=	dpsadmin tools
-APPS		= 	$(STUDIO) $(SUE) $(ADMIN)
+# Makefile for Digiplay
 
-studio: 	$(STUDIO)
-sue:		$(SUE)
+# Base for generated tarball
+VERSION		= 	$(shell cat VERSION)
+BASE		=	digiplay-$(VERSION)
+
+# Installation locations
+ifndef DESTDIR
+BINDIR=/usr/local/bin
+ETCDIR=/etc
+LIBDIR=/usr/local/lib
+MANDIR=/usr/local/share/man/man1
+SHAREDIR=/usr/local/share/dps
+DOCDIR=/usr/local/share/doc/dps
+IMGDIR=$(SHAREDDIR)/images
+else
+BINDIR=$(DESTDIR)/usr/bin
+ETCDIR=$(DESTDIR)/etc
+LIBDIR=$(DESTDIR)/usr/lib
+MANDIR=$(DESTDIR)/usr/share/man/man1
+SHAREDDIR=$(DESTDIR)/usr/share
+DOCDIR=$(SHAREDDIR)/doc/dps
+IMGDIR=$(SHAREDDIR)/dps/images
+endif
+
+# Application groups
+AUDIO		=	audio
+STUDIO		=	studio_play studio_manage
+SUE			=	sueplay suesched
+ADMIN		=	dpsadmin
+DATABASE	=	db
+ALL			=	$(AUDIO) $(STUDIO) $(SUE) $(ADMIN) $(DATABASE)
+
+# Built Executables
+EXE_STUDIO_MANAGE	=	src/studio_manage/studio_manage
+EXE_STUDIO_PLAY		=	src/studio_play/studio_play
+EXE_DPSADMIN		=	src/dpsadmin/dpsadmin
+EXE_SUEPLAY			=	src/sueplay/sueplay
+EXE_SUESCHED		=	src/suesched/suesched
+LIB_DPSAUDIO		=	src/audio/libdpsaudio.so \
+						src/audio/libdpsaudio.so.$(VERSION)
+EXE_ALL				=	$(EXE_STUDIO_MANAGE) $(EXE_STUDIO_PLAY) $(EXE_DPSADMIN)\
+						$(EXE_SUEPLAY) $(EXE_SUESCHED)
+LIB_ALL				=	$(LIB_DPSAUDIO)
+
+.PHONY: clean install doc manual doxygen tar
+
+### Build rules ###
+
+studio: 	$(AUDIO) $(STUDIO)
+sue:		$(AUDIO) $(SUE)
 backend:	$(ADMIN)
 
-include Makefile.settings
-
-.PHONY: clean install
-
-all: $(APPS)
+all: 		$(ALL)
 
 %:
 	@if [ -d src/$@ ]; then \
@@ -24,39 +64,34 @@ all: $(APPS)
 	fi;
 
 clean:
-	@echo "Cleaning source tree"
-	@rm -rf bin lib src/*.o *.tar.gz
-	@-$(foreach APP,$(APPS), if [ -d src/$(APP) ]; then $(MAKE) -C src/$(APP) clean; fi;)
+	@echo "Cleaning source tree"; \
+	rm -rf bin lib src/*.o *.tar.gz
+	@make -C doc/manual clean
+	@-$(foreach APP,$(ALL), if [ -d src/$(APP) ]; then $(MAKE) -C src/$(APP) clean; fi;)
 
 install:
-	@if [ -d bin ]; then \
-		echo "Installing compiled applications in $(INSTALLDIR)"; \
-		cp -rf bin/* $(INSTALLDIR); \
-	fi
-	@if [ -d lib ]; then \
-		echo "Installing libraries in $(LIBDIR)"; \
-		echo "Note: You may need to add $(LIBDIR) to your library search path"; \
-		cp -rf lib/* $(LIBDIR); \
-	fi
-	@echo "Setting up logging directory $(LOGDIR)"
-	@mkdir -p $(LOGDIR)
-	@chmod 666 $(LOGDIR)
+	@mkdir -p $(BINDIR) $(ETCDIR) $(LIBDIR) $(MANDIR) $(SHAREDDIR) $(DOCDIR) \
+				$(IMGDIR);
+	@-$(foreach EXE,$(EXE_ALL), if [ -f $(EXE) ]; then cp -aP $(EXE) $(BINDIR); fi;)
+	@-$(foreach LIB,$(LIB_ALL), if [ -f $(LIB) ]; then cp -aP $(LIB) $(LIBDIR); fi;)
+	@cp -aP share/doc/examples/digiplay.conf $(ETCDIR)
+	@-$(foreach EXE,$(EXE_ALL), if [ -f $(EXE) ]; then cp -aP share/man/man1/`echo $(EXE) | sed 's/.*\///'`.1 $(MANDIR); fi;)
+	@cp -arP share/dps $(SHAREDDIR)
+	@cp -arP share/doc/* $(SHAREDDIR)/doc/dps
 	@echo "Installation complete."
 
-doc: manual
-manual: doc/manual/dpsmanual.tex
-	@cd doc/manual; pdflatex dpsmanual.tex; \
-		mv dpsmanual.pdf ../../; cd ../../
+doc: 		manual
+manual:
+	make -C doc/manual
 
 doxygen:
 	doxygen doc/doxygen.conf
 
-tar: manual
-	@make -s clean
-	@echo "Generating tarball..."
-	@if [ -h `cat VERSION` ]; then rm `cat VERSION`; fi
-	@ln -s . `cat VERSION`
-	@tar -h --exclude `cat VERSION`/`cat VERSION` --exclude-from tar-exclude -cvf `cat VERSION | sed 's/-/_/g'`.tar `cat VERSION` > /dev/null
-	@rm `cat VERSION`
-	@gzip `cat VERSION | sed 's/-/_/g'`.tar
-	@echo "Created ./`cat VERSION | sed 's/-/_/g'`.tar.gz"
+tar: 		clean
+	@echo "Generating tarball..."; \
+	if [ -h $(BASE) ]; then rm $(BASE); fi; \
+	ln -s . $(BASE); \
+	tar -h --exclude $(BASE)/$(BASE) --exclude-from tar-exclude -cvf $(BASE).tar $(BASE) > /dev/null; \
+	rm $(BASE); \
+	gzip $(BASE).tar; \
+	echo "Created $(BASE).tar.gz";

@@ -37,8 +37,6 @@ using namespace std;
 #include "Logger.h"
 #include "Config.h"
 
-#define VERSION 0.95
-
 // Global flags
 static int logDebug = 0;
 static int logVerbose = 0;
@@ -111,9 +109,9 @@ int main(int argc, char *argv[]) {
     Logger::initLogDir();
     Logger::setLogLevel(INFO);
     Logger::setDisplayLevel(ERROR);
-    if (debug) Logger::setLogLevel(INFO);
-    if (verbose) Logger::setDisplayLevel(WARNING);
-    if (quiet) Logger::setDisplayLevel(CRITICAL);
+    if (logDebug) Logger::setLogLevel(INFO);
+    if (logVerbose) Logger::setDisplayLevel(WARNING);
+    if (logQuiet) Logger::setDisplayLevel(CRITICAL);
 
     // Display version if requested
     if (options["version"] == "yes") {

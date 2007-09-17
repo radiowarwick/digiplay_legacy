@@ -1,9 +1,0 @@
-INSTALLDIR	=	/usr/local/bin
-LIBDIR		=	/usr/local/lib
-LOGDIR		=	/var/log/dps
-
-# Available flags: LDAP, PSQL
-AUTH		=	LDAP
-
-# Software revision
-VERSION		= 	1.0.0

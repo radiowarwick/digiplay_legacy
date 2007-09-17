@@ -5,7 +5,6 @@ ROOT		=	../..
 
 # Base name for output (executable name, library basename) and version
 OUT_BASE	=	sueplay
-VERSION		=	1
 
 # Create a library and whether it should be a static library
 OUT_LIB		=	no

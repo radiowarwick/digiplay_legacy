@@ -4,14 +4,10 @@ LD			=	g++
 MOC			?=	@/usr/share/qt3/bin/moc
 UIC			?=	@/usr/share/qt3/bin/uic
 
-# Set default output location and name
-DEST		=	$(ROOT)/bin
+# Set default output location, name and version
+DEST		=	.
 OUTPUT      =   $(OUT_BASE)
-
-VERSION		=	"0.0"
-
-# Configuration specific stuff
-include $(ROOT)/Makefile.settings
+VERSION		=	$(shell cat $(ROOT)/VERSION)
 
 # Generate object list from the modules provided
 # Note: addsuffix might not be portable
@@ -34,7 +30,7 @@ QT_HDRS		=
 # compiling a standard executable or a shared library
 CCINC		:=	-I$(ROOT)/src -I$(ROOT)/components -I/usr/include/postgresql -DDEBUG=4
 CCFLAGS		:=	$(DPSFLAGS) -Wall -O3 -D_THREAD_SAFE -DVERSION="\"$(VERSION)\""
-LDFLAGS		:=	-L$(ROOT)/lib -o $(DEST)/$(OUTPUT) 
+LDFLAGS		:=	-L$(ROOT)/src/audio -o $(DEST)/$(OUTPUT) 
 
 # if QT is enabled, we need to include the necessary compiler and 
 # linker options. We also need to make a few more objects and generate
@@ -46,14 +42,11 @@ ifeq ($(QT_ENABLED),yes)
 	LIBS	+=	-L/usr/share/qt3/lib -L/usr/X11R6/lib -lqt-mt -lXext -lX11
 	QT_OBJS	=	$(addprefix moc_,$(APP_QTOBJS)) \
 				$(addprefix $(ROOT)/src/moc_,$(SHARED_QTOBJS))
-#	QT_OBJS	=	$(addprefix moc_,$(patsubst %.ui,%.o,$(wildcard *.ui)))
-#	QT_HDRS	=	$(patsubst %.ui,%.h,$(wildcard *.ui)) 
 endif
 
 # if we're making a library, need to add the fPIC compiler option
 ifeq ($(OUT_LIB),yes)
 	CCFLAGS     :=   -fPIC $(CCFLAGS)
-	DEST		=	$(ROOT)/lib
 	#if we're making a static library, use the archiver, otherwise make shared
     ifeq ($(OUT_STATIC),yes)
 		OUTPUT      =   lib$(OUT_BASE).a
@@ -70,8 +63,6 @@ endif
 # ....for when I get round to making it all work nicely :)
 MAKEDEPEND	=	$(CC) -M $(CCFLAGS) $(CCINC) -o $*.d $<
 
-# lets not use the default make implicit rules because I wouldn't
-# trust them as far as I could throw them :)
 .SUFFIXES: .c
 
 # uncomment to keep intermediate QT generated files
@@ -115,7 +106,7 @@ default: $(OUTPUT)
 # clean all object files, and remove the .h and .cpp files for QT forms only
 # i.e. we only remove *.h and *.cpp if there exists a *.ui
 clean:
-	@rm -f *.o
+	@rm -f *.o $(OUTPUT) $(OUTPUT).$(VERSION)
 	@-$(foreach MOD,$(QT_MODS), rm -f moc_$(MOD).cpp)
 	@-$(foreach MOD,$(SHARED_QT_MODS), rm -f ../moc_$(MOD).cpp)
 	@-$(foreach MOD,$(QT_MODS), if [ -e $(MOD).ui ]; then rm -f $(MOD).cpp $(MOD).h; fi;)

@@ -5,7 +5,6 @@ ROOT		=	../..
 
 # Base name for output (executable name, library basename) and version
 OUT_BASE	=	dpsaudio
-VERSION		=	1
 
 # Create a library and whether it should be a static library
 OUT_LIB		=	yes
@@ -26,7 +25,6 @@ HDRS		=	Audio.h
 # Compiler and linker options
 LIBS		=	-lm -lpthread
 
-POSTCOMPILE =  cd $(ROOT)/lib; ln -sf lib$(OUT_BASE).so.$(VERSION) \
-					lib$(OUT_BASE).so
+POSTCOMPILE =  ln -sf lib$(OUT_BASE).so.$(VERSION) lib$(OUT_BASE).so
 
 include $(ROOT)/src/Makefile.in

@@ -16,30 +16,21 @@
 # This has to be exported to make some magic below work.
 export DH_OPTIONS
 
-
-
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
-	# Add here commands to configure the package.
-
 	touch configure-stamp
-
 
 #Architecture 
 build: build-arch build-indep
 
 build-arch: build-arch-stamp
 build-arch-stamp: configure-stamp 
-
-	# Add here commands to compile the arch part of the package.
 	$(MAKE) 
 	touch $@
 
 build-indep: build-indep-stamp
 build-indep-stamp: configure-stamp 
-
-	# Add here commands to compile the indep part of the package.
 	$(MAKE) doc
 	touch $@
 
@@ -47,10 +38,7 @@ clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-arch-stamp build-indep-stamp configure-stamp
-
-	# Add here commands to clean up after the build process.
 	$(MAKE) clean
-
 	dh_clean 
 
 install: install-indep install-arch
@@ -59,11 +47,6 @@ install-indep:
 	dh_testroot
 	dh_clean -k -i 
 	dh_installdirs -i
-
-	# Add here commands to install the indep part of the package into
-	# debian/<package>-doc.
-	#INSTALLDOC#
-
 	dh_install -i
 
 install-arch:
@@ -71,11 +54,7 @@ install-arch:
 	dh_testroot
 	dh_clean -k -s 
 	dh_installdirs -s
-
-	# Add here commands to install the arch part of the package into 
-	# debian/tmp.
 	$(MAKE) DESTDIR=$(CURDIR)/debian/tmp install
-
 	dh_install -s
 
 # Must not depend on anything. This is to be called by

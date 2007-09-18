@@ -47,6 +47,8 @@ LIB_ALL				=	$(LIB_DPSAUDIO)
 
 ### Build rules ###
 
+default:	all
+
 studio: 	$(AUDIO) $(STUDIO)
 sue:		$(AUDIO) $(SUE)
 backend:	$(ADMIN)
@@ -75,7 +77,7 @@ install:
 	@-$(foreach EXE,$(EXE_ALL), if [ -f $(EXE) ]; then cp -aP $(EXE) $(BINDIR); fi;)
 	@-$(foreach LIB,$(LIB_ALL), if [ -f $(LIB) ]; then cp -aP $(LIB) $(LIBDIR); fi;)
 	@cp -aP share/doc/examples/digiplay.conf $(ETCDIR)
-	@-$(foreach EXE,$(EXE_ALL), if [ -f $(EXE) ]; then cp -aP share/man/man1/`echo $(EXE) | sed 's/.*\///'`.1 $(MANDIR); fi;)
+	@-$(foreach EXE,$(EXE_ALL), if [ -f $(EXE) ]; then cp -aP share/man/man1/`echo $(EXE) | sed 's/.*\///'`.1.gz $(MANDIR); fi;)
 	@cp -arP share/dps $(SHAREDDIR)
 	@cp -arP share/doc/* $(SHAREDDIR)/doc/dps
 	@echo "Installation complete."

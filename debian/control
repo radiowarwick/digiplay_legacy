@@ -1,0 +1,80 @@
+Source: digiplay
+Section: sound
+Priority: extra
+Maintainer: Chris Cantwell <ccantwell@radio.warwick.ac.uk>
+Build-Depends: debhelper (>= 5), libc6-dev, libpqxx-dev, libqt3-mt-dev, libxext-dev, libx11-dev, libstdc++6-4.1-dev, libflac++-dev
+Standards-Version: 3.7.2
+
+Package: libdpsaudio
+Architecture: i386
+Depends: libc6, libstdc++6, libgcc1
+Description: Digital playout system audio component library.
+ This library provides the audio routines for the digital playout system.
+
+Package: libdpsaudio-dev
+Architecture: all
+Depends:
+Description: Digital playout system audio component library header files.
+
+Package: dpsstudiomanage
+Architecture: i386
+Depends: libc6, libpq5, libqt3-mt, libxext6, libx11-6, libstdc++6, libgcc1, libssl0.9.8
+Recommends: dpsmgmt, dps-doc
+Suggests: dpsstudioplayout
+Description: Digital playout system management software
+ Digiplay is a multi-studio digital playout system. It strives to provide
+ functionality to assist radio presenters deliver content, while maintaining a
+ clean and simple interface.
+ .
+ This package contains the studio management application used for searching
+ and selecting music, compiling showplans, reading studio email, and browsing
+ the system's directory tree. The studio playout is handled using the
+ dpsstudioplayout package. This software requires a central server, provided
+ by the dpsmgmt package.
+ .
+ To improve resilience, the studio management and playout applications should
+ be run on separate X sessions, and ideally on separate machines.
+
+Package: dpsstudioplay
+Architecture: i386
+Depends: libc6, libpq5, libqt3-mt, libxext6, libx11-6, libstdc++6, libgcc1, libdpsaudio
+Recommends: dpsmgmt, dps-doc
+Suggests: dpsstudiomanage
+Description: Digital playout system broadcast software.
+ Digiplay is a multi-studio digital playout system. It strives to provide
+ functionality to assist radio presenters deliver content, while maintaining a
+ clean and simple interface.
+ .
+ This package contains the studio playout application used for playing out
+ music and ident clips. This software supports up to three audio players and
+ a further output for the audio wall.
+ .
+ To improve resilience, the studio management and playout applications should
+ be run on separate X sessions, and ideally on separate machines.
+
+Package: dpssustainer
+Architecture: i386
+Depends: libc6, libpq5, libstdc++6, libgcc1, libreadline5, libflac++6, libdpsaudio
+Recommends: dps-doc
+Description: Digital playout system sustainer service.
+ Digiplay is a multi-studio digital playout system. It strives to provide
+ functionality to assist radio presenters deliver content, while maintaining a
+ clean and simple interface.
+ .
+ This package contains the sustainer daemons.
+
+Package: dpsmgmt
+Architecture: i386
+Depends: libc6, libpq5, libstdc++6, libgcc1, libssl0.9.8, libreadline5
+Recommends: dps-doc
+Description: Digital playout system management tool.
+ Digiplay is a multi-studio digital playout system. It strives to provide
+ functionality to assist radio presenters deliver content, while maintaining a
+ clean and simple interface.
+ .
+ This packages contains the management tool used to administer the system.
+
+Package: dps-doc
+Architecture: all
+Description: Documentation for digiplay
+

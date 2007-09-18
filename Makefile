@@ -95,3 +95,9 @@ tar: 		clean
 	rm $(BASE); \
 	gzip $(BASE).tar; \
 	echo "Created $(BASE).tar.gz";
+
+deb:
+	@dpkg-buildpackage -us -uc -rfakeroot
+
+deb-clean:
+	@fakeroot -- make -f debian/rules clean

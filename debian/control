@@ -16,9 +16,19 @@ Architecture: all
 Depends:
 Description: Digital playout system audio component library header files.
 
+Package: dps-common
+Architecture: i386
+Depends:
+Description: Digital playout system common files.
+ Digiplay is a multi-studio digital playout system. It strives to provide
+ functionality to assist radio presenters deliver content, while maintaining a
+ clean and simple interface.
+ .
+ This package contains common shared files.
+
 Package: dpsstudiomanage
 Architecture: i386
-Depends: libc6, libpq5, libqt3-mt, libxext6, libx11-6, libstdc++6, libgcc1, libssl0.9.8
+Depends: libc6, libpq5, libqt3-mt, libxext6, libx11-6, libstdc++6, libgcc1, libssl0.9.8, dps-common
 Recommends: dpsmgmt, dps-doc
 Suggests: dpsstudioplayout
 Description: Digital playout system management software
@@ -37,7 +47,7 @@ Description: Digital playout system management software
 
 Package: dpsstudioplay
 Architecture: i386
-Depends: libc6, libpq5, libqt3-mt, libxext6, libx11-6, libstdc++6, libgcc1, libdpsaudio
+Depends: libc6, libpq5, libqt3-mt, libxext6, libx11-6, libstdc++6, libgcc1, libdpsaudio, dps-common
 Recommends: dpsmgmt, dps-doc
 Suggests: dpsstudiomanage
 Description: Digital playout system broadcast software.
@@ -54,7 +64,7 @@ Description: Digital playout system broadcast software.
 
 Package: dpssustainer
 Architecture: i386
-Depends: libc6, libpq5, libstdc++6, libgcc1, libreadline5, libflac++6, libdpsaudio
+Depends: libc6, libpq5, libstdc++6, libgcc1, libreadline5, libflac++6, libdpsaudio, dps-common
 Recommends: dps-doc
 Description: Digital playout system sustainer service.
  Digiplay is a multi-studio digital playout system. It strives to provide
@@ -65,7 +75,7 @@ Description: Digital playout system sustainer service.
 
 Package: dpsmgmt
 Architecture: i386
-Depends: libc6, libpq5, libstdc++6, libgcc1, libssl0.9.8, libreadline5
+Depends: libc6, libpq5, libstdc++6, libgcc1, libssl0.9.8, libreadline5, dps-common
 Recommends: dps-doc
 Description: Digital playout system management tool.
  Digiplay is a multi-studio digital playout system. It strives to provide

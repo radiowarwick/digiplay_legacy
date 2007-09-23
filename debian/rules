@@ -26,7 +26,7 @@ build: build-arch build-indep
 
 build-arch: build-arch-stamp
 build-arch-stamp: configure-stamp 
-	$(MAKE) 
+	$(MAKE) DPSDIR=/usr/share/dps 
 	touch $@
 
 build-indep: build-indep-stamp

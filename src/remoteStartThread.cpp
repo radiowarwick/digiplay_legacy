@@ -37,7 +37,7 @@ remoteStartThread::remoteStartThread(QObject *o) {
 }
 
 void remoteStartThread::run() {
-    char *routine = "remoteStartThread::run";
+    const char* routine = "remoteStartThread::run";
 	// Look up normal user in config and drop privilages
 	mutex.lock();
 	stopped = FALSE;

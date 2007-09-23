@@ -34,7 +34,7 @@
  * Database for this location.
  */
 Config::Config(std::string application) {
-	char* routine = "config::config";
+	const char* routine = "config::config";
     DB = new DataAccess();
 	setFlag = false;
     std::string f = "/etc/" + application + ".conf";
@@ -108,7 +108,7 @@ std::string Config::getDBConnectString() {
  * Return the value of a parameter from the database
  */
 std::string Config::getParam(std::string name) {
-	char* routine = "config::getParam";
+	const char* routine = "config::getParam";
 	dps_strLcase(name);
 	if (isDefined(name)) {
         return _db[name];
@@ -122,7 +122,7 @@ std::string Config::getParam(std::string name) {
  * Set the value of a parameter in the database
  */
 void Config::setParam(std::string name, std::string value) {
-	char* routine = "config::setParam";
+	const char* routine = "config::setParam";
 	if (isDefined(name)) {
         std::string SQL = "UPDATE configuration SET val='" + value 
 					+ "' WHERE parameter='" + name 
@@ -148,7 +148,7 @@ void Config::setParam(std::string name, std::string value) {
  * values.
  */
 void Config::requery() {
-	char* routine = "conf::requery";
+	const char* routine = "conf::requery";
     L_INFO(LOG_CONFIG,"Requerying Configuration.");
 
 	if (setFlag) {

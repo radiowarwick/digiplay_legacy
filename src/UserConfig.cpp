@@ -42,7 +42,7 @@ std::string UserConfig::get(std::string param) {
 }
 
 void UserConfig::set(std::string param, std::string val) {
-    char *routine = "UserConfig::set";
+    const char* routine = "UserConfig::set";
     std::string SQL = "UPDATE usersconfigs "
                     "SET val=" + val +
                     "WHERE userid=(SELECT id FROM users WHERE username='"
@@ -62,7 +62,7 @@ void UserConfig::set(std::string param, std::string val) {
 }
 
 void UserConfig::retrieveConfig() {
-    char *routine = "UserConfig::retrieveConfig";
+    const char* routine = "UserConfig::retrieveConfig";
     std::string SQL = "SELECT configs.name AS name, "
                         "usersconfigs.val AS value "
                     "FROM users, usersconfigs, configs "

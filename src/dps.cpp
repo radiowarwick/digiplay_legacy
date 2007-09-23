@@ -30,7 +30,7 @@ using std::endl;
 #include <pqxx/pqxx>
 
 track dps_getTrack(std::string md5) {
-    char *routine = "dps::dps_getTrack";
+    const char *routine = "dps::dps_getTrack";
     DataAccess DB;
     track t;
     t.isNull = true;
@@ -77,7 +77,7 @@ track dps_getTrack(std::string md5) {
 	        t.album = R[0]["album"].c_str();
 	        t.release_date = R[0]["released"].c_str();
 	        t.tracknum = atoi(R[0]["track"].c_str());
-			if (R[0]["censor"].c_str() == "t")
+			if (std::string(R[0]["censor"].c_str()) == "t")
 				t.censor = true;
 			else
 				t.censor = false;

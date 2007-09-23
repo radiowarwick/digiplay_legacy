@@ -112,7 +112,7 @@ xmlAttribute XmlElement::add_attribute(xmlAttribute attr) {
  * 			structure if index out of range
  */
 xmlAttribute XmlElement::get_attribute(unsigned int index) {
-	char* routine = "XmlElement::get_attribute";
+	const char* routine = "XmlElement::get_attribute";
 	if (index < attributes->size()) {
 		return attributes->at(index);
 	}
@@ -131,7 +131,7 @@ xmlAttribute XmlElement::get_attribute(unsigned int index) {
  * 			structure if attribute does not exist
  */
 xmlAttribute XmlElement::get_attribute(string name) {
-	char* routine = "XmlElement::get_attribute";
+	const char* routine = "XmlElement::get_attribute";
 	for (unsigned int i = 0; i < attributes->size(); i++)
 		if (attributes->at(i).name == name)
 			return attributes->at(i);
@@ -143,7 +143,7 @@ xmlAttribute XmlElement::get_attribute(string name) {
 }
 
 void XmlElement::remove_attribute(unsigned int index) {
-	char* routine = "XmlElement::remove_attribute";
+	const char* routine = "XmlElement::remove_attribute";
 	if (index < attributes->size()) {
 		attributes->erase(attributes->begin() + index);
 	}
@@ -155,7 +155,7 @@ void XmlElement::remove_attribute(unsigned int index) {
 }
 
 void XmlElement::remove_attribute(string name) {
-	char* routine = "XmlElement::remove_attribute";
+	const char* routine = "XmlElement::remove_attribute";
 	for (unsigned int i = 0; i < attributes->size(); i++)
 		if (attributes->at(i).name == name) {
 			attributes->erase(attributes->begin() + i);
@@ -167,7 +167,7 @@ void XmlElement::remove_attribute(string name) {
 }
 
 bool XmlElement::has_attribute(string name) {
-    char* routine = "XmlElement::has_attribute";
+    const char* routine = "XmlElement::has_attribute";
     for (unsigned int i = 0; i < attributes->size(); i++) {
         if (attributes->at(i).name == name) {
             return true;
@@ -197,7 +197,7 @@ XmlElement *XmlElement::add_element(XmlElement *elem) {
 }
 
 XmlElement *XmlElement::get_element(unsigned int index) {
-	char* routine = "XmlElement::get_element";
+	const char* routine = "XmlElement::get_element";
 	if (index < elements->size())
 		return elements->at(index);
 	stringstream S;
@@ -207,7 +207,7 @@ XmlElement *XmlElement::get_element(unsigned int index) {
 }
 
 XmlElement *XmlElement::get_element(string name) {
-	char* routine = "XmlElement::get_element";
+	const char* routine = "XmlElement::get_element";
 	for (unsigned int i = 0; i < elements->size(); i++)
 		if (elements->at(i)->name == name)
 			return elements->at(i);
@@ -218,7 +218,7 @@ XmlElement *XmlElement::get_element(string name) {
 }
 
 void XmlElement::remove_element(unsigned int index) {
-	char* routine = "XmlElement::remove_element";
+	const char* routine = "XmlElement::remove_element";
 	if (index < elements->size())
 		elements->erase(elements->begin() + index);
 	else {
@@ -229,7 +229,7 @@ void XmlElement::remove_element(unsigned int index) {
 }
 
 void XmlElement::remove_element(string name) {
-	char* routine = "XmlElement::remove_element";
+	const char* routine = "XmlElement::remove_element";
 	for (unsigned int i = 0; i < elements->size(); i++)
 		if (elements->at(i)->name == name) {
 			elements->erase(elements->begin() + i);

@@ -29,7 +29,8 @@ QT_HDRS		=
 # Define compiler and linker flags depending on whether we're
 # compiling a standard executable or a shared library
 CCINC		:=	-I$(ROOT)/src -I$(ROOT)/components -I/usr/include/postgresql -DDEBUG=4
-CCFLAGS		:=	$(DPSFLAGS) -Wall -O3 -D_THREAD_SAFE -DVERSION="\"$(VERSION)\""
+CCFLAGS		:=	$(DPSFLAGS) -Wall -O3 -D_THREAD_SAFE \
+				-D'VERSION="$(VERSION)"' -D'DPSDIR="$(DPSDIR)"'
 LDFLAGS		:=	-L$(ROOT)/src/audio -o $(DEST)/$(OUTPUT) 
 
 # if QT is enabled, we need to include the necessary compiler and 

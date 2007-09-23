@@ -283,7 +283,7 @@ DpsShowItem& DpsShowItem::operator=(const DpsShowItem& item) {
 }
 
 string DpsShowItem::operator[](string item) {
-    char *routine = "DpsShowItem::operator[]";
+    const char* routine = "DpsShowItem::operator[]";
     if (_data.count(item) == 0) {
         L_ERROR(LOG_SHOWPLAN, "Item " + item + " doesn't exist!");
         return "";
@@ -344,7 +344,7 @@ DpsShowTrack::~DpsShowTrack() {
 
 // ----- DpsShowTrack Member routines -----
 void DpsShowTrack::load(string id) {
-    char *routine = "DpsShowTrack::load";
+    const char* routine = "DpsShowTrack::load";
     string SQL;
     PqxxResult R;
 
@@ -412,7 +412,7 @@ DpsShowJingle::~DpsShowJingle() {
 
 // ----- DpsShowJingle Member routines -----
 void DpsShowJingle::load(string id) {
-    char *routine = "DpsShowJingle::load";
+    const char* routine = "DpsShowJingle::load";
     string SQL;
     PqxxResult R;
 
@@ -480,7 +480,7 @@ DpsShowAdvert::~DpsShowAdvert() {
 
 // ----- DpsShowAdvert Member routines -----
 void DpsShowAdvert::load(string id) {
-    char *routine = "DpsShowAdvert::load";
+    const char* routine = "DpsShowAdvert::load";
     string SQL;
     PqxxResult R;
 
@@ -547,7 +547,7 @@ DpsShowScript::~DpsShowScript() {
 
 // ----- DpsShowScript Member routines -----
 void DpsShowScript::load(unsigned int id) {
-    char *routine = "DpsShowScript::load";
+    const char* routine = "DpsShowScript::load";
     string SQL;
     PqxxResult R;
 
@@ -599,7 +599,7 @@ DpsShowNote::~DpsShowNote() {
 }
 
 void DpsShowNote::load(unsigned int id) {
-    char* routine = "DpsShowNote::load";
+    const char* routine = "DpsShowNote::load";
     string SQL;
     PqxxResult R;
 

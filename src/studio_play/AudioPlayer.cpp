@@ -70,7 +70,7 @@ AudioPlayer::~AudioPlayer() {
 }
 
 void AudioPlayer::customEvent(QCustomEvent *event) {
-    char *routine = "AudioPlayer::customEvent";
+    const char *routine = "AudioPlayer::customEvent";
     switch (event->type()) {
     case 20000: {       // Clock update
             strTime = (QString *) event->data();
@@ -90,7 +90,7 @@ void AudioPlayer::customEvent(QCustomEvent *event) {
 
 
 void AudioPlayer::load() {
-    char *routine = "AudioPlayer::load";
+    const char *routine = "AudioPlayer::load";
     btnLoad->setEnabled(false);
     
     if (conf->getParam("next_on_showplan") == "") {
@@ -218,7 +218,7 @@ void AudioPlayer::setTimeDisplay() {
 }
 
 void AudioPlayer::processConfigUpdate() {
-    char *routine = "AudioPlayer::processConfigUpdate";
+    const char *routine = "AudioPlayer::processConfigUpdate";
     conf->requery();
     qApp->lock();
     if (conf->getParam("next_on_showplan") == "") {

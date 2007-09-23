@@ -42,7 +42,7 @@ TabPanel::~TabPanel() {
 }
 
 void TabPanel::configure(Auth *authModule) {
-	char* routine = "TabPanel::configure";
+	const char* routine = "TabPanel::configure";
 	if (!authModule) {
 		L_WARNING(LOG_TAB,"authModule isn't defined. Can't configure Tab.");
 		return;

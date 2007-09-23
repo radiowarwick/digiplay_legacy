@@ -107,7 +107,7 @@ void Directory::setUid( std::string u ) {
 }
 
 void Directory::setOpen( bool o ) {
-    char *routine = "Directory::setOpen";
+    const char *routine = "Directory::setOpen";
     if ( o ) {
         if (parent())
             setPixmap( folderOpen );

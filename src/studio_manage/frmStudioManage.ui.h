@@ -193,7 +193,7 @@ void frmStudioManage::destroy() {
 }
 
 void frmStudioManage::customEvent(QCustomEvent *event) {
-    char *routine = "frmStudioManage::customEvent";
+    const char *routine = "frmStudioManage::customEvent";
 	switch (event->type()) {
 	case 20000: {       // Clock update
 			QString *s = (QString *) event->data();

@@ -27,7 +27,7 @@ pthread_mutex_t* DataAccess::t_routine_mutex = 0;
  * finished with to prevent database deadlock.
  */
 DataAccess::DataAccess() {
-    char* routine = "DataAccess::DataAccess";
+    const char* routine = "DataAccess::DataAccess";
 
 	// For each instance increment counter. We can only close the connection
 	// when the last instance is destroyed.
@@ -79,7 +79,7 @@ DataAccess::~DataAccess() {
  * thread will be blocked until that transaction has completed.
  */
 PqxxResult DataAccess::exec(std::string name, std::string query) {
-    char* routine = "DataAccess::exec";
+    const char* routine = "DataAccess::exec";
 
     // If it's a different transaction name to the current one open, make the
     // calling thread wait until the existing transaction is complete.
@@ -153,7 +153,7 @@ PqxxResult DataAccess::exec(std::string name, std::string query) {
  * transaction lock.
  */
 void DataAccess::commit(std::string name) {
-    char* routine = "DataAccess::commit";
+    const char* routine = "DataAccess::commit";
     
     // Lock routine mutex
     pthread_mutex_lock(t_routine_mutex);
@@ -188,7 +188,7 @@ void DataAccess::commit(std::string name) {
  * transaction lock.
  */
 void DataAccess::abort(std::string name) {
-    char* routine = "DataAccess::abort";
+    const char* routine = "DataAccess::abort";
     
     // Lock routine mutex
     pthread_mutex_lock(t_routine_mutex);
@@ -225,7 +225,7 @@ void DataAccess::abort(std::string name) {
  * Parses the configuration file to get database connection information.
  */
 std::string DataAccess::getConnectionString() {
-    char* routine = "DataAccess::getConnectionString";
+    const char* routine = "DataAccess::getConnectionString";
     std::string f = "/etc/digiplay.conf";
     std::string DB_CONNECT = "";
     std::map<std::string,std::string> _file;
@@ -279,7 +279,7 @@ std::string DataAccess::getConnectionString() {
  * Wrapper routine to provide string escaping
  */
 std::string DataAccess::esc(std::string str) {
-    char* routine = "DataAccess::esc";
+    const char* routine = "DataAccess::esc";
 
     // lock routine mutex
     pthread_mutex_lock(t_routine_mutex);

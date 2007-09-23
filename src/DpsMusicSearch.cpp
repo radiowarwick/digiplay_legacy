@@ -46,7 +46,7 @@ DpsMusicSearch::~DpsMusicSearch() {
  * to return results incrementally as the search progresses.
  */
 std::vector<track>* DpsMusicSearch::query(std::string search_string) {
-    char* routine = "DpsMusicSearch::query";
+    const char* routine = "DpsMusicSearch::query";
 
     std::string SQL;
     

@@ -96,6 +96,18 @@ Description: Digital playout system database schema and installation tool.
  This package contains the database schema and associated tools for installing
  the database.
 
+Package: dps-www
+Architecture: all
+Depends: apache2, libapache2-mod-php5 php5, php5-ldap, php5-pgsql
+Recommends: dps-doc
+Description: Digital playout system web application.
+ Digiplay is a multi-studio digital playout system. It strives to provide
+ functionality to assist radio presenters deliver content, while maintaining a
+ clean and simple interface.
+ .
+ This packages contains the web application which provides show planning and 
+ administrative functionality for the system.
+
 Package: dps-doc
 Architecture: all
 Description: Documentation for digiplay

@@ -65,7 +65,7 @@ ArchiveManager::~ArchiveManager() {
  * respective vectors.
  */
 void ArchiveManager::load() {
-    char* routine = "ArchiveManager::load";
+    const char* routine = "ArchiveManager::load";
 	/* Reinitialise any vectors if they already exist */
 	delete trackDB;
 	delete trackInbox;
@@ -104,7 +104,7 @@ archive ArchiveManager::spec() {
  * @returns         Track at \a index in component \a c.
  */
 track ArchiveManager::at(ARCHIVE_COMPONENT c, unsigned int index) {
-    char* routine = "ArchiveManager::at";
+    const char* routine = "ArchiveManager::at";
 	if (!initialised) load();
 	if (index > size(c) - 1) {
         L_ERROR(LOG_DB,"index " + dps_itoa(index) + " out of range.");
@@ -127,7 +127,7 @@ track ArchiveManager::at(ARCHIVE_COMPONENT c, unsigned int index) {
  * @returns         Size of specified component.
  */
 unsigned int ArchiveManager::size(ARCHIVE_COMPONENT c) {
-    char* routine = "ArchiveManager::size";
+    const char* routine = "ArchiveManager::size";
 	if (!initialised) load();
 	switch (c) {
 		case DPS_DB:    return trackDB->size();
@@ -148,7 +148,7 @@ unsigned int ArchiveManager::size(ARCHIVE_COMPONENT c) {
  * @param   index   Specifies the index to clean
  */
 void ArchiveManager::clean(ARCHIVE_COMPONENT c, unsigned int index) {
-    char* routine = "ArchiveManager::clean";
+    const char* routine = "ArchiveManager::clean";
 
 	if (!initialised) load();
 	if (index > size(c) - 1) {
@@ -168,7 +168,7 @@ void ArchiveManager::clean(ARCHIVE_COMPONENT c, unsigned int index) {
  * @param	index	The index of the track in the inbox to add
  */
 void ArchiveManager::add(unsigned int index) {
-	char* routine = "ArchiveManager::add";
+	const char* routine = "ArchiveManager::add";
 	if (!initialised) {
         L_ERROR(LOG_DB,"Attempted to add track before archive loaded.");
         return;
@@ -245,7 +245,7 @@ void ArchiveManager::add(unsigned int index) {
  * @param   index   The index of the track in the database to remove.
  */
 void ArchiveManager::remove(unsigned int index) {
-    char* routine = "ArchiveManager::remove";
+    const char* routine = "ArchiveManager::remove";
 
     track t = trackDB->at(index);
     try {
@@ -276,7 +276,7 @@ void ArchiveManager::remove(unsigned int index) {
  * @param   index   The index of the track in the database to trash.
  */
 void ArchiveManager::trash(unsigned int index) {
-    char* routine = "ArchiveManager::trash";
+    const char* routine = "ArchiveManager::trash";
 
     track t = trackDB->at(index);
     try {
@@ -307,7 +307,7 @@ void ArchiveManager::trash(unsigned int index) {
  * @param   index   The index of the track in the trash folder to recover.
  */
 void ArchiveManager::recover(unsigned int index) {
-    char* routine = "ArchiveManager::recover";
+    const char* routine = "ArchiveManager::recover";
 
     track t = trackTrash->at(index);
 
@@ -336,7 +336,7 @@ void ArchiveManager::recover(unsigned int index) {
  * directory to be cleaned out manually if desired.
  */
 void ArchiveManager::upgradeInfo() {
-    char* routine = "ArchiveManager::upgradeInfo";
+    const char* routine = "ArchiveManager::upgradeInfo";
 
     if (!initialised) load();
 
@@ -388,7 +388,7 @@ void ArchiveManager::upgradeInfo() {
  * @param   index   Index of the track in the database to backup to XML.
  */
 void ArchiveManager::backup(unsigned int index) {
-    char* routine = "ArchiveManager::backup";
+    const char* routine = "ArchiveManager::backup";
 
     if (!initialised) load();
 	if (index > size(DPS_DB) - 1) {
@@ -426,7 +426,7 @@ void ArchiveManager::merge(ArchiveManager *A) {
  * @returns             Vector of tracks - one for each audio segment in file.
  */
 std::vector<track> ArchiveManager::readXML(string filename) {
-    char* routine = "ArchiveManager::readXML";
+    const char* routine = "ArchiveManager::readXML";
     std::string s;
     std::vector<track> tracks;
 	XmlDocument* D = new XmlDocument(filename);
@@ -630,7 +630,7 @@ void ArchiveManager::writeXML(std::string filename, track t) {
  * @returns             Track containing contents of INFO file.
  */
 track ArchiveManager::readInfo(std::string filename) {
-    char* routine = "ArchiveManager::readInfo";
+    const char* routine = "ArchiveManager::readInfo";
     unsigned short info_version = 0;
 
 	/* Attempt to open the info file */
@@ -758,7 +758,7 @@ track ArchiveManager::readInfo(std::string filename) {
  *                  from the database is to be stored.
  */
 void ArchiveManager::loadDB(vector<track> *tracks) {
-    char* routine = "ArchiveManager::loadDB";
+    const char* routine = "ArchiveManager::loadDB";
 
 	track t;
     string SQL = "SELECT * FROM v_audio WHERE archiveid = " + dps_itoa(A.id);
@@ -802,7 +802,7 @@ void ArchiveManager::loadDB(vector<track> *tracks) {
  *                  be read.
  */
 void ArchiveManager::loadInbox(vector<track> *tracks) {
-	char* routine = "ArchiveManager::loadInbox";
+	const char* routine = "ArchiveManager::loadInbox";
     
     DIR *dirp;
     struct dirent *dp;
@@ -855,7 +855,7 @@ void ArchiveManager::loadInbox(vector<track> *tracks) {
  *                  be read.
  */
 void ArchiveManager::loadTrash(vector<track> *tracks) {
-	char* routine = "ArchiveManager::loadTrash";
+	const char* routine = "ArchiveManager::loadTrash";
     
     DIR *dirp;
     struct dirent *dp;
@@ -910,7 +910,7 @@ void ArchiveManager::loadTrash(vector<track> *tracks) {
  * @param   t       Track information to add to the database.
  */
 void ArchiveManager::addTrack(track t) {
-    char* routine = "ArchiveManager::addTrack";
+    const char* routine = "ArchiveManager::addTrack";
 
     PqxxResult R;
     int album_id = -1, audio_id = -1;
@@ -1020,7 +1020,7 @@ void ArchiveManager::addTrack(track t) {
  * @param   t       Track information to add to database.
  */
 void ArchiveManager::addJingle(track t) {
-    char* routine = "ArchiveManager::addJingle";
+    const char* routine = "ArchiveManager::addJingle";
 
     PqxxResult R;
     int pkg_id = -1, audio_id = -1;
@@ -1102,7 +1102,7 @@ void ArchiveManager::addJingle(track t) {
  * @param   t       Track information to add to database.
  */
 void ArchiveManager::addAdvert(track t) {
-    char* routine = "ArchiveManager::addAdvert";
+    const char* routine = "ArchiveManager::addAdvert";
 
     PqxxResult R;
     std::string SQL;
@@ -1179,7 +1179,7 @@ void ArchiveManager::addAdvert(track t) {
  * @param   t       Track information to add to database.
  */
 void ArchiveManager::addPrerec(track t) {
-    char* routine = "ArchiveManager::addPrerec";
+    const char* routine = "ArchiveManager::addPrerec";
 
     PqxxResult R;
     vector<int> artist_ids;
@@ -1255,7 +1255,7 @@ void ArchiveManager::addPrerec(track t) {
  * @param   md5     MD5 hash specifying a track to remove from the database.
  */
 void ArchiveManager::removeTrack(string md5) {
-    char* routine = "ArchiveManager::removeTrack";
+    const char* routine = "ArchiveManager::removeTrack";
     std::string SQL, id;
     try {
         SQL = "SELECT id FROM audio WHERE md5='" + md5 + "'";
@@ -1299,7 +1299,7 @@ void ArchiveManager::removeTrack(string md5) {
  * @param   t       Pointer to a track which needs cleaning.
  */
 void ArchiveManager::cleanInfo(track *t) {
-    char* routine = "ArchiveManager::cleanInfo";
+    const char* routine = "ArchiveManager::cleanInfo";
 
     // title
     dps_strTrim(t->title);
@@ -1364,7 +1364,7 @@ void ArchiveManager::cleanInfo(track *t) {
  * @param   t       Pointer to track information to which trim points are added.
  */
 void ArchiveManager::trimAudio(track *t) {
-    char* routine = "ArchiveManager::trimAudio";
+    const char* routine = "ArchiveManager::trimAudio";
 
 #define BLOCK_SAMPLES 4096
 #define SAMPLE_TOL 512		// Approx 2% = -42dB

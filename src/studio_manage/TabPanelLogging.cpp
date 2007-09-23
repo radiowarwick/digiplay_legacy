@@ -66,7 +66,7 @@ TabPanelLogging::~TabPanelLogging() {
 // this is called whenever the application reconfigures itself,
 // usually due to a change in authentication status (login, logoff)
 void TabPanelLogging::configure(Auth *authModule) {
-    char *routine = "TabPanelLogging::configure";
+    const char *routine = "TabPanelLogging::configure";
 
     string SQL = "SELECT id FROM users WHERE username = '" 
                         + authModule->getUser() + "' LIMIT 1";
@@ -180,7 +180,7 @@ void TabPanelLogging::draw() {
 }
 
 int TabPanelLogging::logRecord(string artist, string title){
-    char *routine="TabPanelLogging::logRecord";
+    const char *routine="TabPanelLogging::logRecord";
     
     // Get current time
     int now = (int)time(NULL);
@@ -206,7 +206,7 @@ int TabPanelLogging::logRecord(string artist, string title){
 }
 
 void TabPanelLogging::getRecentlyLogged() {
-    char *routine="TabPanelLogging::getRecentlyLogged";
+    const char *routine="TabPanelLogging::getRecentlyLogged";
     QString artist, title, datestr;
     tm *dte;
     char date[30];
@@ -237,7 +237,7 @@ void TabPanelLogging::getRecentlyLogged() {
 }
 
 void TabPanelLogging::buttonPressed() {
-    char *routine = "TabPanelLogging::buttonPressed";
+    const char *routine = "TabPanelLogging::buttonPressed";
     string artist = txtArtist->text().ascii();
     string title = txtTitle->text().ascii();
     string reclibid = txtReclibID->text().ascii();
@@ -251,7 +251,7 @@ void TabPanelLogging::buttonPressed() {
 }
 
 void TabPanelLogging::processLogUpdate() {
-    char *routine = "TabPanelLogging::processLogUpdate";
+    const char *routine = "TabPanelLogging::processLogUpdate";
 
     L_INFO(LOG_TABLOGGING,"A change to the log relation has occured.");
     getRecentlyLogged();

@@ -87,7 +87,7 @@ void TabPanelEmail::configure(Auth *authModule) {
 
 
 void TabPanelEmail::getEmailBody(QListViewItem *current) {
-    char *routine = "TabPanelEmail::getEmailBody";
+    const char *routine = "TabPanelEmail::getEmailBody";
     L_INFO(LOG_TABEMAIL,"Get email body for id " + current->text(4));
 
     // Find selected email and display email body
@@ -105,7 +105,7 @@ void TabPanelEmail::getEmailBody(QListViewItem *current) {
  * email list.
  */
 void TabPanelEmail::getEmail(){
-    char *routine = "TabPanelEmail::getEmail";
+    const char *routine = "TabPanelEmail::getEmail";
     L_INFO(LOG_TABEMAIL,"Getting emails.");
    
     // If we're not supposed to update, reset the flag and return.
@@ -168,7 +168,7 @@ void TabPanelEmail::markRead(string id) {
 // This handles drawing the contents of the form, and connecting slots,
 // but has little actual implementation
 void TabPanelEmail::draw() {
-    char* routine = "TabEmail::draw()";
+    const char* routine = "TabEmail::draw()";
 
     // this deletes the objects if they already exist so to avoid a leak
     if (lstEmail || txtEmailBody) {

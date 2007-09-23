@@ -33,7 +33,7 @@ using namespace std;
 
 AuthLdap::AuthLdap(string host, unsigned int port, string baseDn, 
                         string filter) {
-	char* routine = "AuthLdap::AuthLdap";
+	const char* routine = "AuthLdap::AuthLdap";
 
     // Attempt to load the ldap shared library
     ldap_handle = dlopen("libldap.so", RTLD_LAZY);
@@ -74,7 +74,7 @@ void AuthLdap::reconnect(string host, unsigned int port, string baseDn,
 }
 
 void AuthLdap::authSession(string username, string password) {
-	char* routine = "AuthLdap::authenticate";
+	const char* routine = "AuthLdap::authenticate";
 	L_INFO(LOG_AUTH,"Authenticating user " + username);
 	
 	if (username == "") {
@@ -181,7 +181,7 @@ void AuthLdap::authSession(string username, string password) {
 
 void AuthLdap::connect(string host, unsigned int port, string baseDn, 
                         string filter) {
-    char* routine = "AuthLdap::connect";
+    const char* routine = "AuthLdap::connect";
     if (_myLdap) {
         ldap_unbind_s(_myLdap);
     }

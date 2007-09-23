@@ -7,7 +7,7 @@ pqxx::connection* DbTrigger::Ctrig = 0;
 unsigned int DbTrigger::instanceCount = 0;
 
 DbTrigger::DbTrigger(const char* name, std::string trigger){ 
-    char* routine = "DbTrigger::DbTrigger";
+    const char* routine = "DbTrigger::DbTrigger";
 
 	++(DbTrigger::instanceCount);
     if (DbTrigger::instanceCount == 1) {

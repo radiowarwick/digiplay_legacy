@@ -43,7 +43,7 @@ DpsEmail::~DpsEmail() {
  * of type \a email, and returns them.
  */
 std::vector<email> DpsEmail::getEmails() {
-    char* routine = "DpsEmail::getEmails";
+    const char* routine = "DpsEmail::getEmails";
 
     email e;
     tm *dte;
@@ -86,7 +86,7 @@ std::vector<email> DpsEmail::getEmails() {
  * Marks a message as read in the database.
  */
 void DpsEmail::markRead(std::string id) {
-    char* routine = "DpsEmail::markRead";
+    const char* routine = "DpsEmail::markRead";
 
     std::string SQL = "UPDATE email SET new_flag='f' WHERE id='" + id + "';";
     try {

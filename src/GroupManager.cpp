@@ -26,7 +26,7 @@ GroupManager::~GroupManager() {
  * operation to be performed as part of a larger single operation.
  */
 void GroupManager::add(Group g, std::string T) {
-    char* routine = "GroupManager::add";
+    const char* routine = "GroupManager::add";
 
     bool standalone = false;
     if (T == "GMAdd") standalone = true;
@@ -58,7 +58,7 @@ void GroupManager::add(Group g, std::string T) {
  * part of a larger single operation.
  */
 void GroupManager::remove(Group g, std::string T) {
-    char* routine = "GroupManager::remove";
+    const char* routine = "GroupManager::remove";
 
     bool standalone = false;
     if (T == "GMRemove") standalone = true;
@@ -102,7 +102,7 @@ void GroupManager::remove(Group g, std::string T) {
  * allow the operation to be performed as part of a larger single operation.
  */
 void GroupManager::addToGroup(User u, Group g, std::string T) {
-    char* routine = "GroupManager::addToGroup";
+    const char* routine = "GroupManager::addToGroup";
 
     bool standalone = false;
     if (T == "GMAddToGroup") standalone = true;
@@ -134,7 +134,7 @@ void GroupManager::addToGroup(User u, Group g, std::string T) {
  * Removes the user from the group.
  */
 void GroupManager::removeFromGroup(User u, Group g, std::string T) {
-    char* routine = "GroupManager::removeFromGroup";
+    const char* routine = "GroupManager::removeFromGroup";
 
     bool standalone = false;
     if (T == "GMRemoveFromGroup") standalone = true;
@@ -173,7 +173,7 @@ unsigned int GroupManager::count() {
  * Returns the group at \a index
  */
 Group GroupManager::get(unsigned int index) {
-    char* routine = "GroupManager::get";
+    const char* routine = "GroupManager::get";
 
     if (index >= groups.size()) {
         L_ERROR(LOG_DB,"Index out of range.");
@@ -187,7 +187,7 @@ Group GroupManager::get(unsigned int index) {
  * Returns the group named \a name.
  */
 Group GroupManager::get(std::string name) {
-    char* routine = "GroupManager::get";
+    const char* routine = "GroupManager::get";
 
     for (unsigned int i = 0; i < groups.size(); i++) {
         if (name == groups.at(i).name)
@@ -204,7 +204,7 @@ Group GroupManager::get(std::string name) {
  * operation.
  */
 std::string GroupManager::groupId(Group g, std::string T) {
-    char* routine = "GroupManager::groupId";
+    const char* routine = "GroupManager::groupId";
 
     bool standalone = false;
     if (T == "GMGroupId") standalone = true;
@@ -233,7 +233,7 @@ std::string GroupManager::groupId(Group g, std::string T) {
  * larger single operation.
  */
 void GroupManager::refresh(std::string T) {
-    char* routine = "GroupManager::refresh";
+    const char* routine = "GroupManager::refresh";
 
     bool standalone = false;
     if (T == "GMRefresh") standalone = true;

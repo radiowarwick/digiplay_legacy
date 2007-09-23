@@ -25,7 +25,7 @@ unsigned int getDigiplayUser(std::string user) {
 }
 
 void dropPrivilage() {
-    char *routine = "security::dropPrivilage";
+    const char* routine = "security::dropPrivilage";
 	// if first time, get our current uid
     if (ruid == -1) {
         ruid = getuid();
@@ -64,7 +64,7 @@ void dropPrivilage() {
 }
 
 void gainPrivilage() {
-    char *routine = "security::gainPrivilage";
+    const char* routine = "security::gainPrivilage";
 	// Get back the privilages we started with (usually root)
     #ifdef _POSIX_SAVED_IDS
     int status = setuid(ruid);
@@ -77,7 +77,7 @@ void gainPrivilage() {
 }
 
 void showPrivilage() {
-    char *routine = "security::showPrivilage";
+    const char* routine = "security::showPrivilage";
 	// Print the current privilages to screen
     unsigned int x = getuid();
     unsigned int y = geteuid();

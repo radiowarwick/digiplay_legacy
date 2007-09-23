@@ -45,11 +45,11 @@ static struct option long_options[] = {
     {0,0,0,0}
 };
 
-static char* short_options = "hv";
+static const char* short_options = "hv";
 
 int main( int argc, char * argv[] )
 {
-	char* routine = "studio_manage::main";
+	const char* routine = "studio_manage::main";
 
     // Configure logging
     Logger::setAppName("studio_manage");

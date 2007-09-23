@@ -60,7 +60,7 @@ Showplan::~Showplan() {
 }
 
 void Showplan::configure(Auth *authModule) {
-    char* routine = "Showplan::configure";
+    const char* routine = "Showplan::configure";
     if (!authModule) {
         L_WARNING(LOG_TAB,"authModule isn't defined. Can't configure Tab.");
         return;
@@ -117,7 +117,7 @@ void Showplan::resizeEvent(QResizeEvent *e) {
 }
 
 /*void Showplan::customEvent(QCustomEvent *e) {
-    char* routine = "Showplan::customEvent";
+    const char* routine = "Showplan::customEvent";
 
     if (e->type() == 30001) {
         L_INFO(LOG_DB,"Triggering configuration refresh");
@@ -149,7 +149,7 @@ void Showplan::resizeEvent(QResizeEvent *e) {
 }*/
 
 void Showplan::addTrack(QString id) {
-    char *routine = "Showplan::addTrack";
+    const char *routine = "Showplan::addTrack";
     L_INFO(LOG_SHOWPLAN,"Adding to showplan " + id);
     DpsShowTrack x(id);
     new ShowPlanAudio( lstShowPlan, lstShowPlan->lastItem(), x);
@@ -159,7 +159,7 @@ void Showplan::addTrack(QString id) {
 }
 
 void Showplan::addJingle(QString id) {
-    char *routine = "Showplan::addJingle";
+    const char *routine = "Showplan::addJingle";
     L_INFO(LOG_SHOWPLAN,"Adding to showplan " + id);
     DpsShowJingle x(id);
     new ShowPlanAudio( lstShowPlan, lstShowPlan->lastItem(), x);
@@ -169,7 +169,7 @@ void Showplan::addJingle(QString id) {
 }
 
 void Showplan::addAdvert(QString id) {
-    char *routine = "Showplan::addAdvert";
+    const char *routine = "Showplan::addAdvert";
     L_INFO(LOG_SHOWPLAN,"Adding to showplan " + id);
     DpsShowAdvert x(id);
     new ShowPlanAudio( lstShowPlan, lstShowPlan->lastItem(), x);
@@ -179,14 +179,14 @@ void Showplan::addAdvert(QString id) {
 }
 
 void Showplan::addScript(DpsShowScript& S) {
-    char *routine = "Showplan::addScript";
+    const char *routine = "Showplan::addScript";
     L_INFO(LOG_SHOWPLAN,"Adding to showplan " + S["name"]);
     new ShowPlanScript( lstShowPlan, lstShowPlan->lastItem(), S);
     L_INFO(LOG_DB,"Playlist add complete.");
 }
 
 void Showplan::addNote(DpsShowNote& N) {
-    char* routine = "Showplan::addNote";
+    const char* routine = "Showplan::addNote";
     L_INFO(LOG_SHOWPLAN,"Adding note to showplan");
     new ShowPlanNote( lstShowPlan, lstShowPlan->lastItem(), N);
     L_INFO(LOG_DB,"Playlist add complete");
@@ -379,7 +379,7 @@ void Showplan::scriptDone() {
 }
 
 void Showplan::processConfigUpdate() {
-    char* routine = "Showplan::processConfigUpdate";
+    const char* routine = "Showplan::processConfigUpdate";
     conf->requery();
     if (conf->getParam("next_on_showplan") == ""
                         && lstShowPlan->childCount() > 0
@@ -736,7 +736,7 @@ ShowPlanAudio::ShowPlanAudio( QListViewItem *parent, QListViewItem *after )
 
 ShowPlanAudio::ShowPlanAudio( QListView *parent, QListViewItem *after, 
         DpsShowItem& t ) : ShowPlanItem(parent, after) {
-    char *routine = "ShowPlanAudio::ShowPlanAudio";
+    const char *routine = "ShowPlanAudio::ShowPlanAudio";
     rootElement = false;
     setText(0,t["title"]);
     setText(2,dps_prettyTime(atoi(t["end_smpl"].c_str()) 

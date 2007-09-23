@@ -39,7 +39,7 @@ using namespace std;
  */
 AudioWall::AudioWall(QWidget *parent, const char* name, unsigned short rows, unsigned short cols)
 		: QWidget(parent,name) {
-    char *routine = "AudioWall::AudioWall";
+    const char *routine = "AudioWall::AudioWall";
 	// default to a single empty page
     _loaded = false;
 	_rows = rows;
@@ -94,7 +94,7 @@ void AudioWall::resizeEvent (QResizeEvent *e) {
  */
 void AudioWall::setButton(unsigned short page, unsigned short index,
 							AudioWallItemSpec newItem) {
-	char *routine = "AudioWall::setButton";
+	const char *routine = "AudioWall::setButton";
     L_INFO(LOG_PLAYOUT, "Set button: page=" + dps_itoa(page)  +
             ", index=" + dps_itoa(index));
 
@@ -143,7 +143,7 @@ void AudioWall::addPage() {
 
     P->items.clear();
     P->items.resize(_rows*_cols);
-    for (unsigned int i = 0; i < _rows*_cols; ++i) P->items.at(i) = 0;
+    for (unsigned short i = 0; i < _rows*_cols; ++i) P->items.at(i) = 0;
 
     // Create a new page of buttons/AudioWallItems
     qApp->lock();
@@ -179,7 +179,7 @@ void AudioWall::addPage() {
  * Deletes the specified cartwall (and buttons) from the wall list
  */
 void AudioWall::deletePage(unsigned int index) {
-    char *routine = "AudioWall::deletePage";
+    const char *routine = "AudioWall::deletePage";
     // Sanity check
     if (index > _pages.size() - 1) {
         L_ERROR(LOG_PLAYOUT, "Tried to delete page " + dps_itoa(index) + 
@@ -221,7 +221,7 @@ void AudioWall::deletePage(unsigned int index) {
  * Displays the specified cartwall buttons, hiding any other buttons
  */
 void AudioWall::displayPage(unsigned int index) {
-    char *routine = "AudioWall::displayPage";
+    const char *routine = "AudioWall::displayPage";
     L_INFO(LOG_PLAYOUT, "Display page " + dps_itoa(index+1) + " of " +
             dps_itoa(_pages.size()));
 

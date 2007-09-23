@@ -32,7 +32,7 @@ unsigned short Logger::logLevel = 0;
 unsigned short Logger::displayLevel = 0;
 string Logger::appName = "";
 
-void Logger::log(LOG_TYPE type, char* routine, string message, 
+void Logger::log(LOG_TYPE type, const char* routine, string message, 
 												MESSAGE_LEVEL level) {
 	if (logLevel >= level) {
 		if (!logFile) {

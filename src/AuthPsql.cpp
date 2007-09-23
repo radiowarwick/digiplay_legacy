@@ -37,7 +37,7 @@ AuthPsql::~AuthPsql() {
 }
 
 void AuthPsql::authSession(std::string username, std::string password) {
-	char* routine = "AuthPsql:authenticate";
+	const char* routine = "AuthPsql:authenticate";
 	L_INFO(LOG_AUTH,"Authenticating user " + username);
 
 	if (username == "") {

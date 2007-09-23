@@ -101,7 +101,7 @@ enum MESSAGE_LEVEL {CRITICAL,GENERAL,ERROR,WARNING,INFO};
  */
 class Logger {
 	public:
-		static void log(LOG_TYPE type, char* routine, std::string message,
+		static void log(LOG_TYPE type, const char* routine, std::string message,
 														MESSAGE_LEVEL level);
 		static void setLogLevel(unsigned short level){logLevel=level;}
 		static void setDisplayLevel(unsigned short level){displayLevel=level;}

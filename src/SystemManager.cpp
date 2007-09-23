@@ -28,7 +28,7 @@ using namespace std;
 #include "SystemManager.h"
 
 SystemManager::SystemManager() {
-    char* routine = "SystemManager::SystemManager";
+    const char* routine = "SystemManager::SystemManager";
 
     DB = new DataAccess();
 	archives = new vector<ArchiveManager*>;
@@ -59,7 +59,7 @@ SystemManager::~SystemManager() {
 }
 
 ArchiveManager* SystemManager::atArchive(unsigned int index) {
-    char* routine = "SystemManager::atArchive";
+    const char* routine = "SystemManager::atArchive";
     if (index > archives->size() - 1) {
         L_CRITICAL(LOG_ARCHIVE, "ArchiveManager::atArchive: index "
                 + dps_itoa(index) + " out of range.");
@@ -82,7 +82,7 @@ short SystemManager::sizeArchive() {
 
 void SystemManager::addArchive(string name, string localPath, 
 										string remotePath) {
-    char* routine = "SystemManager::addArchive";
+    const char* routine = "SystemManager::addArchive";
 
 	string SQL;
 	if (atArchive(name)) {
@@ -115,7 +115,7 @@ void SystemManager::addArchive(string name, string localPath,
 
 void SystemManager::createArchive(string name, string localPath, 
 										string remotePath) {
-    char* routine = "SystemManager::createArchive";
+    const char* routine = "SystemManager::createArchive";
 
     // Change to the localPath and try to create the directory structure
     std::string command = "cd " + localPath + "; ";
@@ -131,7 +131,7 @@ void SystemManager::createArchive(string name, string localPath,
 }
 
 void SystemManager::dropArchive(unsigned int index) {
-    char* routine = "SystemManager::dropArchive";
+    const char* routine = "SystemManager::dropArchive";
 // need to remove all the tracks and stuff first!
 	if (index > archives->size() - 1) {
         L_ERROR(LOG_DB,"Index out of range!");

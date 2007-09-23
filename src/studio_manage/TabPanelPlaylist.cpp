@@ -121,7 +121,7 @@ void TabPanelPlaylist::draw() {
 
 
 void TabPanelPlaylist::getPlaylist(){
-	char *routine = "TabPanelPlaylist::getPlaylist";
+	const char *routine = "TabPanelPlaylist::getPlaylist";
 	QListViewItem *new_playlist = 0, *new_track = 0, *last_track = 0;
 	string SQL = "SELECT id,name FROM playlists ORDER BY name DESC";
 
@@ -184,7 +184,7 @@ void TabPanelPlaylist::clear() {
 }
 
 void TabPanelPlaylist::processPlaylistUpdate() {
-    char* routine = "TabPanelPlaylist::processPlaylistUpdate";
+    const char* routine = "TabPanelPlaylist::processPlaylistUpdate";
     L_INFO(LOG_TABPLAYLIST,"Playlist table updated.");
     getPlaylist();
 }

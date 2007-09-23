@@ -28,7 +28,7 @@ LocationManager::~LocationManager() {
 }
 
 void LocationManager::add(unsigned int loc_index, std::string T) {
-    char* routine = "LocationManager::add";
+    const char* routine = "LocationManager::add";
 
     bool standalone = false;
     if (T == "LMAdd") standalone = true;
@@ -67,7 +67,7 @@ void LocationManager::add(unsigned int loc_index, std::string T) {
 }
 
 void LocationManager::remove(unsigned int loc_index, std::string T) {
-    char* routine = "LocationManager::remove";
+    const char* routine = "LocationManager::remove";
 
     bool standalone = false;
     if (T == "LMRemove") standalone = true;
@@ -96,7 +96,7 @@ void LocationManager::remove(unsigned int loc_index, std::string T) {
 
 void LocationManager::setValue(unsigned int loc_index, std::string parameter,
                                 std::string value, std::string T) {
-    char* routine = "LocationManager::setValue";
+    const char* routine = "LocationManager::setValue";
     
     bool standalone = false;
     if (T == "LMSetValue") standalone = true;
@@ -132,7 +132,7 @@ unsigned int LocationManager::count(std::string T) {
 }
 
 unsigned int LocationManager::get(unsigned int index, std::string T) {
-    char* routine = "LocationManager::get";
+    const char* routine = "LocationManager::get";
 
     if (index >= locations.size()) {
         L_ERROR(LOG_DB,"Location index " + dps_itoa(index) + " out of range.");
@@ -142,7 +142,7 @@ unsigned int LocationManager::get(unsigned int index, std::string T) {
 }
 
 Location LocationManager::getLocation(unsigned int loc_index, std::string T) {
-    char* routine = "LocationManager::getLocation";
+    const char* routine = "LocationManager::getLocation";
 
     bool standalone = false;
     if (T == "LMGet") standalone = true;
@@ -170,7 +170,7 @@ Location LocationManager::getLocation(unsigned int loc_index, std::string T) {
 }
 
 void LocationManager::getLocations() {
-    char* routine = "LocationManager::getLocations";
+    const char* routine = "LocationManager::getLocations";
 
     std::string T = "LMGetLocations";
 

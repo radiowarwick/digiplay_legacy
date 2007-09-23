@@ -36,7 +36,7 @@ XmlDocument::XmlDocument() {
 }
 
 XmlDocument::XmlDocument(string filename) {
-    char *routine = "XmlDocument::XmlDocument";
+    const char* routine = "XmlDocument::XmlDocument";
 	root = new XmlElement();
 
 	ifstream *f_in = new ifstream(filename.c_str());

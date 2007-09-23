@@ -68,7 +68,7 @@ string Auth::getUser() {
  * configuration to reflect the change in userid
  */
 void Auth::authSession(string username, string password) {
-    char *routine = "Auth::authSession";
+    const char* routine = "Auth::authSession";
 
     // Warn if user supplied a blank password
     if (password == "") {
@@ -167,7 +167,7 @@ void Auth::authSession(string username, string password) {
 }
 
 void Auth::closeSession() {
-	char *routine = "Auth::closeSession";
+	const char* routine = "Auth::closeSession";
 	string SQL = "UPDATE configuration SET val=("
 		  "SELECT id FROM users WHERE username='Guest'"
 	      ") WHERE parameter='userid' AND location=" + dps_itoa(location) + ";";
@@ -189,7 +189,7 @@ void Auth::closeSession() {
 }
 
 void Auth::addPrivilage(string privilage) {
-    char *routine="Auth::addPrivilage";
+    const char* routine="Auth::addPrivilage";
 	for (unsigned int i = 0; i < _privilages.size(); i++) {
 		if (_privilages.at(i) == privilage) {
 			L_WARNING(LOG_AUTH, "Privilage is already present");

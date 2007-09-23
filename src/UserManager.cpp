@@ -28,7 +28,7 @@ UserManager::~UserManager() {
  * Enters default configuration values for userconfigs.
  */
 void UserManager::add(User u, std::string T) {
-    char* routine = "UserManager::add";
+    const char* routine = "UserManager::add";
 
     bool standalone = false;
     if (T == "UMAdd") standalone = true;
@@ -96,7 +96,7 @@ void UserManager::add(User u, std::string T) {
  * \todo remove all files and stuff in directory.
  */
 void UserManager::remove(User u, std::string T) {
-    char* routine = "UserManager::remove";
+    const char* routine = "UserManager::remove";
 
     bool standalone = false;
     if (T == "UMRemove") standalone = true;
@@ -175,7 +175,7 @@ unsigned int UserManager::count() {
  * Returns the user at \a index
  */
 User UserManager::get(unsigned int index) {
-    char* routine = "UserManager::get";
+    const char* routine = "UserManager::get";
 
     if (index >= users.size()) {
         L_ERROR(LOG_DB,"Index out of range");
@@ -202,7 +202,7 @@ User UserManager::get(std::string username) {
  * Sets a users password
  */
 void UserManager::setPassword(User u, std::string password, std::string T) {
-    char* routine = "UserManager::setPassword";
+    const char* routine = "UserManager::setPassword";
 
     bool standalone = false;
     if (T == "UMSetPassword") standalone = true;
@@ -244,7 +244,7 @@ void UserManager::setPassword(User u, std::string password, std::string T) {
  * Adds a user to the administrators group
  */
 void UserManager::grantAdmin(User u, std::string T) {
-    char* routine = "UserManager::grantAdmin";
+    const char* routine = "UserManager::grantAdmin";
 
     bool standalone = false;
     if (T == "UMGrantAdmin") standalone = true;
@@ -285,7 +285,7 @@ void UserManager::grantAdmin(User u, std::string T) {
  * Removes a user from the administrators group
  */
 void UserManager::revokeAdmin(User u, std::string T) {
-    char* routine = "UserManager::revokeAdmin";
+    const char* routine = "UserManager::revokeAdmin";
 
     bool standalone = false;
     if (T == "UMRevokeAdmin") standalone = true;
@@ -318,7 +318,7 @@ void UserManager::revokeAdmin(User u, std::string T) {
  */
 std::vector<std::string> UserManager::parseLdap(std::string host, int port,
         std::string dn, std::string filter, std::string T) {
-    char* routine = "UserManager::parseLdap";
+    const char* routine = "UserManager::parseLdap";
    
     // LDAP structure
     LDAP* _myLdap;
@@ -443,7 +443,7 @@ std::vector<std::string> UserManager::parseLdap(std::string host, int port,
  * Rebuilds the internal list of users on the system.
  */
 void UserManager::refresh(std::string T) {
-    char* routine = "UserManager::refresh";
+    const char* routine = "UserManager::refresh";
 
     bool standalone = false;
     if (T == "UMRefresh") standalone = true;
@@ -490,7 +490,7 @@ void UserManager::refresh(std::string T) {
  * Checks if the user specifed by \a u exists on the system
  */
 unsigned int UserManager::userExists(User u, std::string T) {
-    char* routine = "UserManager::userExists";
+    const char* routine = "UserManager::userExists";
 
     bool standalone = false;
     if (T == "UMUserExists") standalone = true;

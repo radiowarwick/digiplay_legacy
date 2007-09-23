@@ -42,7 +42,7 @@ TabPanelInfo::~TabPanelInfo() {
 }
 
 void TabPanelInfo::draw() {
-	char* routine = "TabInfo::draw()";
+	const char* routine = "TabInfo::draw()";
 	
 	if (txtInfoPanel) {
 		L_WARNING(LOG_TABINFO,"Implicit clear() called");

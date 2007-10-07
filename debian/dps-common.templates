@@ -1,0 +1,42 @@
+Template: dps-common/editconf
+Type: select
+Choices: yes, no
+Default: no
+Description: Do you wish to configure /etc/digiplay.conf?
+
+Template: dps-common/dbname
+Type: string
+Default: digiplay
+Description: Enter the name of the digiplay database.
+ This holds the name of the digiplay database. If you have an existing 
+ installation at this site, enter the name of the existing database. Otherwise
+ you are free to choose a name for the database and use the dpsinstall script
+ from the dps-database package to generate the database.
+
+Template: dps-common/dbhost
+Type: string
+Default: 127.0.0.1
+Description: Enter the host on which the digiplay database is located.
+
+Template: dps-common/dbport
+Type: string
+Default: 5432
+Description: Enter the port of the digiplay database.
+
+Template: dps-common/dbuser
+Type: string
+Default: digiplay_user
+Description: Enter the database username for the digiplay user.
+
+Template: dps-common/dbpass
+Type: password
+Default:
+Description: Enter the password used to connect to the database.
+
+Template: dps-common/location
+Type: string
+Default: 0
+Description: Enter the location number for this installation.
+ Location numbers basically specify studio numbers. Each studio should have a
+ unique location number, greater than zero. Zero (0) is used for playout
+ servers and the sustainer service.

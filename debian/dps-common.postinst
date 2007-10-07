@@ -1,0 +1,40 @@
+#!/bin/sh -e
+. /usr/share/debconf/confmodule
+
+db_input high dps-common/editconf || true
+db_go
+db_get dps-common/editconf
+if [ "$RET" = "yes" ]; then
+    db_input high dps-common/dbname || true
+    db_input high dps-common/dbhost || true
+    db_input high dps-common/dbport || true
+    db_input high dps-common/dbuser || true
+    db_input high dps-common/dbpass || true
+    db_input high dps-common/location || true
+    db_go
+    
+    rm -f /tmp/digiplay.conf
+    touch /tmp/digiplay.conf
+
+    echo "# Database connection" > /tmp/digiplay.conf
+    db_get dps-common/dbname
+    echo "DB_NAME=$RET" >> /tmp/digiplay.conf
+    db_get dps-common/dbhost
+    echo "DB_HOST=$RET" >> /tmp/digiplay.conf
+    db_get dps-common/dbport
+    echo "DB_PORT=$RET" >> /tmp/digiplay.conf
+    db_get dps-common/dbuser
+    echo "DB_USER=$RET" >> /tmp/digiplay.conf
+    db_get dps-common/dbpass
+    echo "DB_PASS=$RET" >> /tmp/digiplay.conf
+    db_get dps-common/location
+    echo "# Location number" >> /tmp/digiplay.conf
+    echo "LOCATION=$RET" >> /tmp/digiplay.conf
+
+    mv /tmp/digiplay.conf /etc/digiplay.conf
+fi
+
+adduser --system --ingroup audio dps
+mkdir -p /var/log/dps
+chown -R dps:adm /var/log/dps
+chmod -R 770 /var/log/dps

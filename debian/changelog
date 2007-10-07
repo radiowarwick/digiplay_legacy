@@ -1,3 +1,9 @@
+digiplay (0.99.1-1) unstable; urgency=low
+
+  * Fixed threading bug in audio code
+
+ -- Chris Cantwell <ccantwell@radio.warwick.ac.uk>  Sun, 07 Oct 2007 11:26:00 +0000
+
 digiplay (0.99-7) unstable; urgency=low
 
   * Using debconf on dps-common to configure /etc/digiplay.conf

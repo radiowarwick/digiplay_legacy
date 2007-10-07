@@ -16,7 +16,7 @@ OutputDsp::~OutputDsp() {
 }
 
 void OutputDsp::receiveMessage(PORT inPort, MESSAGE message) {
-    cout << "Message on port " << inPort << ", message " << message << endl;
+    //cout << "Message on port " << inPort << ", message " << message << endl;
     if (inPort != IN0) {
         cout << "OutputDsp::receive: only use IN0 on a DSP device" << endl;
         return;
@@ -28,7 +28,6 @@ void OutputDsp::receiveMessage(PORT inPort, MESSAGE message) {
             break;
         case PAUSE:
             audioState = STATE_PAUSE;
-            cout << "PAUSE STATE!" << endl;
             break;
         default:
             break;

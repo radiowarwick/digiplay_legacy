@@ -104,7 +104,7 @@ void Thread::threadWait() {
  */
 void Thread::threadKill() {
     if (!init_flag) return;
-	pthread_cancel(threadId);
+//	pthread_cancel(threadId);
     pthread_join(threadId,NULL);
 }
 

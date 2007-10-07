@@ -310,7 +310,7 @@ void AudioWall::configurePageNav() {
 void AudioWall::drawCreate() {
     // clear out any existing objects
 	clean();
-	string path = qApp->applicationDirPath();
+	string path = DPSDIR;
 
     qApp->lock();
 	// Create frame, and page next, previous buttons and page num label

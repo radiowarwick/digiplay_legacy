@@ -45,7 +45,7 @@
 TabPanelSearch::TabPanelSearch(QTabWidget *parent, string text)
 		: TabPanel(parent,text)  {
 	panelTag = "TabSearch";
-    path = qApp->applicationDirPath();
+    path = DPSDIR;
     pixAudio = new QPixmap(path + "/images/music16.png");
     pixCensored = new QPixmap(path + "/images/censoredmusic16.png");
 	conf = new Config("digiplay");
@@ -70,6 +70,24 @@ void TabPanelSearch::draw() {
     lblSearch_font.setBold( FALSE );
     lblSearch->setFont( lblSearch_font );
 
+    Searchlable = new QLabel( getPanel(), "Searchlable" );
+    Searchlable->setGeometry( QRect( 10, 33, 67, 20 ) );
+    QFont Searchlable_font(  Searchlable->font() );
+    Searchlable_font.setPointSize( 12 );
+    Searchlable_font.setBold( FALSE );
+    Searchlable->setFont( Searchlable_font );
+
+    txtLibrarySearchText = new QLineEdit( getPanel(), "txtLibrarySearchText" );
+    txtLibrarySearchText->setGeometry( QRect( 83, 10, 330, 20 ) );
+    lstSearchResults = new QListView(getPanel(), "lstSearchResults" );
+
+    ArtistCheckBox = new QCheckBox( getPanel(), "ArtistCheckBox" );
+    ArtistCheckBox->setGeometry( QRect( 83, 35, 70, 20 ) );
+    QFont ArtistCheckBox_font(  ArtistCheckBox->font() );
+    ArtistCheckBox_font.setBold( FALSE );
+    ArtistCheckBox->setFont( ArtistCheckBox_font );
+    ArtistCheckBox->setChecked( TRUE );
+
     TitleCheckBox = new QCheckBox( getPanel(), "TitleCheckBox" );
     TitleCheckBox->setGeometry( QRect( 190, 35, 60, 20 ) );
     QFont TitleCheckBox_font(  TitleCheckBox->font() );
@@ -84,20 +102,6 @@ void TabPanelSearch::draw() {
     AlbumCheckBox->setFont( AlbumCheckBox_font );
     AlbumCheckBox->setChecked( TRUE );
 
-    Searchlable = new QLabel( getPanel(), "Searchlable" );
-    Searchlable->setGeometry( QRect( 10, 33, 67, 20 ) );
-    QFont Searchlable_font(  Searchlable->font() );
-    Searchlable_font.setPointSize( 12 );
-    Searchlable_font.setBold( FALSE );
-    Searchlable->setFont( Searchlable_font );
-
-    ArtistCheckBox = new QCheckBox( getPanel(), "ArtistCheckBox" );
-    ArtistCheckBox->setGeometry( QRect( 83, 35, 70, 20 ) );
-    QFont ArtistCheckBox_font(  ArtistCheckBox->font() );
-    ArtistCheckBox_font.setBold( FALSE );
-    ArtistCheckBox->setFont( ArtistCheckBox_font );
-    ArtistCheckBox->setChecked( TRUE );
-
     btnLibrarySearch = new QPushButton( getPanel(), "btnLibrarySearch" );
     btnLibrarySearch->setGeometry( QRect( 421, 10, 80, 20 ) );
     btnLibrarySearch->setPaletteForegroundColor( QColor( 0, 0, 0 ) );
@@ -107,10 +111,6 @@ void TabPanelSearch::draw() {
     btnLibrarySearch_font.setBold( FALSE );
     btnLibrarySearch->setFont( btnLibrarySearch_font );
     btnLibrarySearch->setAutoDefault( FALSE );
-
-    txtLibrarySearchText = new QLineEdit( getPanel(), "txtLibrarySearchText" );
-    txtLibrarySearchText->setGeometry( QRect( 83, 10, 330, 20 ) );
-    lstSearchResults = new QListView(getPanel(), "lstSearchResults" );
 
     lstSearchResults->setGeometry( QRect( 10, 60, 510, 570 ) );
     lstSearchResults->setVScrollBarMode( QListView::AlwaysOn );

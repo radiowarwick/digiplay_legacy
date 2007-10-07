@@ -73,7 +73,7 @@ void TabPanelPlaylist::configure(Auth *authModule) {
 // This handles drawing the contents of the form, and connecting slots,
 // but has little actual implementation
 void TabPanelPlaylist::draw() {
-	QString path = qApp->applicationDirPath();
+	QString path = DPSDIR;
 	pixExpanded = new QPixmap(path+"/images/expand16.png");
 	pixCollapsed = new QPixmap(path+"/images/contract16.png");
 	pixTrack = new QPixmap(path+"/images/music16.png");

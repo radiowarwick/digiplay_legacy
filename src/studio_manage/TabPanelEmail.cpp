@@ -177,7 +177,7 @@ void TabPanelEmail::draw() {
     }
 
     // Load icons and create icon set
-    QString path = qApp->applicationDirPath();
+    QString path = DPSDIR;
     pixEmailNew = new QPixmap(path + "/images/email_new16.png");
     pixEmailOld = new QPixmap(path + "/images/email_old16.png");
     icsEmailIcons = new QIconSet(*pixEmailNew, QIconSet::Automatic);

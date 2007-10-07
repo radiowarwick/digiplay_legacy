@@ -42,7 +42,12 @@ using namespace Audio;
 #define min(a,b) (((a)<(b))?(a):(b))
 
 int main(int argc, char *argv) {
-    char *routine = "sueplay::main";
+    Logger::setAppName("sueplay");
+    Logger::setLogLevel(INFO);
+    Logger::setDisplayLevel(ERROR);
+    Logger::initLogDir();
+
+    const char* routine = "sueplay::main";
 	system("clear");
 	cout << "Radio Warwick Sustainer" << endl;
 	cout << "-----------------------" << endl;
@@ -86,7 +91,7 @@ int main(int argc, char *argv) {
 	
 	// Process schedule table until empty
 	while (true) {
-		L_INFO(LOG_SUEPLAY, "BEGIN LOOP");
+		//L_INFO(LOG_SUEPLAY, "BEGIN LOOP");
 		// Keep trying until successfully loaded a file that exists!
 		do {
 			// Query database for next track to play
@@ -112,10 +117,10 @@ int main(int argc, char *argv) {
 			fade_in = atoi(R[0]["fade_in"].c_str());
 			fade_out = atoi(R[0]["fade_out"].c_str());
 			length_smpl = atoi(R[0]["length_smpl"].c_str());
-			L_INFO(LOG_SUEPLAY, "DB START: " + dps_itoa(start));
-			L_INFO(LOG_SUEPLAY, "DB END: " + dps_itoa(end));
-			L_INFO(LOG_SUEPLAY, "DB FADEIN: " + dps_itoa(fade_in));
-			L_INFO(LOG_SUEPLAY, "DB FADEOUT: " + dps_itoa(fade_out));
+			//L_INFO(LOG_SUEPLAY, "DB START: " + dps_itoa(start));
+			//L_INFO(LOG_SUEPLAY, "DB END: " + dps_itoa(end));
+			//L_INFO(LOG_SUEPLAY, "DB FADEIN: " + dps_itoa(fade_in));
+			//L_INFO(LOG_SUEPLAY, "DB FADEOUT: " + dps_itoa(fade_out));
 			// Remove the entry from schedule once we've tried to load it
 			SQL_Remove = "DELETE FROM sustschedule WHERE id="
 			                        + (string)R[0]["id"].c_str();
@@ -149,25 +154,25 @@ int main(int argc, char *argv) {
 			fade_in = fade_in - offset;
 		else
 			fade_in = 256;
-		L_INFO(LOG_SUEPLAY, "Fade in length: " + dps_itoa(fade_in));
+		//L_INFO(LOG_SUEPLAY, "Fade in length: " + dps_itoa(fade_in));
 		fader[active]->addNode(0,0.0);
 		fader[active]->addNode(fade_in,1.0);
 	
-		L_INFO(LOG_SUEPLAY, "BEFORE fadeout computation: ");
-		L_INFO(LOG_SUEPLAY, "Fadeout = " + dps_itoa(fade_out));
-		L_INFO(LOG_SUEPLAY, "End = " + dps_itoa(end));
+		//L_INFO(LOG_SUEPLAY, "BEFORE fadeout computation: ");
+		L_INFO(LOG_SUEPLAY, " -> Fadeout: " + dps_itoa(fade_out));
+		//L_INFO(LOG_SUEPLAY, "End = " + dps_itoa(end));
 		if (fade_out < end)
 			fade_out = fade_out - offset;
 		else
 			fade_out = end - 256 - offset;
 		end = end - offset;
-		L_INFO(LOG_SUEPLAY, "Fade out length: " + dps_itoa(end - fade_out));
+		L_INFO(LOG_SUEPLAY, " -> Fade out length: " + dps_itoa(end - fade_out));
 		fader[active]->addNode(fade_out,1.0);
 		fader[active]->addNode(end,0.0);
-		L_INFO(LOG_SUEPLAY, "Added fades");
+		//L_INFO(LOG_SUEPLAY, "Added fades");
 
 		trig[active]->setTriggerSample(min(fade_out,end));
-		L_INFO(LOG_SUEPLAY, "Added trigger");
+		//L_INFO(LOG_SUEPLAY, "Added trigger");
 		// Wait until last track has been played before we load the next
 		if (ch[inactive]->isLoaded()) {
 			L_INFO(LOG_SUEPLAY, "Waiting for channel " + dps_itoa(inactive));
@@ -179,7 +184,7 @@ int main(int argc, char *argv) {
 			ch[active]->play();
 		}
 
-		char *routine = "sueplay::main";
+		//const char* routine = "sueplay::main";
 		int now = (int)time(NULL);
 		artist = DB->esc(artist);
 		title = DB->esc(title);

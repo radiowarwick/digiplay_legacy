@@ -433,7 +433,7 @@ void Showplan::updateNextTrack() {
 }
 
 void Showplan::draw() {
-    QString path = qApp->applicationDirPath();
+    QString path = DPSDIR;
     
     grpFrame = new QGroupBox( this, "grpShowplan" );
     grpFrame->setGeometry( QRect( 0, 0, 470, 670 ) );
@@ -469,21 +469,6 @@ void Showplan::draw() {
     lstShowPlan->setSorting(-1);
     lstShowPlan->header()->hide();
     
-    btnDelete = new QPushButton( grpFrame, "btnDelete" );
-    btnDelete->setGeometry( QRect( 160, 600, 75, 60 ) );
-    btnDelete->setEnabled( FALSE );
-    btnDelete->setPixmap(QPixmap(path + "/images/delete48.png"));
-
-    btnMoveBottom = new QPushButton( grpFrame, "btnMoveBottom" );
-    btnMoveBottom->setGeometry( QRect( 385, 600, 75, 60 ) );
-    btnMoveBottom->setEnabled( FALSE );
-    btnMoveBottom->setPixmap(QPixmap(path + "/images/movebottom32.png"));
-
-    btnMoveDown = new QPushButton( grpFrame, "btnMoveDown" );
-    btnMoveDown->setGeometry( QRect( 310, 600, 75, 60 ) );
-    btnMoveDown->setEnabled( FALSE );
-    btnMoveDown->setPixmap(QPixmap(path + "/images/movedown32.png"));
-
     btnMoveTop = new QPushButton( grpFrame, "btnMoveTop" );
     btnMoveTop->setGeometry( QRect( 10, 600, 75, 60 ) );
     btnMoveTop->setEnabled( FALSE );
@@ -494,9 +479,24 @@ void Showplan::draw() {
     btnMoveUp->setEnabled( FALSE );
     btnMoveUp->setPixmap(QPixmap(path + "/images/moveup32.png"));
 
+    btnDelete = new QPushButton( grpFrame, "btnDelete" );
+    btnDelete->setGeometry( QRect( 160, 600, 75, 60 ) );
+    btnDelete->setEnabled( FALSE );
+    btnDelete->setPixmap(QPixmap(path + "/images/delete48.png"));
+    
     btnClear = new QPushButton( grpFrame, "btnClear" );
     btnClear->setGeometry( QRect( 235, 600, 75, 60 ) );
     btnClear->setPixmap(QPixmap(path + "/images/clear32.png"));
+
+    btnMoveBottom = new QPushButton( grpFrame, "btnMoveBottom" );
+    btnMoveBottom->setGeometry( QRect( 385, 600, 75, 60 ) );
+    btnMoveBottom->setEnabled( FALSE );
+    btnMoveBottom->setPixmap(QPixmap(path + "/images/movebottom32.png"));
+
+    btnMoveDown = new QPushButton( grpFrame, "btnMoveDown" );
+    btnMoveDown->setGeometry( QRect( 310, 600, 75, 60 ) );
+    btnMoveDown->setEnabled( FALSE );
+    btnMoveDown->setPixmap(QPixmap(path + "/images/movedown32.png"));
 
     connect( btnDelete, SIGNAL( clicked() ),        this, SLOT( remove() ));
     connect( btnMoveBottom, SIGNAL( clicked() ),    this, SLOT( moveBottom() ));
@@ -761,7 +761,7 @@ ShowPlanAudio::ShowPlanAudio( QListView *parent, QListViewItem *after,
 }
 
 void ShowPlanAudio::init() {
-    string path = qApp->applicationDirPath();
+    string path = DPSDIR;
     backBrushUnloaded = new QBrush(QColor(0,153,169));
     backBrushLoaded = new QBrush(QColor(0,153,169));
     backBrushFinished = new QBrush(QColor(128,128,128));
@@ -805,7 +805,7 @@ ShowPlanScript::ShowPlanScript( QListView *parent, QListViewItem *after,        
 }
 
 void ShowPlanScript::init() {
-    string path = qApp->applicationDirPath();
+    string path = DPSDIR;
     backBrushUnloaded = new QBrush(QColor(0,173,189));
     backBrushLoaded = new QBrush(QColor(0,173,189));
     backBrushFinished = new QBrush(QColor(148,148,148));
@@ -849,7 +849,7 @@ ShowPlanNote::ShowPlanNote( QListView *parent, QListViewItem *after,        DpsS
 }
 
 void ShowPlanNote::init() {
-    string path = qApp->applicationDirPath();
+    string path = DPSDIR;
     backBrushUnloaded = new QBrush(QColor(0,103,209));
     backBrushLoaded = new QBrush(QColor(0,103,209));
     backBrushFinished = new QBrush(QColor(168,168,168));

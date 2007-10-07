@@ -319,7 +319,7 @@ QString AudioPlayer::getTime( long smpl ) {
 }
 
 void AudioPlayer::drawCreate() {
-    string path = qApp->applicationDirPath();
+    string path = DPSDIR;
     pixPlay = new QPixmap(path + "/images/play.png");
     pixPause = new QPixmap(path + "/images/pause.png");
 

@@ -28,19 +28,21 @@ AUDIO		=	audio
 STUDIO		=	studio_play studio_manage
 SUE			=	sueplay suesched
 ADMIN		=	dpsadmin
+PLAYIN		=	playin
 DATABASE	=	db
-ALL			=	$(AUDIO) $(STUDIO) $(SUE) $(ADMIN) $(DATABASE)
+ALL			=	$(AUDIO) $(STUDIO) $(SUE) $(ADMIN) $(PLAYIN) $(DATABASE)
 
 # Built Executables
 EXE_STUDIO_MANAGE	=	src/studio_manage/studio_manage
 EXE_STUDIO_PLAY		=	src/studio_play/studio_play
 EXE_DPSADMIN		=	src/dpsadmin/dpsadmin
+EXE_PLAYIN			=	src/playin/playin
 EXE_SUEPLAY			=	src/sueplay/sueplay
 EXE_SUESCHED		=	src/suesched/suesched
 LIB_DPSAUDIO		=	src/audio/libdpsaudio.so \
 						src/audio/libdpsaudio.so.$(VERSION)
 EXE_ALL				=	$(EXE_STUDIO_MANAGE) $(EXE_STUDIO_PLAY) $(EXE_DPSADMIN)\
-						$(EXE_SUEPLAY) $(EXE_SUESCHED)
+						$(EXE_PLAYIN) $(EXE_SUEPLAY) $(EXE_SUESCHED)
 LIB_ALL				=	$(LIB_DPSAUDIO)
 
 .PHONY: clean install doc manual doxygen tar
@@ -103,3 +105,6 @@ deb:
 
 deb-clean:
 	@fakeroot -- make -f debian/rules clean
+
+deb-repack:
+	@dpkg-buildpackage -us -uc -nc -rfakeroot

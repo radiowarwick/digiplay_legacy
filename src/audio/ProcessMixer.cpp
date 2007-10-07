@@ -65,7 +65,6 @@ void Audio::ProcessMixer::getAudio(AudioPacket* buffer) {
 	while (x != ch_active.end()) {
 		if ((*x).second->state == STATE_STOP) {
 			PORT p = (*x).second->port;
-			cout << "Making channel " << p << " inactive." << endl; 
 			ch_inactive[p] = ch_active[p];
 			ch_active.erase(p);
 		}
@@ -85,29 +84,29 @@ void Audio::ProcessMixer::receiveMessage(PORT inPort, MESSAGE message) {
 		exit(-1);
 	}
 	if (message == STOP) {
-		cout << "ProcessMixer: Stopping channel " << inPort << endl;
+		//cout << "ProcessMixer: Stopping channel " << inPort << endl;
 		channels[inPort]->state = STATE_STOP;
 	}
 	else if (message == PLAY) {
-		cout << "ProcessMixer: Starting channel " << inPort << endl;
+		//cout << "ProcessMixer: Starting channel " << inPort << endl;
 		channels[inPort]->state = STATE_PLAY;
 		ch_inactive.erase(inPort);
 		ch_active[inPort] = channels[inPort];
 	}
 	if (ch_active.size() == 1 && message == PLAY) {
-		cout << "ProcessMixer: Setting mixer to play" << endl;
+		//cout << "ProcessMixer: Setting mixer to play" << endl;
 		send(OUT0,PLAY);
 	}
 	else if (ch_active.size() == 0) {
-		cout << "ProcessMixer: Setting mixer to stop" << endl;
+		//cout << "ProcessMixer: Setting mixer to stop" << endl;
 		send(OUT0,STOP);
 	}
-	cout << "Done processmixer::receive message" << endl;
+	//cout << "Done processmixer::receive message" << endl;
 }
 
 void Audio::ProcessMixer::onConnect(PORT localPort) {
 	if (localPort <= 0) return;
-	cout << "ProcessMixer: OnConnect " << localPort << endl;
+	//cout << "ProcessMixer: OnConnect " << localPort << endl;
 	pthread_mutex_lock(&channelLock);
 	MixerChannel *C = new MixerChannel;
 	C->state = STATE_STOP;
@@ -121,7 +120,7 @@ void Audio::ProcessMixer::onConnect(PORT localPort) {
 
 void Audio::ProcessMixer::onDisconnect(PORT localPort) {
 	if (localPort <= 0) return;
-	cout << "ProcessMixer: OnDisconnect" << endl;
+	//cout << "ProcessMixer: OnDisconnect" << endl;
 	// Lock mutex to prevent access to channels while removing one
 	pthread_mutex_lock(&channelLock);
 	// remove links in active and inactive maps

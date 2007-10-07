@@ -1,6 +1,9 @@
-digiplay (0.99-2) unstable; urgency=low
+digiplay (0.99-7) unstable; urgency=low
 
-  * Initial release
+  * Using debconf on dps-common to configure /etc/digiplay.conf
+  * Set /etc/digiplay.conf as a conffile
+  * Create dps user on install
+  * Sorted tabbing order on some tabs
 
  -- Chris Cantwell <ccantwell@radio.warwick.ac.uk>  Tue, 20 Sep 2007 00:00:00 +0000
 

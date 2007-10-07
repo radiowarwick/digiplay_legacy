@@ -23,7 +23,7 @@
 #include <qapplication.h>
 
 void dlgWarn::init() {
-    QString path = qApp->applicationDirPath();
+    QString path = DPSDIR;
     pixWarning->setPixmap(QPixmap(path + "/images/warning48.png"));
     pixLogout->setPixmap(QPixmap(path + "/images/loginlogo.png"));
 }

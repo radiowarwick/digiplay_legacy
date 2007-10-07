@@ -104,7 +104,7 @@ void frmStudioManage::init() {
 	
 	// Initialise interface
 	cout << "Initialising Interface..." << endl;
-	QString path = qApp->applicationDirPath();
+	QString path = DPSDIR;
 
 	//Load Images
 	cout << " -> Loading Images and setting contact information... ";

@@ -136,7 +136,7 @@ int main(int argc, char *argv[]) {
  * Parses the command-line options.
  */
 void parseCommand(int argc, char *argv[]) {
-    char* routine = "dpsadmin::parseCommand";
+    const char* routine = "dpsadmin::parseCommand";
     int t = 0;
     int c = 0;
 	while (1) {
@@ -275,7 +275,7 @@ void process() {
  * Process archive management
  */
 void processArchive() {
-    char* routine = "dpsadmin::processArchive";
+    const char* routine = "dpsadmin::processArchive";
 
     L_INFO(LOG_DB,"Entering archive mode.");
     SystemManager *Sys = new SystemManager();
@@ -391,7 +391,7 @@ void processArchive() {
  * Process music management
  */
 void processMusic() {
-    char* routine = "dpsadmin::processMusic";
+    const char* routine = "dpsadmin::processMusic";
 
     SystemManager *Sys = new SystemManager();
 
@@ -465,7 +465,7 @@ void processMusic() {
  * Process location management
  */
 void processLocation() {
-    char* routine = "dpsadmin::processLocation";
+    const char* routine = "dpsadmin::processLocation";
 
     LocationManager* L = new LocationManager();
     Location l;
@@ -520,7 +520,7 @@ void processLocation() {
  * Process user management
  */
 void processUser() {
-    char* routine = "dpsadmin::processUser";
+    const char* routine = "dpsadmin::processUser";
 
     UserManager* U = new UserManager();
     User u;
@@ -618,7 +618,7 @@ void processUser() {
  * Process group management
  */
 void processGroup() {
-    char* routine = "dpsadmin::processGroup";
+    const char* routine = "dpsadmin::processGroup";
 
     GroupManager *G = new GroupManager();
     Group g;

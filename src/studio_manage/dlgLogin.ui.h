@@ -23,8 +23,7 @@
 #include <qapplication.h>
 
 void dlgLogin::init() {
-    
-    QString path = qApp->applicationDirPath();
+    QString path = DPSDIR;
     pixLogin->setPixmap(QPixmap(path + "/images/loginlogo.png"));
     txtLoginUsername->setFocus();
 }

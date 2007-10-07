@@ -70,7 +70,7 @@ void InputRaw::getAudio(AudioPacket* audioData) {
 	// removed check to see if state == STATE_PLAY
 	if (cacheSize == cacheFree) {
         if (f_end_byte - f_pos_byte > 256) {
-            cout << "Out of cached audio" << endl;
+            //cout << "Out of cached audio" << endl;
         }
 		stop();
 	}
@@ -84,17 +84,20 @@ void InputRaw::getAudio(AudioPacket* audioData) {
 }
 
 void InputRaw::load(string filename, long start_smpl, long end_smpl) {
-	if (filename == "") return;
+    cout << "Begin load" << endl;
+	if (filename == "") throw;
 	state = STATE_STOP;
+    cout << "a" << endl;
 	updateStates(STATE_STOP);
+    cout << "b" << endl;
 	threadKill();
-
+    cout << "1" << endl;
 	f.close();
 	f.clear();
 	f.open(filename.c_str(), ios::in|ios::binary);
 	if (f.is_open() && f.good() == false) {
         cout << "Failed to open file '" << filename << "'" << endl;
-        return;
+        throw;
     }
 	f.seekg(0,ios::end);
 	f_filename = filename;
@@ -107,24 +110,25 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
 	cacheRead = cacheStart;
 	cacheWrite = cacheStart;
 	cacheFree = cacheSize;
+    cout << "2" << endl;
 
 	if (countersList.size() > 0) {
 		updateCounters(0);
 		updateTotals(f_length_byte/4);
 	}
-	
+	cout << "3" << endl;
 	int retval = threadStart();
 	if (retval != 0) {
 		cout << "Error creating thread" << endl;
 		return;
 	}
-	
+    cout << "4" << endl;	
 	// Wait until the cache has been half filled
     while ( cacheSize < 2*cacheFree 
 			&& cacheSize - cacheFree < f_length_byte) {
         usleep(100);
     }
-
+    cout << "5" << endl;
 }
 
 void InputRaw::play() {

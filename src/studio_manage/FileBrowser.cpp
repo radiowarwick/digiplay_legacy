@@ -215,7 +215,7 @@ DirectoryView::DirectoryView( QWidget *parent, const char *name, bool sdo )
     _uid = "2";
 
     if ( !folderLocked ) {
-        QString path = qApp->applicationDirPath();
+        QString path = DPSDIR;
         folderLocked = new QPixmap(path + "/images/folderLocked.png");
         folderClosed = new QPixmap(path + "/images/folder.png");
         folderOpen = new QPixmap(path + "/images/folderOpen.png");

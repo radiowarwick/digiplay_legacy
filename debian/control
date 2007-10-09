@@ -2,7 +2,7 @@ Source: digiplay
 Section: sound
 Priority: extra
 Maintainer: Chris Cantwell <ccantwell@radio.warwick.ac.uk>
-Build-Depends: debhelper (>= 5), libc6-dev, libpqxx-dev, libqt3-mt-dev, libxext-dev, libx11-dev, libstdc++6-4.1-dev, libflac++-dev
+Build-Depends: debhelper (>= 5), libc6-dev, libpqxx-dev, libqt3-mt-dev, libxext-dev, libx11-dev, libstdc++6-4.1-dev, libflac++-dev, libldap2-dev
 Standards-Version: 3.7.2
 
 Package: libdpsaudio

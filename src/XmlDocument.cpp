@@ -42,7 +42,8 @@ XmlDocument::XmlDocument(string filename) {
 	ifstream *f_in = new ifstream(filename.c_str());
 	if (!f_in->is_open() || !f_in->good()) {
 		L_ERROR(LOG_XML, "Failed to open file: " + filename);
-		delete this;
+		delete f_in;
+        throw -1;
 	}
 	getline((*f_in),header);
 	getline((*f_in),doctype);
@@ -55,6 +56,8 @@ XmlDocument::XmlDocument(string filename) {
 		data += " " + buffer;
 	}
 	read_element(root,&data,0,data.size());
+    f_in->close();
+    delete f_in;
 }
 
 XmlDocument::~XmlDocument() {

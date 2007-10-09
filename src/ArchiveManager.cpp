@@ -195,7 +195,7 @@ void ArchiveManager::add(unsigned int index) {
 	// detect if the audio file is completely blank and cancel if it is
     if (t.trim_end_smpl <= t.trim_start_smpl) {
 		L_WARNING(LOG_DB,"No non-zero samples, so track ignored.");
-		throw;
+		throw -1;
 	}
 
     // Save a copy for writing out XML later
@@ -429,11 +429,14 @@ std::vector<track> ArchiveManager::readXML(string filename) {
     const char* routine = "ArchiveManager::readXML";
     std::string s;
     std::vector<track> tracks;
-	XmlDocument* D = new XmlDocument(filename);
-	if (!D) {
+    XmlDocument* D;
+    try {
+        D = new XmlDocument(filename);
+    }
+    catch (...) {
 		return tracks;
-	}
-	XmlElement* root = D->get_root();
+    }
+    XmlElement* root = D->get_root();
 
     // create track objects for each segment in the xml document
     // they will all have the same basic data

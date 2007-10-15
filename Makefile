@@ -101,7 +101,7 @@ tar: 		clean
 	echo "Created $(BASE).tar.gz";
 
 deb:
-	@dpkg-buildpackage -us -uc -rfakeroot
+	@dpkg-buildpackage -b -us -uc -rfakeroot
 
 deb-clean:
 	@fakeroot -- make -f debian/rules clean

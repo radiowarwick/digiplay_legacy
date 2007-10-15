@@ -48,10 +48,6 @@ int main(int argc, char *argv) {
     Logger::initLogDir();
 
     const char* routine = "sueplay::main";
-	system("clear");
-	cout << "Radio Warwick Sustainer" << endl;
-	cout << "-----------------------" << endl;
-	cout << "Playback service started." << endl;
 	
 	string SQL_Item,SQL_Remove;
 	PqxxResult R;
@@ -95,13 +91,14 @@ int main(int argc, char *argv) {
 		// Keep trying until successfully loaded a file that exists!
 		do {
 			// Query database for next track to play
+            L_INFO(LOG_SUEPLAY, "Retrieving next track from database.");
 			R = DB->exec("SuePlay",SQL_Item);
 
 			// If no results, then schedule must have been depleated! Doh!
 			if (R.size() == 0) {
 				if (warn_flag) {
 					warn_flag = false;
-					L_WARNING(LOG_SUEPLAY, "WARNING: Schedule is depleated!");
+					L_WARNING(LOG_SUEPLAY, "Schedule is depleated!");
 				}
 				continue;
 			}
@@ -117,11 +114,9 @@ int main(int argc, char *argv) {
 			fade_in = atoi(R[0]["fade_in"].c_str());
 			fade_out = atoi(R[0]["fade_out"].c_str());
 			length_smpl = atoi(R[0]["length_smpl"].c_str());
-			//L_INFO(LOG_SUEPLAY, "DB START: " + dps_itoa(start));
-			//L_INFO(LOG_SUEPLAY, "DB END: " + dps_itoa(end));
-			//L_INFO(LOG_SUEPLAY, "DB FADEIN: " + dps_itoa(fade_in));
-			//L_INFO(LOG_SUEPLAY, "DB FADEOUT: " + dps_itoa(fade_out));
-			// Remove the entry from schedule once we've tried to load it
+			
+            // Remove the entry from schedule once we've tried to load it
+            L_INFO(LOG_SUEPLAY, "Removing track from sustainer playlist.");
 			SQL_Remove = "DELETE FROM sustschedule WHERE id="
 			                        + (string)R[0]["id"].c_str();
 	        DB->exec("SuePlay",SQL_Remove);
@@ -130,11 +125,14 @@ int main(int argc, char *argv) {
 			path += "/" + md5.substr(0,1) + "/";
 			L_INFO(LOG_SUEPLAY, "Attempting to load channel " +
                     dps_itoa(active) + ": " + artist + " - " + title);
+			cout << "Attempting to load channel " +
+                    dps_itoa(active) + ": " + artist + " - " + title << endl;
 			L_INFO(LOG_SUEPLAY, " -> Start: " + dps_itoa(start));
 			L_INFO(LOG_SUEPLAY, " -> End: " + dps_itoa(end));
 			// Try and load the track
 			try {
 				ch[active]->load( path + md5, start, end );
+                L_INFO(LOG_SUEPLAY, "Successfully loaded track.");
 				break;
 			}
 			catch (...) {
@@ -154,13 +152,11 @@ int main(int argc, char *argv) {
 			fade_in = fade_in - offset;
 		else
 			fade_in = 256;
-		//L_INFO(LOG_SUEPLAY, "Fade in length: " + dps_itoa(fade_in));
+		L_INFO(LOG_SUEPLAY, " -> Fadein: " + dps_itoa(fade_in));
 		fader[active]->addNode(0,0.0);
 		fader[active]->addNode(fade_in,1.0);
 	
-		//L_INFO(LOG_SUEPLAY, "BEFORE fadeout computation: ");
 		L_INFO(LOG_SUEPLAY, " -> Fadeout: " + dps_itoa(fade_out));
-		//L_INFO(LOG_SUEPLAY, "End = " + dps_itoa(end));
 		if (fade_out < end)
 			fade_out = fade_out - offset;
 		else
@@ -169,11 +165,10 @@ int main(int argc, char *argv) {
 		L_INFO(LOG_SUEPLAY, " -> Fade out length: " + dps_itoa(end - fade_out));
 		fader[active]->addNode(fade_out,1.0);
 		fader[active]->addNode(end,0.0);
-		//L_INFO(LOG_SUEPLAY, "Added fades");
 
 		trig[active]->setTriggerSample(min(fade_out,end));
-		//L_INFO(LOG_SUEPLAY, "Added trigger");
-		// Wait until last track has been played before we load the next
+		
+        // Wait until last track has been played before we load the next
 		if (ch[inactive]->isLoaded()) {
 			L_INFO(LOG_SUEPLAY, "Waiting for channel " + dps_itoa(inactive));
 			trig[inactive]->waitStop();
@@ -184,7 +179,6 @@ int main(int argc, char *argv) {
 			ch[active]->play();
 		}
 
-		//const char* routine = "sueplay::main";
 		int now = (int)time(NULL);
 		artist = DB->esc(artist);
 		title = DB->esc(title);
@@ -193,12 +187,15 @@ int main(int argc, char *argv) {
 			"VALUES (" + dps_itoa(1) + ", " + dps_itoa(now) + ", '"
 			+ title + "', '" + artist + "', " + dps_itoa(0) + ");";
 		try {
+            L_INFO(LOG_SUEPLAY,"Writing log entry for " + artist
+                    + " - " + title + ".");
 			DB->exec("SuePlayLog",SQL_Insert);
 			DB->commit("SuePlayLog");
 		}
 		catch (...) {
             DB->abort("SuePlayLog");
-			L_ERROR(LOG_TABLOGGING,"Failed to log record " + artist + " - " + title + ".");
+			L_ERROR(LOG_TABLOGGING,"Failed to log record " + artist 
+                    + " - " + title + ".");
 		}
 		active = abs(active - 1);
 		inactive = abs(inactive - 1);

@@ -598,6 +598,7 @@ void processUser() {
                 try {
                     User u;
                     u.username = userlist[i];
+                    u.isAdmin = false;
                     U->add(u);
                 }
                 catch (...) {

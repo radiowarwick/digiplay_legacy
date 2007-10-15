@@ -84,7 +84,7 @@ void InputRaw::getAudio(AudioPacket* audioData) {
 }
 
 void InputRaw::load(string filename, long start_smpl, long end_smpl) {
-	if (filename == "") throw;
+	if (filename == "") throw -1;
 	state = STATE_STOP;
 	updateStates(STATE_STOP);
 	threadKill();
@@ -93,7 +93,7 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
 	f.open(filename.c_str(), ios::in|ios::binary);
 	if (f.is_open() && f.good() == false) {
         cout << "Failed to open file '" << filename << "'" << endl;
-        throw;
+        throw -1;
     }
 	f.seekg(0,ios::end);
 	f_filename = filename;
@@ -209,6 +209,7 @@ void InputRaw::onDisconnect(PORT localPort) {
 }
 
 void InputRaw::threadExecute() {
+    cout << "InputRaw::threadExecute(): begin" << endl;
 	f.clear();
 	f.seekg(f_start_byte, ios::beg);
 
@@ -217,6 +218,7 @@ void InputRaw::threadExecute() {
 
 	while (read_bytes == 256) {
 		if (threadReceive() == STOP) {
+            cout << "InputRaw::threadExecute(): threadReceived stop" << endl;
 			break;
 		}
 		if (cacheFree < 1024) {
@@ -248,5 +250,7 @@ void InputRaw::threadExecute() {
 			}
 		}
 		threadTestKill();
+        usleep(100);
 	}
+    cout << "InputRaw::threadExecute(): end" << endl;
 }

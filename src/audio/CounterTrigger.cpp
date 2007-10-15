@@ -34,6 +34,7 @@ void Audio::CounterTrigger::setTriggerTarget(InputRaw *I) {
 }
 
 void Audio::CounterTrigger::setTriggerSample(unsigned long sample) {
+    cout << "setTriggerSample(): sample = " << sample << endl;
 	if (sample > _totalSamples) {
 		std::cout << "Sample is beyond end of file!" << std::endl;
 		std::cout << "Total samples: " << _totalSamples << std::endl;
@@ -41,16 +42,22 @@ void Audio::CounterTrigger::setTriggerSample(unsigned long sample) {
 		throw;
 	}
 	_passed = (_currentSample > sample);
+    cout << "setTriggerSample(): _passed = " << _passed << endl;
 	_smpl = sample;
 }
 
 void Audio::CounterTrigger::waitTrigger() {
+    cout << "waitTrigger(): _passed = " << _passed << endl;
+    cout << "waitTrigger(): _totalSamples = " << _totalSamples << endl;
+    cout << "waitTrigger(): _currentSample = " << _currentSample << endl;
 	while (!_passed) {
 		usleep(100);
 	}
 }
 
 void Audio::CounterTrigger::waitStop() {
+    cout << "waitStop(): _state = " << _state << endl;
+    cout << "STATE_STOP is " << STATE_STOP << endl;
 	while (_state != STATE_STOP) {
 		usleep(100);
 	}

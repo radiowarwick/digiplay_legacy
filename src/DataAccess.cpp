@@ -81,22 +81,27 @@ DataAccess::~DataAccess() {
 PqxxResult DataAccess::exec(std::string name, std::string query) {
     const char* routine = "DataAccess::exec";
 
-    // If it's a different transaction name to the current one open, make the
+    // Only one routine at a time.
+    pthread_mutex_lock(t_routine_mutex);
+    
+	// If it's a different transaction name to the current one open, make the
     // calling thread wait until the existing transaction is complete.
     if (transActive && transName != name) {
         L_INFO(LOG_DB,"Attempted transaction '" + name + "' while transaction '"
                 + transName + "' is still active. Waiting");
+		// Wait until the current transaction is no longer active
         while (transActive && transName != name) {
             L_INFO(LOG_DB,"Transaction '" + transName + "' is still active.");
             L_INFO(LOG_DB,"Want to start transaction '" + name + "'");
-            sleep(1);
+			// unlock mutex while we wait so the existing transaction can
+			// go about it's business.
+			pthread_mutex_unlock(t_routine_mutex);
+            usleep(10000);
+			pthread_mutex_lock(t_routine_mutex);
         }
         L_INFO(LOG_DB,"Transaction '" + name + "' now commencing.");
     }
 	
-    // Only one routine at a time.
-    pthread_mutex_lock(t_routine_mutex);
-    
     // Lock mutex to prevent multiple queries simultaneously
     PqxxResult R;
 	
@@ -155,26 +160,43 @@ PqxxResult DataAccess::exec(std::string name, std::string query) {
 void DataAccess::commit(std::string name) {
     const char* routine = "DataAccess::commit";
     
-    // Lock routine mutex
+	// Lock routine mutex
     pthread_mutex_lock(t_routine_mutex);
-
+	
     // If we commit a different transaction, we must be stupid
     if (transActive && transName != name) {
-        pthread_mutex_unlock(t_routine_mutex);
         L_ERROR(LOG_DB,"Attempted to commit the wrong transaction!");
+		L_ERROR(LOG_DB,"Tried to commit " + name + " while " + transName
+			+ " is still active.");
+		pthread_mutex_unlock(t_routine_mutex);
         return;
     }
-	
-    // We shouldn't try to commit when we've not done anything. Stupid.
-    if (!W) throw;
+    
+	// We shouldn't try to commit when we've not done anything. Stupid.
+    if (!W) {
+		pthread_mutex_unlock(t_routine_mutex);
+		throw -1;
+	}
 
-	// Lock the mutex, commit the changes, delete the transaction and unlock
-	// the mutex again.
-    L_INFO(LOG_DB,"Committing transaction '" + transName + "'");
-    W->commit();
-    delete W;
-    W = 0;
+	// Try to commit the transaction
+	try {	
+	    L_INFO(LOG_DB,"Committing transaction '" + transName + "'");
+	    W->commit();
+	}
+    catch (const std::exception &e) {
+        pthread_mutex_unlock(t_routine_mutex);
+        L_ERROR(LOG_DB,"Exception: " + std::string(e.what()));
+        throw -1;
+    }
+    catch (...) {
+        pthread_mutex_unlock(t_routine_mutex);
+        L_CRITICAL(LOG_DB,"Unexpected exception.");
+        throw -1;
+    }
 
+	// Clean up Work and set pointer null
+	delete W;
+	W = 0;
     transActive = false;
     transName = "";
 
@@ -197,6 +219,8 @@ void DataAccess::abort(std::string name) {
     if (transActive && transName != name) {
         pthread_mutex_unlock(t_routine_mutex);
         L_ERROR(LOG_DB,"Attempted to abort the wrong transaction!");
+		L_ERROR(LOG_DB,"Tried to abort " + name + " while " + transName
+			+ " is still active.");
         return;
     }
 	
@@ -207,12 +231,25 @@ void DataAccess::abort(std::string name) {
         return;
     }
 
-	// Lock mutex, abort transaction, delete transaction and unlock mutex
-    L_INFO(LOG_DB,"Aborting transaction '" + transName + "'");
-    W->abort();
+	// Try to abort the transaction
+    try {
+		L_INFO(LOG_DB,"Aborting transaction '" + transName + "'");
+	    W->abort();
+	}
+    catch (const std::exception &e) {
+        pthread_mutex_unlock(t_routine_mutex);
+        L_ERROR(LOG_DB,"Exception: " + std::string(e.what()));
+        throw -1;
+    }
+    catch (...) {
+        pthread_mutex_unlock(t_routine_mutex);
+        L_CRITICAL(LOG_DB,"Unexpected exception.");
+        throw -1;
+    }
+
+	// Delete Work and set pointer to null
     delete W;
     W = 0;
-
     transActive = false;
     transName = "";
 

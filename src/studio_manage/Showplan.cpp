@@ -206,7 +206,9 @@ void Showplan::clear(bool prompt) {
     }
     selectionChanged(0);
     lstShowPlan->clear();
+	activePointLock.lock();
     activePoint = 0;
+	activePointLock.unlock();
     updateNextTrack();
 }
 
@@ -311,13 +313,16 @@ void Showplan::clicked(QListViewItem *x) {
 }
 
 void Showplan::selectionChanged(QListViewItem* x) {
-    // If x is null, we're not having anything selected.
+    // Check if the currently selected item is a script
+    // Need to clear script tab, and set item to unloaded state.
+	if ( selectedItem && selectedItem->getType() == 1 &&
+		 	selectedItem->getState() == SHOWPLAN_STATE_LOADED ) {
+		emit scriptDeselected();
+		selectedItem->setState(SHOWPLAN_STATE_UNLOADED);
+	}
+    
+	// If x is null, we're not having anything selected.
     if ( ! x ) {
-	    if ( selectedItem && selectedItem->getType() == 1 &&
-		     	selectedItem->getState() == SHOWPLAN_STATE_LOADED ) {
-            emit scriptDeselected();
-		    selectedItem->setState(SHOWPLAN_STATE_UNLOADED);
-        }
         btnMoveUp->setEnabled(false);
         btnMoveDown->setEnabled(false);
         btnMoveTop->setEnabled(false);
@@ -329,14 +334,6 @@ void Showplan::selectionChanged(QListViewItem* x) {
 
     // Type cast to a ShowPlanItem.
     ShowPlanItem *y = (ShowPlanItem*)x;
-
-    // Check if the currently selected item is a script
-    // Need to clear script tab, and set item to unloaded state.
-	if ( selectedItem && selectedItem->getType() == 1 &&
-		 	selectedItem->getState() == SHOWPLAN_STATE_LOADED ) {
-		emit scriptDeselected();
-		selectedItem->setState(SHOWPLAN_STATE_UNLOADED);
-	}
 
     // If item is unloaded, activate applicable move buttons
     if ( y && y->getState() == SHOWPLAN_STATE_UNLOADED ) {
@@ -380,11 +377,12 @@ void Showplan::scriptDone() {
 
 void Showplan::processConfigUpdate() {
     const char* routine = "Showplan::processConfigUpdate";
+	
+	activePointLock.lock();
     conf->requery();
     if (conf->getParam("next_on_showplan") == ""
                         && lstShowPlan->childCount() > 0
                         && activePoint != lstShowPlan->lastItem()) {
-        activePointLock.lock();
         L_INFO(LOG_DB,"Processing track load event");
         if (activePoint == 0) {
             activePoint = (ShowPlanItem*)lstShowPlan->firstChild();
@@ -392,44 +390,58 @@ void Showplan::processConfigUpdate() {
         else {
             activePoint->setState(SHOWPLAN_STATE_FINISHED);
             activePoint = (ShowPlanItem*)activePoint->nextSibling();
-            while (activePoint->getType() == 1
-                    && activePoint != lstShowPlan->lastItem()) {
-                activePoint = (ShowPlanItem*)activePoint->nextSibling();
-            }
+			// while we have a script selected...
+//            while (activePoint->getType() == 1
+//                    && activePoint != lstShowPlan->lastItem()) {
+//                activePoint = (ShowPlanItem*)activePoint->nextSibling();
+//            }
         }
         activePoint->setState(SHOWPLAN_STATE_LOADED);
         lstShowPlan->ensureItemVisible(activePoint);
         if (lstShowPlan->selectedItem()) {
             selectionChanged(lstShowPlan->selectedItem());
         }
-        L_INFO(LOG_DB,"Triggering update of next_on_showplan entry");
+
         activePointLock.unlock();
+    	L_INFO(LOG_DB,"Configuration refresh complete.");
+        
+		L_INFO(LOG_DB,"Triggering update of next_on_showplan entry");
         updateNextTrack();
     }
-    L_INFO(LOG_DB,"Configuration refresh complete.");
+	else {
+		activePointLock.unlock();
+	}
 }
 
 void Showplan::updateNextTrack() {
-    ShowPlanItem *x = 0;
-    if (lstShowPlan->childCount() == 0) return;
     activePointLock.lock();
+    ShowPlanItem *x = 0;
+    if (lstShowPlan->childCount() == 0) {
+		conf->setParam("next_on_showplan","");
+		activePointLock.unlock();
+		return;
+	}
+
+
     if ( ! activePoint ) {
         x = (ShowPlanItem*)lstShowPlan->firstChild();
     }
     else {
         x = (ShowPlanItem*)activePoint->nextSibling();
     }
-    activePointLock.unlock();
+
     if ( x ) {
         do
             if (x->getType() == 0) {
                 ShowPlanAudio *audio = (ShowPlanAudio*)x;
                 DpsShowItem t = audio->getTrack();
                 conf->setParam("next_on_showplan",t["md5"]);
+				activePointLock.unlock();
                 return;
             }
         while ((x = (ShowPlanItem*)x->nextSibling()) != 0);
     }
+    activePointLock.unlock();
 }
 
 void Showplan::draw() {

@@ -187,7 +187,7 @@ class ShowPlanNote : public ShowPlanItem {
         ShowPlanNote( QListView *parent, QListViewItem *after, 
                             DpsShowItem&   s);
         
-        int getType() {return 1;}
+        int getType() {return 2;}
         DpsShowItem& getNote() {return _n;}
 
     private:

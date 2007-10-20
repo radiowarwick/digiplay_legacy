@@ -85,9 +85,12 @@ void InputRaw::getAudio(AudioPacket* audioData) {
 
 void InputRaw::load(string filename, long start_smpl, long end_smpl) {
 	if (filename == "") throw -1;
-	state = STATE_STOP;
-	updateStates(STATE_STOP);
-	threadKill();
+    if (state != STATE_STOP) {
+    	state = STATE_STOP;
+    	threadKill();
+        threadWait();
+    	updateStates(STATE_STOP);
+    }
 	f.close();
 	f.clear();
 	f.open(filename.c_str(), ios::in|ios::binary);
@@ -117,10 +120,10 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
 		return;
 	}
 	// Wait until the cache has been half filled
-    while ( cacheSize < 2*cacheFree 
+    /*while ( cacheSize < 10*cacheFree 
 			&& cacheSize - cacheFree < f_length_byte) {
         usleep(100);
-    }
+    }*/
 }
 
 void InputRaw::play() {
@@ -132,6 +135,7 @@ void InputRaw::play() {
 void InputRaw::stop() {
 	state = STATE_STOP;
     threadKill();
+    threadWait();
 	send(OUT0,STOP);
 	updateStates(STATE_STOP);
     load(f_filename, f_start_byte/4, f_end_byte/4);
@@ -249,8 +253,11 @@ void InputRaw::threadExecute() {
 				cacheWrite = cacheStart;
 			}
 		}
-		threadTestKill();
-        usleep(100);
+		if (threadTestKill()) {
+            cout << "Caching was terminated." << endl;
+            break;
+        }
+        usleep(1000);
 	}
     cout << "InputRaw::threadExecute(): end" << endl;
 }

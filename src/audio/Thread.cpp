@@ -6,8 +6,10 @@ using Audio::Thread;
 
 Thread::Thread() {
     init_flag = false;
+    terminate_flag = false;
     t_active = false;
     pthread_mutex_init(&t_messages_mutex,NULL);
+    pthread_mutex_init(&t_terminate_mutex,NULL);
 }
 
 Thread::~Thread() {
@@ -21,16 +23,18 @@ Thread::~Thread() {
  */
 int Thread::threadStart() {
     // first kill our thread if it is running
-	threadKill();
+	if (t_active) threadKill();
 
     // get default attributes
 	pthread_attr_init(&threadAttr);
+    terminate_flag = false;
 	
     // create the new thread with default attributes starting \c threadEntry
     // The \c this pointer is passed to provide a reference to this instance
 	int code = pthread_create(&threadId, &threadAttr, Thread::threadEntry, 
 									(void*)this);
     init_flag = true;
+
 	return code;
 }
 
@@ -104,14 +108,25 @@ void Thread::threadWait() {
  */
 void Thread::threadKill() {
     if (!init_flag) return;
-	pthread_cancel(threadId);
-    pthread_join(threadId,NULL);
+    pthread_mutex_lock(&t_terminate_mutex);
+    terminate_flag = true;
+    pthread_mutex_unlock(&t_terminate_mutex);
+
+    // Clean up resources when it dies
+    pthread_detach(threadId);
 }
 
 /**
  * Mark a cancellation point in the \c threadExecute implementation. This
  * allows the thread to be killed off at any such points if requested.
  */
-void Thread::threadTestKill() {
-	pthread_testcancel();
+bool Thread::threadTestKill() {
+    pthread_mutex_lock(&t_terminate_mutex);
+    if (terminate_flag == true) {
+        terminate_flag = false;
+        pthread_mutex_unlock(&t_terminate_mutex);
+        return true;
+    }
+    pthread_mutex_unlock(&t_terminate_mutex);
+    return false;
 }

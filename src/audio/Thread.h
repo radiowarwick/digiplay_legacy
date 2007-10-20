@@ -45,7 +45,7 @@ class Audio::Thread {
 		/// Check if the thread is running
 		bool isThreadActive();
 		/// Create a cancellation point
-		void threadTestKill();
+		bool threadTestKill();
 		/// Cancel the thread execution
 		void threadKill();
 		/// Wait for thread to finish
@@ -61,12 +61,13 @@ class Audio::Thread {
 		pthread_attr_t threadAttr;
 
         bool init_flag;
-		
+        bool terminate_flag;
+
 		// Storage for inter-thread messages
 		vector<int> t_messages;
 		bool t_active;
 		pthread_mutex_t t_messages_mutex;
-		pthread_mutex_t t_active_mutex;
+        pthread_mutex_t t_terminate_mutex;
 };
 
 #endif

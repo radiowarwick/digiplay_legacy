@@ -43,8 +43,18 @@ void InputRaw::getAudio(AudioPacket* audioData) {
     short count = 0;
 
 	if (cacheSize - cacheFree < bytes) {
-		bytes = cacheSize - cacheFree;
-		audioData->setSize(bytes/4);
+		// if we've finished caching, just empty the remaining data
+		if (!isThreadActive()) {
+			bytes = cacheSize - cacheFree;
+			//audioData->setSize(bytes/4);
+		}
+		// if we're still caching, the cache has emptied, so "stutter",
+		// rather than quit.
+		else {
+			cacheRead-=PACKET_BYTES;
+			cacheFree-=PACKET_BYTES;
+			f_pos_byte-=PACKET_BYTES;
+		}
 	}
 	for (unsigned long i = 0; i < PACKET_BYTES; i++) {
         if (state == STATE_STOP || bytes == 0) {
@@ -253,10 +263,10 @@ void InputRaw::threadExecute() {
 				cacheWrite = cacheStart;
 			}
 		}
-		if (threadTestKill()) {
-            cout << "Caching was terminated." << endl;
-            break;
-        }
+		//if (threadTestKill()) {
+        //    cout << "Caching was terminated." << endl;
+        //    break;
+        //}
         usleep(1000);
 	}
     cout << "InputRaw::threadExecute(): end" << endl;

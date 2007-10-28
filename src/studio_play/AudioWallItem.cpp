@@ -61,7 +61,7 @@ void AudioWallItem::onSetTotalSamples() {
 
 void AudioWallItem::updateButton() {
     unsigned long smpl = Audio::Counter::_currentSample;
-    qApp->lock();
+    if (! qApp->tryLock()) return;
     if (text == "") {
         QPushButton::setText("");
         QPushButton::setPaletteForegroundColor(QColor(QRgb(0)));

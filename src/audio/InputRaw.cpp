@@ -45,12 +45,14 @@ void InputRaw::getAudio(AudioPacket* audioData) {
 	if (cacheSize - cacheFree < bytes) {
 		// if we've finished caching, just empty the remaining data
 		if (!isThreadActive()) {
+			cout << "Flushing remainder of cache into buffer." << endl;
 			bytes = cacheSize - cacheFree;
 			//audioData->setSize(bytes/4);
 		}
 		// if we're still caching, the cache has emptied, so "stutter",
 		// rather than quit.
 		else {
+			cout << "STUTTERING!!" << endl;
 			cacheRead-=PACKET_BYTES;
 			cacheFree-=PACKET_BYTES;
 			f_pos_byte-=PACKET_BYTES;
@@ -100,6 +102,7 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
     	threadKill();
         threadWait();
     	updateStates(STATE_STOP);
+    	send(OUT0,STOP);
     }
 	f.close();
 	f.clear();
@@ -119,7 +122,9 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
 	cacheRead = cacheStart;
 	cacheWrite = cacheStart;
 	cacheFree = cacheSize;
-
+	
+	unsigned long preCacheSize = cacheSize/10;
+	
 	if (countersList.size() > 0) {
 		updateCounters(0);
 		updateTotals(f_length_byte/4);
@@ -129,11 +134,11 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
 		cout << "Error creating thread" << endl;
 		return;
 	}
-	// Wait until the cache has been half filled
-    /*while ( cacheSize < 10*cacheFree 
+	// Wait until the cache has 1 second of audio
+    while ( cacheSize - cacheFree < preCacheSize 
 			&& cacheSize - cacheFree < f_length_byte) {
         usleep(100);
-    }*/
+    }
 }
 
 void InputRaw::play() {
@@ -143,9 +148,9 @@ void InputRaw::play() {
 }
 
 void InputRaw::stop() {
-	state = STATE_STOP;
-    threadKill();
+	threadKill();
     threadWait();
+	state = STATE_STOP;
 	send(OUT0,STOP);
 	updateStates(STATE_STOP);
     load(f_filename, f_start_byte/4, f_end_byte/4);
@@ -223,7 +228,6 @@ void InputRaw::onDisconnect(PORT localPort) {
 }
 
 void InputRaw::threadExecute() {
-    cout << "InputRaw::threadExecute(): begin" << endl;
 	f.clear();
 	f.seekg(f_start_byte, ios::beg);
 
@@ -232,7 +236,6 @@ void InputRaw::threadExecute() {
 
 	while (read_bytes == 256) {
 		if (threadReceive() == STOP) {
-            cout << "InputRaw::threadExecute(): threadReceived stop" << endl;
 			break;
 		}
 		if (cacheFree < 1024) {
@@ -263,11 +266,8 @@ void InputRaw::threadExecute() {
 				cacheWrite = cacheStart;
 			}
 		}
-		//if (threadTestKill()) {
-        //    cout << "Caching was terminated." << endl;
-        //    break;
-        //}
-        usleep(1000);
+		if (threadTestKill()) {
+            break;
+        }
 	}
-    cout << "InputRaw::threadExecute(): end" << endl;
 }

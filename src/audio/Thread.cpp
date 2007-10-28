@@ -27,6 +27,10 @@ int Thread::threadStart() {
 
     // get default attributes
 	pthread_attr_init(&threadAttr);
+	// create thread detached.
+	// it isn't valid to "join" detached threads. However, the thread will
+	// automatically reclaim it's resources when completed.
+	pthread_attr_setdetachstate(&threadAttr, PTHREAD_CREATE_DETACHED);
     terminate_flag = false;
 	
     // create the new thread with default attributes starting \c threadEntry
@@ -99,7 +103,7 @@ bool Thread::isThreadActive() {
  * terminates.
  */
 void Thread::threadWait() {
-	pthread_join(threadId,NULL);
+	while (t_active) usleep(100);
 }
 
 /**
@@ -111,9 +115,6 @@ void Thread::threadKill() {
     pthread_mutex_lock(&t_terminate_mutex);
     terminate_flag = true;
     pthread_mutex_unlock(&t_terminate_mutex);
-
-    // Clean up resources when it dies
-    pthread_detach(threadId);
 }
 
 /**

@@ -128,10 +128,12 @@ void AudioWall::setButton(unsigned short page, unsigned short index,
  */
 void AudioWall::setCaption(unsigned short page, QString text) {
 	if (page >= _pages.size()) return;
+	qApp->lock();
 	_pages[page]->title = text;
 	if (page == _currentPage) {
 		grpFrame->setTitle(text);
 	}
+	qApp->unlock();
 }
 
 /**

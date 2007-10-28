@@ -64,6 +64,7 @@ void frmPlayout::init() {
                                 audioPlayer3, SLOT(processConfigUpdate()));
     connect(triggerConfig, SIGNAL(trigger()),
                                 this, SLOT(configChanged()));
+
     // Get the active station and user cartset id from config
     conf = new Config("digiplay");
     stnAudioWallId = atoi(conf->getParam("station_cartset").c_str());
@@ -99,13 +100,13 @@ void frmPlayout::configChanged() {
     conf->requery();
     unsigned int s = atoi(conf->getParam("station_cartset").c_str());
     unsigned int u = atoi(conf->getParam("user_cartset").c_str());
-    if (s != stnAudioWallId) {
+    if (s != stnAudioWallId && stnAudioWallMan) {
         stnAudioWallId = s;
         if (stnAudioWallId != 0) {
             stnAudioWallMan->load(stnAudioWallId);
         }
     }
-    if (u != usrAudioWallId) {
+    if (u != usrAudioWallId && usrAudioWallId) {
         usrAudioWallId = u;
     //    if (usrAudioWallId != 0) {
             cout<< "Doing load" << endl;

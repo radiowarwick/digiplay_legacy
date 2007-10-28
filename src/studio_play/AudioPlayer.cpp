@@ -91,7 +91,9 @@ void AudioPlayer::customEvent(QCustomEvent *event) {
 
 void AudioPlayer::load() {
     const char *routine = "AudioPlayer::load";
+    qApp->lock();
     btnLoad->setEnabled(false);
+    qApp->unlock();
     
     if (conf->getParam("next_on_showplan") == "") {
         return;
@@ -113,13 +115,15 @@ void AudioPlayer::load() {
                                     atoi(R[0]["end_smpl"].c_str()));
     conf->setParam("next_on_showplan","");
     conf->setParam("player" + id + "_md5", string(R[0]["md5"].c_str()));
+	qApp->lock();
     lblTitle->setText(R[0]["title"].c_str());
     lblArtist->setText(R[0]["artist"].c_str());
     btnPlay->setEnabled(true);
     btnStop->setEnabled(true);
     btnLog->setEnabled(true);
     sldSeek->setEnabled(true);
-
+	qApp->unlock();
+    
     // Set last sample to be the end sample and update counter
     _lastSample = _totalSamples;
     onSetSample();
@@ -166,7 +170,9 @@ void AudioPlayer::updateEndTime(){
 }
 
 void AudioPlayer::log() {
+	qApp->lock();
 	btnLog->setEnabled(false);
+	qApp->unlock();
 
 	// Get current time
     int now = (int)time(NULL);
@@ -213,8 +219,8 @@ void AudioPlayer::setTimeDisplay() {
     else {
         lblTime->setText( tr( "ELAPSED" ) );
     }
-    onSetSample();
     qApp->unlock();
+    onSetSample();
 }
 
 void AudioPlayer::processConfigUpdate() {
@@ -225,7 +231,7 @@ void AudioPlayer::processConfigUpdate() {
         L_INFO(LOG_PLAYOUT, "Config updated: DISABLED LOAD");
         btnLoad->setEnabled(false);
     }
-    else {
+    else {//if (_state == STATE_STOP) { 
         L_INFO(LOG_PLAYOUT, "Config updated: ENABLED LOAD");
         btnLoad->setEnabled(true);
     }
@@ -236,25 +242,24 @@ void AudioPlayer::processConfigUpdate() {
 void AudioPlayer::onSetSample() {
     if (_currentSample - _lastSample < 1764) return;
     
-    qApp->lock();
+    if (! qApp->tryLock()) return;
     
     _lastSample = _currentSample;
     sldSeek->setValue(_currentSample);
     
     if ((_totalSamples - _currentSample)/44100 < 20) {
-        lblCounter->setPaletteForegroundColor(QColor(QRgb(16711680)));
+       	lblCounter->setPaletteForegroundColor(QColor(QRgb(16711680)));
     }
     else {
-        lblCounter->setPaletteForegroundColor(QColor(QRgb(0)));
-    }
+	    lblCounter->setPaletteForegroundColor(QColor(QRgb(0)));
+	}
     
     if (lblTime->text() == "REMAIN") {
-        lblCounter->setText(getTime(_totalSamples - _currentSample));
-    }
-    else {
-        lblCounter->setText(getTime(_currentSample));
-    } 
-    
+	    lblCounter->setText(getTime(_totalSamples - _currentSample));
+	}
+	else {
+      	lblCounter->setText(getTime(_currentSample));
+	} 
     qApp->unlock();
 }
 
@@ -320,6 +325,7 @@ QString AudioPlayer::getTime( long smpl ) {
 
 void AudioPlayer::drawCreate() {
     string path = DPSDIR;
+    qApp->lock();
     pixPlay = new QPixmap(path + "/images/play.png");
     pixPause = new QPixmap(path + "/images/pause.png");
 
@@ -337,7 +343,7 @@ void AudioPlayer::drawCreate() {
     lblTime_font.setPointSize( 14 );
     lblTime->setFont( lblTime_font );
     lblTime->setAlignment( int( QLabel::AlignCenter ) );
-    lblTime->setText( tr( "ELAPSED" ) );
+    lblTime->setText( tr( "REMAIN" ) );
 
     btnTimeMode = new QPushButton( grpFrame, "btnTimeMode" );
     btnTimeMode->setGeometry( QRect( 280, 60, 90, 40 ) );
@@ -423,7 +429,9 @@ void AudioPlayer::drawCreate() {
 
     sldSeek = new QSlider( grpFrame, "sldSeek" );
     sldSeek->setGeometry( QRect( 10, 120, 520, 29 ) );
-    sldSeek->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7,             (QSizePolicy::SizeType)4, 0, 0, sldSeek->sizePolicy().hasHeightForWidth() ) );
+    sldSeek->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7,
+    			(QSizePolicy::SizeType)4, 0, 0, 
+    			sldSeek->sizePolicy().hasHeightForWidth() ) );
     sldSeek->setOrientation( QSlider::Horizontal );
     connect( sldSeek, SIGNAL(sliderReleased()), this, SLOT(seek()));
 
@@ -454,6 +462,7 @@ void AudioPlayer::drawCreate() {
     QFont lblArtist_font(  lblArtist->font() );
     lblArtist_font.setPointSize( 14 );
     lblArtist->setFont( lblArtist_font );
+    qApp->unlock();
 }
 
 void AudioPlayer::clean() {

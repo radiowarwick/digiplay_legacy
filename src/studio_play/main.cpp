@@ -52,7 +52,7 @@ int main( int argc, char * argv[] )
 	const char* routine = "studio_play::main";
 
     // Configure logging
-    Logger::setAppName("studio_manage");
+    Logger::setAppName("studio_play");
     Logger::setLogLevel(INFO);
     Logger::setDisplayLevel(ERROR);
     Logger::initLogDir();

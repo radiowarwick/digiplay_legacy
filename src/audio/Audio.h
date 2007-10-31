@@ -40,7 +40,7 @@ typedef int             PORT;
 #define OUT3 -4
 
 #define AUDIO_BUFFER 512
-#define PACKET_MULTIPLIER 4
+#define PACKET_MULTIPLIER 8
 
 #define PACKET_SAMPLES AUDIO_BUFFER/2*PACKET_MULTIPLIER
 #define FADER_STEPS 16

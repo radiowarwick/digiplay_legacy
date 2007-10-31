@@ -68,6 +68,9 @@ int main(int argc, char *argv) {
 	ProcessMixer* mixer = new ProcessMixer();
 	OutputDsp* player = new OutputDsp(Conf->getParam("channel_1").c_str());
 
+	ch[0]->setAutoReload(false);
+	ch[1]->setAutoReload(false);
+	
 	ch[0]->connect(OUT0,fader[0],IN0);
 	ch[1]->connect(OUT0,fader[1],IN0);
 	fader[0]->connect(OUT0,mixer,IN0);
@@ -87,7 +90,7 @@ int main(int argc, char *argv) {
 	
 	// Process schedule table until empty
 	while (true) {
-		//L_INFO(LOG_SUEPLAY, "BEGIN LOOP");
+		L_INFO(LOG_SUEPLAY, "BEGIN LOOP");
 		// Keep trying until successfully loaded a file that exists!
 		do {
 			// Query database for next track to play
@@ -138,7 +141,6 @@ int main(int argc, char *argv) {
 			catch (...) {
 				L_ERROR(LOG_SUEPLAY, "Error loading track");
 			}
-			sleep(1);
 		} while (1);
 		
 		if (R.size() == 0) break;
@@ -163,6 +165,7 @@ int main(int argc, char *argv) {
 			fade_out = end - 256 - offset;
 		end = end - offset;
 		L_INFO(LOG_SUEPLAY, " -> Fade out length: " + dps_itoa(end - fade_out));
+
 		fader[active]->addNode(fade_out,1.0);
 		fader[active]->addNode(end,0.0);
 

@@ -56,11 +56,15 @@ void ProcessFader::threadExecute() {
 }
 
 void ProcessFader::addNode(SAMPLE smpl, double pct) {
+	pthread_mutex_lock(&nodes_lock);
 	nodes[smpl] = pct;
+	pthread_mutex_unlock(&nodes_lock);
 }
 
 void ProcessFader::clearNodes() {
+	pthread_mutex_lock(&nodes_lock);
 	nodes.clear();
+	pthread_mutex_unlock(&nodes_lock);
 }
 
 void ProcessFader::setLevel(double pct) {

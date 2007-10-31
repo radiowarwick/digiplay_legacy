@@ -231,7 +231,7 @@ void AudioPlayer::processConfigUpdate() {
         L_INFO(LOG_PLAYOUT, "Config updated: DISABLED LOAD");
         btnLoad->setEnabled(false);
     }
-    else {//if (_state == STATE_STOP) { 
+    else if (_state == STATE_STOP) { 
         L_INFO(LOG_PLAYOUT, "Config updated: ENABLED LOAD");
         btnLoad->setEnabled(true);
     }
@@ -241,9 +241,9 @@ void AudioPlayer::processConfigUpdate() {
 
 void AudioPlayer::onSetSample() {
     if (_currentSample - _lastSample < 1764) return;
-    
+
     if (! qApp->tryLock()) return;
-    
+        
     _lastSample = _currentSample;
     sldSeek->setValue(_currentSample);
     
@@ -264,39 +264,43 @@ void AudioPlayer::onSetSample() {
 }
 
 void AudioPlayer::onSetState() {
-    qApp->lock();
     switch (_state) {
         case STATE_PLAY:
             {
+            	qApp->lock();
                 btnLoad->setEnabled(false);
                 sldSeek->setEnabled(false);
                 btnPlay->setPixmap(*pixPause);
+                qApp->unlock();
             }
             break;
         case STATE_STOP:
             {
-                if (audioFilereader->isLoaded()) {
+            	bool loaded = audioFilereader->isLoaded();
+            	qApp->lock();
+                if (loaded) {
                     btnPlay->setEnabled(true);
                 }
                 
                 if (conf->getParam("next_on_showplan") != "") {
                     btnLoad->setEnabled(true);
                 }
-
                 btnPlay->setPixmap(*pixPlay);
                 sldSeek->setMaxValue(_totalSamples);
                 sldSeek->setEnabled(true);
+                qApp->unlock();
                 onSetSample();
             }
             break;
         case STATE_PAUSE:
             {
+            	qApp->lock();
                 btnPlay->setPixmap(*pixPlay);
                 sldSeek->setEnabled(true);
+                qApp->unlock();
             }
             break;
-    }
-    qApp->unlock();
+    }    
 }
 
 void AudioPlayer::onSetTotalSamples() {
@@ -325,7 +329,9 @@ QString AudioPlayer::getTime( long smpl ) {
 
 void AudioPlayer::drawCreate() {
     string path = DPSDIR;
+    
     qApp->lock();
+
     pixPlay = new QPixmap(path + "/images/play.png");
     pixPause = new QPixmap(path + "/images/pause.png");
 
@@ -462,6 +468,7 @@ void AudioPlayer::drawCreate() {
     QFont lblArtist_font(  lblArtist->font() );
     lblArtist_font.setPointSize( 14 );
     lblArtist->setFont( lblArtist_font );
+
     qApp->unlock();
 }
 

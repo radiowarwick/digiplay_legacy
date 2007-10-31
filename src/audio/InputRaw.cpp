@@ -27,6 +27,7 @@ InputRaw::InputRaw() {
 	f_length_byte = 0;
 
 	audioBuffer = new char[256];
+	autoReload = true;
 }
 
 InputRaw::~InputRaw() {
@@ -96,7 +97,9 @@ void InputRaw::getAudio(AudioPacket* audioData) {
 }
 
 void InputRaw::load(string filename, long start_smpl, long end_smpl) {
+	cout << "InputRaw: begin load" << endl;
 	if (filename == "") throw -1;
+	cout << "InputRaw: Check state" << endl;
     if (state != STATE_STOP) {
     	state = STATE_STOP;
     	threadKill();
@@ -104,6 +107,7 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
     	updateStates(STATE_STOP);
     	send(OUT0,STOP);
     }
+    cout << "InputRaw: Open new file" << endl;
 	f.close();
 	f.clear();
 	f.open(filename.c_str(), ios::in|ios::binary);
@@ -123,22 +127,27 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
 	cacheWrite = cacheStart;
 	cacheFree = cacheSize;
 	
-	unsigned long preCacheSize = cacheSize/10;
+	unsigned long preCacheSize = cacheSize/4;
 	
+	cout << "InputRaw: sort out counters" << endl;
 	if (countersList.size() > 0) {
 		updateCounters(0);
 		updateTotals(f_length_byte/4);
 	}
+	cout << "InputRaw: start thread" << endl;
 	int retval = threadStart();
 	if (retval != 0) {
 		cout << "Error creating thread" << endl;
-		return;
+		throw -1;
 	}
+	sleep(1);
+	cout << "InputRaw: thread started" << endl;
 	// Wait until the cache has 1 second of audio
     while ( cacheSize - cacheFree < preCacheSize 
 			&& cacheSize - cacheFree < f_length_byte) {
         usleep(100);
     }
+    cout << "InputRaw: finish load" << endl;
 }
 
 void InputRaw::play() {
@@ -153,7 +162,7 @@ void InputRaw::stop() {
 	state = STATE_STOP;
 	send(OUT0,STOP);
 	updateStates(STATE_STOP);
-    load(f_filename, f_start_byte/4, f_end_byte/4);
+    if (autoReload) load(f_filename, f_start_byte/4, f_end_byte/4);
 }
 
 void InputRaw::pause() {

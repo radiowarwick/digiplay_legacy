@@ -52,6 +52,8 @@ class Audio::InputRaw : public Input {
         /// Caches the audio in a separate thread
 		void threadExecute();
 
+		void setAutoReload(bool flag) {autoReload = flag;}
+		
 	private:
 		ifstream f;
 		string f_filename;
@@ -60,6 +62,7 @@ class Audio::InputRaw : public Input {
 		unsigned long f_start_byte, f_end_byte, f_pos_byte, f_length_byte;
 		vector<Audio::Counter*> countersList;
 		STATE state;
+		bool autoReload;
 
         /// Update the position on all attached counter clients
 		void updateCounters(unsigned long sample);

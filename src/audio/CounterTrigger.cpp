@@ -16,6 +16,7 @@ Audio::CounterTrigger::~CounterTrigger() {
  */
 void Audio::CounterTrigger::onSetSample() {
 	if (_currentSample > _smpl && !_passed) {
+		cout << "TRriggering on sample " << _currentSample << endl;
 		_passed = true;
 		_target->play();
 	}
@@ -51,7 +52,7 @@ void Audio::CounterTrigger::waitTrigger() {
     cout << "waitTrigger(): _totalSamples = " << _totalSamples << endl;
     cout << "waitTrigger(): _currentSample = " << _currentSample << endl;
 	while (!_passed) {
-		usleep(100);
+		usleep(1000);
 	}
 }
 
@@ -59,6 +60,7 @@ void Audio::CounterTrigger::waitStop() {
     cout << "waitStop(): _state = " << _state << endl;
     cout << "STATE_STOP is " << STATE_STOP << endl;
 	while (_state != STATE_STOP) {
-		usleep(100);
+		usleep(1000);
 	}
+	cout << "Trigger found stop" << endl;
 }

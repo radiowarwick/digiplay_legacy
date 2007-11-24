@@ -114,7 +114,9 @@ void AudioPlayer::load() {
                                     atoi(R[0]["end_smpl"].c_str()));
     conf->setParam("next_on_showplan","");
     conf->setParam("player" + id + "_md5", string(R[0]["md5"].c_str()));
+    cout << "AudioPlayer::load DOLOCK" << endl;
 	qApp->lock();
+	cout << "AudioPlayer::load LOCK" << endl;
     lblTitle->setText(R[0]["title"].c_str());
     lblArtist->setText(R[0]["artist"].c_str());
     btnPlay->setEnabled(true);
@@ -163,6 +165,7 @@ void AudioPlayer::updateEndTime(){
     if (secs.length() == 1) secs = "0" + secs;
     if (mins.length() == 1) mins = "0" + mins;
     if (hours.length() == 1) hours = "0" + hours;
+
     qApp->lock();
     lblEnd->setText(hours + ":" + mins + ":" + secs);
     qApp->unlock();
@@ -172,7 +175,7 @@ void AudioPlayer::log() {
 	qApp->lock();
 	btnLog->setEnabled(false);
 	qApp->unlock();
-
+	
 	// Get current time
     int now = (int)time(NULL);
 
@@ -242,7 +245,7 @@ void AudioPlayer::onSetSample() {
     if (_currentSample - _lastSample < 1764) return;
 
     if (! qApp->tryLock()) return;
-        
+    
     _lastSample = _currentSample;
     sldSeek->setValue(_currentSample);
     
@@ -299,7 +302,7 @@ void AudioPlayer::onSetState() {
                 qApp->unlock();
             }
             break;
-    }    
+    }
 }
 
 void AudioPlayer::onSetTotalSamples() {
@@ -330,7 +333,7 @@ void AudioPlayer::drawCreate() {
     string path = DPSDIR;
     
     qApp->lock();
-
+	
     pixPlay = new QPixmap(path + "/images/play.png");
     pixPause = new QPixmap(path + "/images/pause.png");
 

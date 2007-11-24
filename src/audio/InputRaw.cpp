@@ -157,11 +157,16 @@ void InputRaw::play() {
 }
 
 void InputRaw::stop() {
-	threadKill();
-    threadWait();
 	state = STATE_STOP;
+	cout << "About to send" << endl;
 	send(OUT0,STOP);
+	cout << "About to updateStates" << endl;
 	updateStates(STATE_STOP);
+	cout << "threadKill" << endl;
+	threadKill();
+	cout << "threadWait" << endl;
+    threadWait();
+    cout << "reload track" << endl;
     if (autoReload) load(f_filename, f_start_byte/4, f_end_byte/4);
 }
 
@@ -249,6 +254,7 @@ void InputRaw::threadExecute() {
 		}
 		if (cacheFree < 1024) {
 			usleep(100);
+			if (threadTestKill()) break;
 			continue;
 		}
 		if (f_end_byte - f.tellg() < 256) {

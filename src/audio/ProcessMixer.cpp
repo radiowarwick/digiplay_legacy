@@ -53,10 +53,16 @@ void Audio::ProcessMixer::getAudio(AudioPacket* buffer) {
             // Compute scale factor for each channel based on the amplitude
             // of the remaining channels in the mix
             for (unsigned int j = i+1; j < N; j++) {
-                factor *= (1.0 - abs(double(chs[j][k])/M));
+                factor *= (1.0 - fabs(double(chs[j][k])/M));
             }
+            if (factor > 1.0) cout << "FACTOR TOO LARGE: " << factor << endl;
             // Scale and add this channel to the mix
-            mix[k] += short(chs[i][k]*factor);
+
+            unsigned int g = abs(int(mix[k]) + int(chs[i][k]*factor));
+            if (g > 32768)
+            	cout << "MIX VALUE TOO LARGE: " << g << endl;
+			
+			mix[k] += short(chs[i][k]*factor);
         }
     }
     delete[] chs;

@@ -1,4 +1,23 @@
-digiplay (0.99.2-1) unstable; urgency=low
+digiplay (0.99.4-1) unstable; urgency=low
+
+    * Added MessagingInterface for inter-class message passing
+    * Added config trigger to trigger class
+    * Single static ConfigManager class handles config update for whole app
+    * Upgraded software to support new config\trigger arrangement
+
+ -- Chris Cantwell <ccantwell@radio.warwick.ac.uk>  Sun, 04 Nov 2007 15:13:00 +0000
+
+digiplay (0.99.3-1) unstable; urgency=low
+
+    * Removed thread cancellation code and replaced with terminate flag
+    * Replaced thread_join with thread_detach to prevent hang or mem leak
+    * Clear email list on log out to prevent segfault on next login
+    * Reduced load time on audio players
+    * Fixed incorrect dates on email
+
+ -- Chris Cantwell <ccantwell@radio.warwick.ac.uk>  Sat, 20 Oct 2007 19:36:00 +0000
+
+ digiplay (0.99.2-1) unstable; urgency=low
 
   * Added back threadcancel call to prevent hang
   * Improved logging

@@ -4,7 +4,6 @@
 namespace Audio {
     class AudioPacket;
 
-    class Thread;
 	class Component;
 	class Input;
 	class InputRaw;

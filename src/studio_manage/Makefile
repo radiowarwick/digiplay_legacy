@@ -24,8 +24,8 @@ QT_MODS		=	frmStudioManage dlgLogin dlgWarn\
 				FileBrowser Showplan
 SHARED_MODS	=	Config DpsMusicSearch DpsEmail dps clockThread \
 				Auth AuthLdap AuthPsql Logger UserConfig DpsObject \
-				DataAccess Security
-SHARED_QT_MODS = DbTrigger
+				DataAccess Security Thread DbTrigger MessagingInterface
+SHARED_QT_MODS = QtTrigger
 
 # Global header files on which dependance exists
 HDRS		=

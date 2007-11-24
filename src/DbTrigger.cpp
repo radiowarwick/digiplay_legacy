@@ -3,6 +3,61 @@
 
 #include "DbTrigger.h"
 
+/*
+ * TriggerRoot
+ */
+ 
+pqxx::connection* TriggerRoot::Ctrig = 0;
+unsigned int TriggerRoot::instanceCount = 0;
+ 
+TriggerRoot::TriggerRoot() {
+	const char* routine = "TriggerRoot::TriggerRoot";
+	
+	++(TriggerRoot::instanceCount);
+    if (TriggerRoot::instanceCount == 1) {
+        try {
+        	Ctrig = new pqxx::connection( DataAccess::getConnectionString() );
+        }
+        catch (const std::exception &e) {
+        	L_ERROR(LOG_DB,e.what());
+        	throw;
+        }
+        enabled = true;
+		threadStart();
+    }
+}
+
+TriggerRoot::~TriggerRoot() throw() {
+	--(TriggerRoot::instanceCount);
+	if (TriggerRoot::instanceCount == 0) {
+		threadKill();
+		threadWait();
+		delete Ctrig;
+	}
+}
+
+void TriggerRoot::threadExecute() {
+	while (enabled) {
+		Ctrig->get_notifs();
+		usleep(10000);
+	}
+}
+
+
+/*
+ * Trigger
+ */
+Trigger::Trigger(std::string trigger) 
+		: TriggerRoot(), pqxx::trigger(*Ctrig, trigger) {
+	
+}
+
+Trigger::~Trigger() throw() {
+	
+}
+
+
+/*
 pqxx::connection* DbTrigger::Ctrig = 0;
 unsigned int DbTrigger::instanceCount = 0;
 
@@ -62,3 +117,4 @@ void DbPqxxTrigger::operator()(int be_pid) {
     emit trigger();
 }
 
+*/

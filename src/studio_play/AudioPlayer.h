@@ -34,6 +34,7 @@
 #include "clockThread.h"
 #include "Config.h"
 #include "DataAccess.h"
+#include "MessagingInterface.h"
 
 class QGroupBox;
 class QPushButton;
@@ -41,13 +42,15 @@ class QLabel;
 class QSlider;
 
 class AudioPlayer:  public QWidget,
-                    public Audio::Counter {
+                    public Audio::Counter,
+                    public MessagingInterface {
     Q_OBJECT
 
     public:
         AudioPlayer(QWidget *parent, const char* name, unsigned short playerId);
         ~AudioPlayer();
-
+		void onMessage();
+		
     public slots:
         void load();
         void log();
@@ -56,7 +59,6 @@ class AudioPlayer:  public QWidget,
         void seek();
         void seek(unsigned long sample);
         void setTimeDisplay();
-        void processConfigUpdate();
 
     private:
         void onSetSample();

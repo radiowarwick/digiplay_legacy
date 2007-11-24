@@ -48,13 +48,18 @@ TabPanelSearch::TabPanelSearch(QTabWidget *parent, string text)
     path = DPSDIR;
     pixAudio = new QPixmap(path + "/images/music16.png");
     pixCensored = new QPixmap(path + "/images/censoredmusic16.png");
-	conf = new Config("digiplay");
+	conf = new Config("digiplay", this);
+	
 	draw();
 }
 
 // clean up stuff
 TabPanelSearch::~TabPanelSearch() {
 	delete conf;
+}
+
+void TabPanelSearch::onMessage() {
+	
 }
 
 // This handles drawing the contents of the form, and connecting slots,
@@ -183,7 +188,6 @@ void TabPanelSearch::Library_Search() {
 
     lstSearchResults->clear();
 	lstSearchResults->setEnabled(false);
-	conf->requery();
 	library_engine->searchLimit(atoi(conf->getParam("search_limit").c_str()));
 	library_engine->searchTitle(TitleCheckBox->isChecked());
 	library_engine->searchArtist(ArtistCheckBox->isChecked());

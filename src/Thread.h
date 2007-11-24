@@ -6,7 +6,7 @@ using namespace std;
 
 #include "pthread.h"
 
-#include "Audio.h"
+//#include "Audio.h"
 
 #ifndef ENUM_MESSAGE
 #define ENUM_MESSAGE
@@ -25,7 +25,7 @@ enum MESSAGE { NONE=0,
  * 'cancellation points' within the \c threadExecute routine where the thread
  * may be terminated if requested.
  */
-class Audio::Thread {
+class Thread {
 	public:
 		/// Create a new thread object
         Thread();
@@ -68,6 +68,23 @@ class Audio::Thread {
 		bool t_active;
 		pthread_mutex_t t_messages_mutex;
         pthread_mutex_t t_terminate_mutex;
+};
+
+
+/**
+ * Implements a mutex object.
+ */
+class ThreadMutex {
+ 	public:
+ 		ThreadMutex();
+ 		~ThreadMutex();
+ 		
+ 		void lock();
+ 		bool tryLock();
+ 		void unlock();
+ 		
+ 	private:
+ 		pthread_mutex_t t_mutex;
 };
 
 #endif

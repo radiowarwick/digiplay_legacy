@@ -46,13 +46,10 @@
  */
 Showplan::Showplan(QWidget *parent, const char* name) 
         : QWidget(parent, name) {
-    conf = new Config("digiplay");
+    conf = new Config("digiplay",this);
     activePoint = 0;
 	selectedItem = 0;
     draw();
-    triggerConfig = new DbTrigger("triggerConfig","trig_id1");
-    triggerConfig->start();
-    connect(triggerConfig, SIGNAL(trigger()),this,SLOT(processConfigUpdate()));
 }
 
 Showplan::~Showplan() {
@@ -67,6 +64,44 @@ void Showplan::configure(Auth *authModule) {
     }
     // TODO: add any user dependant stuff here
 }
+
+void Showplan::onMessage() {
+    const char* routine = "Showplan::onMessage";
+	L_INFO(LOG_DB,"Showplan received message");
+	activePointLock.lock();
+    if (conf->getParam("next_on_showplan") == ""
+                        && lstShowPlan->childCount() > 0
+                        && activePoint != lstShowPlan->lastItem()) {
+        L_INFO(LOG_DB,"Processing track load event");
+        if (activePoint == 0) {
+            activePoint = (ShowPlanItem*)lstShowPlan->firstChild();
+        }
+        else {
+            activePoint->setState(SHOWPLAN_STATE_FINISHED);
+            activePoint = (ShowPlanItem*)activePoint->nextSibling();
+			// while we have a script selected...
+//            while (activePoint->getType() == 1
+//                    && activePoint != lstShowPlan->lastItem()) {
+//                activePoint = (ShowPlanItem*)activePoint->nextSibling();
+//            }
+        }
+        activePoint->setState(SHOWPLAN_STATE_LOADED);
+        lstShowPlan->ensureItemVisible(activePoint);
+        if (lstShowPlan->selectedItem()) {
+            selectionChanged(lstShowPlan->selectedItem());
+        }
+
+        activePointLock.unlock();
+    	L_INFO(LOG_DB,"Configuration refresh complete.");
+        
+		L_INFO(LOG_DB,"Triggering update of next_on_showplan entry");
+        updateNextTrack();
+    }
+	else {
+		activePointLock.unlock();
+	}	
+}
+
 
 void Showplan::loadShowplan(DpsShowplan& S) {
     clear(false);
@@ -372,44 +407,6 @@ void Showplan::scriptDone() {
 		 	selectedItem->getState() == SHOWPLAN_STATE_LOADED ) {
 		emit scriptDeselected();
 		selectedItem->setState(SHOWPLAN_STATE_FINISHED);
-	}
-}
-
-void Showplan::processConfigUpdate() {
-    const char* routine = "Showplan::processConfigUpdate";
-	
-	activePointLock.lock();
-    conf->requery();
-    if (conf->getParam("next_on_showplan") == ""
-                        && lstShowPlan->childCount() > 0
-                        && activePoint != lstShowPlan->lastItem()) {
-        L_INFO(LOG_DB,"Processing track load event");
-        if (activePoint == 0) {
-            activePoint = (ShowPlanItem*)lstShowPlan->firstChild();
-        }
-        else {
-            activePoint->setState(SHOWPLAN_STATE_FINISHED);
-            activePoint = (ShowPlanItem*)activePoint->nextSibling();
-			// while we have a script selected...
-//            while (activePoint->getType() == 1
-//                    && activePoint != lstShowPlan->lastItem()) {
-//                activePoint = (ShowPlanItem*)activePoint->nextSibling();
-//            }
-        }
-        activePoint->setState(SHOWPLAN_STATE_LOADED);
-        lstShowPlan->ensureItemVisible(activePoint);
-        if (lstShowPlan->selectedItem()) {
-            selectionChanged(lstShowPlan->selectedItem());
-        }
-
-        activePointLock.unlock();
-    	L_INFO(LOG_DB,"Configuration refresh complete.");
-        
-		L_INFO(LOG_DB,"Triggering update of next_on_showplan entry");
-        updateNextTrack();
-    }
-	else {
-		activePointLock.unlock();
 	}
 }
 

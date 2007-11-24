@@ -23,20 +23,103 @@
 #include <fstream>
 #include <iostream>
 
+#include "dirent.h"
+#include "sys/types.h"
+
 #include "dps.h"
 #include "Logger.h"
 #include "DataAccess.h"
+#include "DbTrigger.h"
+#include "MessagingInterface.h"
 
 #include "Config.h"
 
 /**
- * Parse the configuration file and read in configuration parameters from the
- * Database for this location.
+ * Config Manager
  */
-Config::Config(std::string application) {
-	const char* routine = "config::config";
-    DB = new DataAccess();
+ConfigManager::ConfigManager(std::string application)
+		: Trigger("trig_id1") {
+	DB = new DataAccess();
 	setFlag = false;
+	
+	processConfigFile(application);
+	
+	requery();
+}
+
+ConfigManager::~ConfigManager() throw() {
+	delete DB;
+}
+
+void ConfigManager::addClient(MessagingInterface* M) {
+	vector<MessagingInterface*>::iterator x;
+	x = find(clientList.begin(), clientList.end(), M);
+	if (x == clientList.end()) {
+		clientList.push_back(M);
+	}
+	else {
+		cout << "Client already connected." << endl;
+	}	
+}
+
+void ConfigManager::removeClient(MessagingInterface* M) {
+	vector<MessagingInterface*>::iterator x;
+	x = find(clientList.begin(), clientList.end(), M);
+	if (x != clientList.end()) {
+		clientList.erase(x);
+	}
+	else {
+		cout << "Client is not connected." << endl;
+	}	
+}
+
+void ConfigManager::operator()(int be_pid) {
+	const char* routine = "ConfigManager::operator()";
+	L_INFO(LOG_CONFIG,"Database trigger activated. Messaging clients.");
+	
+	requery();
+	for (unsigned int i = 0; i < clientList.size(); ++i) {
+		clientList.at(i)->onMessage();
+	}	
+}
+
+std::string ConfigManager::getParam(std::string name) {
+	const char* routine = "ConfigManager::getParam";
+	
+	dps_strLcase(name);
+	if (isDefined(name)) {
+        return _db[name];
+    }
+	L_ERROR(LOG_CONFIG,"Requested config paramater '" + name 
+                        + "' does not exist.");
+	return "";	
+}
+
+void ConfigManager::setParam(std::string name, std::string value) {
+	const char* routine = "ConfigManager::setParam";
+	if (isDefined(name)) {
+        std::string SQL = "UPDATE configuration SET val='" + value 
+					+ "' WHERE parameter='" + name 
+					+ "' AND location=" + LOCATION + ";" ;
+		try {
+			setFlag = true;
+            DB->exec("ConfigSetParam",SQL);
+            DB->commit("ConfigSetParam");
+			_db[name] = value;
+		}
+		catch (...) {
+            DB->abort("ConfigSetParam");
+			L_ERROR(LOG_CONFIG,"Failed to update parameter.");
+		}
+	}
+	else {
+		L_ERROR(LOG_CONFIG,"Parameter '" + name + "' is not defined!");
+	}	
+}		
+
+void ConfigManager::processConfigFile(std::string application) {
+	const char* routine = "ConfigManager::processConfigFile";
+	
     std::string f = "/etc/" + application + ".conf";
 	L_INFO(LOG_CONFIG,"Processing config file " + f);
     std::ifstream config_file(f.c_str(), std::ios::in);
@@ -92,63 +175,10 @@ Config::Config(std::string application) {
 		L_CRITICAL(LOG_CONFIG,"'LOCATION' not specificed in " + f);
 		exit(-1);
 	}
-
-	requery();
 }
 
-Config::~Config() {
-    delete DB;
-}
-
-std::string Config::getDBConnectString() {
-	return DB_CONNECT;
-}
-
-/**
- * Return the value of a parameter from the database
- */
-std::string Config::getParam(std::string name) {
-	const char* routine = "config::getParam";
-	dps_strLcase(name);
-	if (isDefined(name)) {
-        return _db[name];
-    }
-	L_ERROR(LOG_CONFIG,"Requested config paramater '" + name 
-                        + "' does not exist.");
-	return "";
-}
-
-/**
- * Set the value of a parameter in the database
- */
-void Config::setParam(std::string name, std::string value) {
-	const char* routine = "config::setParam";
-	if (isDefined(name)) {
-        std::string SQL = "UPDATE configuration SET val='" + value 
-					+ "' WHERE parameter='" + name 
-					+ "' AND location=" + LOCATION + ";" ;
-		try {
-			setFlag = true;
-            DB->exec("ConfigSetParam",SQL);
-            DB->commit("ConfigSetParam");
-			_db[name] = value;
-		}
-		catch (...) {
-            DB->abort("ConfigSetParam");
-			L_ERROR(LOG_CONFIG,"Failed to update parameter.");
-		}
-	}
-	else {
-		L_ERROR(LOG_CONFIG,"Parameter '" + name + "' is not defined!");
-	}
-}
-
-/**
- * Requery the database configuration relation and update current configuration
- * values.
- */
-void Config::requery() {
-	const char* routine = "conf::requery";
+void ConfigManager::requery() {
+	const char* routine = "ConfigManager::requery";
     L_INFO(LOG_CONFIG,"Requerying Configuration.");
 
 	if (setFlag) {
@@ -170,12 +200,10 @@ void Config::requery() {
 	catch (...) {
         DB->abort("ConfigRequery");
 		L_CRITICAL(LOG_CONFIG,"Failed to retrieve configuration data.");
-	}
-
+	}	
 }
 
-// ====== PRIVATE =======
-bool Config::isDefined(std::string name) {
+bool ConfigManager::isDefined(std::string name) {
 	dps_strLcase(name);
 	if (_db.find(name) != _db.end()) {
 		return true;
@@ -183,3 +211,50 @@ bool Config::isDefined(std::string name) {
 	return false;
 }
 
+
+/**
+ * Parse the configuration file and read in configuration parameters from the
+ * Database for this location.
+ */
+ 
+ConfigManager * Config::CM = 0;
+unsigned int Config::instanceCount = 0;
+
+Config::Config(std::string application) {
+	M = 0;
+	instanceCount++;	
+	if (instanceCount == 1) {
+		CM = new ConfigManager(application);
+	}
+}
+
+Config::Config(std::string application, MessagingInterface * m) {
+	M = m;
+	instanceCount++;
+	if (instanceCount == 1) {
+		CM = new ConfigManager(application);
+	}
+	CM->addClient(M);
+}
+
+Config::~Config() {
+	instanceCount--;
+	if (M) CM->removeClient(M);
+	if (instanceCount == 0) {
+		delete CM;
+	}
+}
+
+/**
+ * Return the value of a parameter from the database
+ */
+std::string Config::getParam(std::string name) {
+	return CM->getParam(name);
+}
+
+/**
+ * Set the value of a parameter in the database
+ */
+void Config::setParam(std::string name, std::string value) {
+	CM->setParam(name,value);
+}

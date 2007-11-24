@@ -36,7 +36,7 @@
 #include "Auth.h"
 #include "Logger.h"
 #include "DataAccess.h"
-#include "DbTrigger.h"
+#include "QtTrigger.h"
 #include "dps.h"
 
 #include "TabPanelPlaylist.h"
@@ -46,8 +46,7 @@ TabPanelPlaylist::TabPanelPlaylist(QTabWidget *parent, string text)
 	panelTag = "TabPlaylist";
 	DB = new DataAccess();	
     
-    triggerPlaylist = new DbTrigger("triggerPlaylist","trig_id5");
-    triggerPlaylist->start();
+    triggerPlaylist = new QtTrigger("triggerPlaylist","trig_id5");
     connect(triggerPlaylist, SIGNAL(trigger()), 
                                     this, SLOT(processPlaylistUpdate()));
 
@@ -56,7 +55,6 @@ TabPanelPlaylist::TabPanelPlaylist(QTabWidget *parent, string text)
 
 // clean up stuff
 TabPanelPlaylist::~TabPanelPlaylist() {
-    triggerPlaylist->stop();
     delete triggerPlaylist;
     delete DB;
 }

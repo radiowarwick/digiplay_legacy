@@ -41,7 +41,7 @@ class QIconSet;
 class Auth;
 
 class DataAccess;
-class DbTrigger;
+class QtTrigger;
 class DpsEmail;
 
 class TabPanelEmail : public TabPanel {
@@ -66,7 +66,7 @@ class TabPanelEmail : public TabPanel {
         std::vector<email> emails;
 
 		bool flagUpdateDisabled;
-		DbTrigger* triggerEmail;
+		QtTrigger* triggerEmail;
 		QListView *lstEmail;
 		QTextBrowser *txtEmailBody;
 		QPixmap *pixEmailNew, *pixEmailOld;

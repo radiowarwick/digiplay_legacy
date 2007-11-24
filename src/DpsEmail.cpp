@@ -21,6 +21,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include <iostream>
 #include <string>
 #include <vector>
 #include <time.h>
@@ -46,10 +47,10 @@ std::vector<email> DpsEmail::getEmails() {
     const char* routine = "DpsEmail::getEmails";
 
     email e;
-    tm *dte;
+    tm dte;
     char date[30];
     std::vector<email> retVec;
-    std::string SQL = "SELECT * FROM email ORDER BY datetime DESC LIMIT 50;";
+    std::string SQL = "SELECT * FROM email ORDER BY datetime DESC LIMIT 20;";
 	
     try {
 		PqxxResult R = DB->exec("EmailGet",SQL);
@@ -58,8 +59,8 @@ std::vector<email> DpsEmail::getEmails() {
         unsigned int I = R.size() - 1;
 		for (unsigned int i = 0; i < R.size(); i++) {
 			time_t thetime(atoi(R[I-i]["datetime"].c_str()));
-			dte = localtime(&thetime);
-			strftime(date, 30, "%Ex %H:%M", dte);
+			dte = *localtime(&thetime);
+			strftime(date, 30, "%x %H:%M", &dte);
 			e.from = R[I-i]["sender"].c_str();
 			e.subject = R[I-i]["subject"].c_str();
 			e.received = date;
@@ -89,12 +90,13 @@ void DpsEmail::markRead(std::string id) {
     const char* routine = "DpsEmail::markRead";
 
     std::string SQL = "UPDATE email SET new_flag='f' WHERE id='" + id + "';";
+    
     try {
         DB->exec("EmailMarkRead",SQL);
 		DB->commit("EmailMarkRead");
     }
     catch (...) {
 	    DB->abort("EmailMarkRead");
-        L_ERROR(LOG_DB,"Filed to set email as read.");
+        L_ERROR(LOG_DB,"Failed to set email as read.");
     }
 }	

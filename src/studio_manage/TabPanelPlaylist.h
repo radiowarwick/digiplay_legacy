@@ -35,7 +35,7 @@ class QListViewItem;
 
 class Auth;
 class DataAccess;
-class DbTrigger;
+class QtTrigger;
 
 class TabPanelPlaylist : public TabPanel {
 	Q_OBJECT
@@ -59,7 +59,7 @@ class TabPanelPlaylist : public TabPanel {
 		void getPlaylist();	
 
         DataAccess* DB;
-        DbTrigger* triggerPlaylist;
+        QtTrigger* triggerPlaylist;
 		QListView *lstPlaylist;
 		QPixmap *pixAList, *pixBList;
 		QPixmap *pixExpanded, *pixCollapsed, *pixTrack;

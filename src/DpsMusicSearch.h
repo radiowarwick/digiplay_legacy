@@ -45,7 +45,7 @@ class DpsMusicSearch {
 		int searchLimit();
 		int searchLimit(int value);
         std::string lastQuery();
-
+		
 	private:
 		Config *conf;
 	    DataAccess* DB;

@@ -33,9 +33,9 @@ using namespace std;
 #include <qmutex.h>
 
 #include "DpsObject.h"
-#include "DbTrigger.h"
+#include "QtTrigger.h"
 #include "Config.h"
-//#include "triggerThread.h"
+#include "MessagingInterface.h"
 
 class QGroupBox;
 class QListView;
@@ -50,7 +50,8 @@ class DpsShowItem;
 class Auth;
 class ShowPlanItem;
 
-class Showplan : public QWidget {
+class Showplan : 	public QWidget,
+					public MessagingInterface {
 	Q_OBJECT
 
 	public:
@@ -59,11 +60,12 @@ class Showplan : public QWidget {
 
         void configure(Auth *authModule);
 
+		void onMessage();
+		
         DpsShowplan getShowplan();
 
         void setGeometry (const QRect& r);
 		void resizeEvent (QResizeEvent *e);
-//        void customEvent (QCustomEvent *e);
 
     public slots:
         void loadShowplan(DpsShowplan& S);
@@ -85,7 +87,6 @@ class Showplan : public QWidget {
 		void scriptDeselected();
 
     private slots:
-        void processConfigUpdate();
         void clicked(QListViewItem* x);
         void selectionChanged(QListViewItem* x);
         void updateNextTrack();
@@ -95,7 +96,7 @@ class Showplan : public QWidget {
 		void clean();
 
         Config* conf;
-        DbTrigger* triggerConfig;
+        QtTrigger* triggerConfig;
         //triggerThread* confTrigger;
 
         QWidget* _parent;

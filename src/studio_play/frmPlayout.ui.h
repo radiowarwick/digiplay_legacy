@@ -24,7 +24,7 @@
 #include <qapplication.h>
 
 #include "Config.h"
-#include "DbTrigger.h"
+#include "QtTrigger.h"
 #include "AudioPlayer.h"
 #include "AudioWall.h"
 #include "AudioWallDriver.h"
@@ -32,7 +32,7 @@
 #include "dps.h"
 #include "remoteStartThread.h"
 
-DbTrigger* triggerConfig;
+QtTrigger* triggerConfig;
 AudioPlayer* audioPlayer1;
 AudioPlayer* audioPlayer2;
 AudioPlayer* audioPlayer3;
@@ -54,14 +54,13 @@ void frmPlayout::init() {
     audioPlayer3 = new AudioPlayer(this,"audioPlayer3",3);
     audioPlayer3->setGeometry(10,510,540,240);
 
-    triggerConfig = new DbTrigger("triggerConfig","trig_id1");
-    triggerConfig->start();
-    connect(triggerConfig, SIGNAL(trigger()),
-                                audioPlayer1, SLOT(processConfigUpdate()));
-    connect(triggerConfig, SIGNAL(trigger()),
-                                audioPlayer2, SLOT(processConfigUpdate()));
-    connect(triggerConfig, SIGNAL(trigger()),
-                                audioPlayer3, SLOT(processConfigUpdate()));
+    triggerConfig = new QtTrigger("triggerConfig","trig_id1");
+//    connect(triggerConfig, SIGNAL(trigger()),
+//                                audioPlayer1, SLOT(processConfigUpdate()));
+//    connect(triggerConfig, SIGNAL(trigger()),
+//                                audioPlayer2, SLOT(processConfigUpdate()));
+//    connect(triggerConfig, SIGNAL(trigger()),
+//                                audioPlayer3, SLOT(processConfigUpdate()));
     connect(triggerConfig, SIGNAL(trigger()),
                                 this, SLOT(configChanged()));
 
@@ -97,7 +96,6 @@ void frmPlayout::destroy() {
 }
 
 void frmPlayout::configChanged() {
-    conf->requery();
     unsigned int s = atoi(conf->getParam("station_cartset").c_str());
     unsigned int u = atoi(conf->getParam("user_cartset").c_str());
     if (s != stnAudioWallId && stnAudioWallMan) {

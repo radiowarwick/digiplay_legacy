@@ -40,7 +40,7 @@
 #include "Logger.h"
 #include "Config.h"
 #include "DataAccess.h"
-#include "DbTrigger.h"
+#include "QtTrigger.h"
 #include "DpsEmail.h"
 
 #include "TabPanelEmail.h"
@@ -59,15 +59,13 @@ TabPanelEmail::TabPanelEmail(QTabWidget *parent, string text)
     // Create GUI objects and configure
     draw();
 
-    triggerEmail = new DbTrigger("triggerEmail","trig_id2");
-    triggerEmail->start();
+    triggerEmail = new QtTrigger("triggerEmail","trig_id2");
     connect(triggerEmail, SIGNAL(trigger()),
                             this, SLOT(getEmail()));
 }
 
 // clean up stuff
 TabPanelEmail::~TabPanelEmail() {
-    triggerEmail->stop();
     delete triggerEmail;
     delete DB;
 
@@ -81,6 +79,9 @@ TabPanelEmail::~TabPanelEmail() {
 void TabPanelEmail::configure(Auth *authModule) {
     if (authModule->isPermitted(panelTag)) {
         getEmail();
+    }
+    else {
+        lstEmail->clear();
     }
     TabPanel::configure(authModule);
 }
@@ -96,6 +97,7 @@ void TabPanelEmail::getEmailBody(QListViewItem *current) {
             txtEmailBody->setCurrentFont(fntBody);
             txtEmailBody->setPointSize(pointSize);
             txtEmailBody->setText(emails[i].body);
+            markRead(emails[i].id);
         }
     }
 }
@@ -114,52 +116,66 @@ void TabPanelEmail::getEmail(){
         return;
     }
 
-    tm *dte = 0;
-    char date[30];
     QListViewItem *new_email = 0;
     string last_id = "0";
+    int k;
 
+    // Get the message ID of the latest message currently shown
     if (lstEmail->childCount() > 0) {
         last_id = lstEmail->firstChild()->text(4).ascii();
     }
 
-    // Get the latest emails
+    // Get the latest emails from the email module
     emails = E->getEmails();
     
-    // Iterate over all emails
+    // Iterate over the new list of emails
     for (unsigned int i = 0; i < emails.size(); i++) {
         // Examine the emails from the oldest to the newest
-        //unsigned int j = emails.size() - i - 1;
-        int k = atoi(emails[i].id.c_str());
+        // Get the ID of the ith email
+        k = atoi(emails[i].id.c_str());
+        
         // If the email is already shown, just check it's read status
         if (k <= atoi(last_id.c_str())) {
+            // find this email in the existing list
             QListViewItem *x = lstEmail->findItem(emails[i].id.c_str(),4);
+
+            // check we found an email, and if not, carry on and ignore it
+            if ( !x ) continue;
+            
+            // Set the new flag appropriately
             if ( emails[i].flag )
                 x->setPixmap(0,*pixEmailNew);
             else
                 x->setPixmap(0,*pixEmailOld);
             continue;
         }
-        // if it's a new email, add it to the start of the list
-        time_t thetime(atoi(emails[i].received.c_str()));
-        dte = localtime(&thetime);
-        strftime(date, 30, "%Ex %H:%M", dte);
-        new_email = new QListViewItem(lstEmail, 
+        // Otherwise it's a new email, so add it to the top of the list
+        else {
+            // if it's a new email, add it to the start of the list
+            new_email = new QListViewItem(lstEmail, 
                                 "",
                                 emails[i].from.c_str(),
                                 emails[i].subject.c_str(),
-                                date,
+                                emails[i].received.c_str(),
                                 emails[i].id.c_str());
-        if ( emails[i].flag )
-            new_email->setPixmap(0, *pixEmailNew);
-        else
-            new_email->setPixmap(0, *pixEmailOld);
-        if (lstEmail->childCount() > 20) {
-            delete lstEmail->lastItem();
+            
+            // Set the new flag appropriately
+            if ( emails[i].flag )
+                new_email->setPixmap(0, *pixEmailNew);
+            else
+                new_email->setPixmap(0, *pixEmailOld);
+            
+            // If we've now listed over 20 emails, delete the last one
+            if (lstEmail->childCount() > 20 && lstEmail->lastItem()) {
+                delete lstEmail->lastItem();
+            }
         }
     }
 }
 
+/**
+ * Marks an email with the given message ID as read
+ */
 void TabPanelEmail::markRead(string id) {
     flagUpdateDisabled = TRUE;
     E->markRead(id);
@@ -211,7 +227,7 @@ void TabPanelEmail::draw() {
     lstEmail->setColumnWidth(1, 180);   
     lstEmail->setColumnWidth(2, 180);   
     lstEmail->setColumnWidth(3, 93);    
-    lstEmail->setColumnWidth(4, 0); 
+    lstEmail->setColumnWidth(4, 0); // Message ID
     lstEmail->header()->setMovingEnabled( FALSE );
     lstEmail->setSorting(-1, FALSE);
 

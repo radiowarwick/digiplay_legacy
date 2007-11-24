@@ -26,6 +26,7 @@
 #define CLASS_TAB_PANEL_LOGGING
 
 #include "TabPanel.h"
+#include "MessagingInterface.h"
 
 class QTabWidget;
 class QListView;
@@ -35,14 +36,16 @@ class QPushButton;
 
 class Auth;
 class DataAccess;
-class DbTrigger;
+class QtTrigger;
 
-class TabPanelLogging : public TabPanel {
+class TabPanelLogging : public TabPanel,
+						public MessagingInterface {
 	Q_OBJECT
 	public:
 		TabPanelLogging(QTabWidget *parent, string text);
 		~TabPanelLogging();
 		void configure(Auth *authModule);
+		void onMessage();
 
 	public slots:
 		virtual void buttonPressed();		
@@ -55,7 +58,7 @@ class TabPanelLogging : public TabPanel {
 		void getRecentlyLogged();
 		
     DataAccess* DB;
-    DbTrigger* triggerLog;
+    QtTrigger* triggerLog;
 		int location, userid;
 		QListView *lstRecentlyLogged;
 		QLineEdit *txtArtist, *txtTitle, *txtReclibID;

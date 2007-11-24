@@ -33,7 +33,7 @@
 #include "Auth.h"
 #include "Logger.h"
 #include "dps.h"
-#include "DbTrigger.h"
+#include "QtTrigger.h"
 #include "Config.h"
 #include "DataAccess.h"
 
@@ -42,15 +42,17 @@
 TabPanelLogging::TabPanelLogging(QTabWidget *parent, string text)
         : TabPanel(parent,text) {
     panelTag = "TabLogging";
-    Config *conf = new Config("digiplay");
+    Config *conf = new Config("digiplay",this);
     DB = new DataAccess();
     location = atoi( conf->getParam("LOCATION").c_str() );
     delete conf;
 
-    triggerLog = new DbTrigger("triggerLog","trig_id4");
-    triggerLog->start();
-
     draw();
+
+    triggerLog = new QtTrigger("triggerLog","trig_id4");
+    connect(triggerLog, SIGNAL(trigger()),
+              this, SLOT(processLogUpdate()));
+
 }
 
 // clean up stuff
@@ -88,6 +90,12 @@ void TabPanelLogging::configure(Auth *authModule) {
     getRecentlyLogged();
     TabPanel::configure(authModule);
 }
+
+
+void TabPanelLogging::onMessage() {
+	
+}
+
 
 // This handles drawing the contents of the form, and connecting slots,
 // but has little actual implementation
@@ -174,9 +182,6 @@ void TabPanelLogging::draw() {
                 this, SLOT( buttonPressed() ) );
     connect( txtTitle, SIGNAL( returnPressed() ), 
                 this, SLOT( buttonPressed() ) );
-    connect(triggerLog, SIGNAL(trigger()),
-		                                this, SLOT(processLogUpdate()));
-
 }
 
 int TabPanelLogging::logRecord(string artist, string title){

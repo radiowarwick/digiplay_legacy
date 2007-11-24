@@ -14,10 +14,10 @@ OUT_STATIC	=	no
 QT_ENABLED 	=	no
 
 # .cpp modules from which to create output
-MODS		=	AudioPacket Thread Component Input InputRaw Output OutputRaw \
+MODS		=	AudioPacket Component Input InputRaw Output OutputRaw \
 				OutputDsp Process  ProcessMixer ProcessFader Counter \
 				CounterTrigger
-SHARED_MODS	=	
+SHARED_MODS	=	Thread
 
 # Global header files on which dependance exists
 HDRS		=	Audio.h

@@ -41,7 +41,7 @@ AudioPlayer::AudioPlayer(QWidget *parent, const char* name, unsigned short playe
     drawCreate();
     id = dps_itoa(playerId);
     DB = new DataAccess();
-    conf = new Config("digiplay");
+    conf = new Config("digiplay",this);
     std::string device = conf->getParam("channel_" + id);
 	location = atoi( conf->getParam("LOCATION").c_str() );
     conf->setParam("player" + id + "_md5","");
@@ -50,7 +50,6 @@ AudioPlayer::AudioPlayer(QWidget *parent, const char* name, unsigned short playe
     // Setup track end counter
     ck = new clockThread(this);
     ck->start();
-    processConfigUpdate();
 
     // Setup audio
     _lastSample = 0;
@@ -223,9 +222,9 @@ void AudioPlayer::setTimeDisplay() {
     onSetSample();
 }
 
-void AudioPlayer::processConfigUpdate() {
-    const char *routine = "AudioPlayer::processConfigUpdate";
-    conf->requery();
+void AudioPlayer::onMessage() {
+    const char *routine = "AudioPlayer::onMessage";
+
     qApp->lock();
     if (conf->getParam("next_on_showplan") == "") {
         L_INFO(LOG_PLAYOUT, "Config updated: DISABLED LOAD");

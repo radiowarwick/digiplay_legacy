@@ -140,7 +140,7 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
 		cout << "Error creating thread" << endl;
 		throw -1;
 	}
-	sleep(1);
+	//sleep(1);
 	cout << "InputRaw: thread started" << endl;
 	// Wait until the cache has 1 second of audio
     while ( cacheSize - cacheFree < preCacheSize 

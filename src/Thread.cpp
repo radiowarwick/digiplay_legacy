@@ -2,7 +2,6 @@
 using namespace std;
 
 #include "Thread.h"
-using Audio::Thread;
 
 Thread::Thread() {
     init_flag = false;
@@ -130,4 +129,33 @@ bool Thread::threadTestKill() {
     }
     pthread_mutex_unlock(&t_terminate_mutex);
     return false;
+}
+
+
+/**
+ * ThreadMutex: object-orientated thread mutex.
+ */
+ThreadMutex::ThreadMutex() {
+	pthread_mutex_init(&t_mutex,NULL);
+}
+
+ThreadMutex::~ThreadMutex() {
+	pthread_mutex_destroy(&t_mutex);
+}
+
+void ThreadMutex::lock() {
+	pthread_mutex_lock(&t_mutex);
+}
+
+bool ThreadMutex::tryLock() {
+	if (pthread_mutex_trylock(&t_mutex) == 0) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+void ThreadMutex::unlock() {
+	pthread_mutex_unlock(&t_mutex);
 }

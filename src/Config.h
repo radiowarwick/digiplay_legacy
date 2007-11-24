@@ -27,10 +27,50 @@
 #include <vector>
 #include <map>
 
-#include "dirent.h"
-#include "sys/types.h"
+#include <pqxx/pqxx>
+
+#include "DbTrigger.h"
 
 class DataAccess;
+class MessagingInterface;
+
+
+/**
+ * Keeps an updated version of the system configuration. This should not be used
+ * directly, but only as a static instance within the Config class. Thus, only
+ * one instance of this class should be created to minimise database overhead.
+ */
+class ConfigManager : public Trigger {
+	public:
+		ConfigManager(std::string application);
+		~ConfigManager() throw();
+
+		void addClient(MessagingInterface* M);
+		void removeClient(MessagingInterface* M);
+
+		void operator()(int be_pid);
+
+		std::string getParam(std::string name);
+		void setParam(std::string name, std::string value);		
+		
+	private:
+		void processConfigFile(std::string application);
+		void requery();
+		bool isDefined(std::string name);
+
+        std::vector<std::string> *names;
+        std::vector<std::string> *values;
+        std::map<std::string,std::string> _file;
+        std::map<std::string,std::string> _db;
+
+        DataAccess *DB;
+        vector<MessagingInterface*> clientList;
+
+		bool setFlag;
+        std::string DB_CONNECT;
+        std::string LOCATION;		
+};
+
 
 /**
  * Manages access and modification to system configuration parameters.
@@ -40,24 +80,20 @@ class DataAccess;
  */
 class Config {
 	public:
+		// Don't receive update notifications
 		Config(std::string filename);
+		// Receive update notifications
+		Config(std::string filename, MessagingInterface * M);
 		~Config();
-        std::string getDBConnectString();
+		
         std::string getParam(std::string name);
 		void setParam(std::string name, std::string value);
-		void requery();
-
-	private:
-		bool isDefined(std::string name);
 		
-        std::vector<std::string> *names;
-        std::vector<std::string> *values;
-        std::map<std::string,std::string> _file;
-        std::map<std::string,std::string> _db;
-		bool setFlag;
-        std::string DB_CONNECT;
-        std::string LOCATION;
-        DataAccess *DB;
+	private:
+		MessagingInterface * M;
+		static ConfigManager* CM;
+		
+		static unsigned int instanceCount;
 };
 
 #endif

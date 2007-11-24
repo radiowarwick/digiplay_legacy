@@ -182,3 +182,4 @@ int DpsMusicSearch::searchLimit(int value) {
 std::string DpsMusicSearch::lastQuery() {
     return lastQuery_string;
 }
+

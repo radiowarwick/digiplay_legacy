@@ -31,6 +31,7 @@
 #include "TabPanel.h"
 #include "Config.h"
 #include "DpsMusicSearch.h"
+#include "MessagingInterface.h"
 #include "dlgWarn.h"
 
 class QTabWidget;
@@ -43,12 +44,14 @@ class QPixmap;
 
 class Auth;
 
-class TabPanelSearch : public TabPanel {
+class TabPanelSearch : 	public TabPanel,
+						public MessagingInterface {
 	Q_OBJECT
 	public:
 		TabPanelSearch(QTabWidget *parent, string text);
 		~TabPanelSearch();
-
+		void onMessage();
+		
 	signals:
         void itemSelected( QString );
 

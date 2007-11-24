@@ -3,11 +3,39 @@
 
 #include <string>
 
-#include <qthread.h>
-#include <qobject.h>
-#include <qapplication.h>
+//#include <qthread.h>
+//#include <qobject.h>
+//#include <qapplication.h>
 
 #include <pqxx/pqxx>
+
+#include "Thread.h"
+
+class TriggerRoot:		public Thread {
+	public:
+		TriggerRoot();
+		~TriggerRoot() throw();
+
+	protected:
+		static pqxx::connection* Ctrig;
+		
+	private:
+		void threadExecute();
+		bool enabled;
+		static unsigned int instanceCount;
+};
+
+
+class Trigger:			public TriggerRoot,
+						public pqxx::trigger {
+	public:
+		Trigger(std::string trigger);
+		~Trigger() throw();
+		
+	protected:
+		virtual void operator()(int be_pid) = 0;
+};
+
 
 /**
  * This is a helper class, which implements the actual trigger. This should not
@@ -15,7 +43,7 @@
  * set up the database connection as well. Use this class with a different
  * database connection at your own risk.
  */
-class DbPqxxTrigger:    public QObject,
+/*class DbPqxxTrigger:    public QObject,
                         public pqxx::trigger {
     Q_OBJECT
 
@@ -28,7 +56,7 @@ class DbPqxxTrigger:    public QObject,
     signals:
         void trigger();
 };
-
+*/
 /**
  * Creates a database trigger on the digiplay database which responds to the
  * specified trigger name registered in the database, emitting the trigger()
@@ -44,7 +72,7 @@ class DbPqxxTrigger:    public QObject,
  * monitoring. Connect the DbTrigger objects trigger() signal to whatever slots
  * should be processed upon this event.
  */
-class DbTrigger:    public QObject,
+/*class DbTrigger:    public QObject,
                     public QThread { 
     Q_OBJECT
 
@@ -70,7 +98,7 @@ class DbTrigger:    public QObject,
         static unsigned int instanceCount;
         static pqxx::connection* Ctrig;
 };
-
+*/
 
 
 #endif

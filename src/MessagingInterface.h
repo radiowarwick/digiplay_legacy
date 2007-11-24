@@ -4,11 +4,14 @@
 class MessagingInterface {
 	public:
 		virtual ~MessagingInterface();
+		virtual void onMessage();
 		
 	protected:
 		MessagingInterface();
 		MessagingInterface(const MessagingInterface& M);
-		virtual 
+		 
 	private:
-	
+
+};
+
 #endif

@@ -16,7 +16,7 @@ QT_ENABLED 	=	no
 # .cpp modules from which to create output
 MODS		=	suesched sched_bin schedule scheduler
 QT_MODS		=
-SHARED_MODS	=	DataAccess Config Logger Security dps
+SHARED_MODS	=	DataAccess Config Logger Security dps DbTrigger Thread
 
 # Global header files on which dependance exists
 HDRS		=

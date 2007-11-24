@@ -18,7 +18,7 @@ MODS		=	dpsadmin
 QT_MODS		=
 SHARED_MODS	=	SystemManager ArchiveManager UserManager GroupManager \
 				MusicManager LocationManager Config XmlDocument XmlElement \
-				dps Logger DataAccess Security
+				dps Logger DataAccess Security DbTrigger Thread
 
 # Global header files on which dependance exists
 HDRS		=

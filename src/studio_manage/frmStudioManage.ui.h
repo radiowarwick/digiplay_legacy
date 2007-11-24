@@ -44,7 +44,7 @@
 
 #include "clockThread.h"
 #include "Config.h"
-#include "DbTrigger.h"
+//#include "QtTrigger.h"
 #include "dps.h"
 
 Auth *authModule;
@@ -59,18 +59,18 @@ TabPanelLogging *tabPanelLogging;
 TabPanelScript *tabPanelScript;
 
 Config *conf;
-DbTrigger* triggerConfig;
+//DbTrigger* triggerConfig;
 clockThread *ck;
 
 void frmStudioManage::init() {
 	// Connect to database
 	cout << "Processing configuration..." << flush;
 	conf = new Config("digiplay");
-    
-    triggerConfig = new DbTrigger("triggerConfig","trig_id1");
-    triggerConfig->start();
-    connect(triggerConfig, SIGNAL(trigger()), 
-                            this, SLOT(processConfigUpdate()));
+//    
+//    triggerConfig = new DbTrigger("triggerConfig","trig_id1");
+//    triggerConfig->start();
+//    connect(triggerConfig, SIGNAL(trigger()), 
+//                            this, SLOT(processConfigUpdate()));
 	cout << "complete!" << endl;
 
 	// Initialise modules
@@ -213,7 +213,7 @@ void frmStudioManage::customEvent(QCustomEvent *event) {
 	}
 }
 
-void frmStudioManage::processConfigUpdate() {
+/*void frmStudioManage::processConfigUpdate() {
     AuthLdap* a;
     if ((a = dynamic_cast<AuthLdap*>(authModule)) != 0) {
         conf->requery();
@@ -224,7 +224,7 @@ void frmStudioManage::processConfigUpdate() {
         a->reconnect(host, port, baseDn, filter);
     }
 }
-
+*/
 void frmStudioManage::updateCartset( QString index ) {
     conf->setParam("user_cartset",index.ascii());
 }

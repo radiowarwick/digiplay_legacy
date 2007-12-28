@@ -84,7 +84,7 @@ static struct option long_options[] = {
 	{0,0,0,0}
 };
 
-static const char* short_options = "AMLUGa:d:lm:u:pc:ij:se:w:hv";
+static const char* short_options = "hvAMLUGa:d:lu:m:c:i";
 
 // Function prototypes
 void parseCommand(int argc, char *argv[]);

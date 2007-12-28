@@ -79,6 +79,7 @@ void Logger::log(LOG_TYPE type, const char* routine, string message,
 	    (*logFile) << outLine.str() << flush;
 	}
 	if (displayLevel >= level) {
+		cerr << endl;
 		switch (level) {
 			case INFO:
 				cerr << "INFO      > ";

@@ -129,8 +129,6 @@ int main(int argc, char *argv) {
 			path += "/" + md5.substr(0,1) + "/";
 			L_INFO(LOG_SUEPLAY, "Attempting to load channel " +
                     dps_itoa(active) + ": " + artist + " - " + title);
-			cout << "Attempting to load channel " +
-                    dps_itoa(active) + ": " + artist + " - " + title << endl;
 			L_INFO(LOG_SUEPLAY, " -> Start: " + dps_itoa(start));
 			L_INFO(LOG_SUEPLAY, " -> End: " + dps_itoa(end));
 			// Try and load the track
@@ -176,11 +174,13 @@ int main(int argc, char *argv) {
 		if (ch[inactive]->isLoaded()) {
 			L_INFO(LOG_SUEPLAY, "Waiting for channel " + dps_itoa(inactive));
 			trig[inactive]->waitStop();
+			cout << "Now playing: " << artist << " - " << title << endl;
 			L_INFO(LOG_SUEPLAY, "Finished waiting");
 		}
 		else {
 			L_INFO(LOG_SUEPLAY, "Playing channel " + dps_itoa(active));
 			ch[active]->play();
+			cout << "Now playing: " << artist << " - " << title << endl;
 		}
 
 		int now = (int)time(NULL);

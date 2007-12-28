@@ -204,7 +204,12 @@ void ConfigManager::requery() {
 }
 
 bool ConfigManager::isDefined(std::string name) {
+	//cout << "[" << name << "]" << endl;
 	dps_strLcase(name);
+	//cout << "[" << name << "]" << endl;
+	//for (map<string,string>::iterator i = _db.begin(); i != _db.end(); i++) {
+	//	cout << i->first << endl;
+	//}
 	if (_db.find(name) != _db.end()) {
 		return true;
 	}

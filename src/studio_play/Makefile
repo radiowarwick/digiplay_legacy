@@ -16,9 +16,9 @@ QT_ENABLED 	=	yes
 # .cpp modules from which to create output
 MODS		=	main
 QT_MODS		=	frmPlayout AudioWall AudioWallItem AudioWallManager \
-				AudioPlayer AudioWallDriver
-SHARED_MODS	=	Config Logger dps remoteStartThread DataAccess \
-				Security clockThread Thread DbTrigger MessagingInterface
+				AudioPlayer AudioWallDriver RemoteStartThread
+SHARED_MODS	=	Config Logger dps DataAccess Security clockThread Thread \
+				DbTrigger MessagingInterface
 SHARED_QT_MODS	= QtTrigger
 
 # Global header files on which dependance exists

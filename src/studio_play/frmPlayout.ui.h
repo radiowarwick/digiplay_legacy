@@ -30,9 +30,10 @@
 #include "AudioWallDriver.h"
 #include "AudioWallManager.h"
 #include "dps.h"
-#include "remoteStartThread.h"
+#include "RemoteStartThread.h"
 
 QtTrigger* triggerConfig;
+RemoteStartThread* remotes;
 AudioPlayer* audioPlayer1;
 AudioPlayer* audioPlayer2;
 AudioPlayer* audioPlayer3;
@@ -55,6 +56,7 @@ void frmPlayout::init() {
     audioPlayer3->setGeometry(10,510,540,240);
 
     triggerConfig = new QtTrigger("triggerConfig","trig_id1");
+	remotes = new RemoteStartThread();
 //    connect(triggerConfig, SIGNAL(trigger()),
 //                                audioPlayer1, SLOT(processConfigUpdate()));
 //    connect(triggerConfig, SIGNAL(trigger()),
@@ -63,6 +65,18 @@ void frmPlayout::init() {
 //                                audioPlayer3, SLOT(processConfigUpdate()));
     connect(triggerConfig, SIGNAL(trigger()),
                                 this, SLOT(configChanged()));
+	connect(remotes, SIGNAL(player1_play()),
+								audioPlayer1, SLOT(play()));
+	connect(remotes, SIGNAL(player1_pause()),
+								audioPlayer1, SLOT(pause()));
+	connect(remotes, SIGNAL(player2_play()),
+								audioPlayer2, SLOT(play()));
+	connect(remotes, SIGNAL(player2_pause()),
+								audioPlayer2, SLOT(pause()));
+	connect(remotes, SIGNAL(player3_play()),
+								audioPlayer3, SLOT(play()));
+	connect(remotes, SIGNAL(player3_pause()),
+								audioPlayer3, SLOT(pause()));
 
     // Get the active station and user cartset id from config
     conf = new Config("digiplay");
@@ -87,8 +101,7 @@ void frmPlayout::init() {
     audioWallOutput->addAudioWall(usrAudioWall);
 
     // Initialise remote starts
-//	remoteStartThread *remotes = new remoteStartThread(this);
-//	remotes->start();
+	remotes->start();
 }
 
 void frmPlayout::destroy() {

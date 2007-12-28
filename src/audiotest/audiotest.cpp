@@ -46,11 +46,9 @@ int main() {
 	fader2->connect(OUT0,mixer,IN1);
 	mixer->connect(OUT0,player,IN0);
 
-	filereader1->load("/mnt/dps0-0/audio/0/06b4bfbfe7f57d98d9f0f1fe5c8cde4f"
-						,0,1052637);
-	filereader2->load("/mnt/dps0-0/audio/0/06b4bfbfe7f57d98d9f0f1fe5c8cde4f"
-						,5000000,10526376);
-	trig->setTriggerSample(441000);
+	filereader1->load("/tmp/output.raw"
+						,0,44100000);
+	trig->setTriggerSample(44100000);
 	filereader1->play();
 //	sleep(50);
 //	filereader2->play();

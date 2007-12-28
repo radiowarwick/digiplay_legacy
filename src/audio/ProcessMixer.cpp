@@ -26,7 +26,6 @@ void Audio::ProcessMixer::getAudio(AudioPacket* buffer) {
 		(*x).second->cmpt->getAudio((*x).second->data);
 		x++;
     }
-   
 	// Short arrays used to access channel audio data
 	short **chs = new short*[N];
 	// Short array used to access output audio data
@@ -55,18 +54,13 @@ void Audio::ProcessMixer::getAudio(AudioPacket* buffer) {
             for (unsigned int j = i+1; j < N; j++) {
                 factor *= (1.0 - fabs(double(chs[j][k])/M));
             }
-            if (factor > 1.0) cout << "FACTOR TOO LARGE: " << factor << endl;
             // Scale and add this channel to the mix
-
-            unsigned int g = abs(int(mix[k]) + int(chs[i][k]*factor));
-            if (g > 32768)
-            	cout << "MIX VALUE TOO LARGE: " << g << endl;
-			
 			mix[k] += short(chs[i][k]*factor);
         }
     }
     delete[] chs;
 
+	// move channels which have now become inactive
 	x = ch_active.begin();
 	while (x != ch_active.end()) {
 		if ((*x).second->state == STATE_STOP) {
@@ -86,7 +80,8 @@ void Audio::ProcessMixer::getAudio(AudioPacket* buffer) {
  */
 void Audio::ProcessMixer::receiveMessage(PORT inPort, MESSAGE message) {
 	if (!channels[inPort]) {
-		cout << "Channel has not been initialised!" << endl;
+		cout << "ERROR: Channel has not been initialised!" << endl;
+		pthread_mutex_unlock(&channelLock);
 		exit(-1);
 	}
 	if (message == STOP) {
@@ -94,10 +89,12 @@ void Audio::ProcessMixer::receiveMessage(PORT inPort, MESSAGE message) {
 		channels[inPort]->state = STATE_STOP;
 	}
 	else if (message == PLAY) {
+		//pthread_mutex_lock(&channelLock);
 		//cout << "ProcessMixer: Starting channel " << inPort << endl;
 		channels[inPort]->state = STATE_PLAY;
 		ch_inactive.erase(inPort);
 		ch_active[inPort] = channels[inPort];
+		//pthread_mutex_unlock(&channelLock);
 	}
 	if (ch_active.size() == 1 && message == PLAY) {
 		//cout << "ProcessMixer: Setting mixer to play" << endl;
@@ -107,6 +104,7 @@ void Audio::ProcessMixer::receiveMessage(PORT inPort, MESSAGE message) {
 		//cout << "ProcessMixer: Setting mixer to stop" << endl;
 		send(OUT0,STOP);
 	}
+	
 	//cout << "Done processmixer::receive message" << endl;
 }
 

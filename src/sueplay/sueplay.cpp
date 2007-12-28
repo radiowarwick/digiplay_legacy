@@ -29,6 +29,7 @@ using namespace std;
 #include "audio/Audio.h"
 #include "audio/InputRaw.h"
 #include "audio/OutputDsp.h"
+#include "audio/OutputRaw.h"
 #include "audio/ProcessMixer.h"
 #include "audio/ProcessFader.h"
 #include "audio/CounterTrigger.h"

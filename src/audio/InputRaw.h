@@ -55,6 +55,7 @@ class Audio::InputRaw : public Input {
 		void setAutoReload(bool flag) {autoReload = flag;}
 		
 	private:
+		ThreadMutex cacheLock;
 		ifstream f;
 		string f_filename;
 		char *audioBuffer, *cacheStart, *cacheEnd, *cacheWrite, *cacheRead;

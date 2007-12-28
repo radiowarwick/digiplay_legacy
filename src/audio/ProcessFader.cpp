@@ -47,6 +47,7 @@ void ProcessFader::getAudio(AudioPacket* audioData) {
 	pthread_mutex_unlock(&nodes_lock);
 }
 
+
 void ProcessFader::receiveMessage(PORT inPort, MESSAGE message) {
     send(OUT0,message);
 }

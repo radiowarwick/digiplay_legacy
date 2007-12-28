@@ -4,8 +4,7 @@
 ROOT		=	../..
 
 # Base name for output (executable name, library basename) and version
-OUT_BASE	=	audiotest
-VERSION		=	1
+OUT_BASE	=	audioplay
 
 # Create a library and whether it should be a static library
 OUT_LIB		=	no
@@ -15,14 +14,14 @@ OUT_STATIC	=	no
 QT_ENABLED 	=	no
 
 # .cpp modules from which to create output
-MODS		=	audiotest
-QT_MODS		=
+MODS		=	audioplay
+QT_MODS		=	
 SHARED_MODS	=	
 
 # Global header files on which dependance exists
 HDRS		=
 
 # Compiler and linker options
-LIBS		=	-lpq /usr/lib/libpqxx.a -lreadline -lm -lpthread -lFLAC++ -ldpsaudio
+LIBS		=	-lpq /usr/lib/libpqxx.a -lreadline -lm -lpthread -ldpsaudio -lFLAC++
 
 include $(ROOT)/src/Makefile.in

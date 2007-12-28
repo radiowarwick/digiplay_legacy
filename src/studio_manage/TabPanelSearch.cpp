@@ -188,6 +188,7 @@ void TabPanelSearch::Library_Search() {
 
     lstSearchResults->clear();
 	lstSearchResults->setEnabled(false);
+	
 	library_engine->searchLimit(atoi(conf->getParam("search_limit").c_str()));
 	library_engine->searchTitle(TitleCheckBox->isChecked());
 	library_engine->searchArtist(ArtistCheckBox->isChecked());
@@ -200,7 +201,9 @@ void TabPanelSearch::Library_Search() {
 							"(Sorry, no matches found.)");
 		return;
 	}
+	
 	lstSearchResults->setUpdatesEnabled(false);
+	lstSearchResults->clear();
 	lstSearchResults->setEnabled(true);
 	QListViewItem *x;
 	for (unsigned int i = 0; i < SearchResults->size(); i++) {

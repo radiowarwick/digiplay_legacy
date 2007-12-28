@@ -1,6 +1,7 @@
 #ifndef CLASS_AUDIO_PROCESS_FADER
 #define CLASS_AUDIO_PROCESS_FADER
 
+#include <fstream>
 #include <vector>
 #include <map>
 using std::vector;

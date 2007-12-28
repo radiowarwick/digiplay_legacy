@@ -118,7 +118,7 @@ void SystemManager::createArchive(string name, string localPath,
     const char* routine = "SystemManager::createArchive";
 
     // Change to the localPath and try to create the directory structure
-    std::string command = "cd " + localPath + "; ";
+    std::string command = "mkdir -p " + localPath + "; cd " + localPath + "; ";
     command += "mkdir -p 0 1 2 3 4 5 6 7 8 9 a b c d e f inbox trash";
     int rv = system(command.c_str());
     if (rv != 0) {

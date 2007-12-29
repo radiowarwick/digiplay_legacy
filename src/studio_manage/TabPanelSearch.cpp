@@ -185,8 +185,9 @@ void TabPanelSearch::Library_Search() {
         delete warning;
         return;
     }
-
     lstSearchResults->clear();
+	QListViewItem* searching = new QListViewItem( lstSearchResults, lstSearchResults->lastItem(),
+	                            "Searching.......");
 	lstSearchResults->setEnabled(false);
 	
 	library_engine->searchLimit(atoi(conf->getParam("search_limit").c_str()));
@@ -195,7 +196,7 @@ void TabPanelSearch::Library_Search() {
 	library_engine->searchAlbum(AlbumCheckBox->isChecked());
 	delete SearchResults;
 	SearchResults = library_engine->query(txtLibrarySearchText->text());
-    
+    delete searching;
 	if (SearchResults->size() == 0) {
 		new QListViewItem( lstSearchResults, lstSearchResults->lastItem(),
 							"(Sorry, no matches found.)");

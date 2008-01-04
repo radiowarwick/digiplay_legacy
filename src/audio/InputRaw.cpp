@@ -306,11 +306,11 @@ void InputRaw::threadExecute() {
             break;
         }
 		//Bandwidth limiting on caching of audio to prevent hanging/stuttering
-		//during caching operations.
+		//during caching operations - to be decided on after testing...
 		//Assuming it takes 0 time to cache audio, theoretical thoughput of
 		//2048kbytes/sec is possible.  Since only 176kbytes/sec are
 		//required this should be plenty.
-		usleep(1000);
+		//usleep(1000);
 	}
 	cacheLock.unlock();
 }

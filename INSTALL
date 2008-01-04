@@ -12,9 +12,12 @@ file is included called digiplay.conf. This should be copied to /etc and adjuste
 Database Configuration
 ----------------------
 1. Install postgresql database server and configure pg_hba.conf.
-2. From the digiplay root directory:
-     cd db
-	 ./dpsinstall
+2. Install tedia2sql
+3. Ensure /etc/tedia2sqlrc is edited so dropStatements = false
+4. From the digiplay root directory do:
+	make database
+	cd share/dps/db
+	./dpsinstall (as root or su postgres)
 
 Previous Database Configuration (bit crap and no longer applicable!)
 -------------------------------

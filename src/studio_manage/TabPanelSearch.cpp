@@ -42,32 +42,146 @@
 
 #include "TabPanelSearch.h"
 
+/**
+ * Constructor.
+ */
 TabPanelSearch::TabPanelSearch(QTabWidget *parent, string text)
 		: TabPanel(parent,text)  {
+    // Set panel tag
 	panelTag = "TabSearch";
+    
+    // Load icons for display
     path = DPSDIR;
     pixAudio = new QPixmap(path + "/images/music16.png");
     pixCensored = new QPixmap(path + "/images/censoredmusic16.png");
+    
+    // Access configuration
 	conf = new Config("digiplay", this);
+
+    // Initialise SearchResults vector
+    SearchResults = 0;
+
+    // Create library search engine.
+    library_engine = new DpsMusicSearch();
 	
+    // Draw GUI components
 	draw();
 }
 
-// clean up stuff
+
+/**
+ * Delete dynamically created objects.
+ */
 TabPanelSearch::~TabPanelSearch() {
+    // Delete GUI components
+    clear();
+    
+    // Delete configuration object
 	delete conf;
 }
 
+
+/**
+ * MessagingInterface
+ */
 void TabPanelSearch::onMessage() {
 	
 }
 
-// This handles drawing the contents of the form, and connecting slots,
-// but has little actual implementation
-void TabPanelSearch::draw() {
-    SearchResults = 0;
 
-    library_engine = new DpsMusicSearch();
+/**
+ * Performs a music search.
+ */
+void TabPanelSearch::Library_Search() {
+    // Check if user has entered required information
+    if (txtLibrarySearchText->text() == "") {
+        dlgWarn *warning = new dlgWarn(getPanel(), "");
+        warning->setTitle("Oops!");
+        warning->setWarning(
+                "You seem to have forgotten to enter something to search for.");
+        warning->setQuestion(false);
+        warning->exec();
+        delete warning;
+        return;
+    }
+    if ( ! (TitleCheckBox->isChecked()
+                ||ArtistCheckBox->isChecked()
+                ||AlbumCheckBox->isChecked() )) {
+        dlgWarn *warning = new dlgWarn(getPanel(), "");
+        warning->setTitle("Oops!");
+        warning->setWarning(
+                "Please select at least one of Title, Artist, Album.");
+        warning->setQuestion(false);
+        warning->exec();
+        delete warning;
+        return;
+    }
+    
+    // Clear the results list
+    lstSearchResults->clear();
+    
+    // Display a "searching..." notice
+	QListViewItem* searching = new QListViewItem( lstSearchResults, lstSearchResults->lastItem(),
+	                            "Searching.......");
+	lstSearchResults->setEnabled(false);
+	
+    // Set search parameters
+	library_engine->searchLimit(atoi(conf->getParam("search_limit").c_str()));
+	library_engine->searchTitle(TitleCheckBox->isChecked());
+	library_engine->searchArtist(ArtistCheckBox->isChecked());
+	library_engine->searchAlbum(AlbumCheckBox->isChecked());
+
+    // Perform search
+	SearchResults = library_engine->query(txtLibrarySearchText->text());
+    
+    // Remove the searching message
+    delete searching;
+    
+    // Display information message if nothing found
+	if (SearchResults->size() == 0) {
+		new QListViewItem( lstSearchResults, lstSearchResults->lastItem(),
+							"(Sorry, no matches found.)");
+		return;
+	}
+	
+    // Clear the list and enter search results
+	lstSearchResults->setUpdatesEnabled(false);
+	lstSearchResults->clear();
+	lstSearchResults->setEnabled(true);
+	QListViewItem *x;
+	for (unsigned int i = 0; i < SearchResults->size(); i++) {
+		x = new QListViewItem(  lstSearchResults, lstSearchResults->lastItem(),
+			SearchResults->at(i).title,
+			SearchResults->at(i).artists.at(0),
+			SearchResults->at(i).album,
+			SearchResults->at(i).id 
+                         );
+		if (SearchResults->at(i).censor) {
+			x->setPixmap(0,*pixCensored);
+		} else {
+			x->setPixmap(0,*pixAudio);
+		}
+	}
+	lstSearchResults->setUpdatesEnabled(true);
+	lstSearchResults->repaint();
+    delete SearchResults;
+}
+
+
+/**
+ * Emits a signal indicating which item is selected.
+ */
+void TabPanelSearch::playlistAdd(QListViewItem* x) {
+	if (x) {
+        emit itemSelected( x->text(3) );
+	}
+}
+
+
+/**
+ * Draw GUI components
+ */
+void TabPanelSearch::draw() {
     lblSearch = new QLabel( getPanel(), "lblSearch" );
     lblSearch->setGeometry( QRect( 28, 10, 60, 20 ) );
     QFont lblSearch_font(  lblSearch->font() );
@@ -162,74 +276,10 @@ void TabPanelSearch::draw() {
 
 }
 
-void TabPanelSearch::Library_Search() {
-    if (txtLibrarySearchText->text() == "") {
-        dlgWarn *warning = new dlgWarn(getPanel(), "");
-        warning->setTitle("Oops!");
-        warning->setWarning(
-                "You seem to have forgotten to enter something to search for.");
-        warning->setQuestion(false);
-        warning->exec();
-        delete warning;
-        return;
-    }
-    if ( ! (TitleCheckBox->isChecked()
-                ||ArtistCheckBox->isChecked()
-                ||AlbumCheckBox->isChecked() )) {
-        dlgWarn *warning = new dlgWarn(getPanel(), "");
-        warning->setTitle("Oops!");
-        warning->setWarning(
-                "Please select at least one of Title, Artist, Album.");
-        warning->setQuestion(false);
-        warning->exec();
-        delete warning;
-        return;
-    }
-    lstSearchResults->clear();
-	QListViewItem* searching = new QListViewItem( lstSearchResults, lstSearchResults->lastItem(),
-	                            "Searching.......");
-	lstSearchResults->setEnabled(false);
-	
-	library_engine->searchLimit(atoi(conf->getParam("search_limit").c_str()));
-	library_engine->searchTitle(TitleCheckBox->isChecked());
-	library_engine->searchArtist(ArtistCheckBox->isChecked());
-	library_engine->searchAlbum(AlbumCheckBox->isChecked());
-	delete SearchResults;
-	SearchResults = library_engine->query(txtLibrarySearchText->text());
-    delete searching;
-	if (SearchResults->size() == 0) {
-		new QListViewItem( lstSearchResults, lstSearchResults->lastItem(),
-							"(Sorry, no matches found.)");
-		return;
-	}
-	
-	lstSearchResults->setUpdatesEnabled(false);
-	lstSearchResults->clear();
-	lstSearchResults->setEnabled(true);
-	QListViewItem *x;
-	for (unsigned int i = 0; i < SearchResults->size(); i++) {
-		x = new QListViewItem(  lstSearchResults, lstSearchResults->lastItem(),
-			SearchResults->at(i).title,
-			SearchResults->at(i).artists.at(0),
-			SearchResults->at(i).album,
-			SearchResults->at(i).id 
-                         );
-		if (SearchResults->at(i).censor) {
-			x->setPixmap(0,*pixCensored);
-		} else {
-			x->setPixmap(0,*pixAudio);
-		}
-	}
-	lstSearchResults->setUpdatesEnabled(true);
-	lstSearchResults->repaint();
-}
 
-void TabPanelSearch::playlistAdd(QListViewItem* x) {
-	if (x) {
-        emit itemSelected( x->text(3) );
-	}
-}
-
+/**
+ * Delete GUI components.
+ */
 void TabPanelSearch::clear() {
 	delete btnLibrarySearch;
 	delete lstSearchResults;

@@ -42,74 +42,43 @@
 
 #include "TabPanelScript.h"
 
+/**
+ * Constructor.
+ */
 TabPanelScript::TabPanelScript(QTabWidget *parent, string text)
             : TabPanel(parent,text) {
+    // Create access to database
     DB = new DataAccess();
+    
+    // Draw GUI components
+    draw();
 }
 
-// clean up stuff
+
+/**
+ * Delete dynamically created objects.
+ */
 TabPanelScript::~TabPanelScript() {
+    // Delete GUI components
+    clear();
+    
+    // Delete database access
     delete DB;
 }
 
-// this is called whenever the application reconfigures itself,
-// usually due to a change in authentication status (login, logoff)
+
+/**
+ * Reconfigures the tab based on the state of the authentication module.
+ */
 void TabPanelScript::configure(Auth *authModule) {
-	hide();
-	if (authModule->isPermitted("TabScript")) {
-		draw();
-		show();
-	}
+    TabPanel::configure(authModule);
 }
 
-// This handles drawing the contents of the form, and connecting slots,
-// but has little actual implementation
-void TabPanelScript::draw() {
-	// do all form drawing here, create widgets, set properties
-    lblScriptName = new QLabel( getPanel(), "lblScriptName" );
-    lblScriptName->setGeometry( QRect( 10, 11, 151, 16 ) );
-    QFont lblScriptName_font(  lblScriptName->font() );
-    lblScriptName_font.setPointSize( 12 );
-    lblScriptName_font.setBold( FALSE );
-    lblScriptName->setFont( lblScriptName_font );
-    lblScriptName->setAlignment( int( QLabel::AlignVCenter 
-                                            | QLabel::AlignLeft ) );
 
-    txtScriptBody = new QTextEdit( getPanel(), "txtScriptBody" );
-    txtScriptBody->setGeometry( QRect( 9, 68, 490, 560 ) );
-	txtScriptBody->setReadOnly(true);
-
-    lblScriptDuration = new QLabel( getPanel(), "lblScriptDuration" );
-    lblScriptDuration->setGeometry( QRect( 240, 11, 60, 16 ) );
-    QFont lblScriptDuration_font(  lblScriptDuration->font() );
-    lblScriptDuration_font.setPointSize( 12 );
-    lblScriptDuration_font.setBold( FALSE );
-    lblScriptDuration->setFont( lblScriptDuration_font );
-    lblScriptDuration->setAlignment( int( QLabel::AlignVCenter 
-                                            | QLabel::AlignLeft ) );
-
-    btnScriptDone = new QPushButton( getPanel(), "btnScriptDone" );
-    btnScriptDone->setGeometry( QRect( 330, 26, 171, 30 ) );
-    QFont btnScriptDone_font(  btnScriptDone->font() );
-    btnScriptDone_font.setPointSize( 12 );
-    btnScriptDone_font.setBold( FALSE );
-    btnScriptDone->setFont( btnScriptDone_font );
-
-    txtScriptName = new QLineEdit( getPanel(), "txtScriptName" );
-    txtScriptName->setGeometry( QRect( 10, 30, 220, 21 ) );
-	txtScriptName->setReadOnly(true);
-
-    txtScriptDuration = new QLineEdit( getPanel(), "txtScriptDuration" );
-    txtScriptDuration->setGeometry( QRect( 238, 30, 70, 21 ) );
-	txtScriptDuration->setReadOnly(true);
-
-    lblScriptName->setText( tr( "Item Name:" ) );
-    lblScriptDuration->setText( tr( "Duration:" ) );
-    btnScriptDone->setText( tr( "Finished" ) );
-	connect( btnScriptDone, SIGNAL( clicked() ), 
-	         this, SLOT( btnScriptDoneClicked() ) );
-}
-
+/**
+ * Retrieves and displays a script given its id.
+ * @param   id      Database ID of the script to display
+ */
 void TabPanelScript::loadScript( int id ) {
 	//gets the id of a script when clicked on in the 
 	//showplan and shoul then load it.
@@ -134,6 +103,10 @@ void TabPanelScript::loadScript( int id ) {
 	}
 }
 
+
+/**
+ * Clear the display for when no script is selected.
+ */
 void TabPanelScript::clearScript() {
         txtScriptBody->setText( "" );
 		txtScriptName->setText( "" );
@@ -142,10 +115,68 @@ void TabPanelScript::clearScript() {
 
 }
 
+
+/**
+ * Emit a signal when the "done" button is pressed.
+ */
 void TabPanelScript::btnScriptDoneClicked() {
 	emit scriptDone();
 }
 
+
+/**
+ * Draw GUI components.
+ */
+void TabPanelScript::draw() {
+    // do all form drawing here, create widgets, set properties
+    lblScriptName = new QLabel( getPanel(), "lblScriptName" );
+    lblScriptName->setGeometry( QRect( 10, 11, 151, 16 ) );
+    QFont lblScriptName_font(  lblScriptName->font() );
+    lblScriptName_font.setPointSize( 12 );
+    lblScriptName_font.setBold( FALSE );
+    lblScriptName->setFont( lblScriptName_font );
+    lblScriptName->setAlignment( int( QLabel::AlignVCenter 
+                                            | QLabel::AlignLeft ) );
+
+    txtScriptBody = new QTextEdit( getPanel(), "txtScriptBody" );
+    txtScriptBody->setGeometry( QRect( 9, 68, 490, 560 ) );
+    txtScriptBody->setReadOnly(true);
+
+    lblScriptDuration = new QLabel( getPanel(), "lblScriptDuration" );
+    lblScriptDuration->setGeometry( QRect( 240, 11, 60, 16 ) );
+    QFont lblScriptDuration_font(  lblScriptDuration->font() );
+    lblScriptDuration_font.setPointSize( 12 );
+    lblScriptDuration_font.setBold( FALSE );
+    lblScriptDuration->setFont( lblScriptDuration_font );
+    lblScriptDuration->setAlignment( int( QLabel::AlignVCenter 
+                                            | QLabel::AlignLeft ) );
+
+    btnScriptDone = new QPushButton( getPanel(), "btnScriptDone" );
+    btnScriptDone->setGeometry( QRect( 330, 26, 171, 30 ) );
+    QFont btnScriptDone_font(  btnScriptDone->font() );
+    btnScriptDone_font.setPointSize( 12 );
+    btnScriptDone_font.setBold( FALSE );
+    btnScriptDone->setFont( btnScriptDone_font );
+
+    txtScriptName = new QLineEdit( getPanel(), "txtScriptName" );
+    txtScriptName->setGeometry( QRect( 10, 30, 220, 21 ) );
+    txtScriptName->setReadOnly(true);
+
+    txtScriptDuration = new QLineEdit( getPanel(), "txtScriptDuration" );
+    txtScriptDuration->setGeometry( QRect( 238, 30, 70, 21 ) );
+    txtScriptDuration->setReadOnly(true);
+
+    lblScriptName->setText( tr( "Item Name:" ) );
+    lblScriptDuration->setText( tr( "Duration:" ) );
+    btnScriptDone->setText( tr( "Finished" ) );
+    connect( btnScriptDone, SIGNAL( clicked() ), 
+             this, SLOT( btnScriptDoneClicked() ) );
+}
+
+
+/**
+ * Delete GUI components.
+ */
 void TabPanelScript::clear() {
 	delete lblScriptName;
 	delete lblScriptDuration;

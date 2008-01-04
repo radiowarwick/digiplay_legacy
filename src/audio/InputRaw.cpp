@@ -90,12 +90,17 @@ void InputRaw::getAudio(AudioPacket* audioData) {
         if (f_end_byte - f_pos_byte > 256) {
             cout << "WARNING: Ran out of cached audio before end of file." << endl;
         }
+        // First unlock the cache before we attempt to stop
+        cacheLock.unlock();
+        
+        // Stop the caching thread and reset
 		stop();
 	}
-	
-	// Unlock the cache
-	cacheLock.unlock();
-	
+	else {
+	    // Just unlock the cache
+	    cacheLock.unlock();
+    }
+    
 	// if we're playing, update all the attached counters with our current
 	// position in terms of stereo samples.
     if (state == STATE_PLAY) {
@@ -118,7 +123,7 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
     }
 	f.close();
 	f.clear();
-	
+
 	// Open the new file and check it's good to read
 	f.open(filename.c_str(), ios::in|ios::binary);
 	if (f.is_open() && f.good() == false) {
@@ -131,6 +136,7 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
 	// Initialise position variables, counters and reset cache
 	// Lock cache to be safe
 	cacheLock.lock();
+
 	f_start_byte = start_smpl * 4;
 	f_end_byte = end_smpl * 4;
 	f_length_byte = f_end_byte - f_start_byte;
@@ -139,11 +145,12 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
 	cacheWrite = cacheStart;
 	cacheFree = cacheSize;
 	cacheLock.unlock();
+
 	if (countersList.size() > 0) {
 		updateCounters(0);
 		updateTotals(f_length_byte/4);
 	}
-	
+
 	// Start caching thread
 	int retval = threadStart();
 	if (retval != 0) {

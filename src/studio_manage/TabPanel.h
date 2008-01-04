@@ -32,21 +32,38 @@ class QWidget;
 class QTabWidget;
 class Auth;
 
+/**
+ * Base class GUI tab widget from which various GUI components can be derived
+ * allowing applications to be built from such components for various
+ * purposes.
+ */
 class TabPanel : public QObject {
 	Q_OBJECT
 	public:
+		/// Constructor
 		TabPanel(QTabWidget *parent, string text);
+		/// Destructor
 		virtual ~TabPanel();
+        
+		/// Reconfigures the panel
 		virtual void configure(Auth *authModule);
+		/// Sets the text shown on the tab
 		void setText(string text) {tabText = text;}
 
 	protected:
+		// Returns a pointer to the actual panel widget
 		QWidget *getPanel() {return panel;}
+		// Hide the panel
 		void hide();
+		// Show the panel
 		void show();
+		// Returns true if the panel is visible
 		bool isVisible();
-		virtual void draw() {return;}
+		// Draw the contents of the panel
+		virtual void draw() = 0;
+		// Clean up the contents of the panel
 		virtual void clear() = 0;
+        
 		string panelTag;
 
 	private:

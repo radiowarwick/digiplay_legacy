@@ -38,60 +38,83 @@
 #include "dps.h"
 #include "Auth.h"
 #include "Logger.h"
-#include "Config.h"
-#include "DataAccess.h"
 #include "QtTrigger.h"
 #include "DpsEmail.h"
 
 #include "TabPanelEmail.h"
 
+/**
+ * Initialises the panel, creates components, draws the GUI components
+ * and initialises the database trigger for the email table.
+ */
 TabPanelEmail::TabPanelEmail(QTabWidget *parent, string text) 
         : TabPanel(parent,text) {
+    // Set panel tag.
     panelTag = "TabEmail";
-    DB = new DataAccess();
+    
+    // Email accessor class.
     E = new DpsEmail();
 
-    // Initislise object pointers
+    // Initialise object pointers.
     lstEmail = 0;
     txtEmailBody = 0;
     flagUpdateDisabled=0;
 
-    // Create GUI objects and configure
+    // Create GUI objects and configure them.
     draw();
 
+    // Create a trigger on the email table so we update when changes are made.
     triggerEmail = new QtTrigger("triggerEmail","trig_id2");
+    
+    // Upon triggering, run the getEmail() routine.
     connect(triggerEmail, SIGNAL(trigger()),
                             this, SLOT(getEmail()));
 }
 
-// clean up stuff
-TabPanelEmail::~TabPanelEmail() {
-    delete triggerEmail;
-    delete DB;
 
-    delete pixEmailNew;
-    delete pixEmailOld;
-    delete icsEmailIcons;
+/**
+ * Clean up dynamically created objects
+ */ 
+TabPanelEmail::~TabPanelEmail() {
+    // Clean up GUI components
+    clear();
+    
+    // Email trigger.
+    delete triggerEmail;
+
+    // Email accessor class.
+    delete E;
 }
 
-// this is called whenever the application reconfigures itself,
-// usually due to a change in authentication status (login, logoff)
+
+/**
+ * Reconfigure the panel to reflect the current authentication status.
+ */
 void TabPanelEmail::configure(Auth *authModule) {
+    // If this module is permitted in the current authentication state
+    // then get emails, otherwise clear the list.
     if (authModule->isPermitted(panelTag)) {
         getEmail();
     }
     else {
         lstEmail->clear();
     }
+    
+    // Do base level configuration (hide modules if necessary)
     TabPanel::configure(authModule);
 }
 
 
+/**
+ * Retrieves the body of an email, given the QListViewItem from the email
+ * list.
+ */
 void TabPanelEmail::getEmailBody(QListViewItem *current) {
     const char *routine = "TabPanelEmail::getEmailBody";
     L_INFO(LOG_TABEMAIL,"Get email body for id " + current->text(4));
 
     // Find selected email and display email body
+    // TODO: Reimplement using a map.
     for (unsigned int i = 0; i < emails.size(); ++i) {
         if (emails[i].id == string(current->text(4).ascii())) {
             txtEmailBody->setCurrentFont(fntBody);
@@ -102,8 +125,9 @@ void TabPanelEmail::getEmailBody(QListViewItem *current) {
     }
 }
 
+
 /**
- * Gets the latest emails from the DpsEmail module, and then redisplays the
+ * Gets the latest emails from the Email accessor, and then redisplays the
  * email list.
  */
 void TabPanelEmail::getEmail(){
@@ -129,6 +153,8 @@ void TabPanelEmail::getEmail(){
     emails = E->getEmails();
     
     // Iterate over the new list of emails
+    // TODO: reimplement this when converted to using a map.
+    // TODO: use iterators and find
     for (unsigned int i = 0; i < emails.size(); i++) {
         // Examine the emails from the oldest to the newest
         // Get the ID of the ith email
@@ -173,6 +199,7 @@ void TabPanelEmail::getEmail(){
     }
 }
 
+
 /**
  * Marks an email with the given message ID as read
  */
@@ -181,8 +208,11 @@ void TabPanelEmail::markRead(string id) {
     E->markRead(id);
 }
 
-// This handles drawing the contents of the form, and connecting slots,
-// but has little actual implementation
+
+/**
+ * This handles drawing the contents of the form, and connecting slots, 
+ * but has little actual implementation
+ */
 void TabPanelEmail::draw() {
     const char* routine = "TabEmail::draw()";
 
@@ -242,9 +272,13 @@ void TabPanelEmail::draw() {
 }
 
 
-
-
+/**
+ * Clean up any objects we created during draw().
+ */
 void TabPanelEmail::clear() {
-    delete lstEmail;
     delete txtEmailBody;
+    delete lstEmail;
+    delete icsEmailIcons;
+    delete pixEmailOld;
+    delete pixEmailNew;
 }

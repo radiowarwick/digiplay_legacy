@@ -39,7 +39,6 @@ AudioWallManager::~AudioWallManager() {
 }
 
 void AudioWallManager::load(unsigned int cartset) {
-    cout << "AudioWallManager:: Loading cartset " << cartset << endl;
 	_cartset = cartset;
 
     if (cartset == 0) {
@@ -48,30 +47,22 @@ void AudioWallManager::load(unsigned int cartset) {
     			delete _pages[i]->items[j];
     		}
     		delete _pages[i];
-            cout << "About to delete page" << endl;
             _A->deletePage(0);
-            cout << "Deleted page" << endl;
     	}
     	_pages.resize(0);
         return;
     }
-    cout << "1" << endl;
 	short pagecount = atoi(DB->exec("AudioWallManagerLoad",
                             "SELECT max(cartwalls.page) "
                             "FROM cartwalls,cartsets "
                             "WHERE cartwalls.cartsetid = " 
 							 	+ dps_itoa(cartset))[0][0].c_str()) + 1;
-    cout << "ID is " << cartset << endl;
-    cout << "Pagecount: " << pagecount << endl;
-    cout << "Current pages: " << _pages.size() << endl;
     for (int i = _pages.size() - 1; i > pagecount - 1; i--) {
         for (int j = 0; j < _A->getSize(); j++) {
             delete _pages[i]->items[j];
         }
-        cout << "Delete page " <<  i << endl;
         _A->deletePage(i);
     }
-    cout << "2" << endl;
 	for (int i = _pages.size(); i < pagecount; i++) {
 		_pages.push_back(new Page);
         _A->addPage();
@@ -79,7 +70,6 @@ void AudioWallManager::load(unsigned int cartset) {
 			_pages[i]->items.push_back(new AudioWallItemSpec);
 		}
 	}
-    cout << "3" << endl;
     PqxxResult R = DB->exec("AudioWallManagerLoad",
                         "SELECT * FROM v_cartwalls WHERE cartset_id = "
                         + dps_itoa(cartset) + " ORDER BY page, prop_name");
@@ -144,11 +134,7 @@ void AudioWallManager::load(unsigned int cartset) {
 			i++;
 		}
 		if (change) {
-            cout << "Detected a change on page " << page << " item " << item
-                << endl;
             _A->setButton(page,item,*I);
 		}
-        //_A->displayPage(0);
 	}
-    cout << "completed update" << endl;
 }

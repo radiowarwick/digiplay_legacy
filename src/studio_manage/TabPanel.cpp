@@ -29,18 +29,37 @@
 
 #include "TabPanel.h"
 
+
+/**
+ * Constructs the base panel widget and sets the parent and text variables as
+ * passed from the derived class's constructor. Nothing is drawn on the widget
+ * at the base level, hence draw() and clean() are pure virtual functions.
+ */
 TabPanel::TabPanel(QTabWidget *parent, string text) {
+    // Set parent, tab label and tab tag
 	tabParent = parent;
 	tabText = text;
 	panelTag = "Tab";
+    
+    // Create base panel widget
 	panel = new QWidget(0,"tabPanel");
-	draw();
 }
 
+
+/**
+ * Clean up the base panel widget
+ */
 TabPanel::~TabPanel() {
 	delete panel;
 }
 
+
+/**
+ * Reconfigures the widget based on the state of the authentication module.
+ * At the base class level, these merely controls the visibility of the
+ * widget based on whether the associated \a panelTag should be active
+ * for the current authentication state.
+ */
 void TabPanel::configure(Auth *authModule) {
 	const char* routine = "TabPanel::configure";
 	if (!authModule) {
@@ -55,6 +74,11 @@ void TabPanel::configure(Auth *authModule) {
 	}
 }
 
+
+/**
+ * Checks if the panel isn't already visible, and then makes it visible by
+ * inserting the base panel as a new tab in the parent QTabWidget.
+ */
 void TabPanel::show() {
 	int p = tabParent->indexOf(panel);
 	if (p == -1) {
@@ -63,6 +87,11 @@ void TabPanel::show() {
 	}
 }
 
+
+/**
+ * Checks that the panel is currently visible, then removes it from the
+ * parent QTabWidget.
+ */
 void TabPanel::hide() {
 	int p = tabParent->indexOf(panel);
 	if (p != -1) {
@@ -71,6 +100,10 @@ void TabPanel::hide() {
 	}
 }
 
+
+/**
+ * Checks if the panel is currently associated with the parent QTabWidget.
+ */
 bool TabPanel::isVisible() {
 	int p = tabParent->indexOf(panel);
 	return (p != -1);

@@ -1,3 +1,20 @@
+digiplay (0.99.7-1) unstable; urgency=low
+
+    * Fixed mutex lock error in audio input class
+    * Removed print statements from audio wall class
+    * Reinstated small cache on dsp output devices
+
+ -- Chris Cantwell <ccantwell@radio.warwick.ac.uk>  Thu, 03 Jan 2008 21:42:00 +0000
+
+digiplay (0.99.6-1) unstable; urgency=low
+    
+    * Fixed audio distortion problem on sustainer.
+    * Cleaned up sustainer output.
+    * Cleaned up audio code.
+    * Implemented OutputRaw audio modules.
+
+ -- Chris Cantwell <ccantwell@radio.warwick.ac.uk>  Fri, 28 Dec 2007 22:30:00 +0000
+
 digiplay (0.99.5-1) unstable; urgency=low
 
     * Fixed GUI freeze on studio_play application if stop while paused

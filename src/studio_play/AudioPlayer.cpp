@@ -114,9 +114,9 @@ void AudioPlayer::load() {
                                     atoi(R[0]["end_smpl"].c_str()));
     conf->setParam("next_on_showplan","");
     conf->setParam("player" + id + "_md5", string(R[0]["md5"].c_str()));
-    cout << "AudioPlayer::load DOLOCK" << endl;
+
 	qApp->lock();
-	cout << "AudioPlayer::load LOCK" << endl;
+
     lblTitle->setText(R[0]["title"].c_str());
     lblArtist->setText(R[0]["artist"].c_str());
     btnPlay->setEnabled(true);

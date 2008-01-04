@@ -29,7 +29,6 @@
 
 #include "Showplan.h"
 #include "TabPanel.h"
-#include "Config.h"
 #include "DpsMusicSearch.h"
 #include "MessagingInterface.h"
 #include "dlgWarn.h"
@@ -43,24 +42,36 @@ class QCheckBox;
 class QPixmap;
 
 class Auth;
+class Config;
 
+/**
+ * TabPanel class for providing a music library search.
+ */
 class TabPanelSearch : 	public TabPanel,
 						public MessagingInterface {
 	Q_OBJECT
 	public:
+        /// Constructor
 		TabPanelSearch(QTabWidget *parent, string text);
+        /// Destructor
 		~TabPanelSearch();
+        /// ???
 		void onMessage();
 		
 	signals:
+        /// Emitted when an item is selected from the search results.
         void itemSelected( QString );
 
 	private slots:
+        /// Searches the library.
 		virtual void Library_Search();
+        /// Emits the signal indicating an item is selected.
 		virtual void playlistAdd(QListViewItem *x);
 
 	private:
+        /// Draws the panel.
 		void draw();
+        /// Clears the panel.
 		void clear();
 	
 		Config *conf;

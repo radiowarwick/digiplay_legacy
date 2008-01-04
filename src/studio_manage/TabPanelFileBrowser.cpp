@@ -22,6 +22,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+ 
 #include <qtabwidget.h>
 #include <qheader.h>
 #include <qapplication.h>
@@ -36,15 +37,23 @@
 
 #include "TabPanelFileBrowser.h"
 
+/**
+ * Initialises the TabPanel and draws the panels GUI components.
+ */
 TabPanelFileBrowser::TabPanelFileBrowser(QTabWidget *parent, string text)
 		: TabPanel(parent, text) {
+    // Set panel tag
     panelTag = "TabFileBrowser";
+    
+    // Draw GUI components
     draw();
 }
 
-// clean up stuff
+/**
+ * Cleans up dynamically created objects.
+ */
 TabPanelFileBrowser::~TabPanelFileBrowser() {
-
+    clear();
 }
 
 void TabPanelFileBrowser::configure(Auth *authModule) {
@@ -54,8 +63,11 @@ void TabPanelFileBrowser::configure(Auth *authModule) {
     TabPanel::configure(authModule);
 }
 
-// This handles drawing the contents of the form, and connecting slots,
-// but has little actual implementation
+
+/**
+ * This handles drawing the contents of the form, and connecting slots, 
+ * but has little actual implementation.
+ */
 void TabPanelFileBrowser::draw() {
 	// do all form drawing here, create widgets, set properties
     lstFileBrowser = new DirectoryView( getPanel() );
@@ -79,13 +91,22 @@ void TabPanelFileBrowser::draw() {
 
     connect( lstFileBrowser, SIGNAL( doubleClicked(QListViewItem*) ),
                 this, SLOT( handleLoad(QListViewItem*) ) );
+    
     lstFileBrowser->show();
 }
 
+
+/**
+ * Cleans up the GUI components.
+ */
 void TabPanelFileBrowser::clear() {
 	delete lstFileBrowser;
 }
 
+
+/**
+ * Emits the appropriate signal when an item is selected in the filebrowser.
+ */
 void TabPanelFileBrowser::handleLoad(QListViewItem* x) {
     if (x) {
         if (x->text(1) == "Audio File") {

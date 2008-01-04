@@ -38,27 +38,36 @@ class Auth;
 class DataAccess;
 class QtTrigger;
 
+/**
+ * TabPanel class for logging records which are played on the system.
+ */
 class TabPanelLogging : public TabPanel,
 						public MessagingInterface {
-	Q_OBJECT
-	public:
-		TabPanelLogging(QTabWidget *parent, string text);
-		~TabPanelLogging();
-		void configure(Auth *authModule);
-		void onMessage();
+    Q_OBJECT
+    public:
+        /// Constructor
+        TabPanelLogging(QTabWidget *parent, string text);
+        /// Destructor
+        ~TabPanelLogging();
+        /// Reconfigure the panel
+        void configure(Auth *authModule);
+        /// ???
+        void onMessage();
 
-	public slots:
-		virtual void buttonPressed();		
-	  void processLogUpdate();
+    public slots:
+        virtual void buttonPressed();		
+        void processLogUpdate();
 
 	private:
-	  void draw();
-		void clear();
-		int logRecord(string artist, string title);
-		void getRecentlyLogged();
+        /// Draw the panel
+        void draw();
+        /// Clear the panel
+        void clear();
+        /// Log a record for the given artist/title
+        int logRecord(string artist, string title);
 		
-    DataAccess* DB;
-    QtTrigger* triggerLog;
+        DataAccess* DB;
+        QtTrigger* triggerLog;
 		int location, userid;
 		QListView *lstRecentlyLogged;
 		QLineEdit *txtArtist, *txtTitle, *txtReclibID;

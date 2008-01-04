@@ -30,13 +30,20 @@ class QTabWidget;
 class QTextBrowser;
 class Auth;
 
+/**
+ * TabPanel class for displaying a simple information panel.
+ */
 class TabPanelInfo : public TabPanel {
 	public:
-		TabPanelInfo(QTabWidget *parent, string text); 
+		/// Constructor
+		TabPanelInfo(QTabWidget *parent, string text);
+		/// Destructor 
 		~TabPanelInfo();
 
 	private:
+		/// Draw the panel
 		void draw();
+		/// Clear the panel
 		void clear();
 
 		QTextBrowser *txtInfoPanel;

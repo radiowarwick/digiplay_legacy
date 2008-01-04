@@ -40,24 +40,34 @@ class QListViewItem;
 class QIconSet;
 class Auth;
 
-class DataAccess;
 class QtTrigger;
 class DpsEmail;
 
+/**
+ * TabPanel class for displaying studio emails.
+ */
 class TabPanelEmail : public TabPanel {
 	Q_OBJECT
 	public:
+		/// Constructor
 		TabPanelEmail(QTabWidget *parent, string text);
+		/// Destructor
 		~TabPanelEmail();
+		/// Reconfigure the panel
 		void configure(Auth *authModule);
 
 	public slots:
-		virtual void getEmailBody(QListViewItem *current);		
+		/// Get the body of an email and display it
+		virtual void getEmailBody(QListViewItem *current);
+		/// Check for emails and update the list
 		void getEmail();
 
 	private:
+		/// Marks an email as read
 		void markRead(string id);
+		/// Draw the panel
 		void draw();
+		/// Clear the panel
 		void clear();
 	
         DataAccess* DB;

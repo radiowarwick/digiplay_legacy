@@ -36,25 +36,37 @@ class QPushButton;
 class Auth;
 class DataAccess;
 
+/**
+ * TabPanel class for displaying the contents of scripts.
+ */
 class TabPanelScript : public TabPanel {
 	Q_OBJECT
 	public:
+        /// Constructor.
 		TabPanelScript(QTabWidget *parent, string text);
+        /// Destructor.
 		~TabPanelScript();
+        /// Reconfigures the panel.
 		void configure(Auth *authModule);
 
 	public slots:
+        /// Loads the specified script.
 		void loadScript( int id );
+        /// Clears the display area.
 		void clearScript();
 	
 	signals:
+        /// Emitted when a script is deemed read/finished.
 		void scriptDone();
 
 	private slots:
+        /// Process script done button and emits signal.
 		void btnScriptDoneClicked();
 
 	private:
+        /// Draw the panel.
 		void draw();
+        /// Clear the panel.
 		void clear();
 
         DataAccess* DB;

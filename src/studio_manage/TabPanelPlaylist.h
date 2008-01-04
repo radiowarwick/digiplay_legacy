@@ -37,26 +37,38 @@ class Auth;
 class DataAccess;
 class QtTrigger;
 
+/**
+ * TabPanel class for providing access to a music playlist.
+ */
 class TabPanelPlaylist : public TabPanel {
 	Q_OBJECT
 	public:
+        /// Constructor.
 		TabPanelPlaylist(QTabWidget *parent, string text);
+        /// Destructor.
 		~TabPanelPlaylist();
+        /// Reconfigures the panel.
 		void configure(Auth *authModule);
 
     signals:
+        /// Emitted when a playlist item is selected.
         void itemSelected( QString md5 );
 
 	private slots:
+        /// Refreshes the contents of the playlist.
         void processPlaylistUpdate();
+        /// Processes when a playlist item is selected and emits signal.
 		virtual void playlistAdd(QListViewItem *current);
+        /// Changes the icon when a playlist is expanded.
 		virtual void listExpanded(QListViewItem *x);
+        /// Changes the icen when a playlist is collapsed.
 		virtual void listCollapsed(QListViewItem *x);
 
 	private:
+        /// Draws the panel.
 		void draw();
+        /// Clears the panel.
 		void clear();
-		void getPlaylist();	
 
         DataAccess* DB;
         QtTrigger* triggerPlaylist;

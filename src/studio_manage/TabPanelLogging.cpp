@@ -21,6 +21,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+ 
 #include <qtabwidget.h>
 #include <qlistview.h>
 #include <qstring.h>
@@ -39,37 +40,51 @@
 
 #include "TabPanelLogging.h"
 
+/**
+ * Constructs a new logging panel.
+ */
 TabPanelLogging::TabPanelLogging(QTabWidget *parent, string text)
         : TabPanel(parent,text) {
+    // Set panel tag
     panelTag = "TabLogging";
-    Config *conf = new Config("digiplay",this);
+    
+    // Create a DataAccess class for database access
     DB = new DataAccess();
+    
+    // Create a config class and determine location
+    Config *conf = new Config("digiplay",this);
     location = atoi( conf->getParam("LOCATION").c_str() );
     delete conf;
 
-    draw();
-
+    // Create a database trigger and run the update routine when triggered
     triggerLog = new QtTrigger("triggerLog","trig_id4");
     connect(triggerLog, SIGNAL(trigger()),
               this, SLOT(processLogUpdate()));
-
+    
+    // Create GUI components
+    draw();
 }
 
-// clean up stuff
+/**
+ * Delete any dynamically created objects.
+ */
 TabPanelLogging::~TabPanelLogging() {
+    // Delete GUI components
+    clear();
+    
+    // Release database access
     delete DB;
-    delete lstRecentlyLogged;
-    delete txtArtist;
-    delete txtTitle;
-    delete txtReclibID;
-    delete btnLog;
 }
 
-// this is called whenever the application reconfigures itself,
-// usually due to a change in authentication status (login, logoff)
+
+/**
+ * Reconfigure the tab based on a change in authentication state.
+ * @param   authModule  Authentication module indicating authentication state.
+ */
 void TabPanelLogging::configure(Auth *authModule) {
     const char *routine = "TabPanelLogging::configure";
 
+    // Get the user id and store it
     string SQL = "SELECT id FROM users WHERE username = '" 
                         + authModule->getUser() + "' LIMIT 1";
     PqxxResult R; 
@@ -87,18 +102,126 @@ void TabPanelLogging::configure(Auth *authModule) {
     else {
         L_ERROR(LOG_TABLOGGING,"No user ID matching username.");
     }
-    getRecentlyLogged();
+    
+    // Populate the list with recently logged items.
+    processLogUpdate();
     TabPanel::configure(authModule);
 }
 
 
+/**
+ * MessagingInterface routine
+ */
 void TabPanelLogging::onMessage() {
 	
 }
 
 
-// This handles drawing the contents of the form, and connecting slots,
-// but has little actual implementation
+/**
+ * Logs a record in the database.
+ * @param   artist      Artists name
+ * @param   title       Title of the track
+ * @returns             0 if completes successfully
+ */
+int TabPanelLogging::logRecord(string artist, string title){
+    const char *routine="TabPanelLogging::logRecord";
+    
+    // Get current time
+    int now = (int)time(NULL);
+
+    // Escape the artist and title
+    artist = DB->esc(artist);
+    title = DB->esc(title);
+
+    // Try and insert into database
+    string SQL = "INSERT INTO log "
+                "(userid, datetime, track_title, track_artist, location) "
+                "VALUES (" + dps_itoa(userid) + ", " + dps_itoa(now) + ", '"
+                + title + "', '" + artist + "', " + dps_itoa(location) + ");";
+    try {
+        DB->exec("LoggingRecord", SQL);
+        DB->commit("LoggingRecord");
+    }
+    catch (...) {
+        L_ERROR(LOG_TABLOGGING,"Failed to insert record " + artist +
+								" - " + title + ".");
+        return -1;
+    }
+    return 0;
+}
+
+
+/**
+ * Code run when the log button is pressed.
+ */
+void TabPanelLogging::buttonPressed() {
+    const char *routine = "TabPanelLogging::buttonPressed";
+    
+    // Retrieve values from text fields
+    string artist = txtArtist->text().ascii();
+    string title = txtTitle->text().ascii();
+    string reclibid = txtReclibID->text().ascii();
+
+    // Try to log record
+    if (logRecord(artist, title) != 0)
+        L_ERROR(LOG_TABLOGGING, "Logging failed");
+        
+    // Reset text fields
+    txtReclibID->setText("");
+    txtArtist->setText("");
+    txtTitle->setText("");
+    
+    // Repopulate the list to reflect changes
+    processLogUpdate();
+}
+
+
+/**
+ * Update the list of logged tracks.
+ */
+void TabPanelLogging::processLogUpdate() {
+    const char *routine = "TabPanelLogging::processLogUpdate";
+
+    L_INFO(LOG_TABLOGGING,"Updating list of recently logged tracks.");
+    QString artist, title, datestr;
+    tm *dte;
+    char date[30];
+    
+    // Clear the list
+    lstRecentlyLogged->clear();
+
+    // Retrieve the last 50 tracks logged.
+    // TODO - Change the 1 in this SQL query to the System Define
+    string SQL = "SELECT * FROM log WHERE userid != 1 ORDER BY datetime DESC LIMIT 50;";
+    PqxxResult R;
+    try {
+        R=DB->exec("LoggingGet", SQL);
+        DB->abort("LoggingGet");
+    }
+    catch (...) {
+        DB->abort("LoggingGet");
+        L_ERROR(LOG_TABLOGGING,"Couldn't get logged records from DB.");
+    }
+    
+    // Populate the list with the retrieved tracks.
+    for (unsigned int i = 0; i < R.size(); i++) {
+        time_t thetime(atoi(R[i]["datetime"].c_str()));
+        dte = localtime(&thetime);
+        strftime(date, 30, "%Ex %H:%M", dte);
+        artist = R[i]["track_artist"].c_str();
+        title = R[i]["track_title"].c_str();
+        lstRecentlyLogged->insertItem(
+                new QListViewItem(  lstRecentlyLogged, 
+                                    lstRecentlyLogged->lastItem(), 
+                                    date, artist, title   ));
+    }
+    L_INFO(LOG_TABLOGGING,"List of recently logged tracks updated successfully.");
+}
+
+
+/**
+ * Draw the GUI components.
+ */
 void TabPanelLogging::draw() {
 
     // do all form drawing here, create widgets, set properties
@@ -176,7 +299,6 @@ void TabPanelLogging::draw() {
     //Disable reclib ID logging until data is available....
     txtReclibID->setEnabled(FALSE);
 
-
     // connect signals and slots here
     connect( btnLog, SIGNAL( clicked() ), 
                 this, SLOT( buttonPressed() ) );
@@ -184,86 +306,10 @@ void TabPanelLogging::draw() {
                 this, SLOT( buttonPressed() ) );
 }
 
-int TabPanelLogging::logRecord(string artist, string title){
-    const char *routine="TabPanelLogging::logRecord";
-    
-    // Get current time
-    int now = (int)time(NULL);
 
-    // Escape the artist and title
-    artist = DB->esc(artist);
-    title = DB->esc(title);
-
-    // Try and insert into database
-    string SQL = "INSERT INTO log "
-                "(userid, datetime, track_title, track_artist, location) "
-                "VALUES (" + dps_itoa(userid) + ", " + dps_itoa(now) + ", '"
-                + title + "', '" + artist + "', " + dps_itoa(location) + ");";
-    try {
-        DB->exec("LoggingRecord", SQL);
-        DB->commit("LoggingRecord");
-    }
-    catch (...) {
-        L_ERROR(LOG_TABLOGGING,"Failed to insert record " + artist +
-								" - " + title + ".");
-    }
-    return 0;
-}
-
-void TabPanelLogging::getRecentlyLogged() {
-    const char *routine="TabPanelLogging::getRecentlyLogged";
-    QString artist, title, datestr;
-    tm *dte;
-    char date[30];
-
-    //TODO - Change the 1 in this SQL query to the System Define
-    string SQL = "SELECT * FROM log WHERE userid != 1 ORDER BY datetime DESC LIMIT 50;";
-    lstRecentlyLogged->clear();
-    PqxxResult R;
-    try {
-        R=DB->exec("LoggingGet", SQL);
-        DB->abort("LoggingGet");
-    }
-    catch (...) {
-        DB->abort("LoggingGet");
-        L_ERROR(LOG_TABLOGGING,"Couldn't get logged records from DB.");
-    }
-    for (unsigned int i = 0; i < R.size(); i++) {
-        time_t thetime(atoi(R[i]["datetime"].c_str()));
-        dte = localtime(&thetime);
-        strftime(date, 30, "%Ex %H:%M", dte);
-        artist = R[i]["track_artist"].c_str();
-        title = R[i]["track_title"].c_str();
-        lstRecentlyLogged->insertItem(
-                new QListViewItem(  lstRecentlyLogged, 
-                                    lstRecentlyLogged->lastItem(), 
-                                    date, artist, title   ));
-    }
-}
-
-void TabPanelLogging::buttonPressed() {
-    const char *routine = "TabPanelLogging::buttonPressed";
-    string artist = txtArtist->text().ascii();
-    string title = txtTitle->text().ascii();
-    string reclibid = txtReclibID->text().ascii();
-
-    if (logRecord(artist, title) != 0)
-        L_ERROR(LOG_TABLOGGING, "Logging failed");
-    txtReclibID->setText("");
-    txtArtist->setText("");
-    txtTitle->setText("");
-    getRecentlyLogged();
-}
-
-void TabPanelLogging::processLogUpdate() {
-    const char *routine = "TabPanelLogging::processLogUpdate";
-
-    L_INFO(LOG_TABLOGGING,"A change to the log relation has occured.");
-    getRecentlyLogged();
-    L_INFO(LOG_TABLOGGING,"Change to log relation processed.");
-    
-}
-
+/**
+ * Delete the GUI components
+ */
 void TabPanelLogging::clear() {
     delete lstRecentlyLogged;
     delete txtArtist;

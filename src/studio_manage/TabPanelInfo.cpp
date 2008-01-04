@@ -30,17 +30,33 @@
 
 #include "TabPanelInfo.h"
 
+/**
+ * Initialise the panal and draw the GUI components.
+ */
 TabPanelInfo::TabPanelInfo(QTabWidget *parent, string text)
 		: TabPanel(parent,text) {
+    // Set panel tag.
 	panelTag = "TabInfo";
+    
+    // Initialise pointers.
 	txtInfoPanel = 0;
+    
+    // Draw GUI components.
 	draw();
 }
 
+
+/**
+ * Deletes any dynamically assigned objects.
+ */
 TabPanelInfo::~TabPanelInfo() {
 	clear();
 }
 
+
+/**
+ * Creates the GUI components for this panel.
+ */
 void TabPanelInfo::draw() {
 	const char* routine = "TabInfo::draw()";
 	
@@ -71,6 +87,10 @@ void TabPanelInfo::draw() {
 		"If you have any suggestions for features you'd like to see in RaW Digiplay, please send an email to the same address above.</p><p>Thanks,</p><P>RaW Digiplay Development Team</p>" ) );
 }
 
+
+/**
+ * Clean up the GUI components.
+ */
 void TabPanelInfo::clear() {
 	delete txtInfoPanel;
 }

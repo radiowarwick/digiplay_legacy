@@ -35,26 +35,42 @@ class Auth;
 class DirectoryView;
 class Directory;
 
+/**
+ * TabPanel class for displaying a virtual filesystem browser.
+ * This provides access to the DPS virtual filesystem structure.
+ */
 class TabPanelFileBrowser : public TabPanel {
 	Q_OBJECT
 	public:
+		/// Constructor
 		TabPanelFileBrowser(QTabWidget *parent, string text);
+		/// Destructor
 		~TabPanelFileBrowser();
+		/// Reconfigure the panel
         void configure(Auth *authModule);
 
     signals:
+    	/// Emitted when a track is selected from the browser.
         void trackSelected( QString md5 );
+        /// Emitted when a jingle is selected from the browser.
         void jingleSelected( QString md5 );
+        /// Emitted when an advert is selected from the browser.
         void advertSelected( QString md5 );
+        /// Emitted when a script is selected from the browser.
         void scriptSelected( DpsShowScript& S );
+        /// Emitted when a cartset is selected from the browser.
         void cartsetSelected( QString index );
+        /// Emitted when a showplan is selected from the browser.
         void showplanSelected( DpsShowplan& s );
 
     protected slots:
+    	/// Handle load events from the FileBrowser object and emit signals.
         void handleLoad(QListViewItem* x);
 
 	private:
+		/// Draw the panel
 		void draw();
+		/// Clear the panel
 		void clear();
         
 		DirectoryView *lstFileBrowser;

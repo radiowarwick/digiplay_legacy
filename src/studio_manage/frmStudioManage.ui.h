@@ -35,6 +35,7 @@
 #include "TabPanelLogging.h"
 #include "TabPanelScript.h"
 #include "TabPanelFileBrowser.h"
+#include "Nownext.h"
 #include "Showplan.h"
 #include "dlgLogin.h"
 #include "dlgWarn.h"
@@ -50,6 +51,7 @@
 Auth *authModule;
 UserConfig *userConfig;
 Showplan *sp;
+Nownext *nownext;
 TabPanelInfo *tabPanelInfo;
 TabPanelEmail *tabPanelEmail;
 TabPanelSearch *tabPanelSearch;
@@ -108,12 +110,17 @@ void frmStudioManage::init() {
 
 	//Load Images
 	cout << " -> Loading Images and setting contact information... ";
-	pixFade->setPixmap(QPixmap(path + "/images/fade.png"));
+//	pixFade->setPixmap(QPixmap(path + "/images/fade.png"));
 	pixLogo->setPixmap(QPixmap(path + "/images/rawdigiplay.png"));
-    lblContactPhone->setText(QString(conf->getParam("contact_phone")));
-    lblContactSms->setText(QString(conf->getParam("contact_sms")));
-    lblContactEmail->setText(QString(conf->getParam("contact_email")));
+    	lblContactPhone->setText(QString(conf->getParam("contact_phone")));
+    	lblContactSms->setText(QString(conf->getParam("contact_sms")));
+    	lblContactEmail->setText(QString(conf->getParam("contact_email")));
 	cout << "success." << endl;
+
+	//Load Now/Next widget
+	nownext = new Nownext( this, "Now Next");
+	nownext->setGeometry( QRect( 0, 0, 1030, 30 ) );
+	nownext->configure(authModule);
 	
 	// Load tab panels after removing the template tab.	
 	tabManage->removePage(tabManage->currentPage());

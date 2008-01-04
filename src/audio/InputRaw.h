@@ -17,7 +17,9 @@ class Audio::Counter;
  */
 class Audio::InputRaw : public Input {
 	public:
-		InputRaw();
+		/// Allow specification of cache size for network resiliance
+		/// but default to 10 secs
+		InputRaw(int cache_size = 1760000);
 		~InputRaw();
 
         /// Processes a request for a block of audio data

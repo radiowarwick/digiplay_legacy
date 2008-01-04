@@ -6,10 +6,10 @@ using std::endl;
 #include "InputRaw.h"
 using Audio::InputRaw;
 
-InputRaw::InputRaw() {
+InputRaw::InputRaw(int cache_size) {
 	state = STATE_STOP;
-	// Configure cache
-	cacheSize = 1760000;
+	// Configure cache to the appropriate size
+	cacheSize = cache_size;
 	cacheStart = new char[cacheSize];
 	if (cacheStart == 0) {
 		cout << "ERROR: Cannot allocate memory for cache" << endl;
@@ -305,6 +305,12 @@ void InputRaw::threadExecute() {
 		if (threadTestKill()) {
             break;
         }
+		//Bandwidth limiting on caching of audio to prevent hanging/stuttering
+		//during caching operations.
+		//Assuming it takes 0 time to cache audio, theoretical thoughput of
+		//2048kbytes/sec is possible.  Since only 176kbytes/sec are
+		//required this should be plenty.
+		usleep(1000);
 	}
 	cacheLock.unlock();
 }

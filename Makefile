@@ -10,7 +10,7 @@ BINDIR=/usr/local/bin
 ETCDIR=/etc
 LIBDIR=/usr/local/lib
 MANDIR=/usr/local/share/man/man1
-SHAREDIR=/usr/local/share/dps
+SHAREDDIR=/usr/local/share/dps
 DOCDIR=/usr/local/share/doc/dps
 IMGDIR=$(SHAREDDIR)/images
 else
@@ -81,7 +81,7 @@ install:
 	@cp -aP share/doc/examples/digiplay.conf $(ETCDIR)
 	@-$(foreach EXE,$(EXE_ALL), if [ -f $(EXE) ]; then cp -aP share/man/man1/`echo $(EXE) | sed 's/.*\///'`.1.gz $(MANDIR); fi;)
 	@cp -arP share/dps $(SHAREDDIR)
-	@cp -arP share/doc/* $(SHAREDDIR)/doc/dps
+	@cp -arP share/doc/* $(SHAREDDIR)/doc	#Removed dps from $(SHAREDDIR)/doc/dps due to folder not found error
 	@echo "Installation complete."
 
 doc: 		manual

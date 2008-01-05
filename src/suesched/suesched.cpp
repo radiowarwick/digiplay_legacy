@@ -29,6 +29,24 @@ int main() {
 	cout << "Radio Warwick Sustainer" << endl;
 	cout << "-----------------------" << endl;
 	cout << "Scheduling service started." << endl;
+
+    bool detach=0;
+
+    if (detach) {
+        if(fork()) return 0;
+
+        chdir("/");
+        setsid();
+        umask(0);
+
+        int pid = fork();
+
+        if (pid) {
+            cout << "Daemon PID: " << pid << endl;
+            return 0;
+        }
+    }
+
 	scheduler *S = new scheduler();
 	while (true) {
 		if (S->getPlaylistSize() == 0) {

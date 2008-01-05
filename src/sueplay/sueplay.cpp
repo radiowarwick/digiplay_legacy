@@ -48,6 +48,23 @@ int main(int argc, char *argv) {
     Logger::setDisplayLevel(ERROR);
     Logger::initLogDir();
 
+    bool detach=0;
+
+    if (detach) {
+        if(fork()) return 0;
+
+        chdir("/");
+        setsid();
+        umask(0);
+
+        int pid = fork();
+
+        if (pid) {
+            cout << "Daemon PID: " << pid << endl;
+            return 0;
+        }
+    }
+
     const char* routine = "sueplay::main";
 	
 	string SQL_Item,SQL_Remove;

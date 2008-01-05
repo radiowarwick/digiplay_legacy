@@ -22,15 +22,66 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include <sys/types.h>
+#include <sys/stat.h>
+#include "getopt.h"
+#include "Logger.h"
 #include "scheduler.h"
 
-int main() {
-	system("clear");
-	cout << "Radio Warwick Sustainer" << endl;
-	cout << "-----------------------" << endl;
-	cout << "Scheduling service started." << endl;
+static int logDebug = 0;
+static int logVerbose = 0;
+static int logQuiet = 0;
+static int detach = 0;
 
-    bool detach=0;
+static struct option long_options[] = {
+    {"debug",   no_argument,    &logDebug, 1},
+    {"verbose", no_argument,    &logVerbose, 1},
+    {"quiet",   no_argument,    &logQuiet, 1},
+    {"help",    no_argument,    0, 'h'},
+    {"version", no_argument,    0, 'v'},
+    {"daemon",  no_argument,    &detach, 1},
+    {0,0,0,0}
+};
+
+static const char* short_options = "hv";
+
+int main(int argc, char *argv []) {
+	const char* routine = "suesched::main";
+    Logger::setAppName("sueplay");
+    Logger::setLogLevel(INFO);
+    Logger::setDisplayLevel(ERROR);
+    Logger::initLogDir();
+
+    while (1) {
+        int v;
+        int option_index = 0;
+        v = getopt_long (argc, argv, short_options,long_options, &option_index);
+        if (v == -1) break;
+        switch (v) {
+            case 'h': {
+                std::cout << "USAGE: " << argv[0]
+                        << " [--debug|--verbose|--quiet] [-h|--help]"
+                        << " [-v|--version] [--daemon]" << std::endl;
+                exit(0);
+                break;
+            }
+            case 'v': {
+                std::cout.precision(1);
+                std::cout << "DPS Sustainer Scheduling Application Version "
+                            << VERSION << std::endl;
+                exit(0);
+                break;
+            }
+        }
+    }
+
+    if (logDebug + logVerbose + logQuiet > 1) {
+        L_ERROR(LOG_DB,"Only one verbosity level may be specified");
+        exit(-1);
+    }
+    if (logDebug) Logger::setDisplayLevel(INFO);
+    if (logVerbose) Logger::setDisplayLevel(WARNING);
+    if (logQuiet) Logger::setDisplayLevel(CRITICAL);
 
     if (detach) {
         if(fork()) return 0;
@@ -46,11 +97,17 @@ int main() {
             return 0;
         }
     }
+	if (!detach) {
+		system("clear");
+		cout << "Radio Warwick Sustainer" << endl;
+		cout << "-----------------------" << endl;
+		cout << "Scheduling service started." << endl;
+	}
 
 	scheduler *S = new scheduler();
 	while (true) {
 		if (S->getPlaylistSize() == 0) {
-			cout << "SCH::FATAL:Nothing to schedule!" << endl;
+			if (!detach) cout << "SCH::FATAL:Nothing to schedule!" << endl;
 			exit(-1);
 		}
 		else {

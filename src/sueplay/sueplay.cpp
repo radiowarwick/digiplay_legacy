@@ -24,6 +24,9 @@
  */
 #include <string>
 #include <iostream>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include "getopt.h"
 using namespace std;
 
 #include "audio/Audio.h"
@@ -42,13 +45,60 @@ using namespace Audio;
 
 #define min(a,b) (((a)<(b))?(a):(b))
 
-int main(int argc, char *argv) {
+static int logDebug = 0;
+static int logVerbose = 0;
+static int logQuiet = 0;
+static int detach = 0;
+
+static struct option long_options[] = {
+    {"debug",   no_argument,    &logDebug, 1},
+    {"verbose", no_argument,    &logVerbose, 1},
+    {"quiet",   no_argument,    &logQuiet, 1},
+    {"help",    no_argument,    0, 'h'},
+    {"version", no_argument,    0, 'v'},
+	{"daemon",  no_argument,	&detach, 1},
+    {0,0,0,0}
+};
+
+static const char* short_options = "hv";
+
+int main(int argc, char *argv []) {
+    const char* routine = "sueplay::main";
     Logger::setAppName("sueplay");
     Logger::setLogLevel(INFO);
     Logger::setDisplayLevel(ERROR);
     Logger::initLogDir();
 
-    bool detach=0;
+    while (1) {
+        int v;
+        int option_index = 0;
+        v = getopt_long (argc, argv, short_options,long_options, &option_index);
+        if (v == -1) break;
+        switch (v) {
+            case 'h': {
+                std::cout << "USAGE: " << argv[0]
+                        << " [--debug|--verbose|--quiet] [-h|--help]"
+                        << " [-v|--version] [--daemon]" << std::endl;
+                exit(0);
+                break;
+            }
+            case 'v': {
+                std::cout.precision(1);
+                std::cout << "DPS Sustainer Playout Application Version "
+                            << VERSION << std::endl;
+                exit(0);
+                break;
+            }
+        }
+    }
+
+    if (logDebug + logVerbose + logQuiet > 1) {
+        L_ERROR(LOG_DB,"Only one verbosity level may be specified");
+        exit(-1);
+    }
+    if (logDebug) Logger::setDisplayLevel(INFO);
+    if (logVerbose) Logger::setDisplayLevel(WARNING);
+    if (logQuiet) Logger::setDisplayLevel(CRITICAL);
 
     if (detach) {
         if(fork()) return 0;
@@ -65,8 +115,6 @@ int main(int argc, char *argv) {
         }
     }
 
-    const char* routine = "sueplay::main";
-	
 	string SQL_Item,SQL_Remove;
 	PqxxResult R;
 	

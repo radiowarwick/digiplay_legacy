@@ -49,14 +49,16 @@ static int logDebug = 0;
 static int logVerbose = 0;
 static int logQuiet = 0;
 static int detach = 0;
+static int print_info = 0;
 
 static struct option long_options[] = {
-    {"debug",   no_argument,    &logDebug, 1},
-    {"verbose", no_argument,    &logVerbose, 1},
-    {"quiet",   no_argument,    &logQuiet, 1},
-    {"help",    no_argument,    0, 'h'},
-    {"version", no_argument,    0, 'v'},
-	{"daemon",  no_argument,	&detach, 1},
+    {"debug",   	no_argument,    &logDebug, 1},
+    {"verbose", 	no_argument,    &logVerbose, 1},
+    {"quiet",   	no_argument,    &logQuiet, 1},
+    {"help",    	no_argument,    0, 'h'},
+    {"version", 	no_argument,    0, 'v'},
+	{"daemon",		no_argument,	&detach, 1},
+	{"now-playing",  no_argument,	&print_info, 1},
     {0,0,0,0}
 };
 
@@ -78,7 +80,7 @@ int main(int argc, char *argv []) {
             case 'h': {
                 std::cout << "USAGE: " << argv[0]
                         << " [--debug|--verbose|--quiet] [-h|--help]"
-                        << " [-v|--version] [--daemon]" << std::endl;
+                        << " [-v|--version] [--daemon] [--print-info]" << std::endl;
                 exit(0);
                 break;
             }
@@ -91,6 +93,10 @@ int main(int argc, char *argv []) {
             }
         }
     }
+	if (detach && print_info) {
+		L_ERROR(LOG_DB,"Printed output only available when attached to the console");
+		exit(-1);
+	}
 
     if (logDebug + logVerbose + logQuiet > 1) {
         L_ERROR(LOG_DB,"Only one verbosity level may be specified");
@@ -233,13 +239,17 @@ int main(int argc, char *argv []) {
 		if (ch[inactive]->isLoaded()) {
 			L_INFO(LOG_SUEPLAY, "Waiting for channel " + dps_itoa(inactive));
 			trig[inactive]->waitStop();
-			cout << "Now playing: " << artist << " - " << title << endl;
+			if (print_info) {
+				cout << "Now playing: " << artist << " - " << title << endl;
+			}
 			L_INFO(LOG_SUEPLAY, "Finished waiting");
 		}
 		else {
 			L_INFO(LOG_SUEPLAY, "Playing channel " + dps_itoa(active));
 			ch[active]->play();
-			cout << "Now playing: " << artist << " - " << title << endl;
+			if (print_info) {
+				cout << "Now playing: " << artist << " - " << title << endl;
+			}
 		}
 
 		int now = (int)time(NULL);

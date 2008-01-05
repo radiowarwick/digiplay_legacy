@@ -32,19 +32,22 @@ using namespace std;
 #include <qframe.h>
 #include <qmutex.h>
 
+#include "Thread.h"
 #include "DpsObject.h"
 #include "MessagingInterface.h"
+#include "DataAccess.h"
 #include "Config.h"
+#include "QtTrigger.h"
 
 class QPainter;
 class QColorGroup;
 class QString;
+class QtTrigger;
 
-class DpsShowItem;
 class Auth;
-class ShowPlanItem;
 
 class Nownext : 	public QWidget,
+					public Thread,
 					public MessagingInterface {
 	Q_OBJECT
 
@@ -59,6 +62,12 @@ class Nownext : 	public QWidget,
         void setGeometry (const QRect& r);
 		void resizeEvent (QResizeEvent *e);
 
+		void threadExecute ();
+		string formatTime (long start, long end);
+
+	public slots:
+		void updateDisplay();
+
 	private:
         void draw();
 		void clean();
@@ -66,7 +75,10 @@ class Nownext : 	public QWidget,
         Config* conf;
         //triggerThread* confTrigger;
 
+		QMutex mutex;
+		DataAccess* DB;
         QWidget* _parent;
+		QtTrigger* trigger;
 		QLabel* lblNow;
 		QLabel* lblNext;
 		QLabel* Area_of_Black;

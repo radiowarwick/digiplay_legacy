@@ -34,6 +34,8 @@
 
 #include "Nownext.h"
 
+using namespace std;
+
 /* =======================================================================
  * Nownext
  * =======================================================================
@@ -41,7 +43,12 @@
 Nownext::Nownext(QWidget *parent, const char* name) 
         : QWidget(parent, name) {
     conf = new Config("digiplay",this);
+	DB = new DataAccess();
+	trigger = new QtTrigger( "trigger", "CHANGEME" );
+	connect(trigger, SIGNAL(trigger()),
+	                 this, SLOT(updateDisplay()));
     draw();
+	threadStart();
 }
 
 Nownext::~Nownext() {
@@ -55,6 +62,78 @@ void Nownext::configure(Auth *authModule) {
         return;
     }
     // TODO: add any user dependant stuff here
+}
+
+string Nownext::formatTime(long start, long end) {
+	
+	string strShowTime;
+	tm tme;
+	char buff[30];
+	time_t timeStart(start);
+	time_t timeEnd(end);
+
+	tme = *localtime(&timeStart);
+	strftime(buff, 30, "%H:%M", &tme);
+	strShowTime = string(" ( ") + buff + " - ";
+	tme = *localtime(&timeEnd);
+	strftime(buff, 30, "%H:%M", &tme);
+	strShowTime += string(buff) + " )";
+	return strShowTime;
+}
+
+void Nownext::updateDisplay() {
+	mutex.lock();
+	string strShowTime;
+	time_t current_time;
+	time(&current_time);
+	string SQL = "SELECT txshows.name, txschedule.starttime, ";
+	SQL += "txschedule.endtime AS name, starttime, endtime FROM txshows, ";
+	SQL += "txschedule WHERE txshows.id=txschedule.txshowid AND txschedule.endtime>";
+	SQL += dps_itoa(current_time);
+	SQL += " ORDER BY txschedule.starttime LIMIT 2";
+	try {
+		PqxxResult R = DB->exec("Fetch nownext", SQL);
+		DB->abort("Fetch nownext");
+
+		if (R.size() == 2) {
+			if (atoi(R[0]["starttime"].c_str()) <= current_time ) {
+				strShowTime=formatTime( atoi(R[0]["starttime"].c_str()),
+										atoi(R[0]["endtime"].c_str()) );
+				lblNow->setText( string("On now: ") + R[0]["name"].c_str() + strShowTime);
+
+				strShowTime=formatTime( atoi(R[1]["starttime"].c_str()),
+										atoi(R[1]["endtime"].c_str()) );
+				lblNext->setText( string("On next: ") + R[1]["name"].c_str() + strShowTime);
+			}
+			else {
+				strShowTime=formatTime( atoi(R[0]["starttime"].c_str()),
+										atoi(R[0]["endtime"].c_str()) );
+				lblNext->setText( string("On next: ") + R[0]["name"].c_str() + strShowTime);
+				lblNow->setText( "On now: " );
+			}
+		}
+		else if (R.size() == 1) {
+			strShowTime=formatTime( atoi(R[0]["starttime"].c_str()),
+									atoi(R[0]["endtime"].c_str()) );
+			if (atoi(R[0]["starttime"].c_str()) <= current_time ) {
+				lblNow->setText( string("On now: ") + R[0]["name"].c_str() + strShowTime);
+				lblNext->setText( "On next: " );
+			}
+			else {
+				lblNow->setText( "On now: " );
+				lblNext->setText( string("On next: ") + R[0]["name"].c_str() +strShowTime);
+			}
+		}
+		else {
+			lblNow->setText( "On now: " );
+			lblNext->setText( "On next: " );
+		}
+	}
+	catch(...) {
+		cout<<"Dammit!"<<endl;
+		DB->abort("Fetch nownext");
+	}
+	mutex.unlock();
 }
 
 void Nownext::onMessage() {
@@ -152,6 +231,23 @@ void Nownext::draw() {
     Area_of_Black = new QLabel( frameOutline, "Area_of_Black" );
     Area_of_Black->setGeometry( QRect( 1003, 0, 21, 30 ) );
     Area_of_Black->setPaletteBackgroundColor( QColor( 0, 0, 0 ) );
+
+	updateDisplay();
+}
+
+void Nownext::threadExecute() {
+	bool sync=0;
+	while(1) {
+		if (sync) {
+			sleep(60);
+			sync = (time(NULL) % 60) < 5; 
+		}
+		else {
+			sleep (1);
+			sync = (time(NULL) % 60) < 5; 
+		}
+		updateDisplay();
+	}
 }
 
 void Nownext::clean() {

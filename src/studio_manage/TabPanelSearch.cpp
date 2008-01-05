@@ -63,6 +63,10 @@ TabPanelSearch::TabPanelSearch(QTabWidget *parent, string text)
 
     // Create library search engine.
     library_engine = new DpsMusicSearch();
+
+    connect(library_engine, SIGNAL(resultsReady()),
+		       this, SLOT(getSearchResults()));
+
 	
     // Draw GUI components
 	draw();
@@ -121,7 +125,7 @@ void TabPanelSearch::Library_Search() {
     lstSearchResults->clear();
     
     // Display a "searching..." notice
-	QListViewItem* searching = new QListViewItem( lstSearchResults, lstSearchResults->lastItem(),
+	searching = new QListViewItem( lstSearchResults, lstSearchResults->lastItem(),
 	                            "Searching.......");
 	lstSearchResults->setEnabled(false);
 	
@@ -130,13 +134,14 @@ void TabPanelSearch::Library_Search() {
 	library_engine->searchTitle(TitleCheckBox->isChecked());
 	library_engine->searchArtist(ArtistCheckBox->isChecked());
 	library_engine->searchAlbum(AlbumCheckBox->isChecked());
-
     // Perform search
-	SearchResults = library_engine->query(txtLibrarySearchText->text());
-    
+	library_engine->query(txtLibrarySearchText->text());
+}
+
+void TabPanelSearch::getSearchResults() {
     // Remove the searching message
     delete searching;
-    
+    SearchResults = library_engine->getResults(); 
     // Display information message if nothing found
 	if (SearchResults->size() == 0) {
 		new QListViewItem( lstSearchResults, lstSearchResults->lastItem(),

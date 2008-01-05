@@ -65,6 +65,7 @@ class TabPanelSearch : 	public TabPanel,
 	private slots:
         /// Searches the library.
 		virtual void Library_Search();
+		void getSearchResults();
         /// Emits the signal indicating an item is selected.
 		virtual void playlistAdd(QListViewItem *x);
 
@@ -75,6 +76,7 @@ class TabPanelSearch : 	public TabPanel,
 		void clear();
 	
 		Config *conf;
+		QListViewItem* searching;
 		vector<track> *SearchResults;
 		DpsMusicSearch* library_engine;
 		QPushButton *btnLibrarySearch;

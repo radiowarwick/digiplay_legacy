@@ -32,10 +32,12 @@
 DpsMusicSearch::DpsMusicSearch() {
     // Create a configuration object
     conf = new Config("digiplay");
+	Q = new std::vector<track>;
 }
 
 DpsMusicSearch::~DpsMusicSearch() {
     delete conf;
+	delete Q;
 }
 
 /** 
@@ -45,24 +47,33 @@ DpsMusicSearch::~DpsMusicSearch() {
  * word 'The' is going to return a whole lot of results.  Might want
  * to return results incrementally as the search progresses.
  */
-std::vector<track>* DpsMusicSearch::query(std::string search_string) {
-    const char* routine = "DpsMusicSearch::query";
+void DpsMusicSearch::query(std::string search_string) {
+	strQueryString = search_string;
+	threadStart();
+}
+
+std::vector<track>* DpsMusicSearch::getResults() {
+	return Q;
+}
+
+void DpsMusicSearch::threadExecute() {
+	mutex.lock();
+	const char* routine = "DpsMusicSearch::threadExecute";
 
     std::string SQL;
     
     // Convert to lowercase
-    std::transform(search_string.begin(), search_string.end(),
-                    search_string.begin(), ::tolower);
+    std::transform(strQueryString.begin(), strQueryString.end(),
+                   strQueryString.begin(), ::tolower);
 
     // Remove "the" if it's at the start
-    if (search_string.substr(0,4) == "the ") {
-        search_string = search_string.substr(4,search_string.length() - 4);
+    if (strQueryString.substr(0,4) == "the ") {
+        strQueryString = strQueryString.substr(4,strQueryString.length() - 4);
     }
 
-    search_string = DB->esc(search_string);
-    lastQuery_string = search_string;
+    strQueryString = DB->esc(strQueryString);
+    lastQuery_string = strQueryString;
 
-    std::vector<track>* Q = new std::vector<track>;
     SQL = "SELECT id, md5, artist, title, album, censor FROM v_audio_music "
  		    "WHERE dir = 2";
 
@@ -89,26 +100,26 @@ std::vector<track>* DpsMusicSearch::query(std::string search_string) {
         /* Do nothing */
     }
     else if (searchTitle_flag == true) {
-        SQL += " AND (title ILIKE '%" + search_string + "%'";
+        SQL += " AND (title ILIKE '%" + strQueryString + "%'";
         if (searchArtist_flag == true) {
-            SQL += " OR artist ILIKE '%" + search_string + "%'";
+            SQL += " OR artist ILIKE '%" + strQueryString + "%'";
         }
    
         if (searchAlbum_flag == true) {
-            SQL += " OR album ILIKE '%" + search_string + "%'";
+            SQL += " OR album ILIKE '%" + strQueryString + "%'";
         }
    
         SQL += ") ORDER BY title";
     }
     else if (searchArtist_flag == true) {
-        SQL += " AND (artist ILIKE '%" + search_string + "%'";
+        SQL += " AND (artist ILIKE '%" + strQueryString + "%'";
         if (searchAlbum_flag == true) {
-            SQL += " OR album ILIKE '%" + search_string + "%'";
+            SQL += " OR album ILIKE '%" + strQueryString + "%'";
         }
         SQL += ") ORDER BY title";      
     }
     else { 
-        SQL += " AND (album ILIKE '%" + search_string + "%') ORDER BY title";
+        SQL += " AND (album ILIKE '%" + strQueryString + "%') ORDER BY title";
     }
 
     if (searchLimit_value > 0) {
@@ -140,7 +151,8 @@ std::vector<track>* DpsMusicSearch::query(std::string search_string) {
 		    Q->at(i).censor = true;
 	    }
     }
-    return Q;
+	emit resultsReady();
+	mutex.unlock();
 }
 
 bool DpsMusicSearch::searchTitle() {

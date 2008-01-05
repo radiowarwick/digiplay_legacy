@@ -26,16 +26,24 @@
 
 #include <string>
 #include <vector>
+#include <qobject.h>
+#include <qmutex.h>
 
+#include "Thread.h"
 #include "dps.h"
 #include "DataAccess.h"
 #include "Config.h"
 
-class DpsMusicSearch {
+class DpsMusicSearch	:	public QObject,
+							public Thread {
+
+	Q_OBJECT
+
     public:
 		DpsMusicSearch();
 		~DpsMusicSearch();
-        std::vector<track>* query(std::string search_string);
+        std::vector<track>* getResults();
+		void query(std::string search_string);
 		bool searchTitle();
 		bool searchTitle(bool flag);
 		bool searchArtist();
@@ -44,9 +52,15 @@ class DpsMusicSearch {
 		bool searchAlbum(bool flag);
 		int searchLimit();
 		int searchLimit(int value);
+		void threadExecute();
         std::string lastQuery();
+	
+	signals:
+		void resultsReady();
 		
 	private:
+		QMutex mutex;
+		std::vector<track>* Q;
 		Config *conf;
 	    DataAccess* DB;
 		bool searchTitle_flag;
@@ -54,6 +68,7 @@ class DpsMusicSearch {
 		bool searchAlbum_flag;
 		int searchLimit_value;
         std::string lastQuery_string;
+        std::string strQueryString;
 };			
 
 #endif

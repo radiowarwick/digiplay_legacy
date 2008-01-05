@@ -53,7 +53,7 @@ ifeq ($(OUT_LIB),yes)
 		OUTPUT      =   lib$(OUT_BASE).a
 		LDFLAGS     :=   -cq $(DEST)/$(OUTPUT)
 		LIBS		=	
-		LD			=	ar
+		STENLD			=	ar
     else
 		OUTPUT      =   lib$(OUT_BASE).so
 		LDFLAGS     :=   -shared -Wl,-soname,$(OUTPUT).$(VERSION) \

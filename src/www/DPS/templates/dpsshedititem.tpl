@@ -63,7 +63,7 @@
 	<input type="hidden" name="templateID" value="{$VIEWER.templateID}" />
 	<input type="hidden" name="itemID" value="{$VIEWER.item.id}" />
 	<div class="bigTitle">Edit Element</div>
-	<div class="subTitle">You MUST save changes by clicking "Submit"</div>
+	<div class="subTitle">You MUST save changes by clicking "Save Changes"</div>
 
 	<table class="showEdititem">
 		<tr>

@@ -243,7 +243,7 @@ void Nownext::threadExecute() {
 			sync = (time(NULL) % 60) < 5; 
 		}
 		else {
-			sleep (1);
+			sleep (4);
 			sync = (time(NULL) % 60) < 5; 
 		}
 		updateDisplay();

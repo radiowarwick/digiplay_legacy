@@ -83,7 +83,7 @@ int main(int argc, char *argv) {
 	ch[0]->addCounter(trig[0]);
 	ch[1]->addCounter(trig[1]);
 
-	string md5, path, title, artist;
+	string md5, id, path, title, artist;
 	long start = 0, end = 0, fade_in = 0, fade_out = 0;
 	long length_smpl = 0;
 	unsigned short active = 0, inactive = 1;
@@ -109,6 +109,7 @@ int main(int argc, char *argv) {
 			warn_flag = true;
 			
 			// Load the required data from database
+			id = R[0]["id"].c_str();
 			path = R[0]["path"].c_str();
 			md5 = R[0]["md5"].c_str();
 			title = R[0]["title"].c_str();
@@ -118,13 +119,6 @@ int main(int argc, char *argv) {
 			fade_in = atoi(R[0]["fade_in"].c_str());
 			fade_out = atoi(R[0]["fade_out"].c_str());
 			length_smpl = atoi(R[0]["length_smpl"].c_str());
-			
-            // Remove the entry from schedule once we've tried to load it
-            L_INFO(LOG_SUEPLAY, "Removing track from sustainer playlist.");
-			SQL_Remove = "DELETE FROM sustschedule WHERE id="
-			                        + (string)R[0]["id"].c_str();
-	        DB->exec("SuePlay",SQL_Remove);
-			DB->commit("SuePlay");
 			
 			path += "/" + md5.substr(0,1) + "/";
 			L_INFO(LOG_SUEPLAY, "Attempting to load channel " +
@@ -201,6 +195,17 @@ int main(int argc, char *argv) {
 			L_ERROR(LOG_TABLOGGING,"Failed to log record " + artist 
                     + " - " + title + ".");
 		}
+			
+            // Remove the entry from schedule once we've tried to load it
+            L_INFO(LOG_SUEPLAY, "Removing track from sustainer playlist.");
+			SQL_Remove = "DELETE FROM sustschedule WHERE id=" + id;
+		try{
+	        	DB->exec("SuePlay",SQL_Remove);
+			DB->commit("SuePlay");
+		} catch (...) {
+            		L_INFO(LOG_SUEPLAY, "Failed to remove track from sustainer playlist.");
+		}
+
 		active = abs(active - 1);
 		inactive = abs(inactive - 1);
 	}
@@ -211,5 +216,5 @@ int main(int argc, char *argv) {
 	delete mixer;
 	delete player;
 	delete Conf;
-    delete DB;
+	delete DB;
 }

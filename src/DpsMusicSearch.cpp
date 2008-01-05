@@ -61,6 +61,10 @@ void DpsMusicSearch::threadExecute() {
 	const char* routine = "DpsMusicSearch::threadExecute";
 
     std::string SQL;
+	vector<string> searchTerms;
+    string buf; // Buffer string for splitting up search terms
+	int noTerms=0;
+	int i;
     
     // Convert to lowercase
     std::transform(strQueryString.begin(), strQueryString.end(),
@@ -73,6 +77,11 @@ void DpsMusicSearch::threadExecute() {
 
     strQueryString = DB->esc(strQueryString);
     lastQuery_string = strQueryString;
+
+    stringstream ssSearchTerms(strQueryString);
+	while (ssSearchTerms >> buf)
+		searchTerms.push_back(buf);
+	noTerms = searchTerms.size();
 
     SQL = "SELECT id, md5, artist, title, album, censor FROM v_audio_music "
  		    "WHERE dir = 2";
@@ -100,31 +109,57 @@ void DpsMusicSearch::threadExecute() {
         /* Do nothing */
     }
     else if (searchTitle_flag == true) {
-        SQL += " AND (title ILIKE '%" + strQueryString + "%'";
+        SQL += " AND (title ILIKE '%";
+			for (i=0; i < noTerms - 1; i++) {
+				SQL += searchTerms.at(i) + "%' OR title ILIKE '%";
+			}
+			SQL += searchTerms.at(i) + "%'";
         if (searchArtist_flag == true) {
-            SQL += " OR artist ILIKE '%" + strQueryString + "%'";
+            SQL += " OR artist ILIKE '%";
+			for (i=0; i < noTerms - 1; i++) {
+				SQL += searchTerms.at(i) + "%' OR artist ILIKE '%";
+			}
+			SQL += searchTerms.at(i) + "%'";
         }
    
         if (searchAlbum_flag == true) {
-            SQL += " OR album ILIKE '%" + strQueryString + "%'";
+            SQL += " OR album ILIKE '%";
+			for (i=0; i < noTerms - 1; i++) {
+				SQL += searchTerms.at(i) + "%' OR album ILIKE '%";
+			}
+			SQL += searchTerms.at(i) + "%'";
         }
    
         SQL += ") ORDER BY title";
     }
     else if (searchArtist_flag == true) {
-        SQL += " AND (artist ILIKE '%" + strQueryString + "%'";
+        SQL += " AND (artist ILIKE '%";
+		for (i=0; i < noTerms - 1; i++) {
+			SQL += searchTerms.at(i) + "%' OR artist ILIKE '%";
+		}
+		SQL += searchTerms.at(i) + "%'";
         if (searchAlbum_flag == true) {
-            SQL += " OR album ILIKE '%" + strQueryString + "%'";
+            SQL += " OR album ILIKE '%";
+			for (i=0; i < noTerms - 1; i++) {
+				SQL += searchTerms.at(i) + "%' OR album ILIKE '%";
+			}
+			SQL += searchTerms.at(i) + "%'";
         }
         SQL += ") ORDER BY title";      
     }
     else { 
-        SQL += " AND (album ILIKE '%" + strQueryString + "%') ORDER BY title";
+        SQL += " AND (album ILIKE '%";
+		for (i=0; i < noTerms - 1; i++) {
+			SQL += searchTerms.at(i) + "%' OR album ILIKE '%";
+		}
+		SQL += searchTerms.at(i) + "%') ORDER BY title";
     }
 
     if (searchLimit_value > 0) {
         SQL += " LIMIT " + dps_itoa(searchLimit_value);
     }
+
+	cout << SQL << endl;
 
     PqxxResult R;
     try {

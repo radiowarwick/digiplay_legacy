@@ -32,6 +32,7 @@
 #include "DpsMusicSearch.h"
 #include "MessagingInterface.h"
 #include "dlgWarn.h"
+#include <qmutex.h>
 
 class QTabWidget;
 class QPushButton;
@@ -75,8 +76,9 @@ class TabPanelSearch : 	public TabPanel,
         /// Clears the panel.
 		void clear();
 	
+		QMutex mutex;
 		Config *conf;
-		vector<track> *SearchResults;
+//		vector<track> *SearchResults;
 		DpsMusicSearch* library_engine;
 		QPushButton *btnLibrarySearch;
 		QListView *lstSearchResults;

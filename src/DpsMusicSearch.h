@@ -42,7 +42,8 @@ class DpsMusicSearch	:	public QObject,
     public:
 		DpsMusicSearch();
 		~DpsMusicSearch();
-        std::vector<track>* getResults();
+		int getResultsSize();
+        track getResultAt(int i);
 		void query(std::string search_string);
 		bool searchTitle();
 		bool searchTitle(bool flag);

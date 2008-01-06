@@ -58,9 +58,6 @@ TabPanelSearch::TabPanelSearch(QTabWidget *parent, string text)
     // Access configuration
 	conf = new Config("digiplay", this);
 
-    // Initialise SearchResults vector
-    SearchResults = 0;
-
     // Create library search engine.
     library_engine = new DpsMusicSearch();
 
@@ -98,6 +95,7 @@ void TabPanelSearch::onMessage() {
  */
 void TabPanelSearch::Library_Search() {
     // Check if user has entered required information
+	mutex.lock();
     if (txtLibrarySearchText->text() == "") {
         dlgWarn *warning = new dlgWarn(getPanel(), "");
         warning->setTitle("Oops!");
@@ -120,8 +118,8 @@ void TabPanelSearch::Library_Search() {
         delete warning;
         return;
     }
-    
-    // Clear the results list
+
+	// Clear the results list
     lstSearchResults->clear();
     
     // Display a "searching..." notice
@@ -129,21 +127,28 @@ void TabPanelSearch::Library_Search() {
 	                            "Searching.......");
 	lstSearchResults->setEnabled(false);
 	
-    // Set search parameters
+	// Set search parameters
 	library_engine->searchLimit(atoi(conf->getParam("search_limit").c_str()));
 	library_engine->searchTitle(TitleCheckBox->isChecked());
 	library_engine->searchArtist(ArtistCheckBox->isChecked());
 	library_engine->searchAlbum(AlbumCheckBox->isChecked());
+	
+	mutex.unlock();
     // Perform search
 	library_engine->query(txtLibrarySearchText->text());
 }
 
 void TabPanelSearch::getSearchResults() {
+
+	mutex.lock();
     // Remove the searching message
 	lstSearchResults->clear();
-    SearchResults = library_engine->getResults(); 
+	track result;
+	int results;
+    results = library_engine->getResultsSize();
+	mutex.unlock();
     // Display information message if nothing found
-	if (SearchResults->size() == 0) {
+	if ( !results ) {
 		new QListViewItem( lstSearchResults, lstSearchResults->lastItem(),
 							"(Sorry, no matches found.)");
 		return;
@@ -153,15 +158,16 @@ void TabPanelSearch::getSearchResults() {
 	//lstSearchResults->setUpdatesEnabled(false);
 	lstSearchResults->setEnabled(true);
 	QListViewItem *x;
-	for (unsigned int i = 0; i < SearchResults->size(); i++) {
+	for (int i = 0; i < results; i++) {
 		cout << "Creating item" <<endl;
+		result = library_engine->getResultAt(i);
 		x = new QListViewItem(  lstSearchResults, lstSearchResults->lastItem(),
-			SearchResults->at(i).title,
-			SearchResults->at(i).artists.at(0),
-			SearchResults->at(i).album,
-			SearchResults->at(i).id 
+			result.title,
+			result.artists.at(0),
+			result.album,
+			result.id 
                          );
-		if (SearchResults->at(i).censor) {
+		if (result.censor) {
 			x->setPixmap(0,*pixCensored);
 		} else {
 			x->setPixmap(0,*pixAudio);

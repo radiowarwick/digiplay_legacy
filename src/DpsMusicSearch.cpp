@@ -48,12 +48,27 @@ DpsMusicSearch::~DpsMusicSearch() {
  * to return results incrementally as the search progresses.
  */
 void DpsMusicSearch::query(std::string search_string) {
+	mutex.lock();
 	strQueryString = search_string;
+	mutex.unlock();
 	threadStart();
 }
 
-std::vector<track>* DpsMusicSearch::getResults() {
-	return Q;
+int DpsMusicSearch::getResultsSize() {
+	mutex.lock();
+	int R = Q->size();
+	mutex.unlock();
+	return R;
+}
+
+track DpsMusicSearch::getResultAt(int i) {
+	mutex.lock();
+	track R;
+	if (i < Q->size()) {
+		R = Q->at(i);
+	}
+	mutex.unlock();
+	return R;
 }
 
 void DpsMusicSearch::threadExecute() {
@@ -186,8 +201,8 @@ void DpsMusicSearch::threadExecute() {
 		    Q->at(i).censor = true;
 	    }
     }
-	emit resultsReady();
 	mutex.unlock();
+	emit resultsReady();
 }
 
 bool DpsMusicSearch::searchTitle() {

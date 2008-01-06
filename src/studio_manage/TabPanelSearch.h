@@ -76,7 +76,6 @@ class TabPanelSearch : 	public TabPanel,
 		void clear();
 	
 		Config *conf;
-		QListViewItem* searching;
 		vector<track> *SearchResults;
 		DpsMusicSearch* library_engine;
 		QPushButton *btnLibrarySearch;

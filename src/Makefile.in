@@ -8,7 +8,7 @@ UIC			?=	@/usr/share/qt3/bin/uic
 DEST		=	.
 OUTPUT      =   $(OUT_BASE)
 VERSION		=	$(shell cat $(ROOT)/VERSION)
-
+DPSDIR		:=	/usr/local/share/dps
 # Generate object list from the modules provided
 # Note: addsuffix might not be portable
 # shared objects are those located directly in the src tree

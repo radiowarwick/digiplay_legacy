@@ -125,7 +125,7 @@ void TabPanelSearch::Library_Search() {
     lstSearchResults->clear();
     
     // Display a "searching..." notice
-	searching = new QListViewItem( lstSearchResults, lstSearchResults->lastItem(),
+	QListViewItem *searching = new QListViewItem( lstSearchResults, lstSearchResults->lastItem(),
 	                            "Searching.......");
 	lstSearchResults->setEnabled(false);
 	
@@ -140,7 +140,7 @@ void TabPanelSearch::Library_Search() {
 
 void TabPanelSearch::getSearchResults() {
     // Remove the searching message
-    delete searching;
+	lstSearchResults->clear();
     SearchResults = library_engine->getResults(); 
     // Display information message if nothing found
 	if (SearchResults->size() == 0) {
@@ -150,11 +150,11 @@ void TabPanelSearch::getSearchResults() {
 	}
 	
     // Clear the list and enter search results
-	lstSearchResults->setUpdatesEnabled(false);
-	lstSearchResults->clear();
+	//lstSearchResults->setUpdatesEnabled(false);
 	lstSearchResults->setEnabled(true);
 	QListViewItem *x;
 	for (unsigned int i = 0; i < SearchResults->size(); i++) {
+		cout << "Creating item" <<endl;
 		x = new QListViewItem(  lstSearchResults, lstSearchResults->lastItem(),
 			SearchResults->at(i).title,
 			SearchResults->at(i).artists.at(0),
@@ -167,9 +167,10 @@ void TabPanelSearch::getSearchResults() {
 			x->setPixmap(0,*pixAudio);
 		}
 	}
-	lstSearchResults->setUpdatesEnabled(true);
-	lstSearchResults->repaint();
-    delete SearchResults;
+	//lstSearchResults->setUpdatesEnabled(true);
+	//lstSearchResults->repaint();
+    //delete SearchResults;  This is re-used in the calling thread so we cannot
+	//delete it
 }
 
 

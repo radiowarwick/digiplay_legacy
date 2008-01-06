@@ -32,7 +32,7 @@
 #include "DpsMusicSearch.h"
 #include "MessagingInterface.h"
 #include "dlgWarn.h"
-#include <qmutex.h>
+#include "Thread.h"
 
 class QTabWidget;
 class QPushButton;
@@ -49,6 +49,7 @@ class Config;
  * TabPanel class for providing a music library search.
  */
 class TabPanelSearch : 	public TabPanel,
+						public Thread,
 						public MessagingInterface {
 	Q_OBJECT
 	public:
@@ -62,11 +63,15 @@ class TabPanelSearch : 	public TabPanel,
 	signals:
         /// Emitted when an item is selected from the search results.
         void itemSelected( QString );
+		/// Emitted when the search query has been completed and the results
+		/// need processing.
+		void resultsReady();
 
 	private slots:
         /// Searches the library.
 		virtual void Library_Search();
-		void getSearchResults();
+		/// Processes search results when they are ready.
+		void processResults();
         /// Emits the signal indicating an item is selected.
 		virtual void playlistAdd(QListViewItem *x);
 
@@ -75,10 +80,11 @@ class TabPanelSearch : 	public TabPanel,
 		void draw();
         /// Clears the panel.
 		void clear();
+		void threadExecute();
 	
-		QMutex mutex;
+		bool searching;
 		Config *conf;
-//		vector<track> *SearchResults;
+		vector<track> SearchResults;
 		DpsMusicSearch* library_engine;
 		QPushButton *btnLibrarySearch;
 		QListView *lstSearchResults;

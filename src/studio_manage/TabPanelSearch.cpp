@@ -60,10 +60,6 @@ TabPanelSearch::TabPanelSearch(QTabWidget *parent, string text)
 
     // Create library search engine.
     library_engine = new DpsMusicSearch();
-
-    connect(library_engine, SIGNAL(resultsReady()),
-		       this, SLOT(getSearchResults()));
-
 	
     // Draw GUI components
 	draw();
@@ -94,8 +90,10 @@ void TabPanelSearch::onMessage() {
  * Performs a music search.
  */
 void TabPanelSearch::Library_Search() {
+	if (searching) return;
+	searching = true;
+	btnLibrarySearch->setEnabled(false);
     // Check if user has entered required information
-	mutex.lock();
     if (txtLibrarySearchText->text() == "") {
         dlgWarn *warning = new dlgWarn(getPanel(), "");
         warning->setTitle("Oops!");
@@ -118,65 +116,64 @@ void TabPanelSearch::Library_Search() {
         delete warning;
         return;
     }
-
-	// Clear the results list
+    
+    // Clear the results list
     lstSearchResults->clear();
     
     // Display a "searching..." notice
-	QListViewItem *searching = new QListViewItem( lstSearchResults, lstSearchResults->lastItem(),
-	                            "Searching.......");
+	new QListViewItem( lstSearchResults,
+							lstSearchResults->lastItem(), "Searching.......");
 	lstSearchResults->setEnabled(false);
 	
-	// Set search parameters
+    // Set search parameters
 	library_engine->searchLimit(atoi(conf->getParam("search_limit").c_str()));
 	library_engine->searchTitle(TitleCheckBox->isChecked());
 	library_engine->searchArtist(ArtistCheckBox->isChecked());
 	library_engine->searchAlbum(AlbumCheckBox->isChecked());
-	
-	mutex.unlock();
-    // Perform search
-	library_engine->query(txtLibrarySearchText->text());
+	threadStart();
 }
 
-void TabPanelSearch::getSearchResults() {
+void TabPanelSearch::threadExecute() {	
+	// Perform search
+	SearchResults = library_engine->query(txtLibrarySearchText->text());
+	usleep(250000);
+	emit resultsReady();
+}    
 
-	mutex.lock();
-    // Remove the searching message
+void TabPanelSearch::processResults() {
+    // Clear the list and enter search results
+	lstSearchResults->setUpdatesEnabled(false);
 	lstSearchResults->clear();
-	track result;
-	int results;
-    results = library_engine->getResultsSize();
-	mutex.unlock();
+
     // Display information message if nothing found
-	if ( !results ) {
+	if (SearchResults.size() == 0) {
 		new QListViewItem( lstSearchResults, lstSearchResults->lastItem(),
 							"(Sorry, no matches found.)");
+		searching = false;
+		btnLibrarySearch->setEnabled(true);
 		return;
 	}
 	
-    // Clear the list and enter search results
-	//lstSearchResults->setUpdatesEnabled(false);
-	lstSearchResults->setEnabled(true);
+    lstSearchResults->setEnabled(true);
 	QListViewItem *x;
-	for (int i = 0; i < results; i++) {
-		cout << "Creating item" <<endl;
-		result = library_engine->getResultAt(i);
+	for (unsigned int i = 0; i < SearchResults.size(); i++) {
+		cout << "Creating item" << endl;
 		x = new QListViewItem(  lstSearchResults, lstSearchResults->lastItem(),
-			result.title,
-			result.artists.at(0),
-			result.album,
-			result.id 
+			SearchResults.at(i).title,
+			SearchResults.at(i).artists.at(0),
+			SearchResults.at(i).album,
+			SearchResults.at(i).id 
                          );
-		if (result.censor) {
+		if (SearchResults.at(i).censor) {
 			x->setPixmap(0,*pixCensored);
 		} else {
 			x->setPixmap(0,*pixAudio);
 		}
 	}
-	//lstSearchResults->setUpdatesEnabled(true);
-	//lstSearchResults->repaint();
-    //delete SearchResults;  This is re-used in the calling thread so we cannot
-	//delete it
+	searching = false;
+	btnLibrarySearch->setEnabled(true);
+	lstSearchResults->setUpdatesEnabled(true);
+	lstSearchResults->repaint();
 }
 
 
@@ -279,6 +276,8 @@ void TabPanelSearch::draw() {
     ArtistCheckBox->setText( tr( "Artist" ) );
     btnLibrarySearch->setText( tr( "Search" ) );
 
+    connect( this, SIGNAL( resultsReady() ), 
+                this, SLOT( processResults() ) );
     connect( btnLibrarySearch, SIGNAL( clicked() ), 
                 this, SLOT( Library_Search() ) );
     connect( lstSearchResults, SIGNAL( doubleClicked(QListViewItem*) ), 

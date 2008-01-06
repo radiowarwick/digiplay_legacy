@@ -47,33 +47,9 @@ DpsMusicSearch::~DpsMusicSearch() {
  * word 'The' is going to return a whole lot of results.  Might want
  * to return results incrementally as the search progresses.
  */
-void DpsMusicSearch::query(std::string search_string) {
-	mutex.lock();
+std::vector<track> DpsMusicSearch::query(std::string search_string) {
+	const char* routine = "DpsMusicSearch::query";
 	strQueryString = search_string;
-	mutex.unlock();
-	threadStart();
-}
-
-int DpsMusicSearch::getResultsSize() {
-	mutex.lock();
-	int R = Q->size();
-	mutex.unlock();
-	return R;
-}
-
-track DpsMusicSearch::getResultAt(int i) {
-	mutex.lock();
-	track R;
-	if (i < Q->size()) {
-		R = Q->at(i);
-	}
-	mutex.unlock();
-	return R;
-}
-
-void DpsMusicSearch::threadExecute() {
-	mutex.lock();
-	const char* routine = "DpsMusicSearch::threadExecute";
 
     std::string SQL;
 	vector<string> searchTerms;
@@ -201,8 +177,7 @@ void DpsMusicSearch::threadExecute() {
 		    Q->at(i).censor = true;
 	    }
     }
-	mutex.unlock();
-	emit resultsReady();
+	return *Q;
 }
 
 bool DpsMusicSearch::searchTitle() {

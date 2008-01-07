@@ -102,6 +102,8 @@ void TabPanelSearch::Library_Search() {
         warning->setQuestion(false);
         warning->exec();
         delete warning;
+		searching = false;
+		btnLibrarySearch->setEnabled(true);
         return;
     }
     if ( ! (TitleCheckBox->isChecked()
@@ -114,6 +116,8 @@ void TabPanelSearch::Library_Search() {
         warning->setQuestion(false);
         warning->exec();
         delete warning;
+		searching = false;
+		btnLibrarySearch->setEnabled(true);
         return;
     }
     

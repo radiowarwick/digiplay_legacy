@@ -139,28 +139,6 @@ void getresult(char **res, char *buf)
 	}
 }
 
-int csv2tracks(struct track **t, char *buf, int len)
-{
-	int i;
-	int ret = 0;
-	char *c;
-	
-	*t = NULL;
-	
-	for (i = 0; i < len; i++) {
-		ret++;
-		*t = (struct track *) realloc(*t, sizeof(struct track) * ret);
-		memset(*t + ret - 1, 0, sizeof(struct track));
-		/* got line */
-		(*t)[ret - 1].num = strtol(buf + i, &c, 10);
-		i = c - buf + 1;
-		(*t)[ret - 1].length_fr = strtol(buf + i, &c, 10);
-		i = c - buf;
-	}
-
-	return ret;
-}
-
 void wnd_splash(char *text)
 {
     char *notice1 = "************************************************";
@@ -547,9 +525,6 @@ int main(int argc, char *argv[])
 			dup2(fdpair[1],2);
 			close(fdpair[1]);
 			close(fdpair[0]);
-			/*
-			execl("/usr/bin/perl", "perl", "-e", "open FD, \"/audioplayin/cdparanoia -Q 2>&1 |\"; while(<FD>) { ($track, $length) = m!^\\s*(\\d+)\\.\\s+(\\d+)\\s+\\[\\d+:\\d+\\.\\d+\\]\\s+(\\d+)\\s+\\[\\d+:\\d+\\.\\d+\\]!; next if (!defined($track)); print \"$track,$length\\n\"; }", NULL);
-			*/
 			execlp("cdparanoia", "cdparanoia", "-Q", NULL);
 			_exit(0);
 			
@@ -563,7 +538,6 @@ int main(int argc, char *argv[])
 		}
 		wclear(win_main);
 		tracks_num = cdp2tracks(&tracks, buf, len);
-		/* tracks_num = csv2tracks(&tracks, buf, len); */
 		mvwprintw(win_main, 1,0, "Please select the tracks to rip using the spacebar.  More than 1 may be selected.");
 		mvwprintw(win_main, 2,0, "the UP and DOWN cursor keys move between tracks.  Press F1 when complete");
 		mvwprintw(win_main, 4,2,  "Selct  Track     Time", tracks_num);
@@ -595,7 +569,6 @@ int main(int argc, char *argv[])
 					tracks[i].uid[8], tracks[i].uid[9], tracks[i].uid[10], tracks[i].uid[11],
 					tracks[i].uid[12], tracks[i].uid[13], tracks[i].uid[14], tracks[i].uid[15]);
 				execlp("cdparanoia", "cdparanoia", "-r", "-Y", buf2, buf, NULL);
-				//execl("/audioplayin/cdparanoia", "cdparanoia", "-r", buf2, buf, NULL);
 				_exit(-2);
 			}
 				

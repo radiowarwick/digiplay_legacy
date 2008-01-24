@@ -80,7 +80,7 @@ int main(int argc, char *argv []) {
             case 'h': {
                 std::cout << "USAGE: " << argv[0]
                         << " [--debug|--verbose|--quiet] [-h|--help]"
-                        << " [-v|--version] [--daemon] [--print-info]" << std::endl;
+                        << " [-v|--version] [--daemon] [--now-playing]" << std::endl;
                 exit(0);
                 break;
             }
@@ -207,6 +207,7 @@ int main(int argc, char *argv []) {
 			}
 		} while (1);
 		
+        DB->abort("SuePlay");
 		if (R.size() == 0) break;
 
 		// positions are specified in terms of STEREO samples

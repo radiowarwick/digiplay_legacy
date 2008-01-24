@@ -6,7 +6,7 @@ using std::endl;
 #include "InputRaw.h"
 using Audio::InputRaw;
 
-InputRaw::InputRaw(int cache_size) {
+InputRaw::InputRaw(unsigned int cache_size) {
 	state = STATE_STOP;
 	// Configure cache to the appropriate size
 	cacheSize = cache_size;
@@ -121,6 +121,10 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
     	updateStates(STATE_STOP);
     	send(OUT0,STOP);
     }
+
+    // Lock cache to be safe
+    cacheLock.lock();
+
 	f.close();
 	f.clear();
 
@@ -130,13 +134,10 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
         cout << "Failed to open file '" << filename << "'" << endl;
         throw -1;
     }
-	f.seekg(0,ios::end);
-	f_filename = filename;
+	//f.seekg(0,ios::end);
 
 	// Initialise position variables, counters and reset cache
-	// Lock cache to be safe
-	cacheLock.lock();
-
+    f_filename = filename;
 	f_start_byte = start_smpl * 4;
 	f_end_byte = end_smpl * 4;
 	f_length_byte = f_end_byte - f_start_byte;
@@ -144,6 +145,7 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
 	cacheRead = cacheStart;
 	cacheWrite = cacheStart;
 	cacheFree = cacheSize;
+
 	cacheLock.unlock();
 
 	if (countersList.size() > 0) {
@@ -159,7 +161,7 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
 	}
 
 	// Amount to ensure cache before completing load
-	unsigned long preCacheSize = cacheSize/4;
+	unsigned long preCacheSize = 441000;
 	
 	// Wait until the cache has preCacheSize audio or all audio,
 	// whichever is smaller

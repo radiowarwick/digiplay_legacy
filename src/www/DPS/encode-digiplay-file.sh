@@ -1,6 +1,5 @@
 #!/bin/bash
-#
-#
+
 if [ -e $1 ]; then
 	# -r 		encode directly from RAW format
 	# -x 		swap byte order

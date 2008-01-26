@@ -19,18 +19,21 @@ class DPSMp3PreviewViewer extends Viewer {
 			$query = "SELECT title, artist, md5, path FROM v_audio 
 				WHERE id = " . $trackid;
 			$file = $db->getRow($query);
-			$filename = escapeshellarg($file['path']) . "/" .
-				escapeshellarg($file['md5'][0]) . "/" .
-				escapeshellarg($file['md5']);
+			//$filename = escapeshellarg($file['path']) . "/" .
+			//	escapeshellarg($file['md5'][0]) . "/" .
+			//	escapeshellarg($file['md5']);
+			$filename = $file['path'] . "/" .
+				$file['md5'][0] . "/" .
+				$file['md5'];
 			header('Pragma: public');
 			header('Expires: 0');
 			header('Content-Transfer-Encoding: binary');
 			#header('Cache-Control: no-store,no-cache,must-revalidate');
 			header('Content-Length: 180373');
-			$fileN=str_replace(' ','_',$file['name']) . '-' .
+			$fileN=str_replace(' ','_',$file['title']) . '-' .
 				str_replace(' ','_',$file['artist']) . '.mp3';
 			$fileN=str_replace('"',"",$fileN);
-			$headstr = 'Content-Disposition: attachment; filename="' . $fileN . "'";
+			$headstr = 'Content-Disposition: attachment; filename="' . $fileN . "\"";
 			header($headstr);
 			header('Content-type: audio/mpeg');
 			passthru($cfg['general']['toolkitRoot'] .

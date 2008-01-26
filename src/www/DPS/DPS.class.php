@@ -407,7 +407,7 @@ class DPS extends Module  {
 		}
 		$searchValue = pg_escape_string($searchValue);
 		if($sortType == "artist") {
-			$sortstr = "artist.name";
+			$sortstr = "artists.name";
 		} else {
 			$sortstr = "audio.title";
 		}
@@ -524,7 +524,7 @@ class DPS extends Module  {
 								AND audiodir.dirid != $binID 
 								AND audioartists.artistid = artists.id 
 								AND audioartists.audioid = audio.id 
-								AND albums.name ILIKE '$searchValue%' "; 
+								AND artists.name ILIKE '$searchValue%' "; 
 			if($sust != '') {
 				$query = $query . " AND audio.sustainer = '$sust' ";
 			}
@@ -548,16 +548,16 @@ class DPS extends Module  {
 									AND audiodir.dirid != $binID 
 									AND audioartists.artistid = artists.id 
 									AND audioartists.audioid = audio.id 
-									AND( albums.name ILIKE '0%' OR 
-											albums.name ILIKE '1%' OR 
-											albums.name ILIKE '2%' OR 
-											albums.name ILIKE '3%' OR 
-											albums.name ILIKE '4%' OR 
-											albums.name ILIKE '5%' OR 
-											albums.name ILIKE '6%' OR 
-											albums.name ILIKE '7%' OR 
-											albums.name ILIKE '8%' OR 
-											albums.name ILIKE '9%' OR) "; 
+									AND( artists.name ILIKE '0%' OR 
+											artists.name ILIKE '1%' OR 
+											artists.name ILIKE '2%' OR 
+											artists.name ILIKE '3%' OR 
+											artists.name ILIKE '4%' OR 
+											artists.name ILIKE '5%' OR 
+											artists.name ILIKE '6%' OR 
+											artists.name ILIKE '7%' OR 
+											artists.name ILIKE '8%' OR 
+											artists.name ILIKE '9%') "; 
 			if($sust != '') {
 				$query = $query . " AND audio.sustainer = '$sust' ";
 			}
@@ -677,7 +677,7 @@ class DPS extends Module  {
 												AND audiodir.dirid != $binID 
 												AND audioartists.artistid = artists.id 
 												AND audioartists.audioid = audio.id 
-												AND albums.name ILIKE '$searchValue%' ";
+												AND artists.name ILIKE '$searchValue%' ";
 			if($sust != '') {
 				$count_query = $count_query . " AND audio.sustainer = '$sust' ";
 			}
@@ -695,16 +695,16 @@ class DPS extends Module  {
 												AND audiodir.dirid != $binID 
 												AND audioartists.artistid = artists.id 
 												AND audioartists.audioid = audio.id 
-												AND( albums.name ILIKE '0%' OR 
-														albums.name ILIKE '1%' OR 
-														albums.name ILIKE '2%' OR 
-														albums.name ILIKE '3%' OR 
-														albums.name ILIKE '4%' OR 
-														albums.name ILIKE '5%' OR 
-														albums.name ILIKE '6%' OR 
-														albums.name ILIKE '7%' OR 
-														albums.name ILIKE '8%' OR 
-														albums.name ILIKE '9%' OR) "; 
+												AND( artists.name ILIKE '0%' OR 
+														artists.name ILIKE '1%' OR 
+														artists.name ILIKE '2%' OR 
+														artists.name ILIKE '3%' OR 
+														artists.name ILIKE '4%' OR 
+														artists.name ILIKE '5%' OR 
+														artists.name ILIKE '6%' OR 
+														artists.name ILIKE '7%' OR 
+														artists.name ILIKE '8%' OR 
+														artists.name ILIKE '9%') "; 
 			if($sust != '') {
 				$count_query = $count_query . " AND audio.sustainer = '$sust' ";
 			}

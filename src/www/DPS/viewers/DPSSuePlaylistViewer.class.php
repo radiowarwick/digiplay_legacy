@@ -26,14 +26,20 @@ class DPSSuePlaylistViewer extends Viewer {
 		$searchType = $this->fieldData['dpsSearchType'];
 		$letter = pg_escape_string($this->fieldData['dpsSearchLetter']);
 
+		if($searchValue == '' && $searchType == '' && $letter == '') {
+			$letter = '*';
+		}
+
 		if($searchType == '' && $letter != '') {
 			if($letter == "*") {
 				$searchType = 'Number';
+				$searchValue = $letter;
 			} else {
 				$searchType = 'Letter';
+				$searchValue = $letter;
 			}
 		}
-
+		
 		if($this->fieldData['dpsSortType'] != '') {
 			$sesh = Session::getInstance();
 			$sortType = $this->fieldData['dpsSortType'];

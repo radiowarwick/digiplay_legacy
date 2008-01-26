@@ -45,8 +45,8 @@ void Logger::log(LOG_TYPE type, const char* routine, string message,
 	    tm local=*(localtime(&current_time));
 	    stringstream outLine;
 	    outLine << "[" << 1900 + local.tm_year << "/";
-        if (local.tm_mon < 10) outLine << "0";
-	    outLine << local.tm_mon << "/";
+        if (local.tm_mon < 9) outLine << "0";
+	    outLine << local.tm_mon + 1 << "/";
         if (local.tm_mday < 10) outLine << "0";
 	    outLine << local.tm_mday << " ";
         if (local.tm_hour < 10) outLine << "0";

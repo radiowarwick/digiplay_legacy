@@ -39,9 +39,6 @@ ArchiveManager::ArchiveManager(archive new_A) {
 	A = new_A;
 	initialised = false;
 	t_null.isNull = true;
-	trackDB = 0;
-	trackInbox = 0;
-	trackTrash = 0;
 
     DB = new DataAccess();
 }
@@ -51,9 +48,6 @@ ArchiveManager::ArchiveManager(archive new_A) {
  * Clean up archive manager
  */
 ArchiveManager::~ArchiveManager() {
-    delete trackDB;
-    delete trackInbox;
-    delete trackTrash;
     delete DB;
 }
 
@@ -67,17 +61,11 @@ ArchiveManager::~ArchiveManager() {
 void ArchiveManager::load() {
     const char* routine = "ArchiveManager::load";
 	/* Reinitialise any vectors if they already exist */
-	delete trackDB;
-	delete trackInbox;
-	delete trackTrash;
 
     try {
-        trackDB = new vector<track>;
-        loadDB(trackDB);
-    	trackInbox = new vector<track>;
-    	loadInbox(trackInbox);
-    	trackTrash = new vector<track>;
-    	loadTrash(trackTrash);
+        loadDB();
+    	loadInbox();
+    	loadTrash();
     }
 	catch (...) {
         L_ERROR(LOG_DB,"An unknown error has occured.");
@@ -111,9 +99,9 @@ track ArchiveManager::at(ARCHIVE_COMPONENT c, unsigned int index) {
 		return t_null;
 	}
 	switch (c) {
-		case DPS_DB:    return trackDB->at(index);
-		case DPS_INBOX:	return trackInbox->at(index);
-		case DPS_TRASH:	return trackTrash->at(index);
+		case DPS_DB:    return createDBTrack(index);
+		case DPS_INBOX:	return trackInbox.at(index);
+		case DPS_TRASH:	return trackTrash.at(index);
 		default:
             L_ERROR(LOG_DB,"unknown location " + c);
 			return t_null;
@@ -130,9 +118,9 @@ unsigned int ArchiveManager::size(ARCHIVE_COMPONENT c) {
     const char* routine = "ArchiveManager::size";
 	if (!initialised) load();
 	switch (c) {
-		case DPS_DB:    return trackDB->size();
-		case DPS_INBOX:	return trackInbox->size();
-		case DPS_TRASH:	return trackTrash->size();
+		case DPS_DB:    return trackDB.size();
+		case DPS_INBOX:	return trackInbox.size();
+		case DPS_TRASH:	return trackTrash.size();
 		default:
             L_ERROR(LOG_DB,"unknown location " + c);
 			return 0;
@@ -147,7 +135,7 @@ unsigned int ArchiveManager::size(ARCHIVE_COMPONENT c) {
  * @param   c       Specifies a component of the archive
  * @param   index   Specifies the index to clean
  */
-void ArchiveManager::clean(ARCHIVE_COMPONENT c, unsigned int index) {
+/*void ArchiveManager::clean(ARCHIVE_COMPONENT c, unsigned int index) {
     const char* routine = "ArchiveManager::clean";
 
 	if (!initialised) load();
@@ -156,12 +144,12 @@ void ArchiveManager::clean(ARCHIVE_COMPONENT c, unsigned int index) {
 		return;
 	}
 	switch (c) {
-		case DPS_DB:	cleanInfo(&(trackDB->at(index)));
-		case DPS_INBOX:	cleanInfo(&(trackInbox->at(index)));
-		case DPS_TRASH:	cleanInfo(&(trackTrash->at(index)));
+		case DPS_DB:	break;//cleanInfo(&(trackDB->at(index)));
+		case DPS_INBOX:	cleanInfo(&(trackInbox.at(index))); break;
+		case DPS_TRASH:	cleanInfo(&(trackTrash.at(index))); break;
 	}
 }
-
+*/
 
 /** 
  * Adds a track from the inbox into the database
@@ -180,7 +168,7 @@ void ArchiveManager::add(unsigned int index) {
 	}
 
 	// get the required track
-	track t = trackInbox->at(index);
+	track t = trackInbox.at(index);
     t.creation_date = dps_current_time();
     t.import_date = dps_current_time();
 
@@ -235,8 +223,8 @@ void ArchiveManager::add(unsigned int index) {
 	writeXML(dest + t.md5 + ".xml", t_save);
 	
 	// Now the track is in the archive, not the inbox...
-	trackDB->push_back(t_save);
-	trackInbox->erase(trackInbox->begin() + index);
+	trackDB.push_back(t_save.md5);
+	trackInbox.erase(trackInbox.begin() + index);
 }
 
 
@@ -247,11 +235,11 @@ void ArchiveManager::add(unsigned int index) {
 void ArchiveManager::remove(unsigned int index) {
     const char* routine = "ArchiveManager::remove";
 
-    track t = trackDB->at(index);
+    track t = createDBTrack(index);
     try {
         removeTrack(t.md5);
-        trackInbox->push_back(t);
-        trackDB->erase(trackDB->begin() + index);
+        trackInbox.push_back(t);
+        trackDB.erase(trackDB.begin() + index);
     }
     catch (...) {
         L_ERROR(LOG_DB,"Failed to remove track information from database.");
@@ -278,11 +266,11 @@ void ArchiveManager::remove(unsigned int index) {
 void ArchiveManager::trash(unsigned int index) {
     const char* routine = "ArchiveManager::trash";
 
-    track t = trackDB->at(index);
+    track t = createDBTrack(index);
     try {
         removeTrack(t.md5);
-        trackTrash->push_back(t);
-        trackDB->erase(trackDB->begin() + index);
+        trackTrash.push_back(t);
+        trackDB.erase(trackDB.begin() + index);
     }
     catch (...) {
         L_ERROR(LOG_DB,"Failed to remove track information from database.");
@@ -309,7 +297,7 @@ void ArchiveManager::trash(unsigned int index) {
 void ArchiveManager::recover(unsigned int index) {
     const char* routine = "ArchiveManager::recover";
 
-    track t = trackTrash->at(index);
+    track t = trackTrash.at(index);
 
     string src = t.md5_archive.localPath + "/trash/" + t.md5 + "*";
     string dest = t.md5_archive.localPath + "/inbox/";
@@ -321,8 +309,8 @@ void ArchiveManager::recover(unsigned int index) {
         return;
     }
 
-    trackInbox->push_back(t);
-    add(trackInbox->size() - 1);
+    trackInbox.push_back(t);
+    add(trackInbox.size() - 1);
 }
 
 
@@ -395,7 +383,7 @@ void ArchiveManager::backup(unsigned int index) {
         L_ERROR(LOG_DB,"index out of range.");
 		return;
 	}
-    track t = trackDB->at(index);
+    track t = createDBTrack(index);
     std::string filename = t.md5_archive.localPath + "/" + t.md5.substr(0,1)
                             + "/" + t.md5 + ".xml";
 	writeXML(filename, t);
@@ -693,10 +681,10 @@ track ArchiveManager::readInfo(std::string filename) {
             }
             if (buffer.substr(0,5) == "type:") {
                 switch (atoi(buffer.substr(6,buffer.length() - 6).c_str())) {
-                    case AUDIO_TYPE_MUSIC:  t.type = AUDIO_TYPE_MUSIC;
-                    case AUDIO_TYPE_JINGLE: t.type = AUDIO_TYPE_JINGLE;
-                    case AUDIO_TYPE_ADVERT: t.type = AUDIO_TYPE_ADVERT;
-                    case AUDIO_TYPE_PREREC: t.type = AUDIO_TYPE_PREREC;
+                    case AUDIO_TYPE_MUSIC:  t.type = AUDIO_TYPE_MUSIC; break;
+                    case AUDIO_TYPE_JINGLE: t.type = AUDIO_TYPE_JINGLE; break;
+                    case AUDIO_TYPE_ADVERT: t.type = AUDIO_TYPE_ADVERT; break;
+                    case AUDIO_TYPE_PREREC: t.type = AUDIO_TYPE_PREREC; break;
                 }
                 continue;
             }
@@ -760,34 +748,18 @@ track ArchiveManager::readInfo(std::string filename) {
  * @param   tracks  Pointer to a vector of tracks into which the information
  *                  from the database is to be stored.
  */
-void ArchiveManager::loadDB(vector<track> *tracks) {
+void ArchiveManager::loadDB() {
     const char* routine = "ArchiveManager::loadDB";
-
+    
+    trackDB.clear();
+    
 	track t;
     string SQL = "SELECT * FROM v_audio WHERE archiveid = " + dps_itoa(A.id);
     try {
         PqxxResult R = DB->exec("ArchiveManagerLoadDB",SQL);
         DB->abort("ArchiveManagerLoadDB");
-    	for (unsigned int i = 0; i < R.size(); i++) {
-    		t.md5 = R[i]["md5"].c_str();
-    		t.md5_archive = A;
-    		t.title = R[i]["title"].c_str();
-    		t.artists.push_back(R[i]["artist"].c_str());
-    		t.album = R[i]["album"].c_str();
-    		t.release_date = R[i]["released"].c_str();
-    		t.tracknum = atoi(R[i]["track"].c_str());
-    		t.length_smpl = atoi(R[i]["length_smpl"].c_str());
-    		t.trim_start_smpl = atoi(R[i]["start_smpl"].c_str());
-    		t.trim_end_smpl = atoi(R[i]["end_smpl"].c_str());
-    		t.fade_in_smpl = atoi(R[i]["intro_smpl"].c_str());
-    		t.fade_out_smpl = atoi(R[i]["extro_smpl"].c_str());
-            switch (atoi(R[i]["audiotype"].c_str())) {
-                case 0: t.type = AUDIO_TYPE_MUSIC;
-                case 1: t.type = AUDIO_TYPE_JINGLE;
-                case 2: t.type = AUDIO_TYPE_ADVERT;
-                case 3: t.type = AUDIO_TYPE_PREREC;
-            }
-    		tracks->push_back(t);
+    	for (unsigned int i = 0; i < R.size(); ++i) {
+            trackDB.push_back(R[i]["md5"].c_str());
     	}
     }
     catch (...) {
@@ -804,8 +776,10 @@ void ArchiveManager::loadDB(vector<track> *tracks) {
  * @param   tracks  Vector of tracks into which the files in the inbox will
  *                  be read.
  */
-void ArchiveManager::loadInbox(vector<track> *tracks) {
+void ArchiveManager::loadInbox() {
 	const char* routine = "ArchiveManager::loadInbox";
+    
+    trackInbox.clear();
     
     DIR *dirp;
     struct dirent *dp;
@@ -826,12 +800,19 @@ void ArchiveManager::loadInbox(vector<track> *tracks) {
 
 			test = fn + ".xml";
 			f_test_xml.open(test.c_str());
+            //test = fn + ".info";
+            //f_test_info.open(test.c_str());
 			if (f_test_xml.good()) {
 				L_INFO(LOG_DB,"Reading XML " + fn + ".xml");
 				t = readXML(fn + ".xml");
 			}
-			f_test_xml.close();
-			
+            f_test_xml.close();
+            /*if (t.empty() && f_test_info.good()) {
+			    L_INFO(LOG_DB,"Reading INFO " + fn + ".info");
+                t.push_back(readInfo(fn + ".info"));
+            }
+            f_test_info.close();
+			*/
 			if (t.empty()) {
                 L_WARNING(LOG_DB,"Failed to read XML for '" + md5 + "'");
                 L_WARNING(LOG_DB," -> ignoring this track");
@@ -840,7 +821,7 @@ void ArchiveManager::loadInbox(vector<track> *tracks) {
 			else {
                 for (unsigned int i = 0; i < t.size(); i++) {
     				cleanInfo(&(t.at(i)));
-    				tracks->push_back(t.at(i));
+    				trackInbox.push_back(t.at(i));
                 }
 			}
         }
@@ -857,8 +838,10 @@ void ArchiveManager::loadInbox(vector<track> *tracks) {
  * @param   tracks  Vector of tracks into which the files in the trash will
  *                  be read.
  */
-void ArchiveManager::loadTrash(vector<track> *tracks) {
+void ArchiveManager::loadTrash() {
 	const char* routine = "ArchiveManager::loadTrash";
+    
+    trackTrash.clear();
     
     DIR *dirp;
     struct dirent *dp;
@@ -893,7 +876,7 @@ void ArchiveManager::loadTrash(vector<track> *tracks) {
 			else {
                 for (unsigned int i = 0; i < t.size(); i++) {
     				cleanInfo(&(t.at(i)));
-    				tracks->push_back(t.at(i));
+    				trackTrash.push_back(t.at(i));
                 }
 			}
         }
@@ -1425,3 +1408,43 @@ void ArchiveManager::trimAudio(track *t) {
 #undef SAMPLE_TOL
 }
 
+
+/**
+ * Creates a track struct from a DB entry.
+ * @param   i       Index of entry to create struct for
+ * @returns         Track struct of entry.
+ */
+track ArchiveManager::createDBTrack(unsigned int i) {
+    const char* routine = "ArchiveManager::createDBTrack";
+    string SQL = "SELECT * FROM v_audio WHERE archiveid = " + dps_itoa(A.id)
+                + " AND md5='" + trackDB.at(i) + "'";
+    try {
+        PqxxResult R = DB->exec("ArchiveManagerLoadDB",SQL);
+        DB->abort("ArchiveManagerLoadDB");
+            
+        track t;
+        t.md5 = R[0]["md5"].c_str();
+        t.md5_archive = A;
+        t.title = R[0]["title"].c_str();
+        t.artists.push_back(R[0]["artist"].c_str());
+        t.album = R[0]["album"].c_str();
+        t.release_date = R[0]["released"].c_str();
+        t.tracknum = atoi(R[0]["track"].c_str());
+        t.length_smpl = atoi(R[0]["length_smpl"].c_str());
+        t.trim_start_smpl = atoi(R[0]["start_smpl"].c_str());
+        t.trim_end_smpl = atoi(R[0]["end_smpl"].c_str());
+        t.fade_in_smpl = atoi(R[0]["intro_smpl"].c_str());
+        t.fade_out_smpl = atoi(R[0]["extro_smpl"].c_str());
+        string type = R[0]["audiotype"].c_str();
+        if (type == "Music") t.type = AUDIO_TYPE_MUSIC;
+        else if (type == "Jingle") t.type = AUDIO_TYPE_JINGLE;
+        else if (type == "Advert") t.type = AUDIO_TYPE_ADVERT;
+        else if (type == "Pre-rec") t.type = AUDIO_TYPE_PREREC;
+        return t;
+    }
+    catch (...) {
+        L_ERROR(LOG_DB,"Failed to create track with MD5 " + trackDB.at(i));
+        DB->abort("ArchiveManagerLoadDB");
+        throw -1;
+    }
+}

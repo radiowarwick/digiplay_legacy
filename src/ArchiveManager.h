@@ -47,7 +47,7 @@ class ArchiveManager {
 		unsigned int size(ARCHIVE_COMPONENT);
         /// Cleans the meta data associated with track \a index in archive
         /// component \a c
-		void clean(ARCHIVE_COMPONENT c, unsigned int index);
+		//void clean(ARCHIVE_COMPONENT c, unsigned int index);
 
         /// Adds a track from the inbox to the database
 		void add(unsigned int index);
@@ -75,11 +75,11 @@ class ArchiveManager {
 
 	private:
         /// Loads the database component of the archive
-		void loadDB(std::vector<track> *tracks);
+		void loadDB();
         /// Loads the inbox component of the archive
-		void loadInbox(std::vector<track> *tracks);
+		void loadInbox();
         /// Loads the trash component of the archive
-		void loadTrash(std::vector<track> *tracks);
+		void loadTrash();
 
         /// Adds a music track \a t to the database
         void addTrack(track t);
@@ -97,13 +97,15 @@ class ArchiveManager {
         /// Determines trim points for the audio data
 		void trimAudio(track *t);
 
+        track createDBTrack(unsigned int index);
+        
 		bool initialised;
 		track t_null;
 		archive A;
         DataAccess *DB;
-        std::vector<track> *trackDB;
-        std::vector<track> *trackInbox;
-        std::vector<track> *trackTrash;
+        std::vector<std::string> trackDB;
+        std::vector<track> trackInbox;
+        std::vector<track> trackTrash;
 };
 
 #endif

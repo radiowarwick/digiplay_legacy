@@ -70,11 +70,11 @@ class DPSStationCartwallsViewer extends Viewer {
 					}
 					$sql = "SELECT cartstyleprops.value AS value, 
 						cartproperties.name AS name
-					FROM cartsaudio, cartstyle, cartstyleprops, cartproperties
+					FROM cartsaudio, cartstyles, cartstyleprops, cartproperties
 					WHERE cartsaudio.id = " . $tcart['id'] . " 
-						AND cartsaudio.styleid = cartstyle.id 
-						AND cartstyle.id = cartstyleprops.styleid 
-						AND cartstyleprops.propertyid = cartproperties.id";
+						AND cartsaudio.cartstyleid = cartstyles.id 
+						AND cartstyles.id = cartstyleprops.cartstyleid 
+						AND cartstyleprops.cartpropertyid = cartproperties.id";
 					$cartprop = $db->getAll($sql);
 					foreach($cartprop as $prop) {
 						if($prop['name'] == 'ForeColourRGB') {

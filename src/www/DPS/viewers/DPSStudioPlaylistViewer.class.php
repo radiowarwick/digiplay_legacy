@@ -3,6 +3,7 @@
 * @package DPS
 */
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
+include_once($cfg['DPS']['dir']['root'] . '/DPS.class.php');
 
 class DPSStudioPlaylistViewer extends Viewer {
 	

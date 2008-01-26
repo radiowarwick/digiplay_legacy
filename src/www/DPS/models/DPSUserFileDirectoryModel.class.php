@@ -19,24 +19,37 @@ class DPSUserFileDirectoryModel extends Model {
 		$userID = $auth->getUserID();
 		$uploaddir = $cfg['DPS']['dir']['uploadDir'];
 		
+		if (!is_dir($uploaddir)) {
+			$this->errors['form'] = "$uploaddir is not a directory.";
+			return;
+		}
+		if (!is_writeable($uploaddir)) {
+			$this->errors['form'] = "$uploaddir is not writeable.";
+			return;
+		}
+
+		// Generate MD5 hash for uploaded file
 		$fname = md5($_FILES['ufile']['name'] . time() . $_FILES['ufile']['tmp_name']);
 		$uploadfile = $uploaddir . "/" . $fname;
 		
-		if (move_uploaded_file($_FILES['ufile']['tmp_name'], $uploadfile)) {
+		// Move the uploaded file from the system tmp dir to the DPS/uploads dir.
+		if (move_uploaded_file($_FILES['ufile']['tmp_name'], $uploadfile . ".wav")) {
+			// Determine various properties of file
 			if($this->fieldData['type'] == "advert") {
-				$type="2";
-				$typeID = $cfg['DPS']['AdvertTypeID'];
-				$package = $auth->getUser();
-			} else if($this->fieldData['type'] == "pre-rec") {
 				$type="3";
+				$typeID = $cfg['DPS']['AdvertTypeID'];
+			} else if($this->fieldData['type'] == "pre-rec") {
+				$type="4";
 				$typeID = $cfg['DPS']['PrerecTypeID'];
 			} else {
-				$type="1";
+				$type="2";
 				$typeID = $cfg['DPS']['JingleTypeID'];
-				$package = $auth->getUser();
 			}
+			$package = $this->fieldData['package'];
+			
+			// Try to write info file for upload
 			if($handle = fopen($uploadfile . ".info", "w")) {
-				$info = "uid: \n"
+				$info = "uid: $fname\n"
 				."title: " . $this->fieldData['name'] . "\n"
 				."artists: \n"
 				."album: $package\n"
@@ -50,13 +63,15 @@ class DPSUserFileDirectoryModel extends Model {
 				."type: $type\n"
 				."cdpresult: N/A website upload\n"
 				."reclibinsert: \n";
+				// if successful in writing info, run the import script
 				if (fwrite($handle, $info) !== FALSE) {
 					exec(
-						escapeshellcmd($cfg['DPS']['dir']['scriptsDir'] . '/webimport.pl ') .
+						escapeshellcmd($cfg['DPS']['dir']['scriptsDir'] . '/dpswebimport.pl ') .
 						escapeshellarg($fname),$id);
 						$id = $id[0];
+					// import script returns an ID of the new file in the database
 					if(is_numeric($id) && $id != '') {
-						//insert into db stuff
+						//insert into db directory, user, group and permissions stuff
 						$audioDir['audioid'] = $id;
 						$audioDir['dirid'] = $dirID;
 						$audioDir['linktype'] = 0;
@@ -75,40 +90,50 @@ class DPSUserFileDirectoryModel extends Model {
 						$gperm['permissions'] = 'B' . $cfg['DPS']['fileRWO'] . 'B';
 						$db->insert('audiogroups',$gperm,false);
 					} else {
-						//error
+						// failed to import the file
 						BasicLogger::logMessage(
 							"Error recieved when uploading file: '" . $id . "'",
 							'error');
-						$this->errors['form'] = "Unable to import file (file may be of invalid type)";
+						$this->errors['form'] = "Unable to import file (file may be of invalid type): " . $id;
 						exec("rm $uploadfile");
 						exec("rm $uploadfile.info");
 						DPSUserFileDirectoryModel::processInvalid();
 					}
 				} else {
-					//error
+					// failed to write the info file
 					BasicLogger::logMessage(
 						"Error recieved when uploading file: Unable to write to $fname.info'",
 						'error');
 					$this->errors['form'] = "Unable to write to info file";
-					exec("rm $uploadfile");
+					exec("rm $uploadfile.wav");
 					DPSUserFileDirectoryModel::processInvalid();
 				}
 				fclose($handle);
 			} else {
-				//error
+				// failed to open the info file to write into it
 				BasicLogger::logMessage(
 					"Error recieved when uploading file: Unable to open $fname.info file to write'",
 					'error');
 				$this->errors['form'] = "Unable to open info file for writing";
-				exec("rm $uploadfile");
+				exec("rm $uploadfile.wav");
 				DPSUserFileDirectoryModel::processInvalid();
 			}
 		} else {
+			// failed to move file into uploads directory
 			if($_FILES['ufile']['error'] == 1) {
-				//error
-				$this->errors['form'] = "File too large for upload";
+				$this->errors['form'] = "File too large for upload to this server.";
+			} else if ($_FILES['ufile']['error'] == 2) {
+				$this->errors['form'] = "File too large for upload via this form.";
+			} else if ($_FILES['ufile']['error'] == 3) {
+				$this->errors['form'] = "The file was only partially uploaded.";
+			} else if ($_FILES['ufile']['error'] == 4) {
+				$this->errors['form'] = "No file was uploaded.";
+			} else if ($_FILES['ufile']['error'] == 6) {
+				$this->errors['form'] = "Missing temporary directory to upload file.";
+			} else if ($_FILES['ufile']['error'] == 7) {
+				$this->errors['form'] = "Failed to write to disk.";
 			} else {
-				//error
+				// otherwise throw a boring general error
 				BasicLogger::logMessage(
 					"Error recieved when uploading file: Unable to move file for processing ({$_FILES['ufile']['error']}",
 					'error');

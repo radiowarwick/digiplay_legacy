@@ -75,7 +75,7 @@ class DPSSueAddPlaylistViewer extends Viewer {
 			$sql = "SELECT DISTINCT artists.name AS name 
 			FROM artists, audioartists 
 			WHERE audioartists.audioid = " . $sueNextTrack['id'] . " 
-			AND audioartists.artist = artists.id";
+			AND audioartists.artistid = artists.id";
 			$artists = $db->getAll($sql);
 			foreach($artists as $artist) {
 				$sueNextTrack['artist'] = $sueNextTrack['artist'] . 

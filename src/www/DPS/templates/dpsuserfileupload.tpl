@@ -13,7 +13,7 @@
 	{else}
 		<div class='alignleft'>
 			<div class='bigTitle'>File Upload: {$VIEWER.folder.name}</div>
-			<div class='subTitle'>Only upload *.wav files</div>
+			<div class='subTitle'>Only upload *.wav files (44100Hz, 16-bit, Stereo)</div>
 			{if $DATA.error == 'form'}
 			<div class='subTitle'>{$DATA.Emessage}</div>
 			{elseif $DATA.error == 'perm'}
@@ -25,15 +25,16 @@
 				<input type="hidden" name="templateID" value="22" />
 				<input type="hidden" name="dirID" value="{$VIEWER.folder.id}" />
 				Name: <input type="text" name="name" value="" /><br />
+				Package: <input type="text" name="package" value="" /><br />
 				Type: <select name="type">
 					<option value="jingle">Jingle</option>
 					<option value="advert">Advert</option>
 					<option value="pre-rec">Pre-rec</option>
-				</select>
-				<br />
+				</select><br />
 				File: <input type="file" name="ufile" /><br />
 				<input type="submit" value="Save" />
 			</form>
+			<div class#'subTitle'>After clicking submit, please be patient while your file is uploaded and added to the playout system.</div>
 		</div>
 		{/if}
 	</body>

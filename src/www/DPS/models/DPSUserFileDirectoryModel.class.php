@@ -95,7 +95,7 @@ class DPSUserFileDirectoryModel extends Model {
 							"Error recieved when uploading file: '" . $id . "'",
 							'error');
 						$this->errors['form'] = "Unable to import file (file may be of invalid type): " . $id;
-						exec("rm $uploadfile");
+						exec("rm $uploadfile.wav");
 						exec("rm $uploadfile.info");
 						DPSUserFileDirectoryModel::processInvalid();
 					}

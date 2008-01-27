@@ -22,19 +22,19 @@
 				{if $VIEWER.dirpub == 't'}
 				Permission:<br />
 				{if $VIEWER.priv == 't'}
-				Private: <input type="radio" name="dirperm" value="priv" checked/>
+				<input type="radio" name="dirperm" value="priv" checked/> Private<br />
 				{else}
-				Private: <input type="radio" name="dirperm" value="priv" />
+				<input type="radio" name="dirperm" value="priv" /> Private<br />
 				{/if}
 				{if $VIEWER.dirr == 't'}
-				Public read: <input type="radio" name="dirperm" value="pubr" checked/>
+				<input type="radio" name="dirperm" value="pubr" checked/> Everyone Read only<br />
 				{else}
-				Public read: <input type="radio" name="dirperm" value="pubr" />
+				<input type="radio" name="dirperm" value="pubr" /> Everyone Read only<br />
 				{/if}
 				{if $VIEWER.dirrw == 't'}
-				Public write: <input type="radio" name="dirperm" value="pubrw" checked/>
+				<input type="radio" name="dirperm" value="pubrw" checked/> Everyone Read/Write<br />
 				{else}
-				Public write: <input type="radio" name="dirperm" value="pubrw" />
+				<input type="radio" name="dirperm" value="pubrw" /> Everyone Read/Write<br />
 				{/if}
 				<br />
 				{else}

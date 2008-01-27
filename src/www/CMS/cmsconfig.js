@@ -6,7 +6,7 @@ FCKConfig.ToolbarSets["cms_full"] = [
 	['OrderedList','UnorderedList','-','Outdent','Indent'],
 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
 	['Link','Unlink','Anchor'],
-	['Image','Table','Rule','Smiley','SpecialChar','UniversalKey'],
+	['Image','Table','Rule','Smiley','SpecialChar'],
 	'/',
 	['Style','FontFormat','FontName','FontSize'],
 	['TextColor','BGColor'],
@@ -21,7 +21,7 @@ FCKConfig.ToolbarSets["cms_safe"] = [
 	['OrderedList','UnorderedList','-','Outdent','Indent'],
 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
 	['Link','Unlink','Anchor'],
-	['Image','Table','Rule','Smiley','SpecialChar','UniversalKey']
+	['Image','Table','Rule','Smiley','SpecialChar']
 ] ;
 
 FCKConfig.ToolbarSets["cms_simple"] = [
@@ -30,13 +30,13 @@ FCKConfig.ToolbarSets["cms_simple"] = [
 	['Find','Replace','-','RemoveFormat'],
 	['Bold','Italic','-','Subscript','Superscript'],
 	['Link','Unlink','Anchor'],
-	['SpecialChar','UniversalKey']
+	['SpecialChar']
 ] ;
 FCKConfig.ToolbarSets["cms_inline"] = [
 	['Bold','Italic','TextColor','FontFormat'],
 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
 	['Link','Unlink'],
-	['SpecialChar','UniversalKey','Image','Table']
+	['SpecialChar','Image','Table']
 ] ;
 
 FCKConfig.ToolbarSets["cms_none"] = [] ;

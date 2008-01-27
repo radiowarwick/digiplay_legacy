@@ -100,7 +100,7 @@ class GroupModel extends Model {
 				$customFieldsToSave['id'] = '#id#';
 				$this->groupToEdit = $db->insert('groups', $customFieldsToSave);
 			}else {
-				$db->update('groups', $customFieldsToSave, "groupid = '{$this->groupToEdit}'");
+				$db->update('groups', $customFieldsToSave, "id = '{$this->groupToEdit}'");
 			}
 		}
 	}

@@ -13,7 +13,7 @@
 	{else}
 		<div class='alignleft'>
 			<div class='bigTitle'>File Upload: {$VIEWER.folder.name}</div>
-			<div class='subTitle'>Only upload *.wav files (44100Hz, 16-bit, Stereo)</div>
+			<div class='subTitle'>Only upload *.wav files (44100Hz, 16-bit, Stereo). Size limit: 20MB</div>
 			{if $DATA.error == 'form'}
 			<div class='subTitle'>{$DATA.Emessage}</div>
 			{elseif $DATA.error == 'perm'}

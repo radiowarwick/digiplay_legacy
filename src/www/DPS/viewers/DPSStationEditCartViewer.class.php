@@ -61,10 +61,10 @@ class DPSStationEditCartViewer extends Viewer {
 			}
 			if($flag) {
 				$sql = "SELECT cartsaudio.id AS id, cartsaudio.text AS text, 
-					cartsaudio.audio AS audioID, cartwalls.cartset AS cartset, 
-					cartsaudio.style AS styleID,cartsaudio.cart AS cart 
+					cartsaudio.audioid AS audioID, cartwalls.cartsetid AS cartset, 
+					cartsaudio.cartstyleid AS styleID,cartsaudio.cart AS cart 
 				FROM cartsaudio, cartwalls 
-				WHERE cartsaudio.cartwall = cartwalls.id 
+				WHERE cartsaudio.cartwallid = cartwalls.id 
 					AND cartsaudio.id = " . $cartID;
 				$cart = $db->getRow($sql);
 				$this->assign('cartInfo', $cart);
@@ -108,7 +108,7 @@ class DPSStationEditCartViewer extends Viewer {
 					AND v_tree_cartset_explicit.permissions & B'" . $cfg['DPS']['fileR'] .
 						"' = '" . $cfg['DPS']['fileR'] . "'";
 				$user_count = $db->getOne($sql);
-				$sql = "SELECT count(*) from v_tree_cartset_inherited, cartwalls 
+				$sql = "SELECT count(*) FROM v_tree_cartset_inherited, cartwalls, cartsaudio 
 				WHERE v_tree_cartset_inherited.cause = {$cfg['DPS']['allusersgroupid']}
 					AND v_tree_cartset_inherited.id = cartwalls.cartsetid
 					AND cartwalls.id = cartsaudio.cartwallid

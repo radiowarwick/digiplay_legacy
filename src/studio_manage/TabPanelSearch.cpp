@@ -89,6 +89,7 @@ void TabPanelSearch::Library_Search() {
 	
 	searching = true;
 	btnLibrarySearch->setEnabled(false);
+	txtLibrarySearchText->setEnabled(false);
     
 	// Check if user has entered required information
     if (txtLibrarySearchText->text() == "") {
@@ -99,8 +100,9 @@ void TabPanelSearch::Library_Search() {
         warning->setQuestion(false);
         warning->exec();
         delete warning;
-		searching = false;
 		btnLibrarySearch->setEnabled(true);
+		txtLibrarySearchText->setEnabled(true);
+		searching = false;
         return;
     }
     if ( ! (TitleCheckBox->isChecked()
@@ -113,8 +115,9 @@ void TabPanelSearch::Library_Search() {
         warning->setQuestion(false);
         warning->exec();
         delete warning;
-		searching = false;
 		btnLibrarySearch->setEnabled(true);
+		txtLibrarySearchText->setEnabled(true);
+		searching = false;
         return;
     }
     
@@ -156,6 +159,7 @@ void TabPanelSearch::processResults() {
 		// Lock GUI while updating
 		qApp->lock();
 		btnLibrarySearch->setEnabled(true);
+		txtLibrarySearchText->setEnabled(true);
 		lstSearchResults->setUpdatesEnabled(true);
 		lstSearchResults->triggerUpdate();
 		qApp->unlock();
@@ -183,8 +187,10 @@ void TabPanelSearch::processResults() {
 	// Lock GUI while updating
 	qApp->lock();
 	btnLibrarySearch->setEnabled(true);
+	txtLibrarySearchText->setEnabled(true);
 	lstSearchResults->setUpdatesEnabled(true);
 	lstSearchResults->triggerUpdate();
+	txtLibrarySearchText->setFocus();
 	qApp->unlock();
 	
 	searching = false;

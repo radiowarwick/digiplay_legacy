@@ -52,9 +52,6 @@ TabPanelEmail::TabPanelEmail(QTabWidget *parent, string text)
     // Set panel tag.
     panelTag = "TabEmail";
     
-    // Email accessor class.
-    E = new DpsEmail();
-
     // Initialise object pointers.
     lstEmail = 0;
     txtEmailBody = 0;
@@ -62,6 +59,9 @@ TabPanelEmail::TabPanelEmail(QTabWidget *parent, string text)
 
     // Create GUI objects and configure them.
     draw();
+
+    // Email accessor class.
+    E = new DpsEmail();
 
     // Create a trigger on the email table so we update when changes are made.
     triggerEmail = new QtTrigger("triggerEmail","trig_id2");

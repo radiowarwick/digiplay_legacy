@@ -46,10 +46,11 @@
  */
 Showplan::Showplan(QWidget *parent, const char* name) 
         : QWidget(parent, name) {
-    conf = new Config("digiplay",this);
     activePoint = 0;
-	selectedItem = 0;
+    selectedItem = 0;
     draw();
+
+    conf = new Config("digiplay",this);
 }
 
 Showplan::~Showplan() {
@@ -150,38 +151,6 @@ void Showplan::resizeEvent(QResizeEvent *e) {
     repaint();
     // TODO: Replace this with proper resize code
 }
-
-/*void Showplan::customEvent(QCustomEvent *e) {
-    const char* routine = "Showplan::customEvent";
-
-    if (e->type() == 30001) {
-        L_INFO(LOG_DB,"Triggering configuration refresh");
-
-        conf->requery();
-        if (conf->getParam("next_on_showplan") == "" 
-                            && lstShowPlan->childCount() > 0
-                            && activePoint != lstShowPlan->lastItem()) {
-            activePointLock.lock();
-            L_INFO(LOG_DB,"Processing track load event");
-            if (activePoint == 0) {
-                activePoint = (ShowPlanItem*)lstShowPlan->firstChild();
-            }
-            else {
-                activePoint->setState(SHOWPLAN_STATE_FINISHED);
-                activePoint = (ShowPlanItem*)activePoint->nextSibling();
-            }
-            activePoint->setState(SHOWPLAN_STATE_LOADED);
-            lstShowPlan->ensureItemVisible(activePoint);
-            if (lstShowPlan->selectedItem()) {
-                selectionChanged(lstShowPlan->selectedItem());
-            }
-            L_INFO(LOG_DB,"Triggering update of next_on_showplan entry");
-            activePointLock.unlock();
-            updateNextTrack();
-        }
-        L_INFO(LOG_DB,"Configuration refresh complete.");
-    }
-}*/
 
 void Showplan::addTrack(QString id) {
     const char *routine = "Showplan::addTrack";

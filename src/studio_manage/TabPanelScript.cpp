@@ -47,11 +47,11 @@
  */
 TabPanelScript::TabPanelScript(QTabWidget *parent, string text)
             : TabPanel(parent,text) {
-    // Create access to database
-    DB = new DataAccess();
-    
     // Draw GUI components
     draw();
+
+    // Create access to database
+    DB = new DataAccess();
 }
 
 

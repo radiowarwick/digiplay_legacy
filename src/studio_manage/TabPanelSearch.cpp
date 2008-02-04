@@ -50,19 +50,14 @@ TabPanelSearch::TabPanelSearch(QTabWidget *parent, string text)
     // Set panel tag
 	panelTag = "TabSearch";
     
-    // Load icons for display
-    path = DPSDIR;
-    pixAudio = new QPixmap(path + "/images/music16.png");
-    pixCensored = new QPixmap(path + "/images/censoredmusic16.png");
+    // Draw GUI components
+    draw();
     
     // Access configuration
 	conf = new Config("digiplay", this);
 
     // Create library search engine.
     library_engine = new DpsMusicSearch();
-	
-    // Draw GUI components
-	draw();
 }
 
 
@@ -195,6 +190,12 @@ void TabPanelSearch::playlistAdd(QListViewItem* x) {
  * Draw GUI components
  */
 void TabPanelSearch::draw() {
+    // Load icons for display
+    path = DPSDIR;
+    pixAudio = new QPixmap(path + "/images/music16.png");
+    pixCensored = new QPixmap(path + "/images/censoredmusic16.png");
+
+
     lblSearch = new QLabel( getPanel(), "lblSearch" );
     lblSearch->setGeometry( QRect( 28, 10, 60, 20 ) );
     QFont lblSearch_font(  lblSearch->font() );

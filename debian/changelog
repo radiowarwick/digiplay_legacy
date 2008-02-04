@@ -1,10 +1,15 @@
 digiplay (0.99.8-1) unstable; urgency=low
 
   * Improved efficiency of archive management in dpsadmin
-  * Fixed errors in website
-  * Fixed file upload
+  * Fixed various errors in website
+  * Fixed file upload and added script
+  * Cleaned up package
+  * Turned off performance analysis
+  * Fixed QConnect errors on studio_play load
+  * Added mutex to configuration management class
+  * Removed potential causes of segfaults in management modules.
 
- -- Chris Cantwell <ccantwell@radio.warwick.ac.uk>  Sun, 27 Jan 2008 17:54:24 +0000
+ -- Chris Cantwell <ccantwell@radio.warwick.ac.uk>  Mon, 04 Feb 2008 14:40:02 +0000
 
 digiplay (0.99.7-1) unstable; urgency=low
 

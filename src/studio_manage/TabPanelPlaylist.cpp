@@ -48,6 +48,9 @@ TabPanelPlaylist::TabPanelPlaylist(QTabWidget *parent, string text)
 		: TabPanel(parent,text) {
     // Set panel tag
 	panelTag = "TabPlaylist";
+
+    // Draw GUI components
+    draw();
     
     // Create access to database
 	DB = new DataAccess();	
@@ -56,9 +59,6 @@ TabPanelPlaylist::TabPanelPlaylist(QTabWidget *parent, string text)
     triggerPlaylist = new QtTrigger("triggerPlaylist","trig_id5");
     connect(triggerPlaylist, SIGNAL(trigger()), 
                                     this, SLOT(processPlaylistUpdate()));
-    
-    // Draw GUI components
-	draw();
 }
 
 

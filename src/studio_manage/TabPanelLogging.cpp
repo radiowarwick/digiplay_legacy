@@ -47,6 +47,9 @@ TabPanelLogging::TabPanelLogging(QTabWidget *parent, string text)
         : TabPanel(parent,text) {
     // Set panel tag
     panelTag = "TabLogging";
+
+    // Create GUI components
+    draw();
     
     // Create a DataAccess class for database access
     DB = new DataAccess();
@@ -61,8 +64,6 @@ TabPanelLogging::TabPanelLogging(QTabWidget *parent, string text)
     connect(triggerLog, SIGNAL(trigger()),
               this, SLOT(processLogUpdate()));
     
-    // Create GUI components
-    draw();
 }
 
 /**

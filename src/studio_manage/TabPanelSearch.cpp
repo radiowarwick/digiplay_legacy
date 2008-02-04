@@ -86,9 +86,11 @@ void TabPanelSearch::onMessage() {
  */
 void TabPanelSearch::Library_Search() {
 	if (searching) return;
+	
 	searching = true;
 	btnLibrarySearch->setEnabled(false);
-    // Check if user has entered required information
+    
+	// Check if user has entered required information
     if (txtLibrarySearchText->text() == "") {
         dlgWarn *warning = new dlgWarn(getPanel(), "");
         warning->setTitle("Oops!");
@@ -129,18 +131,20 @@ void TabPanelSearch::Library_Search() {
 	library_engine->searchTitle(TitleCheckBox->isChecked());
 	library_engine->searchArtist(ArtistCheckBox->isChecked());
 	library_engine->searchAlbum(AlbumCheckBox->isChecked());
+	
+	// Pass control over to separate searching thread
 	threadStart();
 }
 
 void TabPanelSearch::threadExecute() {	
 	// Perform search
 	SearchResults = library_engine->query(txtLibrarySearchText->text());
-	usleep(250000);
-	emit resultsReady();
+	// Display results
+	processResults();
 }    
 
 void TabPanelSearch::processResults() {
-    // Clear the list and enter search results
+    // Clear the list and enter search results (disable updates until done)
 	lstSearchResults->setUpdatesEnabled(false);
 	lstSearchResults->clear();
 
@@ -148,15 +152,21 @@ void TabPanelSearch::processResults() {
 	if (SearchResults.size() == 0) {
 		new QListViewItem( lstSearchResults, lstSearchResults->lastItem(),
 							"(Sorry, no matches found.)");
-		searching = false;
+
+		// Lock GUI while updating
+		qApp->lock();
 		btnLibrarySearch->setEnabled(true);
+		lstSearchResults->setUpdatesEnabled(true);
+		lstSearchResults->triggerUpdate();
+		qApp->unlock();
+		
+		searching = false;
 		return;
 	}
 	
     lstSearchResults->setEnabled(true);
 	QListViewItem *x;
 	for (unsigned int i = 0; i < SearchResults.size(); i++) {
-		cout << "Creating item" << endl;
 		x = new QListViewItem(  lstSearchResults, lstSearchResults->lastItem(),
 			SearchResults.at(i).title,
 			SearchResults.at(i).artists.at(0),
@@ -169,10 +179,15 @@ void TabPanelSearch::processResults() {
 			x->setPixmap(0,*pixAudio);
 		}
 	}
-	searching = false;
+
+	// Lock GUI while updating
+	qApp->lock();
 	btnLibrarySearch->setEnabled(true);
 	lstSearchResults->setUpdatesEnabled(true);
-	lstSearchResults->repaint();
+	lstSearchResults->triggerUpdate();
+	qApp->unlock();
+	
+	searching = false;
 }
 
 
@@ -212,7 +227,6 @@ void TabPanelSearch::draw() {
 
     txtLibrarySearchText = new QLineEdit( getPanel(), "txtLibrarySearchText" );
     txtLibrarySearchText->setGeometry( QRect( 83, 10, 330, 20 ) );
-    lstSearchResults = new QListView(getPanel(), "lstSearchResults" );
 
     ArtistCheckBox = new QCheckBox( getPanel(), "ArtistCheckBox" );
     ArtistCheckBox->setGeometry( QRect( 83, 35, 70, 20 ) );
@@ -245,6 +259,7 @@ void TabPanelSearch::draw() {
     btnLibrarySearch->setFont( btnLibrarySearch_font );
     btnLibrarySearch->setAutoDefault( FALSE );
 
+    lstSearchResults = new QListView(getPanel(), "lstSearchResults" );
     lstSearchResults->setGeometry( QRect( 10, 60, 510, 570 ) );
     lstSearchResults->setVScrollBarMode( QListView::AlwaysOn );
     lstSearchResults->setAllColumnsShowFocus( TRUE );
@@ -281,8 +296,6 @@ void TabPanelSearch::draw() {
     ArtistCheckBox->setText( tr( "Artist" ) );
     btnLibrarySearch->setText( tr( "Search" ) );
 
-    connect( this, SIGNAL( resultsReady() ), 
-                this, SLOT( processResults() ) );
     connect( btnLibrarySearch, SIGNAL( clicked() ), 
                 this, SLOT( Library_Search() ) );
     connect( lstSearchResults, SIGNAL( doubleClicked(QListViewItem*) ), 

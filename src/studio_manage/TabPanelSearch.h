@@ -63,9 +63,6 @@ class TabPanelSearch : 	public TabPanel,
 	signals:
         /// Emitted when an item is selected from the search results.
         void itemSelected( QString );
-		/// Emitted when the search query has been completed and the results
-		/// need processing.
-		void resultsReady();
 
 	private slots:
         /// Searches the library.

@@ -101,6 +101,7 @@ void Showplan::onMessage() {
 	else {
 		activePointLock.unlock();
 	}	
+	L_INFO(LOG_DB,"Finished Showplan onMessage");
 }
 
 

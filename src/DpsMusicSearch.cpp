@@ -150,8 +150,6 @@ std::vector<track> DpsMusicSearch::query(std::string search_string) {
         SQL += " LIMIT " + dps_itoa(searchLimit_value);
     }
 
-	cout << SQL << endl;
-
     PqxxResult R;
     try {
         R = DB->exec("MusicSearch",SQL);

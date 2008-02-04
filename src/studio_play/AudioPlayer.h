@@ -55,6 +55,7 @@ class AudioPlayer:  public QWidget,
         void load();
         void log();
         void play();
+        void pause();
         void stop();
         void seek();
         void seek(unsigned long sample);

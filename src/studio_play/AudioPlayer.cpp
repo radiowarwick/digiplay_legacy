@@ -202,6 +202,12 @@ void AudioPlayer::play() {
     }
 }
 
+void AudioPlayer::pause() {
+    if (_state == STATE_PLAY) {
+        audioFilereader->pause();
+    }
+}
+
 void AudioPlayer::stop() {
     audioFilereader->stop();
 }

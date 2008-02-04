@@ -45,7 +45,6 @@
 
 #include "clockThread.h"
 #include "Config.h"
-//#include "QtTrigger.h"
 #include "dps.h"
 
 Auth *authModule;
@@ -61,18 +60,12 @@ TabPanelLogging *tabPanelLogging;
 TabPanelScript *tabPanelScript;
 
 Config *conf;
-//DbTrigger* triggerConfig;
 clockThread *ck;
 
 void frmStudioManage::init() {
 	// Connect to database
 	cout << "Processing configuration..." << flush;
 	conf = new Config("digiplay");
-//    
-//    triggerConfig = new DbTrigger("triggerConfig","trig_id1");
-//    triggerConfig->start();
-//    connect(triggerConfig, SIGNAL(trigger()), 
-//                            this, SLOT(processConfigUpdate()));
 	cout << "complete!" << endl;
 
 	// Initialise modules

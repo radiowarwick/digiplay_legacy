@@ -56,15 +56,10 @@ void frmPlayout::init() {
     audioPlayer3->setGeometry(10,510,540,240);
 
     triggerConfig = new QtTrigger("triggerConfig","trig_id1");
-	remotes = new RemoteStartThread();
-//    connect(triggerConfig, SIGNAL(trigger()),
-//                                audioPlayer1, SLOT(processConfigUpdate()));
-//    connect(triggerConfig, SIGNAL(trigger()),
-//                                audioPlayer2, SLOT(processConfigUpdate()));
-//    connect(triggerConfig, SIGNAL(trigger()),
-//                                audioPlayer3, SLOT(processConfigUpdate()));
     connect(triggerConfig, SIGNAL(trigger()),
                                 this, SLOT(configChanged()));
+
+    remotes = new RemoteStartThread();
 	connect(remotes, SIGNAL(player1_play()),
 								audioPlayer1, SLOT(play()));
 	connect(remotes, SIGNAL(player1_pause()),

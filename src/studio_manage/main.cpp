@@ -29,7 +29,6 @@
 #include <qapplication.h>
 #include "frmStudioManage.h"
 #include "Security.h"
-#include "Config.h"
 #include "Logger.h"
 
 static int logDebug = 0;

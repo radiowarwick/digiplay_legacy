@@ -66,6 +66,8 @@ class ConfigManager : public Trigger {
         DataAccess *DB;
         vector<MessagingInterface*> clientList;
 
+        ThreadMutex CMutex;
+        bool init;
 		bool setFlag;
         std::string DB_CONNECT;
         std::string LOCATION;		

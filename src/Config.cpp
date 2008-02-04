@@ -27,6 +27,7 @@
 #include "sys/types.h"
 
 #include "dps.h"
+#include "Thread.h"
 #include "Logger.h"
 #include "DataAccess.h"
 #include "DbTrigger.h"
@@ -41,9 +42,9 @@ ConfigManager::ConfigManager(std::string application)
 		: Trigger("trig_id1") {
 	DB = new DataAccess();
 	setFlag = false;
-	
+    init = false;
+    
 	processConfigFile(application);
-	
 	requery();
 }
 
@@ -86,10 +87,16 @@ void ConfigManager::operator()(int be_pid) {
 std::string ConfigManager::getParam(std::string name) {
 	const char* routine = "ConfigManager::getParam";
 	
+//    while (!init) usleep(1000);
+    
+    CMutex.lock();
 	dps_strLcase(name);
 	if (isDefined(name)) {
+        CMutex.unlock();
         return _db[name];
     }
+    CMutex.unlock();
+
 	L_ERROR(LOG_CONFIG,"Requested config paramater '" + name 
                         + "' does not exist.");
 	return "";	
@@ -97,6 +104,10 @@ std::string ConfigManager::getParam(std::string name) {
 
 void ConfigManager::setParam(std::string name, std::string value) {
 	const char* routine = "ConfigManager::setParam";
+    
+//    while (!init) usleep(1000);
+    
+    CMutex.lock();
 	if (isDefined(name)) {
         std::string SQL = "UPDATE configuration SET val='" + value 
 					+ "' WHERE parameter='" + name 
@@ -114,12 +125,14 @@ void ConfigManager::setParam(std::string name, std::string value) {
 	}
 	else {
 		L_ERROR(LOG_CONFIG,"Parameter '" + name + "' is not defined!");
-	}	
+	}
+    CMutex.unlock();
 }		
 
 void ConfigManager::processConfigFile(std::string application) {
 	const char* routine = "ConfigManager::processConfigFile";
 	
+    CMutex.lock();
     std::string f = "/etc/" + application + ".conf";
 	L_INFO(LOG_CONFIG,"Processing config file " + f);
     std::ifstream config_file(f.c_str(), std::ios::in);
@@ -149,23 +162,25 @@ void ConfigManager::processConfigFile(std::string application) {
 
 		DB_CONNECT = "";
 	    if (isDefined("DB_HOST"))
-			DB_CONNECT += "host=" + getParam("DB_HOST") + " ";
+			DB_CONNECT += "host=" + _db["db_host"] + " ";
 		if (isDefined("DB_PORT"))
-			DB_CONNECT += "port=" + getParam("DB_PORT") + " ";
+			DB_CONNECT += "port=" + _db["db_port"] + " ";
 		if (isDefined("DB_NAME"))
-	        DB_CONNECT += "dbname=" + getParam("DB_NAME") + " ";
+	        DB_CONNECT += "dbname=" + _db["db_name"] + " ";
 		else
 			DB_CONNECT += "dbname=digiplay ";
 	    if (isDefined("DB_USER"))
-	        DB_CONNECT += "user=" + getParam("DB_USER") + " ";
+	        DB_CONNECT += "user=" + _db["db_user"] + " ";
 		else
 			DB_CONNECT += "user=digiplay_user ";
 		if (isDefined("DB_PASS"))
-			DB_CONNECT += "password=" + getParam("DB_PASS") + " ";
+			DB_CONNECT += "password=" + _db["db_pass"] + " ";
 		if (isDefined("LOCATION"))
-			LOCATION = getParam("LOCATION");
+			LOCATION = _db["location"];
 	}
 	config_file.close();
+    CMutex.unlock();
+    
 	if (DB_CONNECT == "") {
 		L_CRITICAL(LOG_CONFIG,"Missing config file " + f
 								+ " or syntax error in file.");
@@ -185,6 +200,7 @@ void ConfigManager::requery() {
 		setFlag = false;
 		return;
 	}
+    CMutex.lock();
 	_db.clear();
 	_db = _file;
 	try {
@@ -194,13 +210,16 @@ void ConfigManager::requery() {
         PqxxResult R = DB->exec("ConfigRequery", SQL);
         DB->abort("ConfigRequery");
 		for (unsigned int i = 0; i < R.size(); i++) {
+            //cout << R[i]["parameter"].c_str() << " = " << R[i]["val"].c_str() << endl;
 			_db[R[i]["parameter"].c_str()] = R[i]["val"].c_str();
 		}
+        init = true;
 	}
 	catch (...) {
         DB->abort("ConfigRequery");
 		L_CRITICAL(LOG_CONFIG,"Failed to retrieve configuration data.");
 	}	
+    CMutex.unlock();
 }
 
 bool ConfigManager::isDefined(std::string name) {

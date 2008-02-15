@@ -10,6 +10,23 @@ using Audio::Input;
 
 class Audio::Counter;
 
+/**
+ * Possible Cache states
+ */
+enum CACHE_STATE {
+    CACHE_STATE_ACTIVE = 0,
+    CACHE_STATE_INACTIVE = 1
+};
+
+/**
+ * Possible cache control commands
+ */
+enum CACHE_COMMAND {
+    CACHE_COMMAND_NONE = 0,
+    CACHE_COMMAND_GO = 1,
+    CACHE_COMMAND_STOP = 2
+};
+
 /** Reads and caches audio from a raw pcm audio file.
  * This class reads and caches audio from a raw PCM audio file, storing the
  * audio in a cyclic cache and passing it out when requested by \c getAudio.
@@ -57,7 +74,11 @@ class Audio::InputRaw : public Input {
 		void setAutoReload(bool flag) {autoReload = flag;}
 		
 	private:
+        /// Lock on read/write operations to cache
 		ThreadMutex cacheLock;
+        /// Lock on read/write operations to caching action
+        ThreadMutex cacheStateLock;
+        
 		ifstream f;
 		string f_filename;
 		char *audioBuffer, *cacheStart, *cacheEnd, *cacheWrite, *cacheRead;
@@ -65,6 +86,8 @@ class Audio::InputRaw : public Input {
 		unsigned long f_start_byte, f_end_byte, f_pos_byte, f_length_byte;
 		vector<Audio::Counter*> countersList;
 		STATE state;
+        CACHE_STATE cacheState;
+        CACHE_COMMAND cacheCommand;
 		bool autoReload;
 
         /// Update the position on all attached counter clients
@@ -73,6 +96,11 @@ class Audio::InputRaw : public Input {
 		void updateTotals(unsigned long samples);
         /// Update the state of this component on all attached counter clients
 		void updateStates(enum STATE state);
+        
+        /// Starts caching and waits for cache to be pre-filled
+        void startCaching();
+        /// stop caching and wait for cache to become inactive
+        void stopCaching();
 };
 
 #endif

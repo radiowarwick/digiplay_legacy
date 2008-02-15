@@ -45,7 +45,7 @@ EXE_ALL				=	$(EXE_STUDIO_MANAGE) $(EXE_STUDIO_PLAY) $(EXE_DPSADMIN)\
 						$(EXE_PLAYIN) $(EXE_SUEPLAY) $(EXE_SUESCHED)
 LIB_ALL				=	$(LIB_DPSAUDIO)
 
-.PHONY: clean install doc manual doxygen tar
+.PHONY: clean install doc tar
 
 ### Build rules ###
 
@@ -69,8 +69,8 @@ all: 		$(ALL)
 
 clean:
 	@echo "Cleaning source tree"; \
-	rm -rf bin lib src/*.o *.tar.gz
-	@make -C doc/manual clean
+	rm -rf src/*.o *.tar.gz
+	@make -C doc clean
 	@-$(foreach APP,$(ALL), if [ -d src/$(APP) ]; then $(MAKE) -C src/$(APP) clean; fi;)
 
 install:
@@ -84,12 +84,8 @@ install:
 	@cp -arP share/doc/* $(DOCDIR)
 	@echo "Installation complete."
 
-doc: 		manual
-manual:
-	make -C doc/manual
-
-doxygen:
-	doxygen doc/doxygen.conf
+doc:
+	make -C doc all
 
 tar: 		clean
 	@echo "Generating tarball..."; \

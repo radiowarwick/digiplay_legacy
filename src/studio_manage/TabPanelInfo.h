@@ -24,11 +24,12 @@
 #ifndef CLASS_TAB_PANEL_INFO
 #define CLASS_TAB_PANEL_INFO
 
+#include <string>
+
 #include "TabPanel.h"
 
 class QTabWidget;
 class QTextBrowser;
-class Auth;
 
 /**
  * TabPanel class for displaying a simple information panel.
@@ -36,7 +37,7 @@ class Auth;
 class TabPanelInfo : public TabPanel {
 	public:
 		/// Constructor
-		TabPanelInfo(QTabWidget *parent, string text);
+		TabPanelInfo(QTabWidget *parent, std::string text);
 		/// Destructor 
 		~TabPanelInfo();
 

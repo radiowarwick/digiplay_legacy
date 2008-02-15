@@ -261,7 +261,8 @@ void InputRaw::startCaching() {
     // Check if we're already caching
     if (cacheState == CACHE_STATE_ACTIVE) {
         cout << "Want to start caching, but caching is already active!" << endl;
-        throw -1;
+        cacheStateLock.unlock();
+        stopCaching();
     }
     
     // Issue caching start command

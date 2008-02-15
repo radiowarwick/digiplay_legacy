@@ -26,7 +26,9 @@
 #include <iostream>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include "getopt.h"
+#include <getopt.h>
+#include <signal.h>
+#include <fcntl.h>
 using namespace std;
 
 #include "audio/Audio.h"
@@ -64,13 +66,10 @@ static struct option long_options[] = {
 
 static const char* short_options = "hv";
 
-int main(int argc, char *argv []) {
-    const char* routine = "sueplay::main";
-    Logger::setAppName("sueplay");
-    Logger::setLogLevel(INFO);
-    Logger::setDisplayLevel(ERROR);
-    Logger::initLogDir();
-
+void processOptions(int argc, char *argv []) {
+    const char* routine = "sueplay::getOptions";
+    
+    // Process options
     while (1) {
         int v;
         int option_index = 0;
@@ -93,10 +92,10 @@ int main(int argc, char *argv []) {
             }
         }
     }
-	if (detach && print_info) {
-		L_ERROR(LOG_DB,"Printed output only available when attached to the console");
-		exit(-1);
-	}
+    if (detach && print_info) {
+        L_ERROR(LOG_DB,"Printed output only available when attached to the console");
+        exit(-1);
+    }
 
     if (logDebug + logVerbose + logQuiet > 1) {
         L_ERROR(LOG_DB,"Only one verbosity level may be specified");
@@ -104,21 +103,98 @@ int main(int argc, char *argv []) {
     }
     if (logDebug) Logger::setDisplayLevel(INFO);
     if (logVerbose) Logger::setDisplayLevel(WARNING);
-    if (logQuiet) Logger::setDisplayLevel(CRITICAL);
+    if (logQuiet) Logger::setDisplayLevel(CRITICAL);    
+}
 
+void signalHandler(int sig) {
+    const char* routine = "sueplay::signalHandler";
+    switch (sig) {
+        case SIGHUP:
+            L_INFO(LOG_SUEPLAY,"Hangup signal caught");
+            break;
+        case SIGSEGV:
+            L_CRITICAL(LOG_SUEPLAY,"Segmentation fault occured");
+            exit(-1);
+            break;
+        case SIGTERM:
+            L_INFO(LOG_SUEPLAY,"Terminate signal caught");
+            exit(0);
+            break;
+        case SIGUSR1:
+            L_INFO(LOG_SUEPLAY,"SIGUSR1 caught");
+            break;
+        case SIGUSR2:
+            L_INFO(LOG_SUEPLAY,"SIGUSR2 caught");
+            break;
+    }
+}
+
+void detachProcess() {
+    const char* routine = "sueplay::detachProcess";
+    
+    // Check if we're already a daemon
+    if (getppid() == 1) return;
+    
+    pid_t pid = fork();
+    
+    // Check we fork()-ed correctly
+    if (pid < 0) {
+        L_CRITICAL(LOG_SUEPLAY, "Unable to fork() daemon.");
+        exit(-1);
+    }
+    // Quite parent process
+    if (pid > 0) {
+        L_INFO(LOG_SUEPLAY, "Successfully fork()-ed. Daemon process ID is "
+                    + dps_itoa(pid));
+        exit(0);
+    }
+
+    // Child process (daemon)
+    setsid();
+
+    // Set file creation mask
+    umask(027);
+
+    // Set working directory
+    chdir("/var/run");
+
+    // Open lock file, try to lock, write pid
+    int lfp=open("sueplay.pid",O_RDWR|O_CREAT,0640);
+    if (lfp<0) exit(1); /* can not open */
+    if (lockf(lfp,F_TLOCK,0)<0) {
+        L_CRITICAL(LOG_SUEPLAY,"Daemon already running!"); 
+        exit(0); /* can not lock */
+    }
+    char str[10];
+    sprintf(str,"%d\n",getpid());
+    write(lfp,str,strlen(str)); /* record pid to lockfile */
+
+    // Handle signals
+    signal(SIGCHLD,SIG_IGN);            // ignore child
+    signal(SIGTSTP,SIG_IGN);            // ignore terminal
+    signal(SIGTTOU,SIG_IGN);
+    signal(SIGTTIN,SIG_IGN);
+    signal(SIGHUP,signalHandler);      // catch hangup
+    signal(SIGTERM,signalHandler);     // catch sigterm
+    signal(SIGSEGV,signalHandler);     // catch segfault
+    signal(SIGUSR1,signalHandler);     // catch user1
+    signal(SIGUSR2,signalHandler);     // catch user2
+}
+
+int main(int argc, char *argv []) {
+    // Configure logging module
+    const char* routine = "sueplay::main";
+    Logger::setAppName("sueplay");
+    Logger::setLogLevel(INFO);
+    Logger::setDisplayLevel(ERROR);
+    Logger::initLogDir();
+
+    // Process command-line options
+    processOptions(argc, argv);
+
+    // Create daemon process if running detached
     if (detach) {
-        if(fork()) return 0;
-
-        chdir("/");
-        setsid();
-        umask(0);
-
-        int pid = fork();
-
-        if (pid) {
-            cout << "Daemon PID: " << pid << endl;
-            return 0;
-        }
+        detachProcess();
     }
 
 	string SQL_Item,SQL_Remove;
@@ -175,6 +251,8 @@ int main(int argc, char *argv []) {
 					warn_flag = false;
 					L_WARNING(LOG_SUEPLAY, "Schedule is depleated!");
 				}
+                // Let's not batter the psql server while we poll for new tracks to play
+                sleep(1);
 				continue;
 			}
 			warn_flag = true;

@@ -22,9 +22,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include <iostream>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include "getopt.h"
+#include <signal.h>
+#include <getopt.h>
+#include <fcntl.h>
+using namespace std;
+
 #include "Logger.h"
 #include "scheduler.h"
 
@@ -45,13 +50,9 @@ static struct option long_options[] = {
 
 static const char* short_options = "hv";
 
-int main(int argc, char *argv []) {
-	const char* routine = "suesched::main";
-    Logger::setAppName("sueplay");
-    Logger::setLogLevel(INFO);
-    Logger::setDisplayLevel(ERROR);
-    Logger::initLogDir();
-
+void processOptions(int argc, char *argv[]) {
+    const char* routine = "suesched::processOptions";
+    
     while (1) {
         int v;
         int option_index = 0;
@@ -81,21 +82,96 @@ int main(int argc, char *argv []) {
     }
     if (logDebug) Logger::setDisplayLevel(INFO);
     if (logVerbose) Logger::setDisplayLevel(WARNING);
-    if (logQuiet) Logger::setDisplayLevel(CRITICAL);
+    if (logQuiet) Logger::setDisplayLevel(CRITICAL);    
+}
 
+void signalHandler(int sig) {
+    const char* routine = "suesched::signalHandler";
+    switch (sig) {
+        case SIGHUP:
+            L_INFO(LOG_SUEPLAY,"Hangup signal caught");
+            break;
+        case SIGSEGV:
+            L_CRITICAL(LOG_SUEPLAY,"Segmentation fault occured");
+            exit(-1);
+            break;
+        case SIGTERM:
+            L_INFO(LOG_SUEPLAY,"Terminate signal caught");
+            exit(0);
+            break;
+        case SIGUSR1:
+            L_INFO(LOG_SUEPLAY,"SIGUSR1 caught");
+            break;
+        case SIGUSR2:
+            L_INFO(LOG_SUEPLAY,"SIGUSR2 caught");
+            break;
+    }
+}
+
+void detachProcess() {
+    const char* routine = "suesched::detachProcess";
+    
+    // Check if we're already a daemon
+    if (getppid() == 1) return;
+    
+    pid_t pid = fork();
+    
+    // Check we fork()-ed correctly
+    if (pid < 0) {
+        L_CRITICAL(LOG_SUEPLAY, "Unable to fork() daemon.");
+        exit(-1);
+    }
+    // Quite parent process
+    if (pid > 0) {
+        L_INFO(LOG_SUEPLAY, "Successfully fork()-ed. Daemon process ID is "
+                    + dps_itoa(pid));
+        exit(0);
+    }
+
+    // Child process (daemon)
+    setsid();
+
+    // Set file creation mask
+    umask(027);
+
+    // Set working directory
+    chdir("/var/run");
+
+    // Open lock file, try to lock, write pid
+    int lfp=open("suesched.pid",O_RDWR|O_CREAT,0640);
+    if (lfp<0) exit(1); /* can not open */
+    if (lockf(lfp,F_TLOCK,0)<0) {
+        L_CRITICAL(LOG_SUEPLAY, "Daemon already running!");
+        exit(0); /* can not lock */
+    }
+    char str[10];
+    sprintf(str,"%d\n",getpid());
+    write(lfp,str,strlen(str)); /* record pid to lockfile */
+
+    // Handle signals
+    signal(SIGCHLD,SIG_IGN);            // ignore child
+    signal(SIGTSTP,SIG_IGN);            // ignore terminal
+    signal(SIGTTOU,SIG_IGN);
+    signal(SIGTTIN,SIG_IGN);
+    signal(SIGHUP,signalHandler);      // catch hangup
+    signal(SIGTERM,signalHandler);     // catch sigterm
+    signal(SIGSEGV,signalHandler);     // catch segfault
+    signal(SIGUSR1,signalHandler);     // catch user1
+    signal(SIGUSR2,signalHandler);     // catch user2
+}
+
+
+int main(int argc, char *argv []) {
+	const char* routine = "suesched::main";
+    Logger::setAppName("sueplay");
+    Logger::setLogLevel(INFO);
+    Logger::setDisplayLevel(ERROR);
+    Logger::initLogDir();
+
+    processOptions(argc, argv);
+    
     if (detach) {
-        if(fork()) return 0;
-
-        chdir("/");
-        setsid();
-        umask(0);
-
-        int pid = fork();
-
-        if (pid) {
-            cout << "Daemon PID: " << pid << endl;
-            return 0;
-        }
+        detachProcess();
     }
 	if (!detach) {
 		system("clear");

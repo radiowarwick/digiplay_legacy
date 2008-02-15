@@ -50,6 +50,7 @@ void *Thread::threadEntry(void *pthis) {
 
     // Set thread active, run it, then set unactive
 	pt->t_active = true;
+    pt->terminate_flag = false;
 	pt->threadExecute();
 	pt->t_active = false;
 
@@ -123,7 +124,7 @@ void Thread::threadKill() {
 bool Thread::threadTestKill() {
     pthread_mutex_lock(&t_terminate_mutex);
     if (terminate_flag == true) {
-        terminate_flag = false;
+        //terminate_flag = false;
         pthread_mutex_unlock(&t_terminate_mutex);
         return true;
     }

@@ -16,6 +16,7 @@ Audio::ProcessMixer::~ProcessMixer() {
 /**
  * Retrieves audio from each attached input component and mixes it together
  * according to the formula described.
+ * @param   buffer      Audio packet to fill.
  */
 void Audio::ProcessMixer::getAudio(AudioPacket* buffer) {
 	pthread_mutex_lock(&channelLock);
@@ -77,6 +78,8 @@ void Audio::ProcessMixer::getAudio(AudioPacket* buffer) {
 /** 
  * Receives messages to this component after they've been preprocessed by the
  * component base class. 
+ * @param   inPort      Port on which a message is received.
+ * @param   message     The message received.
  */
 void Audio::ProcessMixer::receiveMessage(PORT inPort, MESSAGE message) {
 	if (!channels[inPort]) {
@@ -85,59 +88,70 @@ void Audio::ProcessMixer::receiveMessage(PORT inPort, MESSAGE message) {
 		exit(-1);
 	}
 	if (message == STOP) {
-		//cout << "ProcessMixer: Stopping channel " << inPort << endl;
 		channels[inPort]->state = STATE_STOP;
 	}
 	else if (message == PLAY) {
-		//pthread_mutex_lock(&channelLock);
-		//cout << "ProcessMixer: Starting channel " << inPort << endl;
 		channels[inPort]->state = STATE_PLAY;
 		ch_inactive.erase(inPort);
 		ch_active[inPort] = channels[inPort];
-		//pthread_mutex_unlock(&channelLock);
 	}
 	if (ch_active.size() == 1 && message == PLAY) {
-		//cout << "ProcessMixer: Setting mixer to play" << endl;
 		send(OUT0,PLAY);
 	}
 	else if (ch_active.size() == 0) {
-		//cout << "ProcessMixer: Setting mixer to stop" << endl;
 		send(OUT0,STOP);
 	}
-	
-	//cout << "Done processmixer::receive message" << endl;
 }
 
+
+/**
+ * Performs tasks when a component is connected.
+ * When a component source is added (to an IN port), a new MixerChannel
+ * is created which associates, a component pointer, component state,
+ * an AudioPacket, and attached port. These MixerChannels are stored in
+ * the channels map, which maps local ports to a MixerChannel. Initially
+ * all channels are marked inactive.
+ * \todo Set channel active if it's playing
+ * @param   localPort   Port on which component is attached
+ */
 void Audio::ProcessMixer::onConnect(PORT localPort) {
 	if (localPort <= 0) return;
-	//cout << "ProcessMixer: OnConnect " << localPort << endl;
+    
 	pthread_mutex_lock(&channelLock);
-	MixerChannel *C = new MixerChannel;
+	
+    MixerChannel *C = new MixerChannel;
 	C->state = STATE_STOP;
 	C->cmpt = connectedDevice(localPort);
 	C->data = new AudioPacket(PACKET_SAMPLES);
 	C->port = localPort;
 	channels[localPort] = C;
-	ch_inactive[localPort] = C;
-	pthread_mutex_unlock(&channelLock);
+	
+    ch_inactive[localPort] = C;
+	
+    pthread_mutex_unlock(&channelLock);
 }
 
+
+/**
+ * Perform tasks when a component is disconnected.
+ * Deletes the associated MixerChannel and frees the associated AudioPacket.
+ * @param   localPort   Port from which component is disconnected.
+ */
 void Audio::ProcessMixer::onDisconnect(PORT localPort) {
 	if (localPort <= 0) return;
-	//cout << "ProcessMixer: OnDisconnect" << endl;
+
 	// Lock mutex to prevent access to channels while removing one
 	pthread_mutex_lock(&channelLock);
+
 	// remove links in active and inactive maps
 	ch_inactive.erase(localPort);
 	ch_active.erase(localPort);
+
 	// delete the data off the heap and remove the channel
 	delete channels[localPort]->data;
 	delete channels[localPort];
 	channels.erase(localPort);
+
 	// unlock channels again
 	pthread_mutex_unlock(&channelLock);
-}
-
-void Audio::ProcessMixer::threadExecute() {
-
 }

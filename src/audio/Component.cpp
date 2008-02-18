@@ -6,11 +6,16 @@ using std::endl;
 #include "Counter.h"
 using Audio::Component;
 
+/**
+ * Creates a new component. This should not be called directly.
+ */
 Component::Component() {
 
 }
 
-/** Processes the components mapping lists and removes and mappings to this
+
+/** 
+ * Processes the components mapping lists and removes and mappings to this
  * object. Each component map is processed in turn and the connected
  * component is sent a destroyMapping() request.
  */
@@ -20,7 +25,9 @@ Component::~Component() {
     }
 }
 
-/** Establishes a connection between a local port and a port on a remote
+
+/** 
+ * Establishes a connection between a local port and a port on a remote
  * component. Validation is performed to check that the local port or the
  * port on the remote component is not already in use. A mapping is then added
  * to this components mapping list, and the remote component is instructed to
@@ -54,7 +61,8 @@ bool Component::connect(PORT localPort, Component *c,
 }
 
 
-/** Disconnect all components connected to a port on this component
+/** 
+ * Disconnect all components connected to a port on this component
  * @param localPort The local port which is disconnected
  */
 void Component::disconnect(PORT localPort) {
@@ -71,7 +79,8 @@ void Component::disconnect(PORT localPort) {
 }
 
 
-/** Adds a counter component to this components counter update list
+/** 
+ * Adds a counter component to this components counter update list
  * @param C The counter component to be added to be updated during getAudio
  */
 void Component::addCounter(Counter* C) {
@@ -84,7 +93,8 @@ void Component::addCounter(Counter* C) {
 }
 
 
-/** Removes a counter component from the list of components to be updated
+/** 
+ * Removes a counter component from the list of components to be updated
  * @param C The counter component to be removed
  */
 void Component::removeCounter(Counter* C) {
@@ -97,7 +107,8 @@ void Component::removeCounter(Counter* C) {
 }
 
 
-/** Sends a message from one component to another. The local OUT port is
+/** 
+ * Sends a message from one component to another. The local OUT port is
  * specified and the destination component is then looked up from this in the
  * mapping table. The message is then transmitted using the remote components
  * receive() routine.
@@ -105,7 +116,6 @@ void Component::removeCounter(Counter* C) {
  * @param message Specify the message to send
  */
 void Component::send(PORT outPort, MESSAGE message) {
-//    cout << "Component::send" << endl;
     for (unsigned int i = 0; i < portMap.size(); i++) {
         if (portMap.at(i).port == outPort) {
             portMap.at(i).component->receive(portMap.at(i).remotePort,
@@ -120,14 +130,14 @@ void Component::send(PORT outPort, MESSAGE message) {
 }
 
 
-/** Processes received message for this component. This is a virtual function
+/** 
+ * Processes received message for this component. This is a virtual function
  * and should be reimplemented in each derived class to handle messages as
  * required.
  * @param inPort Specifies the port on which the message is received
  * @param message Specifies the message received.
  */
 void Component::receive(PORT inPort, MESSAGE message) {
-    //cout << "Component::receive" << endl;
     for (unsigned int i = 0; i < portMap.size(); i++) {
         if (portMap.at(i).port == inPort) {
             switch (message) {
@@ -143,8 +153,6 @@ void Component::receive(PORT inPort, MESSAGE message) {
                 default:
                     break;
             }
-            //cout << "ReceiveMessage(" << inPort << ")" << endl;
-            //cout << "ReceiveMessage(" << message << ")" << endl;
             receiveMessage(inPort,message);
             return;
         }
@@ -153,7 +161,8 @@ void Component::receive(PORT inPort, MESSAGE message) {
 }
 
 
-/** A pointer to the connected component on the specified port is returned
+/** 
+ * A pointer to the connected component on the specified port is returned
  * @param inPort The port to get the connected component for.
  * @return The component connected to \c inPort.
  */
@@ -167,7 +176,8 @@ Component* Component::connectedDevice(PORT inPort) {
 }
 
 
-/** Adds a new component mapping to this components mapping list specifying
+/** 
+ * Adds a new component mapping to this components mapping list specifying
  * the remote component and port connected to a local port.
  * @param localPort The local port the component \c is connected to
  * @param c The component connected to this component
@@ -176,8 +186,6 @@ Component* Component::connectedDevice(PORT inPort) {
  */
 bool Component::createMapping(PORT localPort, Component *c,
 										PORT remotePort) {
-	//cout << "Creating mapping from local " << localPort
-	//	<< " to remote " << remotePort << endl;
     // Fail if this port has already been mapped
     if (localPort != OTHER) {
         for (unsigned int i = 0; i < portMap.size(); i++) {
@@ -200,7 +208,11 @@ bool Component::createMapping(PORT localPort, Component *c,
 }
 
 
-/** Removes a mapping
+/** 
+ * Removes a mapping
+ * @param   localPort   The port from which to remove mapping
+ * @param   c           The component with which we destroy the mapping
+ * @returns             True if successful
  */
 bool Component::destroyMapping(PORT localPort, Component *c) {
     // if it's a counter, remove it from the list

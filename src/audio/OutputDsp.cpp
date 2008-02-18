@@ -5,14 +5,28 @@ using std::endl;
 #include "OutputDsp.h"
 using Audio::OutputDsp;
 
+/**
+ * Creates a new output object to write to a DSP device
+ * @param   channel     DSP device to use
+ */
 OutputDsp::OutputDsp(string channel) {
 	initialise(channel);
 }
 
+
+/**
+ * Destructor
+ */
 OutputDsp::~OutputDsp() {
 
 }
 
+
+/**
+ * Process messages received from other connected components.
+ * @param   inPort      Port on which message is received.
+ * @param   message     Message received.
+ */
 void OutputDsp::receiveMessage(PORT inPort, MESSAGE message) {
     //cout << "Message on port " << inPort << ", message " << message << endl;
     if (inPort != IN0) {
@@ -32,14 +46,30 @@ void OutputDsp::receiveMessage(PORT inPort, MESSAGE message) {
     }
 }
 
+
+/**
+ * Perform tasks when a component is connected to this component
+ * @param   localPort   Port on which component is connected.
+ */
 void OutputDsp::onConnect(PORT localPort) {
 
 }
 
+
+/**
+ * Perform tasks when a component is disconnected from this component.
+ * @param   localPort   Port from which this component is disconnected.
+ */
 void OutputDsp::onDisconnect(PORT localPort) {
 
 }
 
+
+/**
+ * Writes audio to a DSP device. An AudioPacket is created, which the
+ * Component attached to the first input port is asked to fill. This
+ * audio is then written to the output device.
+ */
 void OutputDsp::threadExecute() {
     if (!connectedDevice(IN0)) 
 		cout << "CONNECTED DEVICE IS NULL" << endl;
@@ -66,6 +96,11 @@ void OutputDsp::threadExecute() {
 	delete buffer;
 }
 
+
+/**
+ * Opens and initialises an output DSP device.
+ * @param   device      The DSP device to initialise.
+ */
 void OutputDsp::initialise(string device) {
     // Open audio device
     deviceName = device;

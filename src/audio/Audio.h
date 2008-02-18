@@ -1,13 +1,16 @@
 #ifndef NS_AUDIO
 #define NS_AUDIO
-// Audio namespace
+
+/**
+ * Audio namespace contains all Audio Components
+ */
 namespace Audio {
     class AudioPacket;
 
 	class Component;
 	class Input;
 	class InputRaw;
-        class InputFlac;
+    class InputFlac;
 	class InputWav;
 	class InputMp3;
 	class InputDsp;
@@ -28,6 +31,7 @@ namespace Audio {
 typedef unsigned long   SAMPLE;
 typedef short           SAMPLEVAL;
 typedef int             PORT;
+// Audio component ports
 #define OTHER 0
 #define IN0 1
 #define IN1 2
@@ -38,9 +42,10 @@ typedef int             PORT;
 #define OUT2 -3
 #define OUT3 -4
 
+// Audio packet size definitions
 #define AUDIO_BUFFER 512
 #define PACKET_MULTIPLIER 8
-
+// Audio packet size parameters
 #define PACKET_SAMPLES AUDIO_BUFFER/2*PACKET_MULTIPLIER
 #define FADER_STEPS 16
 #define FADER_GRANULARITY PACKET_SAMPLES/FADER_STEPS
@@ -61,6 +66,9 @@ enum STATE {	STATE_STOP = 0,
 				STATE_PAUSE = 2 };
 #endif
 
+/**
+ * Maps a foreign component, port and its state to a local port.
+ */
 struct ConnectionMapping {
     PORT port;
     Audio::Component *component;

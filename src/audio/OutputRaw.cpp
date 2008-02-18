@@ -7,16 +7,29 @@ using std::endl;
 #include "OutputRaw.h"
 using Audio::OutputRaw;
 
+/**
+ * Create a new output module to write to file.
+ * @param   filename    File to write to
+ */
 OutputRaw::OutputRaw(string filename) {
 	this->filename = filename;
 }
 
+
+/**
+ * Destructor
+ */
 OutputRaw::~OutputRaw() {
 
 }
 
+
+/**
+ * Process messages received from other components.
+ * @param   inPort      Port on which message is received
+ * @param   message     Message received
+ */
 void OutputRaw::receiveMessage(PORT inPort, MESSAGE message) {
-    //cout << "Message on port " << inPort << ", message " << message << endl;
     if (inPort != IN0) {
         cout << "OutputRaw::receive: only use IN0 on a FILE" << endl;
         return;
@@ -37,15 +50,29 @@ void OutputRaw::receiveMessage(PORT inPort, MESSAGE message) {
             break;
     }
 }
-		
+
+
+/**
+ * Perform tasks when a component is connected
+ * @param   localPort   Port on which component is connected
+ */	
 void OutputRaw::onConnect(PORT localPort) {
 	
 }
 
+
+/**
+ * Perform tasks when a component is disconnected
+ * @param   localPort   Port on which component is disconnected
+ */
 void OutputRaw::onDisconnect(PORT localPort) {
 	
 }
 
+
+/**
+ * Request audio from upstream and write it to file
+ */
 void OutputRaw::threadExecute() {
     if (!connectedDevice(IN0)) 
 		cout << "CONNECTED DEVICE IS NULL" << endl;
@@ -81,4 +108,3 @@ void OutputRaw::threadExecute() {
 	delete buffer;
 
 }
-

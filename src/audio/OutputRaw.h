@@ -11,14 +11,20 @@
  */
 class Audio::OutputRaw : public Audio::Output {
 	public:
+        /// Create an output component to write to a file
 		OutputRaw(std::string filename);
+        /// Destructor
 		~OutputRaw();
 
+        /// Process messages received from other components
 		void receiveMessage(PORT inPort, MESSAGE message);
 		
+        /// Perform tasks when a component is connected
 		virtual void onConnect(PORT localPort);
+        /// Perform tasks when a component is disconnected
 		virtual void onDisconnect(PORT localPort);
 
+        /// Thread to process audio into file
 		void threadExecute();
 
 	private:

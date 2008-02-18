@@ -1,9 +1,14 @@
-#include "AudioPacket.h"
-using Audio::AudioPacket;
-
 #include <iostream>
 using namespace std;
 
+#include "AudioPacket.h"
+using Audio::AudioPacket;
+
+/**
+ * Creates a new AudioPacket of a given size. Memory is allocated to store
+ * at most this number of samples.
+ * @param   size    The size of the AudioPacket to create (mono samples).
+ */
 AudioPacket::AudioPacket(SAMPLE size) {
     _size = size;
 	_allocated = size;
@@ -11,10 +16,10 @@ AudioPacket::AudioPacket(SAMPLE size) {
     _data = new SAMPLEVAL[_size];
 }
 
-AudioPacket::~AudioPacket() {
-    delete[] _data;
-}
-
+/**
+ * Creates a copy of an existing AudioPacket
+ * @param   A       The existing AudioPacket to copy
+ */
 AudioPacket::AudioPacket(const AudioPacket &A) {
     _size = A._size;
     _start = A._start;
@@ -24,6 +29,18 @@ AudioPacket::AudioPacket(const AudioPacket &A) {
     }
 }
 
+/**
+ * Deallocates memory and cleans up.
+ */
+AudioPacket::~AudioPacket() {
+    delete[] _data;
+}
+
+/**
+ * Copies one AudioPacket into another.
+ * @param   A       An existing AudioPacket
+ * @returns         This AudioPacket
+ */
 AudioPacket& AudioPacket::operator=(const AudioPacket &A) {
     if (_size != A._size) {
         delete[] _data;
@@ -37,6 +54,11 @@ AudioPacket& AudioPacket::operator=(const AudioPacket &A) {
     return (*this);
 }
 
+/**
+ * Returns a sample at a given index.
+ * @param   index   The index of the requested sample.
+ * @returns         Value of the requested sample.
+ */
 SAMPLEVAL& AudioPacket::operator[] (SAMPLE index) {
     if (index >= _size) {
         cout << "OUT OF RANGE: " << index << endl;
@@ -44,6 +66,11 @@ SAMPLEVAL& AudioPacket::operator[] (SAMPLE index) {
     return _data[index];
 }
 
+/**
+ * Sets the number of valid samples. This must be less than or equal to
+ * the size of the AudioPacket on creation, or else an exception will occur.
+ * @param   size    Number of valid samples.
+ */
 void AudioPacket::setSize(SAMPLE size) {
 	if (size > _allocated) {
 		throw;

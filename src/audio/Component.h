@@ -36,8 +36,11 @@ class Audio::Component : public Thread {
         void removeCounter(Counter* C);
 
 	protected:
+        /// Only derived classes from component can be created
         Component();
-		virtual void threadExecute() =0;
+        /// Empty routine for thread by default
+		virtual void threadExecute() {}
+        /// Process messages received from other components
         virtual void receiveMessage(PORT inPort, MESSAGE message) =0;
 		
         /// Receive a message from a connected component
@@ -49,6 +52,7 @@ class Audio::Component : public Thread {
 		Audio::Component* connectedDevice(PORT inPort);
         /// Access the list of connected component mappings
         const vector<ConnectionMapping>& connectedDevices() {return portMap;}
+        /// Access the list of connected counters
         const vector<Counter*>& connectedCounters() {return _counters;}
 
 	private:

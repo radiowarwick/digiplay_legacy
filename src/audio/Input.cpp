@@ -30,7 +30,3 @@ void Audio::Input::pause() {
 void Audio::Input::seek(long sample) {
 
 }
-
-void Audio::Input::threadExecute() {
-
-}

@@ -34,9 +34,9 @@ enum CACHE_COMMAND {
  */
 class Audio::InputRaw : public Input {
 	public:
-		/// Allow specification of cache size for network resiliance
-		/// but default to 10 secs
+		/// Create a new raw PCM input file reader
 		InputRaw(unsigned int cache_size = 1760000);
+        /// Destructor
 		~InputRaw();
 
         /// Processes a request for a block of audio data
@@ -71,6 +71,7 @@ class Audio::InputRaw : public Input {
         /// Caches the audio in a separate thread
 		void threadExecute();
 
+        /// Set that the track should be reloaded when stopped
 		void setAutoReload(bool flag) {autoReload = flag;}
 		
 	private:

@@ -40,11 +40,11 @@ int main() {
 	OutputDsp* player = new OutputDsp("/dev/dsp");
 	
 	// Connect everything up
-	filereader1->connect(OUT0,fader1,IN0);
-	filereader2->connect(OUT0,fader2,IN0);
-    fader1->connect(OUT0,mixer,IN0);
-	fader2->connect(OUT0,mixer,IN1);
-	mixer->connect(OUT0,player,IN0);
+	filereader1->patch(OUT0,fader1,IN0);
+	filereader2->patch(OUT0,fader2,IN0);
+    fader1->patch(OUT0,mixer,IN0);
+	fader2->patch(OUT0,mixer,IN1);
+	mixer->patch(OUT0,player,IN0);
 
 	filereader1->load("/tmp/output.raw"
 						,0,44100000);

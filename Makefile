@@ -30,7 +30,8 @@ SUE			=	sueplay suesched
 ADMIN		=	dpsadmin
 PLAYIN		=	playin
 DATABASE	=	db
-ALL			=	$(AUDIO) $(STUDIO) $(SUE) $(ADMIN) $(PLAYIN) $(DATABASE)
+ALL			=	$(AUDIO) $(STUDIO) $(SUE) $(ADMIN) $(PLAYIN) $(DATABASE) \
+				audioplay audiotest
 
 # Built Executables
 EXE_STUDIO_MANAGE	=	src/studio_manage/studio_manage

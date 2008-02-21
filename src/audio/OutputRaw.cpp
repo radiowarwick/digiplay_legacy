@@ -56,7 +56,7 @@ void OutputRaw::receiveMessage(PORT inPort, MESSAGE message) {
  * Perform tasks when a component is connected
  * @param   localPort   Port on which component is connected
  */	
-void OutputRaw::onConnect(PORT localPort) {
+void OutputRaw::onPatch(PORT localPort) {
 	
 }
 
@@ -65,7 +65,7 @@ void OutputRaw::onConnect(PORT localPort) {
  * Perform tasks when a component is disconnected
  * @param   localPort   Port on which component is disconnected
  */
-void OutputRaw::onDisconnect(PORT localPort) {
+void OutputRaw::onUnpatch(PORT localPort) {
 	
 }
 

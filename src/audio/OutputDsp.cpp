@@ -51,7 +51,7 @@ void OutputDsp::receiveMessage(PORT inPort, MESSAGE message) {
  * Perform tasks when a component is connected to this component
  * @param   localPort   Port on which component is connected.
  */
-void OutputDsp::onConnect(PORT localPort) {
+void OutputDsp::onPatch(PORT localPort) {
 
 }
 
@@ -60,7 +60,7 @@ void OutputDsp::onConnect(PORT localPort) {
  * Perform tasks when a component is disconnected from this component.
  * @param   localPort   Port from which this component is disconnected.
  */
-void OutputDsp::onDisconnect(PORT localPort) {
+void OutputDsp::onUnpatch(PORT localPort) {
 
 }
 

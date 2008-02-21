@@ -37,7 +37,7 @@ Component::~Component() {
  * @param remotePort The port on the remote component to connect to
  * @return Success or failure of connection
  */
-bool Component::connect(PORT localPort, Component *c, 
+bool Component::patch(PORT localPort, Component *c, 
 								PORT remotePort) {
     // Need to check the local port is only mapped once if it's non-zero.
     if (localPort != OTHER) {
@@ -65,7 +65,7 @@ bool Component::connect(PORT localPort, Component *c,
  * Disconnect all components connected to a port on this component
  * @param localPort The local port which is disconnected
  */
-void Component::disconnect(PORT localPort) {
+void Component::unpatch(PORT localPort) {
     unsigned int i = 0;
     while (i < portMap.size()) {
         if (portMap.at(i).port == localPort) {
@@ -75,7 +75,7 @@ void Component::disconnect(PORT localPort) {
         }
         i++;
     }
-	onDisconnect(localPort);
+	onUnpatch(localPort);
 }
 
 
@@ -203,7 +203,7 @@ bool Component::createMapping(PORT localPort, Component *c,
     // See if the other component is also a counter
     Counter *C =  dynamic_cast<Counter*>(c);
     if (C) addCounter(C);
-	onConnect(localPort);
+	onPatch(localPort);
     return true;
 }
 

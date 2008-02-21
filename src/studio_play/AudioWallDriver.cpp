@@ -15,7 +15,7 @@ AudioWallDriver::AudioWallDriver(unsigned short playerId) {
 
     mixer = new Audio::ProcessMixer();
     player = new Audio::OutputDsp(device);
-    mixer->connect(OUT0,player,IN0);
+    mixer->patch(OUT0,player,IN0);
 }
 
 AudioWallDriver::~AudioWallDriver() {
@@ -23,6 +23,6 @@ AudioWallDriver::~AudioWallDriver() {
 }
 
 void AudioWallDriver::addAudioWall(AudioWall *A) {
-    bool result = mixer->connect(count,A,OUT0);
+    bool result = mixer->patch(count,A,OUT0);
     if (result) ++count;
 }

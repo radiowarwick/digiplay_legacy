@@ -44,7 +44,7 @@ typedef int             PORT;
 
 // Audio packet size definitions
 #define AUDIO_BUFFER 512
-#define PACKET_MULTIPLIER 8
+#define PACKET_MULTIPLIER 2
 // Audio packet size parameters
 #define PACKET_SAMPLES AUDIO_BUFFER/2*PACKET_MULTIPLIER
 #define FADER_STEPS 16
@@ -56,7 +56,9 @@ typedef int             PORT;
 enum MESSAGE {  NONE = 0,
                 PLAY = 1,
                 STOP = 2,
-                PAUSE = 3 };
+                PAUSE = 3,
+                START = 4,
+                SEEK = 5 };
 #endif
 
 #ifndef ENUM_STATE

@@ -73,25 +73,25 @@ void Thread::threadSend(int m) {
 	pthread_mutex_unlock(&t_messages_mutex);
 }
 
-int Thread::threadReceive() {
+bool Thread::threadReceive(int m) {
 	pthread_mutex_lock(&t_messages_mutex);
 	
-	int m = 0;
 	if (t_messages.size() > 0) {
 		int t = 1;
 		if (pthread_self() != threadId) {
 			t = -1;
 		}
 		for (unsigned int i = 0; i < t_messages.size(); i++) {
-			if (t_messages.at(i) * t > 0) {
-				m = t_messages.at(i) * t;
+			if (t_messages.at(i) * t > 0 
+                    && t_messages.at(i) == m) {
 				t_messages.erase(t_messages.begin() + i);
-				return t;
+                pthread_mutex_unlock(&t_messages_mutex);
+				return true;
 			}
 		}
 	}
 	pthread_mutex_unlock(&t_messages_mutex);
-	return m;
+    return false;
 }
 
 bool Thread::isThreadActive() {

@@ -32,12 +32,15 @@ class QWidget;
 class QTabWidget;
 class Auth;
 
+#include "Thread.h"
+
 /**
  * Base class GUI tab widget from which various GUI components can be derived
  * allowing applications to be built from such components for various
  * purposes.
  */
-class TabPanel : public QObject {
+class TabPanel :    public QObject,
+                    public Thread {
 	Q_OBJECT
 	public:
 		/// Constructor
@@ -67,6 +70,8 @@ class TabPanel : public QObject {
 		string panelTag;
 
 	private:
+        void threadExecute() {}
+        
 		QWidget *panel;
 		QTabWidget *tabParent;
 		string tabText;

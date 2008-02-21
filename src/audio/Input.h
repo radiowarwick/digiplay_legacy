@@ -7,7 +7,7 @@
  * Pure virtual base class for input components.
  * This class provides a base class from which to derive input components.
  */
-class Audio::Input : public Audio::Component {
+class Audio::Input : public virtual Audio::Component {
 	public:
         /// Destructor
 		virtual ~Input();
@@ -22,9 +22,9 @@ class Audio::Input : public Audio::Component {
         /// Seeks to a position in an input source
 		virtual void seek(long sample) = 0;
         /// Process when a component is connected
-		virtual void onConnect(PORT localPort) = 0;
+		virtual void onPatch(PORT localPort) = 0;
         /// Process when a component is disconnected
-		virtual void onDisconnect(PORT localPort) = 0;
+		virtual void onUnpatch(PORT localPort) = 0;
 
 	protected:
         /// Only allow derived classes to be created

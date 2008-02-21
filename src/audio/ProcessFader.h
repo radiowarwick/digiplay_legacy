@@ -31,9 +31,9 @@ class Audio::ProcessFader : public Audio::Process {
         virtual void receiveMessage(PORT inPort, MESSAGE message);
 		
         /// Perform tasks when a component is connected
-		virtual void onConnect(PORT localPort) {}
+		virtual void onPatch(PORT localPort) {}
         /// Perform tasks when a component is disconnected
-		virtual void onDisconnect(PORT localPort) {}
+		virtual void onUnpatch(PORT localPort) {}
 
         /// Set the amplitude as a percentage.
 		void setLevel(double pct);

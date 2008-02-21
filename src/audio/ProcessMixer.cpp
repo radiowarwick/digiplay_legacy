@@ -114,7 +114,7 @@ void Audio::ProcessMixer::receiveMessage(PORT inPort, MESSAGE message) {
  * \todo Set channel active if it's playing
  * @param   localPort   Port on which component is attached
  */
-void Audio::ProcessMixer::onConnect(PORT localPort) {
+void Audio::ProcessMixer::onPatch(PORT localPort) {
 	if (localPort <= 0) return;
     
 	pthread_mutex_lock(&channelLock);
@@ -137,7 +137,7 @@ void Audio::ProcessMixer::onConnect(PORT localPort) {
  * Deletes the associated MixerChannel and frees the associated AudioPacket.
  * @param   localPort   Port from which component is disconnected.
  */
-void Audio::ProcessMixer::onDisconnect(PORT localPort) {
+void Audio::ProcessMixer::onUnpatch(PORT localPort) {
 	if (localPort <= 0) return;
 
 	// Lock mutex to prevent access to channels while removing one

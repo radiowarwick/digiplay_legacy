@@ -219,11 +219,11 @@ int main(int argc, char *argv []) {
 	ch[0]->setAutoReload(false);
 	ch[1]->setAutoReload(false);
 	
-	ch[0]->connect(OUT0,fader[0],IN0);
-	ch[1]->connect(OUT0,fader[1],IN0);
-	fader[0]->connect(OUT0,mixer,IN0);
-	fader[1]->connect(OUT0,mixer,IN1);
-	mixer->connect(OUT0,player,IN0);
+	ch[0]->patch(OUT0,fader[0],IN0);
+	ch[1]->patch(OUT0,fader[1],IN0);
+	fader[0]->patch(OUT0,mixer,IN0);
+	fader[1]->patch(OUT0,mixer,IN1);
+	mixer->patch(OUT0,player,IN0);
 	
 	trig[0]->setTriggerTarget(ch[1]);
 	trig[1]->setTriggerTarget(ch[0]);

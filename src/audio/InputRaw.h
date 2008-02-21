@@ -64,9 +64,9 @@ class Audio::InputRaw : public Input {
 		void receiveMessage(PORT inPort, MESSAGE message);
 
         /// Perform any initialisation tasks required on connection
-		virtual void onConnect(PORT localPort);
+		virtual void onPatch(PORT localPort);
         /// Perform any uninitialisation tasks required on disconnection
-		virtual void onDisconnect(PORT localPort);
+		virtual void onUnpatch(PORT localPort);
 
         /// Caches the audio in a separate thread
 		void threadExecute();
@@ -80,15 +80,16 @@ class Audio::InputRaw : public Input {
         /// Lock on read/write operations to caching action
         ThreadMutex cacheStateLock;
         
-		ifstream f;
+        bool loaded;
 		string f_filename;
 		char *audioBuffer, *cacheStart, *cacheEnd, *cacheWrite, *cacheRead;
 		unsigned long cacheSize, cacheFree;
 		unsigned long f_start_byte, f_end_byte, f_pos_byte, f_length_byte;
+        unsigned long f_seek_byte;
+        unsigned long preCacheSize;
 		vector<Audio::Counter*> countersList;
 		STATE state;
         CACHE_STATE cacheState;
-        CACHE_COMMAND cacheCommand;
 		bool autoReload;
 
         /// Update the position on all attached counter clients

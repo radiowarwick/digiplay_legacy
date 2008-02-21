@@ -9,18 +9,21 @@ using namespace std;
 #include "audio/CounterTrigger.h"
 using namespace Audio;
 
-int main() {
+int main(int argc, char* argv[]) {
+    if (argc != 2) {
+        cout << "Error: no file specified" << endl;
+    }
 	// Create input sources and load
-	InputRaw* filereader1 = new InputRaw("/dev/null");
+	InputRaw* filereader1 = new InputRaw();
+    ProcessMixer* mixer = new ProcessMixer();
 	// Create a DSP output
 	OutputDsp* player = new OutputDsp("/dev/dsp");
 	
 	// Connect everything up
-	filereader1->connect(OUT0,player,IN0);
-
-//	filereader1->load("/mnt/music/0/00131818d2c415982e341539abac6fdb"
-	filereader1->load("/tmp/channel1.raw"
-						,0,44100000);
+	filereader1->patch(OUT0,mixer,IN0);
+    mixer->patch(OUT0,player,IN0);
+    // Load track, and play it
+    filereader1->load(string(argv[1]),0,441000000);
 	filereader1->play();
 	sleep(1000);
 }

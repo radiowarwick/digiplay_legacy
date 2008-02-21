@@ -32,7 +32,6 @@
 #include "DpsMusicSearch.h"
 #include "MessagingInterface.h"
 #include "dlgWarn.h"
-#include "Thread.h"
 
 class QTabWidget;
 class QPushButton;
@@ -49,7 +48,6 @@ class Config;
  * TabPanel class for providing a music library search.
  */
 class TabPanelSearch : 	public TabPanel,
-						public Thread,
 						public MessagingInterface {
 	Q_OBJECT
 	public:

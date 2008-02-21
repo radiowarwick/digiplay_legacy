@@ -56,7 +56,7 @@ AudioPlayer::AudioPlayer(QWidget *parent, const char* name, unsigned short playe
 	// Set up new InputRaw with 10 minute cache for network resiliance
     audioFilereader = new Audio::InputRaw(105840000);
     audioPlayer = new Audio::OutputDsp(device);
-    audioFilereader->connect(OUT0,audioPlayer,IN0);
+    audioFilereader->patch(OUT0,audioPlayer,IN0);
     audioFilereader->addCounter(this);
 
     length_hours = 0;

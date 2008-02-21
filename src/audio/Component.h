@@ -19,16 +19,16 @@ class Audio::Component : public Thread {
         /// Clean up all component mappings
 		virtual ~Component();
         /// Places \c samples stereo samples of audio into \c audioData.
-		virtual void getAudio(AudioPacket* audioData) =0;
+		virtual void getAudio(AudioPacket* audioData __attribute__((unused)) ) {}
 
         /// Connect a local port on this component to another component.
-		bool connect(PORT localPort, Component *c, PORT remotePort);
+		bool patch(PORT localPort, Component *c, PORT remotePort);
         /// Disconnect a components connected to a local port
-		void disconnect(PORT localPort);
+		void unpatch(PORT localPort);
 		/// Pure virtual function called when a connect has been made
-		virtual void onConnect(PORT localPort) = 0;
+		virtual void onPatch(PORT localPort __attribute__((unused))) {}
 		/// Pure virtual function called when a disconnection has been made
-		virtual void onDisconnect(PORT localPort) = 0;
+		virtual void onUnpatch(PORT localPort __attribute__((unused))) {}
 
         /// Stores a pointer to a counter object to update on getAudio
         void addCounter(Counter* C);
@@ -41,7 +41,8 @@ class Audio::Component : public Thread {
         /// Empty routine for thread by default
 		virtual void threadExecute() {}
         /// Process messages received from other components
-        virtual void receiveMessage(PORT inPort, MESSAGE message) =0;
+        virtual void receiveMessage(PORT inPort __attribute__((unused)), 
+                                    MESSAGE message __attribute__((unused))) {}
 		
         /// Receive a message from a connected component
         void receive(PORT inPort, MESSAGE message);

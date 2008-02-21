@@ -40,7 +40,7 @@ class Thread {
 		/// Send a message to the thread
 		void threadSend(int m);
 		/// Received a message
-		int threadReceive();
+		bool threadReceive(int m);
 
 		/// Check if the thread is running
 		bool isThreadActive();

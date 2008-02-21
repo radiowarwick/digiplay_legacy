@@ -87,6 +87,9 @@ install:
 doc:
 	make -C doc all
 
+doxygen:
+	make -C doc doxygen
+
 tar: 		clean
 	@echo "Generating tarball..."; \
 	if [ -h $(BASE) ]; then rm $(BASE); fi; \

@@ -154,8 +154,7 @@ void AudioWall::addPage() {
             I = new AudioWallItem(this,"button" 
                         + QString::number(P->items.size()-1) 
                         + "-" + QString::number(_rows*i+j));
-            Audio::ProcessMixer::connect(
-                _pages.size()*_pageSize + i*_cols + j + 1, I, OUT0);
+            patch(_pages.size()*_pageSize + i*_cols + j + 1, I, OUT0);
             I->hide();
             I->setEnabled(false);
             P->items.at(i*_cols + j) = I;

@@ -11,7 +11,7 @@
  * component, the \c setSample routine will be called after each audio packet
  * request to update the currentSample.
  */
-class Audio::Counter : public Audio::Component {
+class Audio::Counter : public virtual Audio::Component {
     public:
         virtual ~Counter();
         /// Set the current sample
@@ -27,11 +27,10 @@ class Audio::Counter : public Audio::Component {
 		virtual void onSetState() = 0;
         /// Overloaded routine called when the total samples changes
 		virtual void onSetTotalSamples() = 0;
-
+        
     protected:
         /// Disallow instances of this class
         Counter();
-        
         /// Stores the current playback position of the attached component
         unsigned long _currentSample;
         /// Stores the total samples to playback from the attached component

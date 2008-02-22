@@ -21,6 +21,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "Logger.h"
+
 #include "scheduler.h"
 
 #define DO_CROSSFADES 1
@@ -46,11 +48,14 @@ scheduler::~scheduler() {
  *  long seconds		number of minutes to schedule for
  */
 void scheduler::doSchedule(long seconds) {
-	cout << " -> Scheduling " << seconds << " seconds of music." << endl;
+    const char* routine = "scheduler::doSchedule";
+    
+	L_INFO(LOG_SUESCHED,"Scheduling " + dps_itoa(seconds) 
+            + " seconds of music.");
 
 	// Check we're not aiming to schedule a stupid amount of time
 	if (seconds > 86400) {
-		cout << "   -> ERROR: max scheduling slot is 24hrs (86400)" << endl;
+		L_ERROR(LOG_SUESCHED,"Max scheduling slot is 24hrs (86400)");
 		return;
 	}
 	target_length_smpl = seconds * 44100;
@@ -71,24 +76,31 @@ void scheduler::doSchedule(long seconds) {
 #endif
 		)) {
 	}
-	S->printToScreen();
+	//if (!detach && !logQuiet) S->printToScreen();
 	
 #if (DO_EXPORT == 1)
 	S->exportToDatabase();	
 #endif
 	
-	complete();
-	cout << " -> Scheduling complete!" << endl;
-	cout << endl;
+	L_INFO(LOG_SUESCHED,"Scheduling complete.");
 }
+
+
+void scheduler::printSchedule() {
+    S->printToScreen();
+}
+
 
 /* Load data from database, create bins, etc
  */
 bool scheduler::initialise() {
+    const char* routine = "scheduler::initialise";
+    
+    L_INFO(LOG_SUESCHED, "Initialising.");
 	bins = new vector<sched_bin*>;
 	srand(time(0));
 	
-	cout << " -> Loading audio data..." << endl;
+	L_INFO(LOG_SUESCHED, "Loading audio data.");
 	bins->push_back(new sched_bin(BIN1_SQL,0));
 	bins->push_back(new sched_bin(BIN2_SQL,1));
 	bins->push_back(new sched_bin(BIN3_SQL,2));
@@ -97,28 +109,29 @@ bool scheduler::initialise() {
 	bins->push_back(new sched_bin(BIN6_SQL,5));
 	bins->push_back(new sched_bin(BIN7_SQL,6));
 
-    cout << " -> Getting Weightings..." << endl;
+    L_INFO(LOG_SUESCHED, "Getting Weightings...");
     bin_w[0] = atoi(getConfigParam("bin_weighting_1").c_str());
     bin_w[1] = atoi(getConfigParam("bin_weighting_2").c_str());
     bin_w[2] = atoi(getConfigParam("bin_weighting_3").c_str());
     bin_w[3] = atoi(getConfigParam("bin_weighting_4").c_str());
     bin_w[4] = atoi(getConfigParam("bin_weighting_5").c_str());
 
-	cout << " -> Initialisation complete." << endl;
+	L_INFO(LOG_SUESCHED, "Initialisation complete.");
 	return true;
 }
 
 bool scheduler::complete() {
-//	DB->commit();
+    const char* routine = "scheduler::complete";
 
-	cout << " -> Cleaning up..." << endl;
+	L_INFO(LOG_SUESCHED, "Cleaning up.");
 	for (unsigned int i = 0; i < bins->size(); i++)
 		delete bins->at(i);
 	delete bins;
 	return true;
 }
 
-/* Returns the number of tracks in the playlist
+/**
+ * Returns the number of tracks in the playlist
  */
 unsigned int scheduler::getPlaylistSize() {
     string SQL = "SELECT count(id) FROM audio WHERE sustainer='t'";
@@ -127,7 +140,8 @@ unsigned int scheduler::getPlaylistSize() {
     return x;
 }   
 
-/* Returns the total length of the tracks in the playlist
+/** 
+ * Returns the total length of the tracks in the playlist
  */
 unsigned long scheduler::getPlaylistLength() {
     string SQL = "SELECT sum(length_smpl) FROM audio "
@@ -137,7 +151,8 @@ unsigned long scheduler::getPlaylistLength() {
     return x;
 }   
 
-/* Returns the number of tracks in the playout schedule which are still
+/** 
+ * Returns the number of tracks in the playout schedule which are still
  * to play
  */
 unsigned int scheduler::getScheduleRemainSize() {
@@ -166,7 +181,9 @@ unsigned long scheduler::getScheduleRemainTime() {
  * TODO: Insert jingles and adverts
  */
 bool scheduler::doFill() {
-	cout << " -> Filling schedule..." << flush;
+    const char* routine = "scheduler::doFill";
+    
+	L_INFO(LOG_SUESCHED,"Filling schedule.");
     S->newSchedule();
 	int bin;
 	int checkcount = 0;
@@ -196,9 +213,8 @@ bool scheduler::doFill() {
 			checkcount++;
 			// give up after 50 attempts (and trying different bins)
 			if (checkcount > 50) {
-				cout << "failed!" << endl;
-				cout << " -> ERROR: Not enough tracks for this duration!" 
-					<< endl;
+				L_ERROR(LOG_SUESCHED,"fillSchedule() failed!");
+				L_ERROR(LOG_SUESCHED,"Not enough tracks for this duration!"); 
 				return false;
 			}
 			// give up after 10 attempts and hope for a different bin
@@ -214,19 +230,21 @@ bool scheduler::doFill() {
 			time_from_last_jingle += t.length_smpl;
 		}
 	}
-	cout << "done." << endl;
-	cout << "   -> Schedule length: " << S->getLength_pretty() << endl;
+	L_INFO(LOG_SUESCHED,"fillSchedule() completed.");
+	L_INFO(LOG_SUESCHED,"Schedule length: " + S->getLength_pretty());
 	return true;
 }
 
 /* Minimises the schedule, replacing tracks by shorter ones from same bin
  */
 bool scheduler::doMinimise() {
-	cout << " -> Minimising schedule...." << flush;
+    const char* routine = "scheduler::doMinimise";
+    
+	L_INFO(LOG_SUESCHED, "Starting minimising schedule.");
 	
 	if (S->getLength_smpl() <= target_length_smpl + (90 * ONE_SECOND)) {
-		cout << "skipped." << endl;
-		cout << "   -> INFO: Current schedule is within tolerance." << endl;
+		L_INFO(LOG_SUESCHED,"Skipped minimising schedule.");
+		L_INFO(LOG_SUESCHED,"Current schedule is within tolerance.");
 		return true;
 	}
 
@@ -258,13 +276,13 @@ bool scheduler::doMinimise() {
 		
 		// If we've failed to replace any tracks after 50 attempts, give up!
 		if (no_improve_count > 50) {
-			cout << "failed." << endl;
+			L_ERROR(LOG_SUESCHED,"Failed to minimise after 50 attempts.");
 			return false;
 		}
 	}
 	// Have successfully minimised schedule to within tolerance
-	cout << "done." << endl;
-	cout << "   -> Schedule length: " << S->getLength_pretty() << endl;
+	L_INFO(LOG_SUESCHED,"Completed minimising schedule.");
+	L_INFO(LOG_SUESCHED,"Schedule length: " + S->getLength_pretty());
 	return true;
 }
 
@@ -272,7 +290,9 @@ bool scheduler::doMinimise() {
  * for each track.
  */
 bool scheduler::doCrossfades() {
-	cout << " -> Computing Crossfades...";
+    const char* routine = "scheduler::doCrossfades";
+    
+	L_INFO(LOG_SUESCHED,"Computing Crossfades.");
 	track t, t_next, t_previous;
 	for (unsigned int i = 0; i < S->size(); i++) {
 		t = S->at(i);
@@ -294,8 +314,8 @@ bool scheduler::doCrossfades() {
 		S->remove(i);
 		S->add(t,i);
 	}
-	cout << "done." << endl;
-	cout << "   -> Schedule length: " << S->getLength_pretty() << endl;
+	L_INFO(LOG_SUESCHED,"Finished computing crossfades.");;
+	L_INFO(LOG_SUESCHED,"Schedule length: " + S->getLength_pretty());
 	return true;
 }
 		
@@ -384,11 +404,12 @@ bool scheduler::doCrossfades() {
 /* Fades out the last track to make accurate timing
  */
 bool scheduler::doFadeOut() {
-	cout << " -> Computing final fade-out..." << flush;
+    const char* routine = "scheduler::doFadeOut";
+    
+	L_INFO(LOG_SUESCHED,"Computing final fade-out.");
     if (S->getLength_smpl() < target_length_smpl) {
-		cout << "failed!" << endl;
-        cout << "   -> ERROR: Crossfades made schedule too short!" << endl;
-		cout << endl;
+		L_WARNING(LOG_SUESCHED,"Computing final fade-out failed!");
+        L_WARNING(LOG_SUESCHED,"Crossfades made schedule too short!");
         return false;
     }
 	unsigned long excess = S->getLength_smpl() - target_length_smpl;
@@ -397,7 +418,7 @@ bool scheduler::doFadeOut() {
 	t.fade_out_smpl = t.trim_end_smpl - (5 * ONE_SECOND);
 	S->remove(S->size() - 1);
 	S->add(t,-1);
-	cout << "done." << endl;
+	L_INFO(LOG_SUESCHED,"Computing final fade-out done.");
 	return true;
 }
 
@@ -410,6 +431,8 @@ bool scheduler::doFadeOut() {
  * \todo: replace with config class
  */
 string scheduler::getConfigParam(string name) {
+    const char* routine = "scheduler::getConfigParam";
+    
 	string SQL = "SELECT val FROM configuration WHERE parameter='"
 		+ name + "'";
 	PqxxResult R = DB->exec("SchedulerGetParam",SQL);
@@ -418,7 +441,7 @@ string scheduler::getConfigParam(string name) {
 		return R[0][0].c_str();
 	}
 	else {
-		cout << "NO RECORDS!" << flush;
+		L_ERROR(LOG_SUESCHED,"Requested config value doesn't exist!");
 		return "";
 	}
 }

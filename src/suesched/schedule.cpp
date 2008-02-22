@@ -20,6 +20,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "Logger.h"
+
 #include "schedule.h"
 
 schedule::schedule() {
@@ -50,8 +52,10 @@ void schedule::add(track t, short position) {
 /* Removes an item from the schedule
  */
 void schedule::remove(unsigned short position) {
+    const char* routine = "schedule::remove";
+    
     if (position >= S->size()) {
-        cout << "Invalid ID to remove" << endl;
+        L_CRITICAL(LOG_SUESCHED,"Invalid ID to remove");
         exit(-1);
     }
     S->erase(S->begin() + position);

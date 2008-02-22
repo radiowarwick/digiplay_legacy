@@ -68,6 +68,7 @@ class scheduler {
 		scheduler();
 		~scheduler();
 		void doSchedule(long seconds);
+        void printSchedule();
 		unsigned int getPlaylistSize();
 		unsigned long getPlaylistLength();
 		unsigned int getScheduleRemainSize();

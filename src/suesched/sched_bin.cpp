@@ -20,15 +20,19 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "Logger.h"
+
 #include "sched_bin.h"
 
 sched_bin::sched_bin(string SQL, unsigned short b) {
+    const char* routine = "sched_bin::sched_bin";
+    
     DB = new DataAccess();
 	bin = DB->exec("Sched_bin",SQL);
     DB->abort("Sched_bin");
 	if (bin.size() == 0) {
-		cout << " -> WARNING: bin " << b << " is empty!" << endl;
-		cout << "   -> SQL: " << SQL << endl;
+        L_WARNING(LOG_SUESCHED,"Bin " + dps_itoa(b) + " is empty!");
+        L_WARNING(LOG_SUESCHED,"SQL: " + SQL);
 	}
 	bin_id = b;
 	t_null.isNull = true;
@@ -43,10 +47,11 @@ unsigned int sched_bin::size() {
 }
 
 track sched_bin::at(unsigned int index) {
+    const char* routine = "sched_bin::at";
+    
 	track t;
 	if (index > size() - 1 || index < 0) {
-		cout << "sched_bin::title : ERROR index " << index 
-					<< " out of range" << endl;
+        L_ERROR(LOG_SUESCHED,"Index " + dps_itoa(index) + " out of range");
 		return t_null;
 	}
 	t.isNull = false;

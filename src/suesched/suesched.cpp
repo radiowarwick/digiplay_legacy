@@ -82,7 +82,8 @@ void processOptions(int argc, char *argv[]) {
     }
     if (logDebug) Logger::setDisplayLevel(INFO);
     if (logVerbose) Logger::setDisplayLevel(WARNING);
-    if (logQuiet) Logger::setDisplayLevel(CRITICAL);    
+    if (logQuiet) Logger::setDisplayLevel(CRITICAL);
+    if (detach) Logger::setDisplayLevel(CRITICAL);    
 }
 
 void signalHandler(int sig) {
@@ -163,7 +164,7 @@ void detachProcess() {
 
 int main(int argc, char *argv []) {
 	const char* routine = "suesched::main";
-    Logger::setAppName("sueplay");
+    Logger::setAppName("suesched");
     Logger::setLogLevel(INFO);
     Logger::setDisplayLevel(ERROR);
     Logger::initLogDir();
@@ -173,7 +174,7 @@ int main(int argc, char *argv []) {
     if (detach) {
         detachProcess();
     }
-	if (!detach) {
+	if (!detach && !logQuiet) {
 		system("clear");
 		cout << "Radio Warwick Sustainer" << endl;
 		cout << "-----------------------" << endl;
@@ -183,12 +184,16 @@ int main(int argc, char *argv []) {
 	scheduler *S = new scheduler();
 	while (true) {
 		if (S->getPlaylistSize() == 0) {
-			if (!detach) cout << "SCH::FATAL:Nothing to schedule!" << endl;
+			//if (!detach) {
+                L_CRITICAL(LOG_SUESCHED, "SCH::FATAL:Nothing to schedule!");
+            //}
 			exit(-1);
 		}
 		else {
-			if (S->getScheduleRemainSize() < 5)
+			if (S->getScheduleRemainSize() < 5) {
 				S->doSchedule(3600);
+                if (!detach && !logQuiet) S->printSchedule();
+            }
 		}
 		sleep(3);
 	}

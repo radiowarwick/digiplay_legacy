@@ -1,0 +1,65 @@
+#!/bin/sh
+
+DAEMON="/usr/bin/sueplay"
+PID="/var/run/sueplay.pid"
+OPTS="--daemon"
+
+set -e
+
+test -x $DAEMON || exit 0
+
+if test -f /etc/default/sueplay; then
+	. /etc/default/sueplay
+fi
+
+. /lib/lsb/init-functions
+
+check_log_dir() {
+	if [ ! -d /var/log/dps ]; then
+		mkdir /var/log/dps;
+		chmod 0755 /var/log/dps
+	fi
+}
+
+case "$1" in
+  start)
+	check_log_dir
+    log_daemon_msg "Starting Sustainer Playout service" "sueplay"
+	if start-stop-daemon --start --quiet --oknodo --pidfile $PID --exec $DAEMON -- $OPTS; then
+        log_end_msg 0
+    else
+        log_end_msg 1
+    fi
+    ;;
+  stop)
+    log_daemon_msg "Stopping Sustainer Playout service" "sueplay"
+    if start-stop-daemon --stop --quiet --oknodo --pidfile $PID; then
+        log_end_msg 0
+    else
+        log_end_msg 1
+    fi
+    ;;
+  reload|force-reload)
+    log_daemon_msg "Reloading Sustainer Playout service" "sueplay"
+    if start-stop-daemon --stop --signal 1 --quiet --oknodo --pidfile $PID --exec $DAEMON; then
+        log_end_msg 0
+    else
+        log_end_msg 1
+    fi
+    ;;
+  restart)
+    log_daemon_msg "Restarting Sustainer Playout service" "sueplay"
+    start-stop-daemon --stop --quiet --oknodo --pidfile $PID
+    check_log_dir
+    if start-stop-daemon --start --quiet --oknodo --pidfile $PID --exec $DAEMON -- $OPTS; then
+        log_end_msg 0
+    else
+        log_end_msg 1
+    fi
+    ;;
+  *)
+    log_action_msg "Usage: /etc/init.d/sueplay {start|stop|reload|force-reload|restart}"
+    exit 1
+esac
+
+exit 0

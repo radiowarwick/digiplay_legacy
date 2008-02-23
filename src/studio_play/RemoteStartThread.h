@@ -23,19 +23,20 @@
 #ifndef CLASS_REMOTE_START_THREAD
 #define CLASS_REMOTE_START_THREAD
 
-#include <qmutex.h>
-#include <qthread.h>
 #include <qapplication.h>
 #include <qobject.h>
 
+#include "Thread.h"
+
 class RemoteStartThread : public QObject,
-						  public QThread {
+						  public Thread {
 	
 	Q_OBJECT
 	
 	public:
 		RemoteStartThread();
-		void run();
+		void threadExecute();
+        void start();
 		void stop();
 
 	signals:
@@ -47,7 +48,7 @@ class RemoteStartThread : public QObject,
 		void player3_pause();
 	
 	private:
-		QMutex mutex;
+		ThreadMutex mutex;
 		QObject *receiver;
 		
 		bool stopped;

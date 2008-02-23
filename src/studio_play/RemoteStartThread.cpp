@@ -35,27 +35,27 @@ RemoteStartThread::RemoteStartThread() {
 	stopped = TRUE;
 }
 
-void RemoteStartThread::run() {
+void RemoteStartThread::threadExecute() {
     const char* routine = "RemoteStartThread::run";
 	mutex.lock();
 	stopped = FALSE;
 	mutex.unlock();
 	//Gain privilages to open the parallel port
-	gainPrivilage();
+	//gainPrivilage();
 	//Open the parallel port
-	if (ioperm(ADDRESS,2,1)) {
+/*	if (ioperm(ADDRESS,2,1)) {
 		//If the port cannot be opened drop privilages and log an error
-	    dropPrivilage();
+	    //dropPrivilage();
         char *error;
         sprintf(error, "Couldn't open parallel port at address %x\n", ADDRESS);
 	    L_ERROR(LOG_AUDIOHW, error);
 	}
 	else {
-		//If the port has been opened, drop privilages
-		dropPrivilage();
+*/		//If the port has been opened, drop privilages
+		//dropPrivilage();
 		while(!stopped) {
 			//Read in a byte from the parallel port status register
-			status = inb(ADDRESS+1);
+//			status = inb(ADDRESS+1);
 			//Check to see if the value has changed
 			if (status != old_status) {
 				//If it has, extract the bits that have changed (XOR)
@@ -106,9 +106,13 @@ void RemoteStartThread::run() {
 			}
 
 		usleep(100000);
-		}
+//		}
 	}
 
+}
+
+void RemoteStartThread::start() {
+    threadStart();    
 }
 
 void RemoteStartThread::stop() {

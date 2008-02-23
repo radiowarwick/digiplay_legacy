@@ -86,11 +86,6 @@ int main( int argc, char * argv[] )
     if (logVerbose) Logger::setDisplayLevel(WARNING);
     if (logQuiet) Logger::setDisplayLevel(CRITICAL);
 
-	if (isRoot()) {
-		L_INFO(LOG_DB,"Attempting to drop to unprivilaged user.");
-	    dropPrivilage();
-	}
-
 	// Create application and main window
     QApplication a( argc, argv );
     frmPlayout w;

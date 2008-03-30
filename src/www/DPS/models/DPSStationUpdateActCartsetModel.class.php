@@ -17,10 +17,9 @@ class DPSStationUpdateActCartsetModel extends Model {
 		global $cfg;
 		$db = Database::getInstance($cfg['DPS']['dsn']);
 		$cartsetID = pg_escape_string($this->fieldData['cartset']);
-		$loc = 1;
 		$cartset = array();
 		$cartset['val'] = $cartsetID;
-		$atWhere = "location = $loc and parameter = 'station_cartset'";
+		$atWhere = "parameter = 'station_cartset'";
 		$db->update('configuration', $cartset, $atWhere, true);
 	}
 		

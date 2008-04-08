@@ -125,6 +125,7 @@ unsigned int schedule::getCrossfadePoints() {
 
 void schedule::printToScreen() {
 	track t;
+    string desc;
 	cout << " -> Schedule length: " << getLength_pretty() << endl << endl;
 	cout << "    Title                                               "
 		<< "Length       ID" << endl;
@@ -132,7 +133,12 @@ void schedule::printToScreen() {
 		<< "--------------------" << endl;
 	for (unsigned short i = 0; i < S->size(); i++) {
 		t = S->at(i);
-		string desc = t.title + " (" + t.artists.at(0) + ")";
+        if (t.artists.size() > 0) {
+		    desc = t.title + " (" + t.artists.at(0) + ")";
+        }
+        else {
+            desc = t.title;
+        }
 		printf("%02i) %-50.50s [%10i] {%6i}\n",
 				(int)i, desc.c_str(), (int)t.length_smpl, (int)t.audio_id);
 	}

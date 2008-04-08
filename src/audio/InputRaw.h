@@ -10,23 +10,6 @@ using Audio::Input;
 
 class Audio::Counter;
 
-/**
- * Possible Cache states
- */
-enum CACHE_STATE {
-    CACHE_STATE_ACTIVE = 0,
-    CACHE_STATE_INACTIVE = 1
-};
-
-/**
- * Possible cache control commands
- */
-enum CACHE_COMMAND {
-    CACHE_COMMAND_NONE = 0,
-    CACHE_COMMAND_GO = 1,
-    CACHE_COMMAND_STOP = 2
-};
-
 /** Reads and caches audio from a raw pcm audio file.
  * This class reads and caches audio from a raw PCM audio file, storing the
  * audio in a cyclic cache and passing it out when requested by \c getAudio.

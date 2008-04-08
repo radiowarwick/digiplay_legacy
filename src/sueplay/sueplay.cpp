@@ -206,7 +206,7 @@ int main(int argc, char *argv []) {
     L_INFO(LOG_SUEPLAY, " -> Connecting to Database...");
     DataAccess* DB = new DataAccess();
 	
-	SQL_Item = "SELECT archives.localpath AS path, audio.md5 AS md5, audio.title AS title, audio.length_smpl AS length_smpl, sustschedule.id AS id, sustschedule.trim_start_smpl AS start, sustschedule.trim_end_smpl AS end, sustschedule.fade_in AS fade_in, sustschedule.fade_out AS fade_out, v_audio_music.artist FROM sustschedule, audio, archives, v_audio_music WHERE sustschedule.audioid = audio.id AND archives.id = audio.archive AND audio.id = v_audio_music.id ORDER BY sustschedule.id LIMIT 1";
+	SQL_Item = "SELECT archives.localpath AS path, v_audio.md5 AS md5, v_audio.title AS title, v_audio.length_smpl AS length_smpl, sustschedule.id AS id, sustschedule.trim_start_smpl AS start, sustschedule.trim_end_smpl AS end, sustschedule.fade_in AS fade_in, sustschedule.fade_out AS fade_out, v_audio.artist FROM sustschedule, archives, v_audio WHERE sustschedule.audioid = v_audio.id AND archives.id = v_audio.archiveid ORDER BY sustschedule.id LIMIT 1";
 	L_INFO(LOG_SUEPLAY, "done.");
 
 	// Create components
@@ -311,7 +311,6 @@ int main(int argc, char *argv []) {
 
 		fader[active]->addNode(fade_out,1.0);
 		fader[active]->addNode(end,0.0);
-
 		trig[active]->setTriggerSample(min(fade_out,end));
 		
         // Wait until last track has been played before we load the next

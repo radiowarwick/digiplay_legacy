@@ -499,7 +499,7 @@ int main(int argc, char *argv[])
 		memset(mcn, 0, sizeof (mcn));
 	
 		/* 1. display splash screen */
-		wnd_splash("Please insert an Music CD.");
+		wnd_splash("Please insert a Music CD.");
 
 		/* 2. poll the cdrom drive to see if a CD has been inserted */
 		fd = open((argc == 2) ? argv[1] : "/dev/cdrom", O_RDONLY | O_NONBLOCK);
@@ -568,7 +568,7 @@ int main(int argc, char *argv[])
 					tracks[i].uid[4], tracks[i].uid[5], tracks[i].uid[6], tracks[i].uid[7],
 					tracks[i].uid[8], tracks[i].uid[9], tracks[i].uid[10], tracks[i].uid[11],
 					tracks[i].uid[12], tracks[i].uid[13], tracks[i].uid[14], tracks[i].uid[15]);
-				execlp("cdparanoia", "cdparanoia", "-r", "-Y", buf2, buf, NULL);
+				execlp("cdparanoia", "cdparanoia", "-e", "-r", "-Y", buf2, buf, NULL);
 				_exit(-2);
 			}
 				

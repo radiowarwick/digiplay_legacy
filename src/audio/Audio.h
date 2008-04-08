@@ -78,4 +78,21 @@ struct ConnectionMapping {
     PORT remotePort;
 };
 
+/**
+ * Possible Cache states
+ */
+enum CACHE_STATE {
+    CACHE_STATE_ACTIVE = 0,
+    CACHE_STATE_INACTIVE = 1
+};
+
+/**
+ * Possible cache control commands
+ */
+enum CACHE_COMMAND {
+    CACHE_COMMAND_NONE = 0,
+    CACHE_COMMAND_GO = 1,
+    CACHE_COMMAND_STOP = 2
+};
+
 #endif

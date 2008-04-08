@@ -6,6 +6,8 @@ using std::endl;
 #include "InputRaw.h"
 using Audio::InputRaw;
 
+#define READ_PACKET 8192
+
 /**
  * Creates a new raw PCM input filereader. The size of the Cache to use may be
  * specified. If not specified, it defaults to 10 seconds.
@@ -38,7 +40,7 @@ InputRaw::InputRaw(unsigned int cache_size) {
 	f_end_byte = 0;
 	f_length_byte = 0;
 
-	audioBuffer = new char[5192];
+	audioBuffer = new char[READ_PACKET];
     
     // Start caching thread
     int retval = threadStart();
@@ -114,6 +116,12 @@ void InputRaw::getAudio(AudioPacket* audioData) {
 	// block of audio in terms of stereo samples.
 	audioData->setStart(pos);
 
+    // if we're playing, update all the attached counters with our current
+    // position in terms of stereo samples.
+    if (state == STATE_PLAY) {
+        updateCounters(pos);
+    }
+
 	// if cache is completely empty, stop
 	if (cacheSize == cacheFree) {
         if (f_end_byte - f_pos_byte > 256) {
@@ -121,6 +129,9 @@ void InputRaw::getAudio(AudioPacket* audioData) {
         }
         // First unlock the cache before we attempt to stop
         cacheLock.unlock();
+        
+        // Update counters with the end sample position
+        updateCounters(f_end_byte/4);
         
         // Stop the caching and reset
 		stop();
@@ -130,12 +141,6 @@ void InputRaw::getAudio(AudioPacket* audioData) {
 	    cacheLock.unlock();
     }
     
-	// if we're playing, update all the attached counters with our current
-	// position in terms of stereo samples.
-    if (state == STATE_PLAY) {
-        updateCounters(pos);
-    }
-
     return;
 }
 
@@ -338,22 +343,26 @@ void InputRaw::updateStates(enum STATE state) {
  * until the cache is filled to a predefined size.
  */
 void InputRaw::startCaching() {
+    cacheStateLock.lock();
+    
+    // If the cache is already active, stop the caching
     if (cacheState == CACHE_STATE_ACTIVE) {
-        threadSend(STOP);
-        while (cacheState == CACHE_STATE_ACTIVE) {
-            usleep(10000);
-        }
+        cacheStateLock.unlock();
+        stopCaching();
+    }
+    else {
+        cacheStateLock.unlock();
     }
     
+    // Start caching
     threadSend(START);
-
+    
     // Wait until the cache has preCacheSize audio or all audio,
     // whichever is smaller
     while ( cacheSize - cacheFree < preCacheSize 
             && cacheSize - cacheFree < f_length_byte) {
         usleep(1000);
     }
-
 }
 
 
@@ -363,14 +372,18 @@ void InputRaw::startCaching() {
  */
 void InputRaw::stopCaching() {
     // if we're still caching, instruct to stop caching
+    cacheStateLock.lock();
     if (cacheState == CACHE_STATE_ACTIVE) {
         threadSend(STOP);
     }
-    
+
     // Wait until we've actually stopped caching
     while (cacheState == CACHE_STATE_ACTIVE) {
+        cacheStateLock.unlock();
         usleep(10000);
+        cacheStateLock.lock();
     }
+    cacheStateLock.unlock();
 }
 
 
@@ -412,57 +425,82 @@ void InputRaw::onUnpatch(PORT localPort) {
 void InputRaw::threadExecute() {
     // Start of the caching thread. Only one thread is run during the
     // lifetime of this object.
+    ifstream *f = 0;
+    unsigned int read_bytes = READ_PACKET;
+    char *ptr = 0;
+    
     while (!threadTestKill()) {
-        cacheStateLock.lock();
 
+        // Wait until told to start caching a file
         while (!threadReceive(START)) {
             // purge any STOP commands while stopped
             threadReceive(STOP);
             usleep(10000);
         }
+        
+        // Open the file and check it's good to read
+        // if not, loop around and wait to be told to start again
+        // (hopefully with a new file)
+        f = new ifstream(f_filename.c_str(), ios::in|ios::binary);
+        if (!f) {
+            cout << "Unable to create file object" << endl;
+            continue;
+        }
+        if (f->is_open() && f->good() == false) {
+            cout << "Failed to open file '" << f_filename << "'" << endl;
+            continue;
+        }
 
+        // Set caching state as active
+        cacheStateLock.lock();
         cacheState = CACHE_STATE_ACTIVE;
         cacheStateLock.unlock();
 
-        // Open the file and check it's good to read
-        ifstream f(f_filename.c_str(), ios::in|ios::binary);
-        if (f.is_open() && f.good() == false) {
-            cout << "Failed to open file '" << f_filename << "'" << endl;
-            throw -1;
-        }
         loaded = true;
         
-        // Start caching open file
-    	f.clear();
-    	f.seekg(f_start_byte, ios::beg);
-    
-    	unsigned int READ_PACKET = 5192;
-    	unsigned int read_bytes = READ_PACKET;
-    	char *ptr;
-    
-    	while (//read_bytes == READ_PACKET &&             // Not end of file
-                !threadTestKill() &&                  // Thread not terminated
-                !threadReceive(STOP)) {         // Not told to stop
-            
-    		cacheLock.lock();
+        // Get file length and reset
+        f->seekg(0, ios::end);
+        if (f->tellg() < f_end_byte || f_end_byte == 0) {
+            f_end_byte = f->tellg();
+        }
 
+        f->clear();
+    	f->seekg(f_start_byte, ios::beg);
+
+        
+        /**************************************************
+         * CACHE AUDIO FILE
+         **************************************************/
+    	while ( !threadTestKill() &&            // Thread not terminated
+                !threadReceive(STOP)) {         // Not told to stop
+            // Lock the cache
+    		cacheLock.lock();
+            
+            // Handle seek requests first
             if (threadReceive(SEEK)) {
                 cacheRead = cacheStart;
                 cacheWrite = cacheStart;
                 cacheFree = cacheSize;
                 f_pos_byte = f_seek_byte;
-                f.seekg(f_seek_byte, ios::beg);
+                f->seekg(f_seek_byte, ios::beg);
             }
             
+            // Sleep if cache is full
     		if (cacheFree < READ_PACKET * 2) {
     			cacheLock.unlock();
     			usleep(10000);
     			continue;
     		}
     		
+            // Default number of bytes to read
             read_bytes = READ_PACKET;
-    		if (f_end_byte - f.tellg() < READ_PACKET) {
-    			read_bytes = f_end_byte - f.tellg();
+            
+            // If we have less than this, work out how many bytes left to read
+    		if (f_end_byte - f->tellg() < READ_PACKET) {
+    			read_bytes = f_end_byte - f->tellg();
+                // If there are in fact no bytes, then we're at the end
+                // So just keep sleeping until told to stop
+                // This allows the user to seek while it's still playing
     			if (read_bytes == 0) {
                     cacheLock.unlock();
                     usleep(10000);
@@ -470,15 +508,20 @@ void InputRaw::threadExecute() {
                 }
     		}
 
-    		f.read(audioBuffer, read_bytes);
-    		read_bytes = f.gcount();
+            // Read the audio from the file into a temp buffer
+    		f->read(audioBuffer, read_bytes);
+            
+            // See how many bytes we actually read
+    		read_bytes = f->gcount();
     
+            // If we didn't read any, then sleep (although an error must have occured!)
     		if (read_bytes == 0) {
                 cacheLock.unlock();
                 usleep(10000);
     			continue;
     		}
 
+            // Copy the read audio into the cache
     		ptr = audioBuffer;
     		for (unsigned int i = 0; i < read_bytes; i++) {
     			*cacheWrite = *ptr;
@@ -489,6 +532,9 @@ void InputRaw::threadExecute() {
     				cacheWrite = cacheStart;
     			}
     		}
+
+            // Unlock the cache to allow audio to be read out
+            cacheLock.unlock();
     		
     		//Bandwidth limiting on caching of audio to prevent hanging/stuttering
     		//during caching operations - to be decided on after testing...
@@ -497,17 +543,18 @@ void InputRaw::threadExecute() {
     		//required this should be plenty.
     		//if (cacheSize - cacheFree > preCacheSize) {
             //    usleep(1000);
-            //}
-            
-            cacheLock.unlock();
+            //}            
     	}
+
+        // Unlock the cache
+        cacheLock.unlock();
+        
+        // Close the file and delete
         loaded = false;
-        f.close();
-        f.clear();
-
-    	cacheLock.unlock();
-
-        // Reset cache state to inactive
+        f->close();
+        delete f;
+        
+        // Set cache state to inactive
         cacheStateLock.lock();
         cacheState = CACHE_STATE_INACTIVE;
         cacheStateLock.unlock();

@@ -952,11 +952,10 @@ AS
 			extro_smpl,lifespan,sustainer
     FROM v_audio_adverts
     UNION
-    SELECT 'Prerec'::character varying,id,md5,title,'' AS artist,pkg AS album,
+    SELECT 'Prerec'::character varying,id,md5,title,artist,album,
 			archiveid,archive,path,'0' AS track,'0' AS released,length_smpl,
-			start_smpl,end_smpl,intro_smpl,extro_smpl,lifespan,
-			enabled AS sustainer
-    FROM v_audio_jingles
+			start_smpl,end_smpl,intro_smpl,extro_smpl,lifespan,sustainer
+    FROM v_audio_prerec
 ORDER BY id;
 
 -- v_cartwalls

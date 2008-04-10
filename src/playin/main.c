@@ -31,6 +31,8 @@
 #include <linux/cdrom.h>
 #include <ncurses.h>
 #include <form.h>
+#include <time.h>
+#include <string.h>
 
 #define MIN(x,y) (((x) < (y)) ? x : y)
 
@@ -462,6 +464,164 @@ int handletrackinfo(struct track *t)
 	return 0;
 }
 
+void generate_info(struct track t, char *mcn[]) {
+	int len, fd, i = 0;
+	char buf[1023];
+
+	snprintf(buf, 1023, "/mnt/audio/audio/inbox/%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x.info",
+			t.uid[0], t.uid[1], t.uid[2], t.uid[3],
+			t.uid[4], t.uid[5], t.uid[6], t.uid[7],
+			t.uid[8], t.uid[9], t.uid[10], t.uid[11],
+			t.uid[12], t.uid[13], t.uid[14], t.uid[15]);
+	fd = open(buf, O_WRONLY | O_CREAT, 0644);
+	len = snprintf(buf, 1023, "uid: %.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x\n",
+			t.uid[0], t.uid[1], t.uid[2], t.uid[3],
+			t.uid[4], t.uid[5], t.uid[6], t.uid[7],
+			t.uid[8], t.uid[9], t.uid[10], t.uid[11],
+			t.uid[12], t.uid[13], t.uid[14], t.uid[15]);
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "title: %s\n", t.title);
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "artists: %s\n", t.artists);
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "album: %s\n", t.album);
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "tracknum: %d\n", t.num);
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "genres: %s\n", t.genres);
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "released: %s\n", t.year_rel);
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "lengthfr: %d\n", t.length_fr);
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "mcn: %s\n", mcn);
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "reclibid: %s\n", t.reclibid);
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "origin: %s\n", t.origin);
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "cdpresult: %s\n", t.result);
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "reclibinsert: %s\n", t.reclibinsert);
+	write(fd, buf, len);
+	close(fd);
+}
+
+void generate_xml(struct track t, char *mcn[]) {
+	int len, fd, i = 0;
+	char buf[1023];
+
+	snprintf(buf, 1023, "/mnt/audio/audio/inbox/%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x.xml",
+			t.uid[0], t.uid[1], t.uid[2], t.uid[3],
+			t.uid[4], t.uid[5], t.uid[6], t.uid[7],
+			t.uid[8], t.uid[9], t.uid[10], t.uid[11],
+			t.uid[12], t.uid[13], t.uid[14], t.uid[15]);
+	fd = open(buf, O_WRONLY | O_CREAT, 0644);
+
+	len = snprintf(buf, 1023, "<?xml version=\"1.0\"?>\n");
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "<!DOCTYPE audio_v1 SYSTEM \"dps.dtd\">\n");
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "<audio md5=\"%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x\"\n", 
+			t.uid[0], t.uid[1], t.uid[2], t.uid[3],
+			t.uid[4], t.uid[5], t.uid[6], t.uid[7],
+			t.uid[8], t.uid[9], t.uid[10], t.uid[11],
+			t.uid[12], t.uid[13], t.uid[14], t.uid[15]);
+	write(fd, buf, len);
+
+	for (i = strlen(t.title) - 1; i >= 0; i--) {
+		if ( t.title[i] == 32 )
+			t.title[i]=0;
+		else
+			break;
+	}
+	for (i = strlen(t.album) - 1; i >= 0; i--) {
+		if ( t.album[i] == 32 )
+			t.album[i]=0;
+		else
+			break;
+	}
+	for (i = strlen(t.origin) - 1; i >= 0; i--) {
+		if ( t.origin[i] == 32 )
+			t.origin[i]=0;
+		else
+			break;
+	}
+	for (i = strlen(t.year_rel) - 1; i >= 0; i--) {
+		if ( t.year_rel[i] == 32 )
+			t.year_rel[i]=0;
+		else
+			break;
+	}
+	for (i = strlen(t.reclibid) - 1; i >= 0; i--) {
+		if ( t.reclibid[i] == 32 )
+			t.reclibid[i]=0;
+		else
+			break;
+	}
+	for (i = strlen(t.artists) - 1; i >= 0; i--) {
+		if ( t.artists[i] == 32 )
+			t.artists[i]=0;
+		else
+			break;
+	}
+
+	len = snprintf(buf, 1023, "\t\tfiletype=\"raw\"\n");
+	write(fd, buf, len);
+	int n = time(NULL);
+	len = snprintf(buf, 1023, "\t\tcreationdate=\"%i\"\n", n);
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "\t\tcreator=\"\"\n");
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "\t\timportdate=\"\"\n");
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "\t\tripresult=\"%s\"\n", t.result);
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "\t\ttype=\"music\">\n");
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "\t<segment>\n");
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "\t\t<title>%s</title>\n", t.title);
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "\t\t<album name=\"%s\"\n", t.album);
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "\t\t\torigin=\"%s\">\n", t.origin);
+	write(fd, buf, len);
+	if (strlen(t.year_rel))
+		len = snprintf(buf, 1023, "\t\t\t<released>%s</released>\n", t.year_rel);
+	else 
+		len = snprintf(buf, 1023, "\t\t\t<released />\n");
+	write(fd, buf, len);
+	if (strlen(t.reclibid))
+		len = snprintf(buf, 1023, "\t\t\t<reclibid>%s</reclibid>\n", t.reclibid);	
+	else
+		len = snprintf(buf, 1023, "\t\t\t<reclibid />\n", t.reclibid);
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "\t\t</album>\n");
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "\t\t<artist name=\"%s\" />\n", t.artists);
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "\t\t<tracknum>%d</tracknum>\n", t.num);
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "\t\t<censor>No</censor>\n");
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "\t\t<smpl length=\"\"\n");
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "\t\t\ttrim_start=\"\"\n");
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "\t\t\ttrim_end=\"\"\n");
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "\t\t\tfade_in=\"\"\n");
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "\t\t\tfade_out=\"\" />\n");
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "\t</segment>\n");
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "</audio>\n");
+	write(fd, buf, len);
+	close(fd);
+}
+
 int main(int argc, char *argv[])
 {
 	int fd;
@@ -584,7 +744,7 @@ int main(int argc, char *argv[])
 						FD_SET(fdpair[0], &fdset);
 					select(fdpair[0]+1, &fdset, NULL, NULL, NULL);
 					if(fdpair[0] && FD_ISSET(fdpair[0], &fdset)) {
-						len = read(fdpair[0], buf, 1023);
+						len = read(fdpair[0], buf, 2048);
 						if (len > 0) {
 							buf[len] = 0;
 							updstatus(buf);
@@ -606,44 +766,8 @@ int main(int argc, char *argv[])
 				updstatus("Track Complete");
 			}
 			}
-			snprintf(buf, 1023, "/mnt/audio/audio/inbox/%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x.info",
-					tracks[i].uid[0], tracks[i].uid[1], tracks[i].uid[2], tracks[i].uid[3],
-					tracks[i].uid[4], tracks[i].uid[5], tracks[i].uid[6], tracks[i].uid[7],
-					tracks[i].uid[8], tracks[i].uid[9], tracks[i].uid[10], tracks[i].uid[11],
-					tracks[i].uid[12], tracks[i].uid[13], tracks[i].uid[14], tracks[i].uid[15]);
-			fd = open(buf, O_WRONLY | O_CREAT, 0644);
-			len = snprintf(buf, 1023, "uid: %.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x\n",
-					tracks[i].uid[0], tracks[i].uid[1], tracks[i].uid[2], tracks[i].uid[3],
-					tracks[i].uid[4], tracks[i].uid[5], tracks[i].uid[6], tracks[i].uid[7],
-					tracks[i].uid[8], tracks[i].uid[9], tracks[i].uid[10], tracks[i].uid[11],
-					tracks[i].uid[12], tracks[i].uid[13], tracks[i].uid[14], tracks[i].uid[15]);
-			write(fd, buf, len);
-			len = snprintf(buf, 1023, "title: %s\n", tracks[i].title);
-			write(fd, buf, len);
-			len = snprintf(buf, 1023, "artists: %s\n", tracks[i].artists);
-			write(fd, buf, len);
-			len = snprintf(buf, 1023, "album: %s\n", tracks[i].album);
-			write(fd, buf, len);
-			len = snprintf(buf, 1023, "tracknum: %d\n", tracks[i].num);
-			write(fd, buf, len);
-			len = snprintf(buf, 1023, "genres: %s\n", tracks[i].genres);
-			write(fd, buf, len);
-			len = snprintf(buf, 1023, "released: %s\n", tracks[i].year_rel);
-			write(fd, buf, len);
-			len = snprintf(buf, 1023, "lengthfr: %d\n", tracks[i].length_fr);
-			write(fd, buf, len);
-			len = snprintf(buf, 1023, "mcn: %s\n", mcn);
-			write(fd, buf, len);
-			len = snprintf(buf, 1023, "reclibid: %s\n", tracks[i].reclibid);
-			write(fd, buf, len);
-			len = snprintf(buf, 1023, "origin: %s\n", tracks[i].origin);
-			write(fd, buf, len);
-			len = snprintf(buf, 1023, "cdpresult: %s\n", tracks[i].result);
-			write(fd, buf, len);
-			len = snprintf(buf, 1023, "reclibinsert: %s\n", tracks[i].reclibinsert);
-			write(fd, buf, len);
-			close(fd);
-
+			generate_info(tracks[i], mcn);
+			generate_xml(tracks[i], mcn);
 		}
 
 		/* eject cd */

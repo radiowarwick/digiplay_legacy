@@ -197,7 +197,7 @@ int main(int argc, char *argv []) {
         detachProcess();
     }
 
-	string SQL_Item,SQL_Remove;
+	string SQL_Item,SQL_Detail,SQL_Remove;
 	PqxxResult R;
 	
 	L_INFO(LOG_SUEPLAY, " -> Reading configuration file");
@@ -206,7 +206,8 @@ int main(int argc, char *argv []) {
     L_INFO(LOG_SUEPLAY, " -> Connecting to Database...");
     DataAccess* DB = new DataAccess();
 	
-	SQL_Item = "SELECT archives.localpath AS path, v_audio.md5 AS md5, v_audio.title AS title, v_audio.length_smpl AS length_smpl, sustschedule.id AS id, sustschedule.trim_start_smpl AS start, sustschedule.trim_end_smpl AS end, sustschedule.fade_in AS fade_in, sustschedule.fade_out AS fade_out, v_audio.artist FROM sustschedule, archives, v_audio WHERE sustschedule.audioid = v_audio.id AND archives.id = v_audio.archiveid ORDER BY sustschedule.id LIMIT 1";
+	SQL_Item = "SELECT audioid FROM sustschedule ORDER BY id LIMIT 1"; 
+    SQL_Detail = "SELECT archives.localpath AS path, v_audio.md5 AS md5, v_audio.title AS title, v_audio.length_smpl AS length_smpl, sustschedule.id AS id, sustschedule.trim_start_smpl AS start, sustschedule.trim_end_smpl AS end, sustschedule.fade_in AS fade_in, sustschedule.fade_out AS fade_out, v_audio.artist FROM sustschedule, archives, v_audio WHERE sustschedule.audioid = v_audio.id AND archives.id = v_audio.archiveid";
 	L_INFO(LOG_SUEPLAY, "done.");
 
 	// Create components
@@ -244,7 +245,9 @@ int main(int argc, char *argv []) {
 			// Query database for next track to play
             L_INFO(LOG_SUEPLAY, "Retrieving next track from database.");
 			R = DB->exec("SuePlay",SQL_Item);
-
+            id = R[0]["audioid"].c_str();
+            R = DB->exec("SuePlay",SQL_Detail + " AND v_audio.id=" + id);
+             
 			// If no results, then schedule must have been depleated! Doh!
 			if (R.size() == 0) {
 				if (warn_flag) {

@@ -6,7 +6,7 @@
  * Creates a new CounterTrigger
  */
 Audio::CounterTrigger::CounterTrigger() {
-
+    _target = 0;
 }
 
 

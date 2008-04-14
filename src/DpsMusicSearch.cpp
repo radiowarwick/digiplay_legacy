@@ -74,7 +74,7 @@ std::vector<track> DpsMusicSearch::query(std::string search_string) {
 		searchTerms.push_back(buf);
 	noTerms = searchTerms.size();
 
-    SQL = "SELECT id, md5, artist, title, album, censor FROM v_audio_music "
+	SQL = "SELECT id, md5, artist, title, album, censor FROM v_audio_music "
  		    "WHERE dir = 2";
 
     int censor_start = atoi(conf->getParam("censor_start").c_str());

@@ -147,6 +147,8 @@ void TabPanelSearch::threadExecute() {
 }    
 
 void TabPanelSearch::processResults() {
+
+	qApp->lock();
     // Clear the list and enter search results (disable updates until done)
 	lstSearchResults->setUpdatesEnabled(false);
 	lstSearchResults->clear();
@@ -156,8 +158,6 @@ void TabPanelSearch::processResults() {
 		new QListViewItem( lstSearchResults, lstSearchResults->lastItem(),
 							"(Sorry, no matches found.)");
 
-		// Lock GUI while updating
-		qApp->lock();
 		btnLibrarySearch->setEnabled(true);
 		txtLibrarySearchText->setEnabled(true);
 		lstSearchResults->setUpdatesEnabled(true);
@@ -185,7 +185,7 @@ void TabPanelSearch::processResults() {
 	}
 
 	// Lock GUI while updating
-	qApp->lock();
+//	qApp->lock();
 	btnLibrarySearch->setEnabled(true);
 	txtLibrarySearchText->setEnabled(true);
 	lstSearchResults->setUpdatesEnabled(true);

@@ -147,9 +147,10 @@ void TabPanelSearch::threadExecute() {
 }    
 
 void TabPanelSearch::processResults() {
-
+	// Lock GUI while updating
 	qApp->lock();
-    // Clear the list and enter search results (disable updates until done)
+
+	// Clear the list and enter search results (disable updates until done)
 	lstSearchResults->setUpdatesEnabled(false);
 	lstSearchResults->clear();
 
@@ -184,8 +185,6 @@ void TabPanelSearch::processResults() {
 		}
 	}
 
-	// Lock GUI while updating
-//	qApp->lock();
 	btnLibrarySearch->setEnabled(true);
 	txtLibrarySearchText->setEnabled(true);
 	lstSearchResults->setUpdatesEnabled(true);

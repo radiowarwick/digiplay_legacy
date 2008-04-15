@@ -70,7 +70,7 @@ static struct option long_options[] = {
     {0,0,0,0}
 };
 
-static const char* short_options = "hvd:p:";
+static const char* short_options = "hvd:";
 
 void processOptions(int argc, char *argv []) {
     const char* routine = "playin::processOptions";

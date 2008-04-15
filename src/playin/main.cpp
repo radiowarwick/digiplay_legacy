@@ -34,9 +34,16 @@
 #include <time.h>
 #include <string.h>
 #include <getopt.h>
+#include <iostream>
+#include <string>
+#include "Config.h"
+#include "SystemManager.h"
+
 extern "C" {
 	#include "md5.h"
 }
+
+using namespace std;
 
 #define MIN(x,y) (((x) < (y)) ? x : y)
 
@@ -49,19 +56,21 @@ static int detach = 0;
 static int print_info = 0;
 extern char *optarg;
 extern int optind, optopt;
+string device="unset";
+string base_path="unset";
+Config *C;
 
-//    {"debug",           no_argument,    &logDebug, 1},
-//    {"verbose",         no_argument,    &logVerbose, 1},
-//    {"quiet",           no_argument,    &logQuiet, 1},
 static struct option long_options[] = {
+//	{"debug",           no_argument,    &logDebug, 1},
+//	{"verbose",         no_argument,    &logVerbose, 1},
+//	{"quiet",           no_argument,    &logQuiet, 1},
     {"help",            no_argument,    0, 'h'},
     {"version",         no_argument,    0, 'v'},
     {"device",          required_argument, 0, 'd'},
-    {"path",            required_argument, 0, 'p'},
     {0,0,0,0}
 };
 
-static const char* short_options = "hvdp";
+static const char* short_options = "hvd:p:";
 
 void processOptions(int argc, char *argv []) {
     const char* routine = "playin::processOptions";
@@ -77,21 +86,17 @@ void processOptions(int argc, char *argv []) {
                 printf("USAGE: %s", argv[0]);
 //              printf(" [--debug|--verbose|--quiet]");
 				printf(" [-h|--help]");
-                printf(" [-v|--version] [--device=DEVICE] [--path=PATH]\n");
+                printf(" [-v|--version] [--device=DEVICE]\n");
                 exit(0);
                 break;
             }
             case 'v': {
-                printf("DPS CD Playin Application %.2f\n", VERSION);
+                cout << "DPS CD Playin Application " << VERSION << endl;
                 exit(0);
                 break;
             }
 			case 'd': {
-				printf("Device: %s\n", optarg);
-				break;
-			}
-			case 'p': {
-				printf("Path: %s\n", optarg);
+				device = string(optarg);
 				break;
 			}
         }
@@ -106,7 +111,7 @@ void processOptions(int argc, char *argv []) {
 //	if (logQuiet) Logger::setDisplayLevel(CRITICAL);
 }
 
-struct track {
+struct cd_track {
 	int num;		/* physical track number */
 	int length_fr;	/* length of track in frames (75fps) */
 	int selected;	/* will we rip it ? */
@@ -127,7 +132,7 @@ struct track {
 	FORM  *form;
 };
 
-void freetracks(struct track *t, int num)
+void freetracks(struct cd_track *t, int num)
 {
 	int i;
 	for (i = 0; i < num; i++) {
@@ -152,7 +157,7 @@ void freetracks(struct track *t, int num)
 	}
 }
 
-struct track ttmp = {0};
+struct cd_track ttmp = {0};
 
 int term_rows = 0;
 int term_cols = 0;
@@ -161,7 +166,7 @@ WINDOW *win_title;
 WINDOW *win_main;
 WINDOW *win_status;
 
-int cdp2tracks(struct track **t, char *buf, int len)
+int cdp2tracks(struct cd_track **t, char *buf, int len)
 {
 	int i,j;
 	int ret = 0;
@@ -182,8 +187,8 @@ int cdp2tracks(struct track **t, char *buf, int len)
 
 		if (j == 3 && x == ']') {
 			ret++;
-			*t = (struct track *) realloc(*t, sizeof(struct track) * ret);
-			memset(*t + ret - 1, 0, sizeof(struct track));
+			*t = (struct cd_track *) realloc(*t, sizeof(struct cd_track) * ret);
+			memset(*t + ret - 1, 0, sizeof(struct cd_track));
 			/* got line */
 			(*t)[ret - 1].num = n;
 			(*t)[ret - 1].length_fr = l;
@@ -244,7 +249,7 @@ void updstatus(char *text)
 }
 
 
-void drawselection(WINDOW *win, struct track *tracks, int tracks_num, int start)
+void drawselection(WINDOW *win, struct cd_track *tracks, int tracks_num, int start)
 {
 	int i = start;
 	int w,h;
@@ -260,7 +265,7 @@ void drawselection(WINDOW *win, struct track *tracks, int tracks_num, int start)
 	}
 }
 
-void dotrackselect(struct track *tracks, int tracks_num)
+void dotrackselect(struct cd_track *tracks, int tracks_num)
 {
 	int pos = 0;
 	WINDOW *tmpwin;
@@ -353,7 +358,7 @@ void dotrackselect(struct track *tracks, int tracks_num)
 	}
 }
 
-int createtrackform(struct track *t)
+int createtrackform(struct cd_track *t)
 {
 	int i;
 
@@ -420,7 +425,7 @@ int createtrackform(struct track *t)
 	wrefresh(win_main);
 }
 
-void cleanuptrackform(struct track *t)
+void cleanuptrackform(struct cd_track *t)
 {
 	int i;
 	unpost_form(t->form);
@@ -429,7 +434,7 @@ void cleanuptrackform(struct track *t)
 		free_field(t->fields[i]);
 }
 
-int validatetrackform(struct track *t)
+int validatetrackform(struct cd_track *t)
 {
 	int rows;
 	
@@ -483,7 +488,7 @@ int validatetrackform(struct track *t)
 	return 0;
 }
 
-int handletrackinfo(struct track *t)
+int handletrackinfo(struct cd_track *t)
 {
 	int i;
 	int ch;
@@ -532,12 +537,12 @@ int handletrackinfo(struct track *t)
 	return 0;
 }
 
-void generate_info(struct track t, char mcn[]) {
+void generate_info(struct cd_track t, char mcn[]) {
 	int len, fd, i = 0;
 	char buf[1023];
 
-	snprintf(buf, 1023, "/mnt/audio/audio/inbox/%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x.info",
-			t.uid[0], t.uid[1], t.uid[2], t.uid[3],
+	snprintf(buf, 1023, "%s%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x.info",
+			base_path.c_str(), t.uid[0], t.uid[1], t.uid[2], t.uid[3],
 			t.uid[4], t.uid[5], t.uid[6], t.uid[7],
 			t.uid[8], t.uid[9], t.uid[10], t.uid[11],
 			t.uid[12], t.uid[13], t.uid[14], t.uid[15]);
@@ -575,12 +580,12 @@ void generate_info(struct track t, char mcn[]) {
 	close(fd);
 }
 
-void generate_xml(struct track t, char mcn[]) {
+void generate_xml(struct cd_track t, char mcn[]) {
 	int len, fd, i = 0;
 	char buf[1023];
 
-	snprintf(buf, 1023, "/mnt/audio/audio/inbox/%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x.xml",
-			t.uid[0], t.uid[1], t.uid[2], t.uid[3],
+	snprintf(buf, 1023, "%s%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x.xml",
+			base_path.c_str(), t.uid[0], t.uid[1], t.uid[2], t.uid[3],
 			t.uid[4], t.uid[5], t.uid[6], t.uid[7],
 			t.uid[8], t.uid[9], t.uid[10], t.uid[11],
 			t.uid[12], t.uid[13], t.uid[14], t.uid[15]);
@@ -697,20 +702,27 @@ int main(int argc, char *argv[])
 	char buf[10240];
 	int len;
 	int i;
+	SystemManager SM;
 
 	/* initialization */
 	processOptions(argc, argv);
-/*	if (!strlen(device))
-		devptr = "/dev/cdrom";
-	if (!strlen(path))
-		pathptr = "/mnt/audio/audio/inbox/";
-	else if (path[strlen(path)-1] != '/') {
-		printf("Paths must end with a /\n");
+	C = new Config("digiplay");
+	base_path = SM.atArchive(C->getParam("playin_archive"))->spec().localPath;
+	if (device == "unset")
+		device = "/dev/cdrom";
+	if (base_path == "" )
+		base_path = "/mnt/audio/audio/inbox/";
+	else if (base_path.substr(base_path.length()-1, 1) != "/" )
+		base_path = base_path + "/";
+	base_path += "inbox/";
+	DIR * dptr = opendir(base_path.c_str());
+	if (!dptr) {
+		cout << "That path is invalid" <<endl;
 		exit(1);
 	}
-	printf ("Device: %s, Path: %s", device, path);
-	exit(0);*/
-
+	closedir(dptr);
+	cout << "Device: " << device.c_str() << " Path: " << base_path.c_str() << endl;
+	
 	initscr();
 	cbreak();
 	noecho();
@@ -734,7 +746,7 @@ int main(int argc, char *argv[])
 	while(1) {
 		int fdpair[2];
 		int tracks_num;
-		struct track *tracks;
+		struct cd_track *tracks;
 		
 		memset(mcn, 0, sizeof (mcn));
 	
@@ -742,7 +754,7 @@ int main(int argc, char *argv[])
 		wnd_splash("Please insert a Music CD.");
 
 		/* 2. poll the cdrom drive to see if a CD has been inserted */
-		fd = open((argc == 2) ? argv[1] : "/dev/cdrom", O_RDONLY | O_NONBLOCK);
+		fd = open(device.c_str(), O_RDONLY | O_NONBLOCK);
 		while (1) {
 			int ret;
 			sleep(1);
@@ -803,8 +815,8 @@ int main(int argc, char *argv[])
 				close(fdpair[1]);
 				close(fdpair[0]);
 				snprintf(buf2, 128, "%d", tracks[i].num);
-				snprintf(buf, 1023, "/mnt/audio/audio/inbox/%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x",
-					tracks[i].uid[0], tracks[i].uid[1], tracks[i].uid[2], tracks[i].uid[3],
+				snprintf(buf, 1023, "%s%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x%.2x",
+					base_path.c_str(), tracks[i].uid[0], tracks[i].uid[1], tracks[i].uid[2], tracks[i].uid[3],
 					tracks[i].uid[4], tracks[i].uid[5], tracks[i].uid[6], tracks[i].uid[7],
 					tracks[i].uid[8], tracks[i].uid[9], tracks[i].uid[10], tracks[i].uid[11],
 					tracks[i].uid[12], tracks[i].uid[13], tracks[i].uid[14], tracks[i].uid[15]);
@@ -851,14 +863,14 @@ int main(int argc, char *argv[])
 		}
 
 		/* eject cd */
-		fd = open((argc == 2) ? argv[1] : "/dev/cdrom", O_RDONLY | O_NONBLOCK);
+		fd = open(device.c_str(), O_RDONLY | O_NONBLOCK);
 		ioctl(fd, CDROMEJECT);
 		close(fd);
 	
 		freetracks(tracks, tracks_num);
 		tracks_num = 0;
 		tracks = NULL;
-		memset(&ttmp, 0, sizeof(struct track));
+		memset(&ttmp, 0, sizeof(struct cd_track));
 	}
 	
 	/* clean up*/

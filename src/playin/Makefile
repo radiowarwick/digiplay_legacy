@@ -17,13 +17,14 @@ QT_ENABLED 	=	no
 # .cpp modules from which to create output
 MODS		=	main md5
 QT_MODS		=
-SHARED_MODS	=
+SHARED_MODS	=	Config dps DbTrigger Thread DataAccess Logger Security \
+				SystemManager ArchiveManager XmlDocument XmlElement
 
 # Global header files on which dependance exists
 HDRS		=
 
 # Compiler and linker options
-LIBS		=	-lncurses -lform
+LIBS		=	-lncurses -lform -lpq /usr/lib/libpqxx.a -lpthread
 
 # Compiled binaries are no longer put in $(ROOT)/bin
 #POSTCOMPILE =   cp cdparanoia $(ROOT)/bin

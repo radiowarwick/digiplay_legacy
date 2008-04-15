@@ -29,6 +29,7 @@
 
 #include "dps.h"
 #include "DataAccess.h"
+#include "DpsObject.h"
 #include "Config.h"
 
 class DpsMusicSearch {
@@ -36,7 +37,7 @@ class DpsMusicSearch {
     public:
 		DpsMusicSearch();
 		~DpsMusicSearch();
-		std::vector<track> query(std::string search_string);
+		std::vector<DpsShowTrack> query(std::string search_string);
 		bool searchTitle();
 		bool searchTitle(bool flag);
 		bool searchArtist();
@@ -49,7 +50,7 @@ class DpsMusicSearch {
         std::string lastQuery();
 	
 	private:
-		std::vector<track>* Q;
+		std::vector<DpsShowTrack>* Q;
 		Config *conf;
 	    DataAccess* DB;
 		bool searchTitle_flag;

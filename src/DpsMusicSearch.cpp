@@ -27,12 +27,13 @@
 
 #include "DataAccess.h"
 #include "DpsMusicSearch.h"
+#include "DpsObject.h"
 #include "Logger.h"
 
 DpsMusicSearch::DpsMusicSearch() {
     // Create a configuration object
     conf = new Config("digiplay");
-	Q = new std::vector<track>;
+	Q = new std::vector<DpsShowTrack>;
 }
 
 DpsMusicSearch::~DpsMusicSearch() {
@@ -47,7 +48,7 @@ DpsMusicSearch::~DpsMusicSearch() {
  * word 'The' is going to return a whole lot of results.  Might want
  * to return results incrementally as the search progresses.
  */
-std::vector<track> DpsMusicSearch::query(std::string search_string) {
+std::vector<DpsShowTrack> DpsMusicSearch::query(std::string search_string) {
 	const char* routine = "DpsMusicSearch::query";
 	strQueryString = search_string;
 
@@ -161,20 +162,11 @@ std::vector<track> DpsMusicSearch::query(std::string search_string) {
         throw;
     }
 
-    Q->resize(R.size());
-    for (unsigned int i = 0; i < R.size(); i++) {
-	    Q->at(i).title = R[i]["title"].c_str();
-	    Q->at(i).artists.push_back(R[i]["artist"].c_str());
-	    Q->at(i).album = R[i]["album"].c_str();
-	    Q->at(i).md5 = R[i]["md5"].c_str();
-	    Q->at(i).id = R[i]["id"].c_str();
-	    if (std::string(R[i]["censor"].c_str()) == "f") {
-		    Q->at(i).censor = false;
-	    } 
-        else {
-		    Q->at(i).censor = true;
-	    }
-    }
+	Q->clear();
+
+    for (unsigned int i = 0; i < R.size(); i++)
+	    Q->push_back(DpsShowTrack(R[i]["id"].c_str()));
+
 	return *Q;
 }
 

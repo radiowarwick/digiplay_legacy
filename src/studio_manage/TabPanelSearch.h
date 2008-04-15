@@ -79,7 +79,7 @@ class TabPanelSearch : 	public TabPanel,
 	
 		bool searching;
 		Config *conf;
-		vector<track> SearchResults;
+		vector<DpsShowTrack> SearchResults;
 		DpsMusicSearch* library_engine;
 		QPushButton *btnLibrarySearch;
 		QListView *lstSearchResults;

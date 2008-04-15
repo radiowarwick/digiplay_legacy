@@ -39,6 +39,7 @@
 
 #include "Auth.h"
 #include "Logger.h"
+#include "DpsObject.h"
 
 #include "TabPanelSearch.h"
 
@@ -173,12 +174,12 @@ void TabPanelSearch::processResults() {
 	QListViewItem *x;
 	for (unsigned int i = 0; i < SearchResults.size(); i++) {
 		x = new QListViewItem(  lstSearchResults, lstSearchResults->lastItem(),
-			SearchResults.at(i).title,
-			SearchResults.at(i).artists.at(0),
-			SearchResults.at(i).album,
-			SearchResults.at(i).id 
+			SearchResults.at(i)["title"],
+			SearchResults.at(i)["artist"],
+			SearchResults.at(i)["album"],
+			dps_itoa(SearchResults.at(i).getId()) 
                          );
-		if (SearchResults.at(i).censor) {
+		if (SearchResults.at(i)["censor"] == "t") {
 			x->setPixmap(0,*pixCensored);
 		} else {
 			x->setPixmap(0,*pixAudio);

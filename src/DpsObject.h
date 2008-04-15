@@ -149,8 +149,8 @@ class DpsShowTrack : public DpsShowItem {
         DpsShowTrack(const DpsShowplan& parent, std::string md5);
         DpsShowTrack(const DpsShowplan& parent, const DpsShowItem& after, std::string md5);
         virtual ~DpsShowTrack();
+        DpsShowTrack& operator=(const DpsShowTrack& item);
 
-        
     private:
         DpsShowTrack();
         void load(std::string md5);

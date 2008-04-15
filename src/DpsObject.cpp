@@ -342,6 +342,11 @@ DpsShowTrack::~DpsShowTrack() {
 
 // ----- DpsShowTrack Operators -----
 
+DpsShowTrack& DpsShowTrack::operator=(const DpsShowTrack& item) {
+    this->DpsShowItem::operator=(item);
+    return *this;
+}
+
 // ----- DpsShowTrack Member routines -----
 void DpsShowTrack::load(string id) {
     const char* routine = "DpsShowTrack::load";

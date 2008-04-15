@@ -668,7 +668,7 @@ void generate_xml(struct cd_track t, char mcn[]) {
 	if (strlen(t.reclibid))
 		len = snprintf(buf, 1023, "\t\t\t<reclibid>%s</reclibid>\n", t.reclibid);	
 	else
-		len = snprintf(buf, 1023, "\t\t\t<reclibid />\n", t.reclibid);
+		len = snprintf(buf, 1023, "\t\t\t<reclibid />\n");
 	write(fd, buf, len);
 	len = snprintf(buf, 1023, "\t\t</album>\n");
 	write(fd, buf, len);

@@ -471,7 +471,7 @@ std::vector<track> ArchiveManager::readXML(string filename) {
             if (f->get_name() == "album") {
                 for (unsigned int j = 0; j < f->count_elements(); j++) {
                     xmlAttribute g = f->get_attribute(j);
-        	        if (g.name == "album") 
+        	        if (g.name == "name") 
                         tracks.at(i).album = g.value;
                     if (g.name == "origin") 
                         tracks.at(i).origin = g.value;

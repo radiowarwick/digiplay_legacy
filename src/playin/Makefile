@@ -30,7 +30,9 @@ LIBS		=	-lncurses -lform
 
 # Include make rules and change any default variables
 include $(ROOT)/src/Makefile.in
-CC			=	gcc
-
+CCFLAGS         =      -D'VERSION="$(VERSION)"'
+#CC			=	gcc $(CCFLAGS)
+md5.o:	md5.c
+	gcc -c md5.c -o md5.o
 
 

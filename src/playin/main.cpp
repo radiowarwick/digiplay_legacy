@@ -33,13 +33,81 @@
 #include <form.h>
 #include <time.h>
 #include <string.h>
+#include <getopt.h>
+extern "C" {
+	#include "md5.h"
+}
 
 #define MIN(x,y) (((x) < (y)) ? x : y)
 
 #define NAME "RaW // Radio Warwick // Audio archive playin"
 
+static int logDebug = 0;
+static int logVerbose = 0;
+static int logQuiet = 0;
+static int detach = 0;
+static int print_info = 0;
+extern char *optarg;
+extern int optind, optopt;
+
+//    {"debug",           no_argument,    &logDebug, 1},
+//    {"verbose",         no_argument,    &logVerbose, 1},
+//    {"quiet",           no_argument,    &logQuiet, 1},
+static struct option long_options[] = {
+    {"help",            no_argument,    0, 'h'},
+    {"version",         no_argument,    0, 'v'},
+    {"device",          required_argument, 0, 'd'},
+    {"path",            required_argument, 0, 'p'},
+    {0,0,0,0}
+};
+
+static const char* short_options = "hvdp";
+
+void processOptions(int argc, char *argv []) {
+    const char* routine = "playin::processOptions";
+
+    // Process options
+    while (1) {
+        int v;
+        int option_index = 0;
+        v = getopt_long (argc, argv, short_options,long_options, &option_index);
+        if (v == -1) break;
+        switch (v) {
+            case 'h': {
+                printf("USAGE: %s", argv[0]);
+//              printf(" [--debug|--verbose|--quiet]");
+				printf(" [-h|--help]");
+                printf(" [-v|--version] [--device=DEVICE] [--path=PATH]\n");
+                exit(0);
+                break;
+            }
+            case 'v': {
+                printf("DPS CD Playin Application %.2f\n", VERSION);
+                exit(0);
+                break;
+            }
+			case 'd': {
+				printf("Device: %s\n", optarg);
+				break;
+			}
+			case 'p': {
+				printf("Path: %s\n", optarg);
+				break;
+			}
+        }
+    }
+
+//	if (logDebug + logVerbose + logQuiet > 1) {
+//		L_ERROR(LOG_DB,"Only one verbosity level may be specified");
+//		exit(-1);
+//	}
+//	if (logDebug) Logger::setDisplayLevel(INFO);
+//	if (logVerbose) Logger::setDisplayLevel(WARNING);
+//	if (logQuiet) Logger::setDisplayLevel(CRITICAL);
+}
+
 struct track {
-	int num;	/* physical track number */
+	int num;		/* physical track number */
 	int length_fr;	/* length of track in frames (75fps) */
 	int selected;	/* will we rip it ? */
 
@@ -464,7 +532,7 @@ int handletrackinfo(struct track *t)
 	return 0;
 }
 
-void generate_info(struct track t, char *mcn[]) {
+void generate_info(struct track t, char mcn[]) {
 	int len, fd, i = 0;
 	char buf[1023];
 
@@ -507,7 +575,7 @@ void generate_info(struct track t, char *mcn[]) {
 	close(fd);
 }
 
-void generate_xml(struct track t, char *mcn[]) {
+void generate_xml(struct track t, char mcn[]) {
 	int len, fd, i = 0;
 	char buf[1023];
 
@@ -631,6 +699,18 @@ int main(int argc, char *argv[])
 	int i;
 
 	/* initialization */
+	processOptions(argc, argv);
+/*	if (!strlen(device))
+		devptr = "/dev/cdrom";
+	if (!strlen(path))
+		pathptr = "/mnt/audio/audio/inbox/";
+	else if (path[strlen(path)-1] != '/') {
+		printf("Paths must end with a /\n");
+		exit(1);
+	}
+	printf ("Device: %s, Path: %s", device, path);
+	exit(0);*/
+
 	initscr();
 	cbreak();
 	noecho();
@@ -694,7 +774,7 @@ int main(int argc, char *argv[])
 			while ((i = read(fdpair[0], buf + len, 10240 - len)))
 				len += i;
 			close(fdpair[0]);
-			wait(NULL);
+			wait();
 		}
 		wclear(win_main);
 		tracks_num = cdp2tracks(&tracks, buf, len);

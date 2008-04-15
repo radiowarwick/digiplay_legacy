@@ -118,12 +118,20 @@ void SystemManager::createArchive(string name, string localPath,
     const char* routine = "SystemManager::createArchive";
 
     // Change to the localPath and try to create the directory structure
-    std::string command = "mkdir -p " + localPath + "; cd " + localPath + "; ";
-    command += "mkdir -p 0 1 2 3 4 5 6 7 8 9 a b c d e f inbox trash";
+    std::string command = "mkdir -p " + localPath + " 2> /dev/null";
     int rv = system(command.c_str());
     if (rv != 0) {
         L_ERROR(LOG_DB,"Unable to create archive directory structure.");
         L_ERROR(LOG_DB," -> shell code is " + dps_itoa(rv));
+		exit(1);
+    }
+	command = "cd " + localPath + "; ";
+    command += "mkdir -p 0 1 2 3 4 5 6 7 8 9 a b c d e f inbox trash";
+    rv = system(command.c_str());
+    if (rv != 0) {
+        L_ERROR(LOG_DB,"Unable to create archive directory structure.");
+        L_ERROR(LOG_DB," -> shell code is " + dps_itoa(rv));
+		exit(1);
     }
 
     // Now add this archive to the system.

@@ -703,11 +703,18 @@ int main(int argc, char *argv[])
 	int len;
 	int i;
 	SystemManager SM;
+	ArchiveManager *AM;
 
 	/* initialization */
 	processOptions(argc, argv);
 	C = new Config("digiplay");
-	base_path = SM.atArchive(C->getParam("playin_archive"))->spec().localPath;
+
+	AM = SM.atArchive(C->getParam("playin_archive"));
+	if (!AM) {
+		cout << "Invalid archive in database or config perameter missing" << endl;
+		exit(1);
+	}
+	base_path = AM->spec().localPath;
 	if (device == "unset")
 		device = "/dev/cdrom";
 	if (base_path == "" )

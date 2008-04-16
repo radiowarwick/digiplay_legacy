@@ -41,18 +41,14 @@ void RemoteStartThread::threadExecute() {
 	mutex.lock();
 	stopped = FALSE;
 	mutex.unlock();
-	//Gain privilages to open the parallel port
-	//gainPrivilage();
 	//Open the parallel port
 	if (ioperm(ADDRESS,2,1)) {
-		//If the port cannot be opened drop privilages and log an error
-	    //dropPrivilage();
+		//If the port cannot be opened log an error
         sprintf(error, "Couldn't open parallel port at address %x\n", ADDRESS);
 	    L_ERROR(LOG_AUDIOHW, error);
 	}
 	else {
-		//If the port has been opened, drop privilages
-		//dropPrivilage();
+		//If the port has been opened, log a confirmation message
         sprintf(error, "Succesfully opened parallel port at address %x\n", ADDRESS);
 	    L_INFO(LOG_AUDIOHW, error);
 		while(!stopped) {

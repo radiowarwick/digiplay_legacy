@@ -9,7 +9,7 @@
 -- unless explicitly set.
 --
 SET check_function_bodies = false;
-CREATE OR REPLACE FUNCTION v_tree_getInherited(IN int8, IN int8) RETURNS bit(8) AS '
+CREATE OR REPLACE FUNCTION v_tree_getInherited(IN int8, IN int8) RETURNS bit(8) AS $$
     DECLARE
         int_id ALIAS FOR $1;
         int_userid ALIAS FOR $2;
@@ -23,14 +23,15 @@ CREATE OR REPLACE FUNCTION v_tree_getInherited(IN int8, IN int8) RETURNS bit(8) 
                     WHERE id = int_id AND userid = int_userid 
                     GROUP BY id;
         IF NOT FOUND THEN
-            RETURN \'00000000\';
+            RETURN '00000000';
         END IF;
         RETURN bit_permissions;
-    END' LANGUAGE 'plpgsql';
+    END $$ LANGUAGE 'plpgsql';
 
 --
 -- array_accum
 --
+DROP AGGREGATE IF EXISTS array_accum(anyelement) CASCADE;
 CREATE AGGREGATE array_accum (
     sfunc = array_append,
     basetype = anyelement,
@@ -453,74 +454,74 @@ ORDER BY itemtype, name;
 -- v_tree_cartset_explicit
 -- Show the explicitely defined permissions on cartset objects
 --
-CREATE OR REPLACE VIEW v_tree_cartset_explicit
+CREATE OR REPLACE VIEW v_tree_aw_sets_explicit
     (id,name,parent,userid,username,permissions,causetype,cause)
 AS
-    SELECT  cartsets.id AS id,
-            cartsets.name AS name,
-            cartsetsdir.dirid AS parent,
+    SELECT  aw_sets.id AS id,
+            aw_sets.name AS name,
+            aw_sets_dir.dir_id AS parent,
             users.id AS userid,
             users.username AS username,
-            cartsetsusers.permissions AS permissions,
+            aw_sets_users.permissions AS permissions,
             'user'::text AS causetype,
             users.id AS cause
-    FROM    cartsets, cartsetsdir, cartsetsusers, users
-    WHERE   (cartsetsdir.cartsetid = cartsets.id)
-        AND (cartsetsusers.cartsetid = cartsets.id)
-        AND (cartsetsusers.userid = users.id)
+    FROM    aw_sets, aw_sets_dir, aw_sets_users, users
+    WHERE   (aw_sets_dir.set_id = aw_sets.id)
+        AND (aw_sets_users.set_id = aw_sets.id)
+        AND (aw_sets_users.user_id = users.id)
 
     UNION
 
-    SELECT  cartsets.id AS id,
-            cartsets.name AS name,
-            cartsetsdir.dirid AS parent,
+    SELECT  aw_sets.id AS id,
+            aw_sets.name AS name,
+            aw_sets_dir.dir_id AS parent,
             users.id AS userid,
             users.username AS username,
-            cartsetsgroups.permissions AS permissions,
+            aw_sets_groups.permissions AS permissions,
             'group'::text AS causetype,
             groups.id AS cause
-    FROM    cartsets, cartsetsdir, cartsetsgroups, usersgroups, users, groups
-    WHERE   (cartsetsdir.cartsetid = cartsets.id)
-        AND (cartsetsgroups.cartsetid = cartsets.id)
-        AND (cartsetsgroups.groupid = groups.id)
+    FROM    aw_sets, aw_sets_dir, aw_sets_groups, usersgroups, users, groups
+    WHERE   (aw_sets_dir.set_id = aw_sets.id)
+        AND (aw_sets_groups.set_id = aw_sets.id)
+        AND (aw_sets_groups.group_id = groups.id)
         AND (usersgroups.groupid = groups.id)
         AND (usersgroups.userid = users.id)
 ;
 
 --
--- v_tree_cartset_inherited
--- Shows the inherited user and group permissions defined on a cartset
+-- v_tree_aw_sets_inherited
+-- Shows the inherited user and group permissions defined on an audiowall set
 --
-CREATE OR REPLACE VIEW v_tree_cartset_inherited
+CREATE OR REPLACE VIEW v_tree_aw_sets_inherited
     (id,name,parent,userid,username,permissions,causetype,cause)
 AS  
-    SELECT  cartsets.id,
-            cartsets.name,
-            cartsetsdir.dirid,
+    SELECT  aw_sets.id,
+            aw_sets.name,
+            aw_sets_dir.dir_id,
             users.id,
             users.username,
-            v_tree_getInherited(cartsetsdir.dirid,users.id) AS permissions,
+            v_tree_getInherited(aw_sets_dir.dir_id,users.id) AS permissions,
             'inherited'::text AS causetype,
             users.id AS cause
-    FROM    (cartsets inner join cartsetsdir 
-                    ON (cartsets.id = cartsetsdir.cartsetid))
+    FROM    (aw_sets inner join aw_sets_dir 
+                    ON (aw_sets.id = aw_sets_dir.set_id))
              cross join users
-    WHERE   v_tree_getInherited(cartsetsdir.dirid,users.id) != '00000000'
-        AND (cartsetsdir.inherit = 't')
+    WHERE   v_tree_getInherited(aw_sets_dir.dir_id,users.id) != '00000000'
+        AND (aw_sets_dir.inherit = 't')
 ;
 
 --
--- v_tree_cartset
+-- v_tree_aw_sets
 -- Show the overall permissions defined on cartset objects
 --
-CREATE OR REPLACE VIEW v_tree_cartset
+CREATE OR REPLACE VIEW v_tree_aw_sets
     (id,name,parent,userid,username,permissions)
 AS
     SELECT id,name,parent,userid,username,bit_or(permissions) AS permissions
     FROM (
-        SELECT * FROM v_tree_cartset_explicit
+        SELECT * FROM v_tree_aw_sets_explicit
         UNION
-        SELECT * FROM v_tree_cartset_inherited
+        SELECT * FROM v_tree_aw_sets_inherited
     ) AS Q1
     GROUP BY id,name,parent,userid,username
     HAVING bit_or(permissions) != '00000000'
@@ -612,31 +613,31 @@ CREATE OR REPLACE VIEW v_tree_showplan_explicit
 AS
     SELECT  showplans.id AS id,
             showplans.name AS name,
-            showplandir.dirid AS parent,
+            showplansdir.dirid AS parent,
             users.id AS userid,
             users.username AS username,
-            showplanusers.permissions AS permissions,
+            showplansusers.permissions AS permissions,
             'user'::text AS causetype,
             users.id AS cause
-    FROM    showplans, showplandir, showplanusers, users
-    WHERE   (showplandir.showplanid = showplans.id)
-        AND (showplanusers.showplanid = showplans.id)
-        AND (showplanusers.userid = users.id)
+    FROM    showplans, showplansdir, showplansusers, users
+    WHERE   (showplansdir.showplanid = showplans.id)
+        AND (showplansusers.showplanid = showplans.id)
+        AND (showplansusers.userid = users.id)
 
     UNION
 
     SELECT  showplans.id AS id,
             showplans.name AS name,
-            showplandir.dirid AS parent,
+            showplansdir.dirid AS parent,
             users.id AS userid,
             users.username AS username,
-            showplangroups.permissions AS permissions,
+            showplansgroups.permissions AS permissions,
             'group'::text AS causetype,
             groups.id AS cause
-    FROM    showplans, showplandir, showplangroups, usersgroups, users, groups
-    WHERE   (showplandir.showplanid = showplans.id)
-        AND (showplangroups.showplanid = showplans.id)
-        AND (showplangroups.groupid = groups.id)
+    FROM    showplans, showplansdir, showplansgroups, usersgroups, users, groups
+    WHERE   (showplansdir.showplanid = showplans.id)
+        AND (showplansgroups.showplanid = showplans.id)
+        AND (showplansgroups.groupid = groups.id)
         AND (usersgroups.groupid = groups.id)
         AND (usersgroups.userid = users.id)
 ;
@@ -650,17 +651,17 @@ CREATE OR REPLACE VIEW v_tree_showplan_inherited
 AS
     SELECT  showplans.id,
             showplans.name,
-            showplandir.dirid,
+            showplansdir.dirid,
             users.id,
             users.username,
-            v_tree_getInherited(showplandir.dirid,users.id) AS permissions,
+            v_tree_getInherited(showplansdir.dirid,users.id) AS permissions,
             'inherited'::text AS causetype,
             users.id AS cause
-    FROM    (showplans inner join showplandir 
-                    ON (showplans.id = showplandir.showplanid))
+    FROM    (showplans inner join showplansdir 
+                    ON (showplans.id = showplansdir.showplanid))
              cross join users
-    WHERE   v_tree_getInherited(showplandir.dirid,users.id) != '00000000'
-        AND (showplandir.inherit = 't')
+    WHERE   v_tree_getInherited(showplansdir.dirid,users.id) != '00000000'
+        AND (showplansdir.inherit = 't')
 ;
 
 --
@@ -692,7 +693,7 @@ AS
     FROM (
         SELECT 'dir' AS itemtype, v_tree_dir.* FROM v_tree_dir
         UNION
-        SELECT 'cartset' AS itemtype, v_tree_cartset.* FROM v_tree_cartset
+        SELECT 'aw_set' AS itemtype, v_tree_aw_sets.* FROM v_tree_aw_sets
         UNION
         SELECT 'script' AS itemtype, v_tree_script.* FROM v_tree_script
         UNION
@@ -710,33 +711,33 @@ GROUP BY itemtype, id, name, parent, userid, username
 HAVING bit_or(permissions) != '00000000'
 ORDER BY itemtype, name;
 
--- v_cartwalls
-CREATE OR REPLACE VIEW v_cartwalls
+-- v_audiowalls
+CREATE OR REPLACE VIEW v_audiowalls
 AS
     SELECT  audio.md5 AS md5, 
             archives.localpath AS path, 
             audio.start_smpl AS start, 
             audio.end_smpl AS end, 
-            cartsaudio.cart AS cart, 
-            cartsaudio.text AS text, 
-            cartwalls.name AS wall_name, 
-            cartwalls.description AS wall_desc,
-            cartwalls.page AS page, 
-            cartsets.id AS cartset_id, 
-            cartsets.name AS cartset, 
-            cartsets.description AS cartset_desc, 
-            cartproperties.name AS prop_name, 
-            cartstyleprops.value AS prop_value
-    FROM    audio, cartsaudio, cartwalls, cartsets, cartstyles, cartstyleprops,
-            cartproperties, archives
-    WHERE   (cartsaudio.audioid = audio.id)
-        AND (cartsaudio.cartwallid = cartwalls.id)
-        AND (cartwalls.cartsetid = cartsets.id)
-        AND (cartsaudio.cartstyleid = cartstyles.id)
-        AND (cartstyleprops.cartstyleid = cartstyles.id)
-        AND (cartstyleprops.cartpropertyid = cartproperties.id)
+            aw_items.item AS item, 
+            aw_items.text AS text, 
+            aw_walls.name AS wall_name, 
+            aw_walls.description AS wall_desc,
+            aw_walls.page AS page, 
+            aw_sets.id AS set_id, 
+            aw_sets.name AS set, 
+            aw_sets.description AS set_desc, 
+            aw_props.name AS prop_name, 
+            aw_styles_props.value AS prop_value
+    FROM    audio, aw_items, aw_walls, aw_sets, aw_styles, aw_styles_props,
+            aw_props, archives
+    WHERE   (aw_items.audio_id = audio.id)
+        AND (aw_items.wall_id = aw_walls.id)
+        AND (aw_walls.set_id = aw_sets.id)
+        AND (aw_items.style_id = aw_styles.id)
+        AND (aw_styles_props.style_id = aw_styles.id)
+        AND (aw_styles_props.prop_id = aw_props.id)
         AND (audio.archive = archives.id)
-    ORDER BY cartwalls.id, cartsaudio.cart, cartproperties.id;
+    ORDER BY aw_walls.id, aw_items.item, aw_props.id;
 
 -- v_scripts
 CREATE OR REPLACE VIEW v_scripts
@@ -808,7 +809,8 @@ AS
             audio.intro_smpl AS intro_smpl, 
             audio.extro_smpl AS extro_smpl, 
             lifespans.data AS lifespan, 
-            audio.sustainer AS sustainer
+            audio.sustainer AS sustainer,
+            audio.filetype AS filetype
     FROM audio, audioartists, artists, albums, archives, lifespans, 
          audiodir, dir
     WHERE   (audioartists.audioid = audio.id)
@@ -824,7 +826,8 @@ AS
             archives.name, archives.localpath, audio.music_track,
             audio.music_released, audio.origin, audio.censor, audiodir.dirid,
             audio.length_smpl, audio.start_smpl, audio.end_smpl, 
-            audio.intro_smpl, audio.extro_smpl, lifespans.data, audio.sustainer
+            audio.intro_smpl, audio.extro_smpl, lifespans.data, 
+            audio.sustainer, audio.filetype
     ORDER BY audio.md5;
 
 -- v_audio_jingles
@@ -846,7 +849,8 @@ AS
             audio.end_smpl AS end_smpl, 
             audio.intro_smpl AS intro_smpl, 
             audio.extro_smpl AS extro_smpl, 
-            lifespans.data AS lifespan
+            lifespans.data AS lifespan,
+            audio.filetype AS filetype
     FROM audio, archives, audiojinglepkgs, jinglepkgs, jingletypes, audiodir,
          dir, lifespans
     WHERE   (archives.id = audio.archive)
@@ -878,7 +882,8 @@ AS
             audio.intro_smpl AS intro_smpl, 
             audio.extro_smpl AS extro_smpl,
             lifespans.data AS lifespan, 
-            'f'::character(1) AS sustainer
+            'f'::character(1) AS sustainer,
+            audio.filetype AS filetype
     FROM audio, archives, audiodir, dir, lifespans, companies
     WHERE   (archives.id = audio.archive)
         AND (audio.type = 3)
@@ -910,7 +915,8 @@ AS
             audio.intro_smpl AS intro_smpl, 
             audio.extro_smpl AS extro_smpl, 
             lifespans.data AS lifespan, 
-            audio.sustainer AS sustainer
+            audio.sustainer AS sustainer,
+            audio.filetype AS filetype
     FROM audio, audioartists, artists, albums, archives, lifespans, 
          audiodir, dir
     WHERE   (audioartists.audioid = audio.id)
@@ -926,64 +932,36 @@ AS
             archives.name, archives.localpath, audio.music_track,
             audio.music_released, audio.origin, audio.censor, audiodir.dirid,
             audio.length_smpl, audio.start_smpl, audio.end_smpl, 
-            audio.intro_smpl, audio.extro_smpl, lifespans.data, audio.sustainer
+            audio.intro_smpl, audio.extro_smpl, lifespans.data, audio.sustainer,
+            audio.filetype
     ORDER BY audio.md5;
 
 -- v_audio
 CREATE OR REPLACE VIEW v_audio
     (audiotype,id,md5,title,artist,album,archiveid,archive,path,track,released,
         length_smpl,start_smpl,end_smpl,intro_smpl,extro_smpl,lifespan,
-        sustainer)
+        sustainer,filetype)
 AS
     SELECT 'Music'::character varying,id,md5,title,artist,album,archiveid,
 			archive,path,track,released,length_smpl,start_smpl,end_smpl,
-			intro_smpl,extro_smpl,lifespan,sustainer
+			intro_smpl,extro_smpl,lifespan,sustainer,filetype
     FROM v_audio_music
     UNION
     SELECT 'Jingle'::character varying,id,md5,title,'' AS artist,pkg AS album,
 			archiveid,archive,path,'0' AS track,'0' AS released,length_smpl,
 			start_smpl,end_smpl,intro_smpl,extro_smpl,lifespan,
-			enabled AS sustainer
+			enabled AS sustainer,filetype
     FROM v_audio_jingles
     UNION
     SELECT 'Advert'::character varying,id,md5,title,'' AS artist,
 			company AS album,archiveid,archive,path,'0' AS track,
 			'0' AS released,length_smpl,start_smpl,end_smpl,intro_smpl,
-			extro_smpl,lifespan,sustainer
+			extro_smpl,lifespan,sustainer,filetype
     FROM v_audio_adverts
     UNION
     SELECT 'Prerec'::character varying,id,md5,title,artist,album,
 			archiveid,archive,path,'0' AS track,'0' AS released,length_smpl,
-			start_smpl,end_smpl,intro_smpl,extro_smpl,lifespan,sustainer
+			start_smpl,end_smpl,intro_smpl,extro_smpl,lifespan,sustainer, 
+			filetype
     FROM v_audio_prerec
 ORDER BY id;
-
--- v_cartwalls
-CREATE OR REPLACE VIEW v_cartwalls
-AS
-	SELECT 	audio.md5 AS md5, 
-			archives.localpath AS path, 
-			audio.start_smpl AS start, 
-			audio.end_smpl AS end, 
-			cartsaudio.cart AS cart, 
-			cartsaudio.text AS text, 
-			cartwalls.name AS wall_name, 
-			cartwalls.description AS wall_desc, 
-			cartwalls.page AS page, 
-			cartsets.id AS cartset_id, 
-			cartsets.name AS cartset, 
-			cartsets.description AS cartset_desc, 
-			cartproperties.name AS prop_name, 
-			cartstyleprops.value AS prop_value
-	FROM 	audio, cartsaudio, cartwalls, cartsets, cartstyles,
-			cartstyleprops, cartproperties, archives
-	WHERE 	(cartsaudio.audioid = audio.id)
-    	AND (cartsaudio.cartwallid = cartwalls.id)
-    	AND (cartwalls.cartsetid = cartsets.id)
-    	AND (cartsaudio.cartstyleid = cartstyles.id)
-    	AND (cartstyleprops.cartstyleid = cartstyles.id)
-    	AND (cartstyleprops.cartpropertyid = cartproperties.id)
-    	AND (audio.archive = archives.id)
-	ORDER BY cartwalls.id, cartsaudio.cart, cartproperties.id
-;
-

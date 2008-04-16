@@ -56,7 +56,7 @@ TabPanelPlaylist::TabPanelPlaylist(QTabWidget *parent, string text)
 	DB = new DataAccess();	
     
     // Create database trigger for playlist updates. 
-    triggerPlaylist = new QtTrigger("triggerPlaylist","trig_id5");
+    triggerPlaylist = new QtTrigger("triggerPlaylist","t_playlists");
     connect(triggerPlaylist, SIGNAL(trigger()), 
                                     this, SLOT(processPlaylistUpdate()));
 }

@@ -153,8 +153,8 @@ void Directory::setOpen( bool o ) {
                     F = new FileItem(this,name,"Audio Advert");
                     F->setPixmap( fileAdvert );
                 }
-                else if (type == "cartset") {
-                    F = new FileItem(this,name,"Cartset");
+                else if (type == "aw_set") {
+                    F = new FileItem(this,name,"AudioWall Set");
                     F->setPixmap( fileCartset );
                 }
                 else if (type == "script") {
@@ -229,7 +229,7 @@ DirectoryView::DirectoryView( QWidget *parent, const char *name, bool sdo )
         fileJingle = new QPixmap(path + "/images/jingle16.png");
         fileAdvert = new QPixmap(path + "/images/jingle16.png");
         fileScript = new QPixmap(path + "/images/script16.png");
-        fileCartset = new QPixmap(path + "/images/cartset16.png");
+        fileCartset = new QPixmap(path + "/images/awset16.png");
         fileShowplan = new QPixmap(path + "/images/info16.png");
     }
 

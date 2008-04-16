@@ -121,37 +121,9 @@ void UserManager::remove(User u, std::string T) {
     try {
         SQL = "SELECT id FROM users WHERE username='" + u.username + "'";
         id = DB->exec(T,SQL)[0][0].c_str();
-        // User configuration data
-        SQL = "DELETE FROM usersconfigs WHERE userid=" + id;
-        DB->exec(T,SQL);
-        // Group memberships
-        SQL = "DELETE FROM usersgroups WHERE userid=" + id;
-        DB->exec(T,SQL);
-        // Object permissions
-        SQL = "DELETE FROM audiousers WHERE userid=" + id;
-        DB->exec(T,SQL);
-        SQL = "DELETE FROM cartsetsusers WHERE userid=" + id;
-        DB->exec(T,SQL);
-        SQL = "DELETE FROM dirusers WHERE userid=" + id;
-        DB->exec(T,SQL);
-        SQL = "DELETE FROM scriptsusers WHERE userid=" + id;
-        DB->exec(T,SQL);
-        SQL = "DELETE FROM showplanusers WHERE userid=" + id;
-        DB->exec(T,SQL);
         // The user
         SQL = "DELETE FROM users WHERE username='" + u.username + "'";
         DB->exec(T,SQL);
-        // The user's home directory
-        SQL = "SELECT id FROM dir WHERE name='" + u.username + "' "
-                "AND parent=" DIR_USERS;
-        id = DB->exec(T,SQL)[0][0].c_str();
-        SQL = "DELETE FROM dirgroups WHERE dirid=" + id;
-        DB->exec(T,SQL);
-        SQL = "DELETE FROM dir WHERE name='" + u.username + "' "
-                "AND parent=" DIR_USERS;
-        DB->exec(T,SQL);
-
-        // Commit all changes
         if (standalone) DB->commit(T);
     }
     catch (...) {

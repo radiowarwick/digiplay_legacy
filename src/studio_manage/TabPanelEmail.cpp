@@ -64,7 +64,7 @@ TabPanelEmail::TabPanelEmail(QTabWidget *parent, string text)
     E = new DpsEmail();
 
     // Create a trigger on the email table so we update when changes are made.
-    triggerEmail = new QtTrigger("triggerEmail","trig_id2");
+    triggerEmail = new QtTrigger("triggerEmail","t_email");
     
     // Upon triggering, run the getEmail() routine.
     connect(triggerEmail, SIGNAL(trigger()),

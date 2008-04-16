@@ -372,7 +372,7 @@
         <dia:real val="5.5999999999999996"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#showplandir#</dia:string>
+        <dia:string>#showplansdir#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
@@ -661,7 +661,7 @@
         <dia:real val="4.8000000000000007"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#showplangroups#</dia:string>
+        <dia:string>#showplansgroups#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
@@ -1107,7 +1107,7 @@
         <dia:real val="4.8000000000000007"/>
       </dia:attribute>
       <dia:attribute name="name">
-        <dia:string>#showplanusers#</dia:string>
+        <dia:string>#showplansusers#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
         <dia:string>##</dia:string>
@@ -1830,7 +1830,7 @@
         <dia:point val="23.16,17.6759"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="22.36,9.33222;34.735,18.4759"/>
+        <dia:rectangle val="22.36,9.34722;34.735,18.4759"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="23.16,17.6759"/>
@@ -1896,7 +1896,7 @@
         <dia:point val="29.535,21.1759"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="29.035,19.502;41.385,21.9759"/>
+        <dia:rectangle val="29.035,19.517;41.385,21.9759"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="29.535,21.1759"/>
@@ -2030,7 +2030,7 @@
         <dia:point val="16.785,21.1759"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="10.985,19.675;22.41,21.9759"/>
+        <dia:rectangle val="10.985,19.69;22.41,21.9759"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="16.785,21.1759"/>
@@ -2234,7 +2234,7 @@
         <dia:point val="51.375,8.475"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="46.685,7.375;54.405,11.1822"/>
+        <dia:rectangle val="46.685,7.39;54.405,11.1822"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="51.375,8.475"/>
@@ -2302,7 +2302,7 @@
         <dia:point val="51.675,19.275"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="44.735,18.175;56.73,21.352"/>
+        <dia:rectangle val="44.735,18.19;56.73,21.352"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="51.675,19.275"/>
@@ -2370,7 +2370,7 @@
         <dia:point val="51.875,30.675"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="44.785,29.575;57.555,32.315"/>
+        <dia:rectangle val="44.785,29.59;57.555,32.315"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="51.875,30.675"/>

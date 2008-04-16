@@ -72,18 +72,6 @@ void GroupManager::remove(Group g, std::string T) {
     std::string id = groupId(g,T);
 
     try {
-        SQL = "DELETE FROM usersgroups WHERE groupid=" + id;
-        DB->exec(T,SQL);
-        SQL = "DELETE FROM audiogroups WHERE groupid=" + id;
-        DB->exec(T,SQL);
-        SQL = "DELETE FROM cartsetsgroups WHERE groupid=" + id;
-        DB->exec(T,SQL);
-        SQL = "DELETE FROM dirgroups WHERE groupid=" + id;
-        DB->exec(T,SQL);
-        SQL = "DELETE FROM scriptsgroups WHERE groupid=" + id;
-        DB->exec(T,SQL);
-        SQL = "DELETE FROM showplangroups WHERE groupid=" + id;
-        DB->exec(T,SQL);
         SQL = "DELETE FROM groups WHERE name='" + g.name + "'";
         DB->exec(T,SQL);
         if (standalone) DB->commit(T);

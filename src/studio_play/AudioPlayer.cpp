@@ -33,6 +33,14 @@ using namespace std;
 #include "Logger.h"
 #include "dps.h"
 
+#include "audio/Audio.h"
+#include "audio/Input.h"
+#include "audio/InputRaw.h"
+#include "audio/InputFlac.h"
+#include "audio/OutputDsp.h"
+#include "audio/Counter.h"
+using namespace Audio;
+
 #include "AudioPlayer.h"
 
 AudioPlayer::AudioPlayer(QWidget *parent, const char* name, unsigned short playerId) 
@@ -54,10 +62,8 @@ AudioPlayer::AudioPlayer(QWidget *parent, const char* name, unsigned short playe
     // Setup audio
     _lastSample = 0;
 	// Set up new InputRaw with 10 minute cache for network resiliance
-    audioFilereader = new Audio::InputRaw(105840000);
-    audioPlayer = new Audio::OutputDsp(device);
-    audioFilereader->patch(OUT0,audioPlayer,IN0);
-    audioFilereader->addCounter(this);
+    audioFilereader = 0;
+    audioPlayer = new OutputDsp(device);
 
     length_hours = 0;
     length_mins = 0;
@@ -108,16 +114,39 @@ void AudioPlayer::load() {
         L_ERROR(LOG_PLAYOUT, "No such track!");
         return;
     }
+
+    string ext = "";
+    string filetype(R[0]["filetype"].c_str());
+
+    if (audioFilereader) {
+        audioFilereader->unpatch(OUT0);
+        delete audioFilereader;        
+    }
+
+    if (filetype == "raw") {
+        audioFilereader = new InputRaw(105840000);
+    }
+    else if (filetype == "flac") {
+        audioFilereader = new InputFlac(105840000);
+        ext = ".flac";
+    }
+    else {
+        cout << "Unknown file type: " << filetype << endl;
+    }
+
+    audioFilereader->patch(OUT0,audioPlayer,IN0);
+    audioFilereader->addCounter(this);
     string f = R[0]["path"].c_str() + string("/") 
                 + (string(R[0]["md5"].c_str())).substr(0,1)
-                + string("/") + R[0]["md5"].c_str();
+                + string("/") + R[0]["md5"].c_str() + ext;
+
     audioFilereader->load(f, atoi(R[0]["start_smpl"].c_str()),
                                     atoi(R[0]["end_smpl"].c_str()));
+                                    
     conf->setParam("next_on_showplan","");
     conf->setParam("player" + id + "_md5", string(R[0]["md5"].c_str()));
 
 	qApp->lock();
-
     lblTitle->setText(R[0]["title"].c_str());
     lblArtist->setText(R[0]["artist"].c_str());
     btnPlay->setEnabled(true);
@@ -125,7 +154,7 @@ void AudioPlayer::load() {
     btnLog->setEnabled(true);
     sldSeek->setEnabled(true);
 	qApp->unlock();
-    
+
     // Set last sample to be the end sample and update counter
     _lastSample = _totalSamples;
     onSetSample();

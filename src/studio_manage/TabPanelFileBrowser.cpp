@@ -122,8 +122,8 @@ void TabPanelFileBrowser::handleLoad(QListViewItem* x) {
             DpsShowScript S(atoi(x->text(2).ascii()));
             emit scriptSelected( S );
         }
-        if (x->text(1) == "Cartset") {
-            emit cartsetSelected( x->text(2) );
+        if (x->text(1) == "AudioWall Set") {
+            emit awsetSelected( x->text(2) );
         }
         if (x->text(1) == "Showplan") {
             DpsShowplan s;

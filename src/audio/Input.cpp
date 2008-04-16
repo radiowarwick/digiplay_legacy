@@ -69,11 +69,12 @@ void Input::getAudio(AudioPacket* audioData) {
             //cout << "Flushing remainder of cache into buffer." << endl;
             bytes = cacheSize - cacheFree;
         }
-        // if we're still caching, the cache has emptied, so stutter.
+        // if we're still caching, the cache has emptied, oops!
         else {
-            //cacheRead-=PACKET_BYTES;
-            //cacheFree-=PACKET_BYTES;
-            //f_pos_byte-=PACKET_BYTES;
+            cout << "WARNING: buffer seems to be empty, yet we haven't reached end of file!" << endl;
+            cout << "Audio length: " << f_length_byte << endl;
+            cout << "Current pos:  " << f_pos_byte - f_start_byte << endl;
+            bytes = cacheSize - cacheFree;
         }
     }
     
@@ -96,7 +97,6 @@ void Input::getAudio(AudioPacket* audioData) {
         ++ptr;
         ++count;
     }
-    
     // set the absolute position (relative to the start point) of this
     // block of audio in terms of stereo samples.
     audioData->setStart(pos);
@@ -108,7 +108,7 @@ void Input::getAudio(AudioPacket* audioData) {
     }
 
     // if cache is completely empty, stop
-    if (cacheSize == cacheFree) {
+    if (cacheFree >= cacheSize) {
         if (f_end_byte - f_pos_byte > 256) {
             cout << "WARNING: Ran out of cached audio before end of file." << endl;
         }

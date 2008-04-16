@@ -52,7 +52,7 @@ void Audio::CounterTrigger::onSetTotalSamples() {
  * Sets the target which will receive actions from this trigger.
  * @param   I           InputRaw component to receive actions
  */
-void Audio::CounterTrigger::setTriggerTarget(InputRaw *I) {
+void Audio::CounterTrigger::setTriggerTarget(Input *I) {
 	_target = I;
 }
 
@@ -91,7 +91,7 @@ void Audio::CounterTrigger::waitTrigger() {
 void Audio::CounterTrigger::waitStop() {
 	while (_state != STATE_STOP) {
 		usleep(1000);
-	}
+    }
 }
 
 

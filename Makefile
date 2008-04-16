@@ -31,7 +31,7 @@ ADMIN		=	dpsadmin
 PLAYIN		=	playin
 DATABASE	=	db
 ALL			=	$(AUDIO) $(STUDIO) $(SUE) $(ADMIN) $(PLAYIN) $(DATABASE) \
-				audioplay audiotest
+				audioplay audiotest audioflac
 
 # Built Executables
 EXE_STUDIO_MANAGE	=	src/studio_manage/studio_manage

@@ -39,7 +39,7 @@
  * Config Manager
  */
 ConfigManager::ConfigManager(std::string application)
-		: Trigger("trig_id1") {
+		: Trigger("t_configuration") {
 	DB = new DataAccess();
 	setFlag = false;
     init = false;

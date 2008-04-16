@@ -41,6 +41,13 @@ void OutputDsp::receiveMessage(PORT inPort, MESSAGE message) {
         case PAUSE:
             audioState = STATE_PAUSE;
             break;
+        case STOP:
+            if (isThreadActive()) {
+                threadKill();
+                threadWait();
+            }
+            audioState = STATE_STOP;
+            break;
         default:
             break;
     }
@@ -76,13 +83,24 @@ void OutputDsp::threadExecute() {
 
     AudioPacket *buffer = new AudioPacket(PACKET_SAMPLES);
     char* d = (char*)(buffer->getData());
-	Component *C = connectedDevice(IN0);
+	Component *C;
 
-	while (audioState != STATE_STOP) {
+	while (!threadTestKill()) {
+        if (audioState == STATE_STOP) {
+            usleep(100);
+            continue;
+        }
+        
         if (audioState == STATE_PAUSE) {
             usleep(100);
             continue;
         }
+        
+        if (!(C = connectedDevice(IN0))) {
+            usleep(100);
+            continue;
+        }
+        
 		C->getAudio(buffer);
 		for (unsigned int i = 0; i < PACKET_MULTIPLIER; i++) {
 			if (write (audio, d+(i*AUDIO_BUFFER), AUDIO_BUFFER) 

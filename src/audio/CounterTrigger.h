@@ -1,7 +1,7 @@
 #ifndef CLASS_COUNTER_TRIGGER
 #define CLASS_COUNTER_TRIGGER
 
-#include "InputRaw.h"
+#include "Input.h"
 
 #include "Counter.h"
 
@@ -26,7 +26,7 @@ class Audio::CounterTrigger : public Audio::Counter {
         void onSetTotalSamples();
 
         /// Set the InputRaw component to trigger when conditions are met.
-		void setTriggerTarget(InputRaw *I);
+		void setTriggerTarget(Input *I);
         /// Set the sample at which the event should trigger
 		void setTriggerSample(unsigned long sample);
         /// Blocks execution until the trigger sample has passed
@@ -37,7 +37,7 @@ class Audio::CounterTrigger : public Audio::Counter {
 		void waitPlay();
 
     private:
-		InputRaw *_target;
+		Input *_target;
 		unsigned long _smpl;
 		bool _passed;
 };

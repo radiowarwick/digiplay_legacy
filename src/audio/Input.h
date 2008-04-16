@@ -84,6 +84,7 @@ class Audio::Input : public virtual Audio::Component {
         // Counters
         vector<Audio::Counter*> countersList;
         
+        
 
 };
 

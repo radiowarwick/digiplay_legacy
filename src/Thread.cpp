@@ -12,7 +12,12 @@ Thread::Thread() {
 }
 
 Thread::~Thread() {
+    pthread_mutex_destroy(&t_messages_mutex);
+    pthread_mutex_destroy(&t_terminate_mutex);
+    pthread_attr_destroy(&threadAttr);
 
+    threadKill();
+    threadWait();
 }
 
 /**

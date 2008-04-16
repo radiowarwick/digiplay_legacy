@@ -59,7 +59,7 @@ class TabPanelFileBrowser : public TabPanel {
         /// Emitted when a script is selected from the browser.
         void scriptSelected( DpsShowScript& S );
         /// Emitted when a cartset is selected from the browser.
-        void cartsetSelected( QString index );
+        void awsetSelected( QString index );
         /// Emitted when a showplan is selected from the browser.
         void showplanSelected( DpsShowplan& s );
 

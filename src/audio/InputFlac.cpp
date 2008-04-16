@@ -23,6 +23,7 @@ InputFlac::~InputFlac() {
 
 }
 
+
 void InputFlac::load(string filename, long start_smpl, long end_smpl) {
     if (filename == "") throw -1;
 
@@ -39,21 +40,40 @@ void InputFlac::load(string filename, long start_smpl, long end_smpl) {
     // Lock cache to be safe
     cacheLock.lock();
 
-	FLAC__StreamDecoderInitStatus retval = init(filename);
+    if (f.is_open()) {
+        f.close();
+        f.clear();
+    }
+    f.open(filename.c_str(), ios::in|ios::binary);
+
+    if (!f.good()) {
+        cout << "Failed to open file [" << filename << "]" << endl;
+        throw -1;
+    }
+
+    set_md5_checking(true);
+	FLAC__StreamDecoderInitStatus retval = init();
     if(retval != FLAC__STREAM_DECODER_INIT_STATUS_OK) {
         fprintf(stderr, "ERROR: initializing decoder: %s\n", FLAC__StreamDecoderInitStatusString[retval]);
         throw -1;
     }
-    
     process_until_end_of_metadata();
-    if (sample_rate == 44100) {
-        cout << "Samplerate is correct." << endl;
+    
+    if (sample_rate != 44100) {
+        cout << "Samplerate is incorrect: " << sample_rate << endl;
+        throw -1;
     }
-    if (channels == 2) {
-        cout << "Channels are correct." << endl;
+    if (channels != 2) {
+        cout << "Number of channels are incorrect: " << channels << endl;
+        throw -1;
     }
-    if (bps == 16) {
-        cout << "Sample bits are correct." << endl;
+    if (bps != 16) {
+        cout << "Sample bits are incorrect: " << bps << endl;
+        throw -1;
+    }
+    // reset file length if given length doesn't match the actual file
+    if (total_samples < f_end_byte || f_end_byte == 0) {
+        f_end_byte = total_samples*4 - f_start_byte;
     }
 
     // Initialise position variables, counters and reset cache
@@ -69,7 +89,7 @@ void InputFlac::load(string filename, long start_smpl, long end_smpl) {
     cacheLock.unlock();
 
     updateCounters(0);
-    updateTotals(f_length_byte/4);
+    updateTotals(f_length_byte / 4);
 
     try {
         startCaching();
@@ -78,18 +98,6 @@ void InputFlac::load(string filename, long start_smpl, long end_smpl) {
         throw -1;
     }
 }
-
-void InputFlac::seek(long sample) {
-	sample -= (sample % 64);
-	bool retval = seek_absolute((FLAC__uint64)(sample));
-	if (!retval)
-		cout << "Error seeking to stream position " << sample << endl;
-	cacheWrite = cacheRead;
-	cacheFree = cacheSize;
-}
-
-
-
 
 /**
  * Processes messages received from other audio components.
@@ -120,13 +128,13 @@ void InputFlac::onUnpatch(PORT localPort) {
 
 
 void InputFlac::threadExecute() {
-
     while (!threadTestKill()) {
         // Wait until told to start caching a file
-        while (!threadReceive(START)) {
+        if (!threadReceive(START)) {
             // purge any STOP commands while stopped
             threadReceive(STOP);
             usleep(10000);
+            continue;
         }
 
         // Set caching state as active
@@ -135,12 +143,11 @@ void InputFlac::threadExecute() {
         cacheStateLock.unlock();
 
         loaded = true;
+        cachedBytes = 0;
         
-        // reset file length if given length doesn't match the actual file
-        if (total_samples < f_end_byte || f_end_byte == 0) {
-            f_end_byte = total_samples - f_start_byte;
+        if (!seek_absolute((FLAC__uint64)(f_start_byte/4))) {
+            cout << "Failed to seek" << endl;
         }
-        seek_absolute((FLAC__uint64)(f_start_byte/4));
         
         /**************************************************
          * CACHE AUDIO FILE
@@ -156,12 +163,18 @@ void InputFlac::threadExecute() {
                 cacheWrite = cacheStart;
                 cacheFree = cacheSize;
                 f_pos_byte = f_seek_byte;
+                cachedBytes = f_seek_byte;
                 seek_absolute((FLAC__uint64)(f_seek_byte/4));
             }
-            
-            if (cacheFree < 128000) {
+
+            // get_blocksize() returns number of samples in a frame, so the
+            // number of bytes is 4*get_block_size(). We pause caching when
+            // free cache drops to below twice this.
+            if (cacheFree < 8*get_blocksize() 
+                    || get_state() == FLAC__STREAM_DECODER_END_OF_STREAM
+                    || cachedBytes >= f_length_byte) {
                 cacheLock.unlock();
-                usleep(10000);
+                usleep(100);
                 continue;
             }
             
@@ -174,9 +187,13 @@ void InputFlac::threadExecute() {
 
             // Unlock the cache to allow audio to be read out
             cacheLock.unlock();
-            
-        }
 
+            if (cacheSize - cacheFree > preCacheSize) {
+                usleep(100);
+            }            
+        }
+        finish();
+        
         // Unlock the cache
         cacheLock.unlock();
         
@@ -187,6 +204,43 @@ void InputFlac::threadExecute() {
     }
 }
 
+::FLAC__StreamDecoderReadStatus InputFlac::read_callback(FLAC__byte buffer[], size_t *bytes) {
+    if (f.eof()) {
+        return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
+    }
+    if (*bytes != 0) {
+        f.read((char*)buffer, *bytes);
+        *bytes = f.gcount();
+        return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
+    }
+    return FLAC__STREAM_DECODER_READ_STATUS_ABORT;
+}
+
+::FLAC__StreamDecoderSeekStatus InputFlac::seek_callback(FLAC__uint64 absolute_byte_offset) {
+    f.seekg(absolute_byte_offset);
+    if (f.good()) {
+        return FLAC__STREAM_DECODER_SEEK_STATUS_OK;
+    }
+    return FLAC__STREAM_DECODER_SEEK_STATUS_ERROR;
+}
+
+::FLAC__StreamDecoderTellStatus InputFlac::tell_callback (FLAC__uint64 *absolute_byte_offset) {
+    *absolute_byte_offset = (FLAC__uint64)(f.tellg());
+    return FLAC__STREAM_DECODER_TELL_STATUS_OK;
+}
+
+::FLAC__StreamDecoderLengthStatus InputFlac::length_callback (FLAC__uint64 *stream_length) {
+    unsigned long pos = f.tellg();
+    f.seekg(0,ios::end);
+    *stream_length = (FLAC__uint64)(f.tellg());
+    f.seekg(pos,ios::beg);
+    return FLAC__STREAM_DECODER_LENGTH_STATUS_OK;
+}
+
+bool InputFlac::eof_callback () {
+    return f.eof();
+}
+        
 ::FLAC__StreamDecoderWriteStatus InputFlac::write_callback(
             const::FLAC__Frame *frame, const FLAC__int32 *const buffer[]) {
     size_t i;
@@ -213,8 +267,10 @@ void InputFlac::threadExecute() {
         if (cacheWrite > cacheEnd) {
             cacheWrite = cacheStart;
         }
+        cachedBytes += 4;
+        if (cachedBytes >= f_length_byte) break;
     }
-    
+
     return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
 
@@ -226,16 +282,6 @@ void InputFlac::metadata_callback(const::FLAC__StreamMetadata *metadata) {
         sample_rate = metadata->data.stream_info.sample_rate;
         channels = metadata->data.stream_info.channels;
         bps = metadata->data.stream_info.bits_per_sample;
-/*
-        fprintf(stderr, "sample rate    : %u Hz\n", sample_rate);
-        fprintf(stderr, "channels       : %u\n", channels);
-        fprintf(stderr, "bits per sample: %u\n", bps);
-#ifdef _MSC_VER
-        fprintf(stderr, "total samples  : %I64u\n", total_samples);
-#else
-        fprintf(stderr, "total samples  : %llu\n", total_samples);
-#endif
-*/
     }
 }
 

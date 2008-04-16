@@ -60,7 +60,7 @@ TabPanelLogging::TabPanelLogging(QTabWidget *parent, string text)
     delete conf;
 
     // Create a database trigger and run the update routine when triggered
-    triggerLog = new QtTrigger("triggerLog","trig_id4");
+    triggerLog = new QtTrigger("triggerLog","t_log");
     connect(triggerLog, SIGNAL(trigger()),
               this, SLOT(processLogUpdate()));
     

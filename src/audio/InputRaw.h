@@ -5,14 +5,13 @@
 #include <fstream>
 
 #include "Input.h"
-using Audio::Input;
 
 /** Reads and caches audio from a raw pcm audio file.
  * This class reads and caches audio from a raw PCM audio file, storing the
  * audio in a cyclic cache and passing it out when requested by \c getAudio.
  * The reading of the file into the cache is done in a separate thread.
  */
-class Audio::InputRaw : public Input {
+class Audio::InputRaw : public Audio::Input {
 	public:
 		/// Create a new raw PCM input file reader
 		InputRaw(unsigned int cache_size = 1760000);

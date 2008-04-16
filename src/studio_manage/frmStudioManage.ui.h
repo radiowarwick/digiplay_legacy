@@ -173,7 +173,7 @@ void frmStudioManage::init() {
                 sp, SLOT( addScript( DpsShowScript& ) ) );
     connect ( tabPanelFileBrowser, SIGNAL( showplanSelected( DpsShowplan& ) ),
                 sp, SLOT( loadShowplan( DpsShowplan& ) ) );
-    connect ( tabPanelFileBrowser, SIGNAL( cartsetSelected( QString ) ),
+    connect ( tabPanelFileBrowser, SIGNAL( awSetSelected( QString ) ),
                 this, SLOT( updateCartset( QString ) ) );
     connect ( sp, SIGNAL( scriptSelected( int ) ),
                 tabPanelScript, SLOT( loadScript( int ) ) );

@@ -1253,21 +1253,8 @@ void ArchiveManager::removeTrack(string md5) {
         id = R[0][0].c_str();
 
         L_INFO(LOG_DB,"Removing track " + md5);
-        SQL = "DELETE FROM audioartists WHERE audioid=" + id;
-        DB->exec("ArchiveManagerRemoveTrack",SQL);
-        SQL = "DELETE FROM audiogroups WHERE audioid=" + id;
-        DB->exec("ArchiveManagerRemoveTrack",SQL);
-        SQL = "DELETE FROM audiousers WHERE audioid=" + id;
-        DB->exec("ArchiveManagerRemoveTrack",SQL);
-        SQL = "DELETE FROM audiokeywords WHERE audioid=" + id;
-        DB->exec("ArchiveManagerRemoveTrack",SQL);
-        SQL = "DELETE FROM audiojinglepkgs WHERE audioid=" + id;
-        DB->exec("ArchiveManagerRemoveTrack",SQL);
-        SQL = "DELETE FROM audiodir WHERE audioid=" + id;
-        DB->exec("ArchiveManagerRemoveTrack",SQL);
         SQL = "DELETE FROM audio WHERE id=" + id;
         DB->exec("ArchiveManagerRemoveTrack",SQL);
-
         DB->commit("ArchiveManagerRemoveTrack");
         L_INFO(LOG_DB,"Removal of track " + id + " complete.");
     }

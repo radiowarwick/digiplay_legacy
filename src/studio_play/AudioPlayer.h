@@ -27,14 +27,18 @@
 #include <qwidget.h>
 #include <qmutex.h>
 
-#include "audio/Audio.h"
-#include "audio/InputRaw.h"
-#include "audio/OutputDsp.h"
-#include "audio/Counter.h"
 #include "clockThread.h"
 #include "Config.h"
 #include "DataAccess.h"
 #include "MessagingInterface.h"
+
+#include "audio/Counter.h"
+
+// Forward declarations
+class Audio::Input;
+class Audio::InputRaw;
+class Audio::InputFlac;
+class Audio::OutputDsp;
 
 class QGroupBox;
 class QPushButton;
@@ -78,7 +82,7 @@ class AudioPlayer:  public QWidget,
 		int userid;
         Config* conf;
         DataAccess* DB;
-        Audio::InputRaw* audioFilereader;
+        Audio::Input* audioFilereader;
         Audio::OutputDsp* audioPlayer;
         unsigned long _lastSample;
 

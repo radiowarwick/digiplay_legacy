@@ -75,10 +75,10 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
 	cacheFree = cacheSize;
 
 	cacheLock.unlock();
-
+    
     updateCounters(0);
 	updateTotals(f_length_byte/4);
-
+    
     try {
         startCaching();
     }
@@ -132,10 +132,11 @@ void InputRaw::threadExecute() {
     while (!threadTestKill()) {
 
         // Wait until told to start caching a file
-        while (!threadReceive(START)) {
+        if (!threadReceive(START)) {
             // purge any STOP commands while stopped
             threadReceive(STOP);
             usleep(10000);
+            continue;
         }
 
         // Open the file and check it's good to read
@@ -150,7 +151,7 @@ void InputRaw::threadExecute() {
             cout << "Failed to open file '" << f_filename << "'" << endl;
             continue;
         }
-
+        
         // Set caching state as active
         cacheStateLock.lock();
         cacheState = CACHE_STATE_ACTIVE;
@@ -166,8 +167,7 @@ void InputRaw::threadExecute() {
 
         f->clear();
     	f->seekg(f_start_byte, ios::beg);
-
-        
+                
         /**************************************************
          * CACHE AUDIO FILE
          **************************************************/
@@ -241,9 +241,9 @@ void InputRaw::threadExecute() {
     		//Assuming it takes 0 time to cache audio, theoretical thoughput of
     		//2048kbytes/sec is possible.  Since only 176kbytes/sec are
     		//required this should be plenty.
-    		//if (cacheSize - cacheFree > preCacheSize) {
-            //    usleep(1000);
-            //}            
+    		if (cacheSize - cacheFree > preCacheSize) {
+                usleep(100);
+            }            
     	}
 
         // Unlock the cache
@@ -253,7 +253,7 @@ void InputRaw::threadExecute() {
         loaded = false;
         f->close();
         delete f;
-        
+
         // Set cache state to inactive
         cacheStateLock.lock();
         cacheState = CACHE_STATE_INACTIVE;

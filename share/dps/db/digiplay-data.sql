@@ -44,32 +44,32 @@ insert into usersgroups values ( 1,1,1 ) ;
 insert into usersgroups values ( 2,2,1 ) ;
 alter sequence usersgroups_id_seq restart 3;
 
--- inserts for cartproperties(name,note)
-insert into cartproperties values ( 1,'ForeColourRGB','Button text colour.' ) ;
-insert into cartproperties values ( 2,'BackColourRGB','Button background colour.' ) ;
-insert into cartproperties values ( 3,'Font','Text font.' ) ;
-insert into cartproperties values ( 4,'FontSize','Text font size.' ) ;
-insert into cartproperties values ( 5,'FontBold','Bold text.' ) ;
-insert into cartproperties values ( 6,'FontItalic','Italic text.' ) ;
-alter sequence cartproperties_id_seq restart 7;
+-- inserts for aw_props(name,note)
+insert into aw_props values ( 1,'ForeColourRGB','Button text colour.' ) ;
+insert into aw_props values ( 2,'BackColourRGB','Button background colour.' ) ;
+insert into aw_props values ( 3,'Font','Text font.' ) ;
+insert into aw_props values ( 4,'FontSize','Text font size.' ) ;
+insert into aw_props values ( 5,'FontBold','Bold text.' ) ;
+insert into aw_props values ( 6,'FontItalic','Italic text.' ) ;
+alter sequence aw_props_id_seq restart 7;
 
--- inserts for cartstyles(name,description)
-insert into cartstyles values ( 1,'Blue','Blue background with black text.' ) ;
-insert into cartstyles values ( 2,'RaW Purple','RaW design.' ) ;
-insert into cartstyles values ( 3,'Cool Green','Bluish-green background with black text.' ) ;
-insert into cartstyles values ( 4,'Bright Green','Green background with black text.' ) ;
-alter sequence cartstyles_id_seq restart 5;
+-- inserts for aw_styles(name,description)
+insert into aw_styles values ( 1,'Blue','Blue background with black text.' ) ;
+insert into aw_styles values ( 2,'RaW Purple','RaW design.' ) ;
+insert into aw_styles values ( 3,'Cool Green','Bluish-green background with black text.' ) ;
+insert into aw_styles values ( 4,'Bright Green','Green background with black text.' ) ;
+alter sequence aw_styles_id_seq restart 5;
 
--- inserts for cartstylepropsg
-insert into cartstyleprops values ( 1,1,1,0 ) ;
-insert into cartstyleprops values ( 2,1,2,1214912 ) ;
-insert into cartstyleprops values ( 3,2,1,0 ) ;
-insert into cartstyleprops values ( 4,2,2,11731183 ) ;
-insert into cartstyleprops values ( 5,3,1,0 ) ;
-insert into cartstyleprops values ( 6,3,2,49245 ) ;
-insert into cartstyleprops values ( 7,4,1,0 ) ;
-insert into cartstyleprops values ( 8,4,2,8044544 ) ;
-alter sequence cartstyleprops_id_seq restart 9;
+-- inserts for aw_styles_props
+insert into aw_styles_props values ( 1,1,1,0 ) ;
+insert into aw_styles_props values ( 2,1,2,1214912 ) ;
+insert into aw_styles_props values ( 3,2,1,0 ) ;
+insert into aw_styles_props values ( 4,2,2,11731183 ) ;
+insert into aw_styles_props values ( 5,3,1,0 ) ;
+insert into aw_styles_props values ( 6,3,2,49245 ) ;
+insert into aw_styles_props values ( 7,4,1,0 ) ;
+insert into aw_styles_props values ( 8,4,2,8044544 ) ;
+alter sequence aw_styles_props_id_seq restart 9;
 
 -- inserts for audiotypes(name,description)
 insert into audiotypes values ( 1,'Music','Music tracks from the CD library or other sources.' ) ;

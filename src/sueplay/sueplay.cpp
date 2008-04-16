@@ -33,6 +33,7 @@ using namespace std;
 
 #include "audio/Audio.h"
 #include "audio/InputRaw.h"
+#include "audio/InputFlac.h"
 #include "audio/OutputDsp.h"
 #include "audio/OutputRaw.h"
 #include "audio/ProcessMixer.h"
@@ -207,31 +208,21 @@ int main(int argc, char *argv []) {
     DataAccess* DB = new DataAccess();
 	
 	SQL_Item = "SELECT audioid FROM sustschedule ORDER BY id LIMIT 1"; 
-    SQL_Detail = "SELECT archives.localpath AS path, v_audio.md5 AS md5, v_audio.title AS title, v_audio.length_smpl AS length_smpl, sustschedule.id AS id, sustschedule.trim_start_smpl AS start, sustschedule.trim_end_smpl AS end, sustschedule.fade_in AS fade_in, sustschedule.fade_out AS fade_out, v_audio.artist FROM sustschedule, archives, v_audio WHERE sustschedule.audioid = v_audio.id AND archives.id = v_audio.archiveid";
+    SQL_Detail = "SELECT filetype, archives.localpath AS path, v_audio.md5 AS md5, v_audio.title AS title, v_audio.length_smpl AS length_smpl, sustschedule.id AS id, sustschedule.trim_start_smpl AS start, sustschedule.trim_end_smpl AS end, sustschedule.fade_in AS fade_in, sustschedule.fade_out AS fade_out, v_audio.artist FROM sustschedule, archives, v_audio WHERE sustschedule.audioid = v_audio.id AND archives.id = v_audio.archiveid";
 	L_INFO(LOG_SUEPLAY, "done.");
 
 	// Create components
-	InputRaw* ch[] = {new InputRaw(), new InputRaw()};
+	Input* ch[] = {0,0};
 	ProcessFader* fader[] = {new ProcessFader(), new ProcessFader()};
 	CounterTrigger* trig[] = {new CounterTrigger(), new CounterTrigger()};
 	ProcessMixer* mixer = new ProcessMixer();
 	OutputDsp* player = new OutputDsp(Conf->getParam("channel_1").c_str());
 
-	ch[0]->setAutoReload(false);
-	ch[1]->setAutoReload(false);
-	
-	ch[0]->patch(OUT0,fader[0],IN0);
-	ch[1]->patch(OUT0,fader[1],IN0);
 	fader[0]->patch(OUT0,mixer,IN0);
 	fader[1]->patch(OUT0,mixer,IN1);
 	mixer->patch(OUT0,player,IN0);
 	
-	trig[0]->setTriggerTarget(ch[1]);
-	trig[1]->setTriggerTarget(ch[0]);
-	ch[0]->addCounter(trig[0]);
-	ch[1]->addCounter(trig[1]);
-
-	string md5, id, path, title, artist;
+	string md5, id, path, title, artist, ext;
 	long start = 0, end = 0, fade_in = 0, fade_out = 0;
 	long length_smpl = 0;
 	unsigned short active = 0, inactive = 1;
@@ -278,8 +269,25 @@ int main(int argc, char *argv []) {
 			L_INFO(LOG_SUEPLAY, " -> Start: " + dps_itoa(start));
 			L_INFO(LOG_SUEPLAY, " -> End: " + dps_itoa(end));
 			// Try and load the track
-			try {
-				ch[active]->load( path + md5, start, end );
+			try { 
+                if (ch[active]) {
+                    ch[active]->unpatch(OUT0);
+                    delete ch[active];
+                }
+                if (string(R[0]["filetype"].c_str()) == "raw") {
+                    ch[active] = new InputRaw();
+                    ext = "";
+                }
+                else if (string(R[0]["filetype"].c_str()) == "flac") {
+                    ch[active] = new InputFlac();
+                    ext = ".flac";
+                }
+                ch[active]->setAutoReload(false);
+                ch[active]->patch(OUT0, fader[active], IN0);
+                trig[inactive]->setTriggerTarget(ch[active]);
+                ch[active]->addCounter(trig[active]);
+                
+				ch[active]->load( path + md5 + ext, start, end );
                 L_INFO(LOG_SUEPLAY, "Successfully loaded track.");
 				break;
 			}
@@ -315,9 +323,9 @@ int main(int argc, char *argv []) {
 		fader[active]->addNode(fade_out,1.0);
 		fader[active]->addNode(end,0.0);
 		trig[active]->setTriggerSample(min(fade_out,end));
-		
+        
         // Wait until last track has been played before we load the next
-		if (ch[inactive]->isLoaded()) {
+		if (ch[inactive] && ch[inactive]->isLoaded()) {
 			L_INFO(LOG_SUEPLAY, "Waiting for channel " + dps_itoa(inactive));
 			trig[inactive]->waitStop();
 			if (print_info) {

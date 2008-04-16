@@ -62,7 +62,7 @@ void frmPlayout::init() {
     triggerConfig = new QtTrigger("triggerConfig","trig_id1");
     connect(triggerConfig, SIGNAL(trigger()),
                                 this, SLOT(configChanged()));
-/*
+
     remotes = new RemoteStartThread();
 	connect(remotes, SIGNAL(player1_play()),
 								audioPlayer1, SLOT(play()));
@@ -76,7 +76,7 @@ void frmPlayout::init() {
 								audioPlayer3, SLOT(play()));
 	connect(remotes, SIGNAL(player3_pause()),
 								audioPlayer3, SLOT(pause()));
-*/
+
     // Get the active station and user cartset id from config
     conf = new Config("digiplay");
     stnAudioWallId = atoi(conf->getParam("station_cartset").c_str());
@@ -100,7 +100,7 @@ void frmPlayout::init() {
     audioWallOutput->addAudioWall(usrAudioWall);
 
     // Initialise remote starts
-	//remotes->start();
+	remotes->start();
     
     if (isRoot()) {
         L_INFO(LOG_DB,"Attempting to drop to unprivilaged user.");

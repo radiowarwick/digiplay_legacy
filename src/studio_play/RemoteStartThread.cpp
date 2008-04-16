@@ -37,31 +37,31 @@ RemoteStartThread::RemoteStartThread() {
 
 void RemoteStartThread::threadExecute() {
     const char* routine = "RemoteStartThread::run";
+    char *error;
 	mutex.lock();
 	stopped = FALSE;
 	mutex.unlock();
 	//Gain privilages to open the parallel port
 	//gainPrivilage();
 	//Open the parallel port
-/*	if (ioperm(ADDRESS,2,1)) {
+	if (ioperm(ADDRESS,2,1)) {
 		//If the port cannot be opened drop privilages and log an error
 	    //dropPrivilage();
-        char *error;
         sprintf(error, "Couldn't open parallel port at address %x\n", ADDRESS);
 	    L_ERROR(LOG_AUDIOHW, error);
 	}
 	else {
-*/		//If the port has been opened, drop privilages
+		//If the port has been opened, drop privilages
 		//dropPrivilage();
+        sprintf(error, "Succesfully opened parallel port at address %x\n", ADDRESS);
+	    L_INFO(LOG_AUDIOHW, error);
 		while(!stopped) {
 			//Read in a byte from the parallel port status register
-//			status = inb(ADDRESS+1);
+			status = inb(ADDRESS+1);
 			//Check to see if the value has changed
 			if (status != old_status) {
 				//If it has, extract the bits that have changed (XOR)
 				int changed = status^old_status;
-				//Create a new event
-				QCustomEvent *remote;
 				//Check to see if it was the "Busy" line which changed
 				if ((changed & 0x80) == 0x80) {
 					//Check to see whether it was a play or pause command
@@ -106,7 +106,7 @@ void RemoteStartThread::threadExecute() {
 			}
 
 		usleep(100000);
-//		}
+		}
 	}
 
 }

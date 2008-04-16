@@ -35,7 +35,7 @@ class DpsEmail {
 	public:
 		DpsEmail();
 		~DpsEmail();
-        std::vector<email> getEmails();
+        std::vector<std::map<std::string,std::string> > getEmails();
 //		const char* getEmailBody(std::string id);
 		void markRead(std::string id);
 

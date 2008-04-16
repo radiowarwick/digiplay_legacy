@@ -118,14 +118,14 @@ struct script {
 	unsigned long length_smpl;
 };
 
-struct email {
+/*struct email {
     std::string from;
     std::string subject;
     std::string received;
     std::string body;
     bool flag;
     std::string id;
-};
+};*/
 
 enum eventType { 
 	EVENT_TYPE_PLAY, 

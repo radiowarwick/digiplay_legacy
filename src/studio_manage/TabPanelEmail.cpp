@@ -116,11 +116,11 @@ void TabPanelEmail::getEmailBody(QListViewItem *current) {
     // Find selected email and display email body
     // TODO: Reimplement using a map.
     for (unsigned int i = 0; i < emails.size(); ++i) {
-        if (emails[i].id == string(current->text(4).ascii())) {
+        if (emails[i]["id"] == string(current->text(4).ascii())) {
             txtEmailBody->setCurrentFont(fntBody);
             txtEmailBody->setPointSize(pointSize);
-            txtEmailBody->setText(emails[i].body);
-            markRead(emails[i].id);
+            txtEmailBody->setText(emails[i]["body"]);
+            markRead(emails[i]["id"]);
         }
     }
 }
@@ -158,18 +158,18 @@ void TabPanelEmail::getEmail(){
     for (unsigned int i = 0; i < emails.size(); i++) {
         // Examine the emails from the oldest to the newest
         // Get the ID of the ith email
-        k = atoi(emails[i].id.c_str());
+        k = atoi(emails[i]["id"].c_str());
         
         // If the email is already shown, just check it's read status
         if (k <= atoi(last_id.c_str())) {
             // find this email in the existing list
-            QListViewItem *x = lstEmail->findItem(emails[i].id.c_str(),4);
+            QListViewItem *x = lstEmail->findItem(emails[i]["id"].c_str(),4);
 
             // check we found an email, and if not, carry on and ignore it
             if ( !x ) continue;
             
             // Set the new flag appropriately
-            if ( emails[i].flag )
+            if ( emails[i]["new"] == "t" )
                 x->setPixmap(0,*pixEmailNew);
             else
                 x->setPixmap(0,*pixEmailOld);
@@ -180,13 +180,13 @@ void TabPanelEmail::getEmail(){
             // if it's a new email, add it to the start of the list
             new_email = new QListViewItem(lstEmail, 
                                 "",
-                                emails[i].from.c_str(),
-                                emails[i].subject.c_str(),
-                                emails[i].received.c_str(),
-                                emails[i].id.c_str());
+                                emails[i]["from"].c_str(),
+                                emails[i]["subject"].c_str(),
+                                emails[i]["received"].c_str(),
+                                emails[i]["id"].c_str());
             
             // Set the new flag appropriately
-            if ( emails[i].flag )
+            if ( emails[i]["new"] == "t" )
                 new_email->setPixmap(0, *pixEmailNew);
             else
                 new_email->setPixmap(0, *pixEmailOld);

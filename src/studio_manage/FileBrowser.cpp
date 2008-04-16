@@ -121,7 +121,7 @@ void Directory::setOpen( bool o ) {
             setPixmap( folderTopClosed );
     }
 	int children = childCount();
-	for (int i = 0; i < children; i--)
+	for (int i = 0; i < children; i++)
 		delete firstChild();
     if ( o && !childCount() ) {
         std::string SQL;

@@ -73,7 +73,7 @@ class TabPanelEmail : public TabPanel {
         DataAccess* DB;
         DpsEmail* E;
 
-        std::vector<email> emails;
+        std::vector<std::map<std::string,std::string> > emails;
 
 		bool flagUpdateDisabled;
 		QtTrigger* triggerEmail;

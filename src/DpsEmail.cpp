@@ -43,13 +43,13 @@ DpsEmail::~DpsEmail() {
  * Extracts the most recent 50 emails from the database, and populates a vector
  * of type \a email, and returns them.
  */
-std::vector<email> DpsEmail::getEmails() {
+std::vector<std::map<std::string,std::string> > DpsEmail::getEmails() {
     const char* routine = "DpsEmail::getEmails";
 
-    email e;
+    std::map<std::string,std::string> e;
     tm dte;
     char date[30];
-    std::vector<email> retVec;
+    std::vector<std::map<std::string,std::string> > retVec;
     std::string SQL = "SELECT * FROM email ORDER BY datetime DESC LIMIT 20;";
 	
     try {
@@ -61,17 +61,17 @@ std::vector<email> DpsEmail::getEmails() {
 			time_t thetime(atoi(R[I-i]["datetime"].c_str()));
 			dte = *localtime(&thetime);
 			strftime(date, 30, "%x %H:%M", &dte);
-			e.from = R[I-i]["sender"].c_str();
-			e.subject = R[I-i]["subject"].c_str();
-			e.received = date;
-			e.body = R[I-i]["body"].c_str();
-			e.id = R[I-i]["id"].c_str();
+			e["from"] = R[I-i]["sender"].c_str();
+			e["subject"] = R[I-i]["subject"].c_str();
+			e["received"] = date;
+			e["body"] = R[I-i]["body"].c_str();
+			e["id"] = R[I-i]["id"].c_str();
 
             std::string flag = R[i]["new_flag"].c_str();
 			if ( !flag.compare("t") )
-				e.flag = true;
+				e["new"] = "t";
 			else
-				e.flag = false;
+				e["new"] = "f";
 
 			retVec.push_back(e);
 		}

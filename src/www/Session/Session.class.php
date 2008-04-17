@@ -177,8 +177,8 @@ class Session {
 			        AND sessions.lastaccess < ?";
 			*/
 			$db = Database::getInstance($cfg['Session']['dsn']);
-			
-			$result = $db->getAll($sql, array(gmmktime() - $cfg['Session']['lifetime']));
+            $time = "'" . (gmmktime() - $cfg['Session']['lifetime']) . "'";
+            $result = $db->getAll($sql, array($time));
 
 			foreach ($result as $row) {
 				$sesID = $row['sessionid'];
@@ -255,7 +255,7 @@ class Session {
 		                'lastaccess' => gmmktime());
 		$sessionid = $db->insert('sessions', $values);
 		
-		//Store cookie
+        //Store cookie
 		$md5 = $this->getHash($sessionid, $this->useragent, $rndidentifier);
 		
 		setcookie('key1', $sessionid, time() + $cfg['Session']['lifetime'], $cfg['Session']['path'], $cfg['Session']['domain']);

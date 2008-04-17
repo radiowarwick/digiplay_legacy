@@ -451,8 +451,8 @@ HAVING bit_or(permissions) != '00000000'
 ORDER BY itemtype, name;
 
 --
--- v_tree_cartset_explicit
--- Show the explicitely defined permissions on cartset objects
+-- v_tree_aw_set_explicit
+-- Show the explicitely defined permissions on awset objects
 --
 CREATE OR REPLACE VIEW v_tree_aw_sets_explicit
     (id,name,parent,userid,username,permissions,causetype,cause)
@@ -512,7 +512,7 @@ AS
 
 --
 -- v_tree_aw_sets
--- Show the overall permissions defined on cartset objects
+-- Show the overall permissions defined on awset objects
 --
 CREATE OR REPLACE VIEW v_tree_aw_sets
     (id,name,parent,userid,username,permissions)

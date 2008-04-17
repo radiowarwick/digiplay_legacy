@@ -122,7 +122,7 @@ class Page implements IController {
 				//formName is not required, so set to empty string
 				//note that forms will be ignored if this is not passed
 				$this->fieldData['formName'] = null;
-      }
+            }
 				
 			//Load the module names
 			$this->viewerModuleName = $db->getOne("SELECT modulename FROM templates WHERE templateid = ?", 
@@ -132,21 +132,21 @@ class Page implements IController {
 				$this->modelModuleName = $this->fieldData['moduleName'];
 			} else {
 				$this->modelModuleName = 'MVC';
-      }
+            }
 			
-      ### Check that the user has permission to use the submitted form
+            ### Check that the user has permission to use the submitted form
 			
 			// get the realmid of the submitted form
 			$sql = 'SELECT realmid FROM forms WHERE formname = ? AND modulename = ?';
 			$realmid = $db->getOne($sql, array($this->formName, $this->modelModuleName));
 			$auth  = Auth::getInstance();
-      
-			// If the realm id could not found then allow access
+			
+            // If the realm id could not found then allow access
 			// (this will cause 'Model' to be used - so no processing occurs)
 			if(!$realmid){
 				//Access is allowed
 				$modelAccess = true;
-      } else {
+            } else {
 				//Check if the user has access to the realm associated with the form
 				if(!$auth->isLoggedIn()){
 					$auth->attemptLogin($cfg['Auth']['anonuser']);

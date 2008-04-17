@@ -32,7 +32,7 @@ class LocationAddModel extends Model {
 		$configI['parameter'] = 'player3_md5';
 		$configI['val'] = '';
 		$db->insert('configuration',$configI,true);
-		$configI['parameter'] = 'user_cartset';
+		$configI['parameter'] = 'user_aw_set';
 		$configI['val'] = '';
 		$db->insert('configuration',$configI,true);
 		$configI['parameter'] = 'next_on_showplan';
@@ -53,7 +53,7 @@ class LocationAddModel extends Model {
 		$configI['parameter'] = 'channel_4';
 		$configI['val'] = $this->fieldData['channel_4'];
 		$db->insert('configuration',$configI,true);
-		$configI['parameter'] = 'station_cartset';
+		$configI['parameter'] = 'station_aw_set';
 		$configI['val'] = '';
 		$db->insert('configuration',$configI,true);
 	}

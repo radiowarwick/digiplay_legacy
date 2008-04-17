@@ -9,7 +9,7 @@ MVCUtils::includeModel('Model', 'tkfecommon');
 /**
  * Model for user management
  */
-class DPSStationAddCartModel extends Model {
+class DPSStationAddAwItemModel extends Model {
 	
 	const module = 'DPS';
 	
@@ -19,8 +19,8 @@ class DPSStationAddCartModel extends Model {
 	
 		$audio = $this->fieldData['audioID'];
 		$style = $this->fieldData['style'];
-		$cartwall = $this->fieldData['cartwallID'];
-		$cartPos = $this->fieldData['cartPos'];
+		$AwWall = $this->fieldData['AwWallID'];
+		$AwItemPos = $this->fieldData['AwItemPos'];
 	
 		$text="";
 		$subStr = explode("\n",$_POST["text"]);
@@ -29,19 +29,19 @@ class DPSStationAddCartModel extends Model {
 		}
 		$text = rtrim($text,"\n");
 		if($text != '' && $audio != '' && is_numeric($audio)) {
-			$sql = "SELECT COUNT(*) FROM cartsaudio, cartwalls 
-				WHERE cartwalls.id = cartsaudio.cartwallid
-				AND cartwalls.id = " . pg_escape_string($cartwall) . " 
-				AND cartsaudio.cart = " . pg_escape_string($cartPos);
+			$sql = "SELECT COUNT(*) FROM aw_items, aw_walls 
+				WHERE aw_walls.id = aw_items.wall_id
+				AND aw_walls.id = " . pg_escape_string($AwWall) . " 
+				AND aw_items.item = " . pg_escape_string($AwItemPos);
 			$count = $db->getOne($sql);
 			if($count == 0) {
-				$cart = array();
-				$cart['text'] = $text;
-				$cart['audioid'] = $audio;
-				$cart['cartstyleid'] = $style;
-				$cart['cartwallid'] = $cartwall;
-				$cart['cart'] = $cartPos;
-				$db->insert('cartsaudio', $cart, true);
+				$AwItem = array();
+				$AwItem['text'] = $text;
+				$AwItem['audio_id'] = $audio;
+				$AwItem['style_id'] = $style;
+				$AwItem['wall_id'] = $AwWall;
+				$AwItem['item'] = $AwItemPos;
+				$db->insert('aw_items', $AwItem, true);
 			}
 		}
 	}
@@ -50,23 +50,23 @@ class DPSStationAddCartModel extends Model {
 		//No invalid processing required
 		if($this->errors['text']) {
 		MVCUtils::redirect(
-			MVCUtils::getTemplateID('dpsststationeditcart.tpl'),
-			array("cartID" => "New",
-				"cartwallID" => $this->fieldData['cartwallID'],
-				"cartPos" => $this->fieldData['cartPos'], "error" => "text"));
+			MVCUtils::getTemplateID('dpsststationeditawitem.tpl'),
+			array("AwItemID" => "New",
+				"AwWallID" => $this->fieldData['AwWallID'],
+				"AwItemPos" => $this->fieldData['AwItemPos'], "error" => "text"));
 		} elseif($this->errors['style']) {
 			MVCUtils::redirect(
-				MVCUtils::getTemplateID('dpsststationeditcart.tpl'),
-				array("cartID" => "New",
-					"cartwallID" => $this->fieldData['cartwallID'],
-					"cartPos" => $this->fieldData['cartPos'],
+				MVCUtils::getTemplateID('dpsststationeditawitem.tpl'),
+				array("AwItemID" => "New",
+					"AwWallID" => $this->fieldData['AwWallID'],
+					"AwItemPos" => $this->fieldData['AwItemPos'],
 					"error" => "style"));
 		} elseif($this->errors['audioID']) {
 			MVCUtils::redirect(
-				MVCUtils::getTemplateID('dpsststationeditcart.tpl'),
-				array("cartID" => "New",
-					"cartwallID" => $this->fieldData['cartwallID'],
-					"cartPos" => $this->fieldData['cartPos'],
+				MVCUtils::getTemplateID('dpsststationeditawitem.tpl'),
+				array("AwItemID" => "New",
+					"AwWallID" => $this->fieldData['AwWallID'],
+					"AwItemPos" => $this->fieldData['AwItemPos'],
 					"error" => "audioID"));
 		}
 	}

@@ -9,7 +9,7 @@ MVCUtils::includeModel('Model', 'tkfecommon');
 /**
  * Model for user management
  */
-class DPSUserDeleteCartModel extends Model {
+class DPSUserDeleteAwItemModel extends Model {
 	
 	const module = 'DPS';
 	

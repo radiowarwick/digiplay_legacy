@@ -9,7 +9,7 @@ MVCUtils::includeModel('Model', 'tkfecommon');
 /**
  * Model for user management
  */
-class DPSUserAddCartPageModel extends Model {
+class DPSUserAddAwWallModel extends Model {
 	
 	const module = 'DPS';
 	

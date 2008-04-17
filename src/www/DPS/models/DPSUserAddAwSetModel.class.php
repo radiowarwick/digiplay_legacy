@@ -9,7 +9,7 @@ MVCUtils::includeModel('Model', 'tkfecommon');
 /**
 * Model for user management
 */
-class DPSUserAddCartsetModel extends Model {
+class DPSUserAddAwSetModel extends Model {
 	
 	const module = 'DPS';
 	
@@ -44,31 +44,31 @@ class DPSUserAddCartsetModel extends Model {
 		}
 		
 		if($name != '') {
-			$cartset = array();
+			$AwSet = array();
 			$perm = array();
-			$cartset['name'] = $name;
-			$cartset['description'] = $desc;
-			$cartset['id'] = "#id#";
-			$cartsetID = $db->insert('cartsets',$cartset,true);
+			$AwSet['name'] = $name;
+			$AwSet['description'] = $desc;
+			$AwSet['id'] = "#id#";
+			$AwSetID = $db->insert('aw_sets',$AwSet,true);
 			$auth = Auth::getInstance();
 			$userID = $auth->getUserID();
-			$perm['userid'] = $userID;
-			$perm['cartsetid'] = $cartsetID;
+			$perm['user_id'] = $userID;
+			$perm['set_id'] = $AwSetID;
 			$perm['permissions'] = "B" . $cfg['DPS']['fileRWO'] . "B";
-			$db->insert('cartsetsusers',$perm,false);
-			$gperm['groupid'] = $cfg['Auth']['AdminGroup'];
-			$gperm['cartsetid'] = $cartsetID;
+			$db->insert('aw_sets_users',$perm,false);
+			$gperm['group_id'] = $cfg['Auth']['AdminGroup'];
+			$gperm['set_id'] = $AwSetID;
 			$gperm['permissions'] = 'B' . $cfg['DPS']['fileRWO'] . 'B';
-			$db->insert('cartsetsgroups',$gperm,false);
-			$cartwall = array();
-			$cartwall['name'] = "New Page";
-			$cartwall['cartsetid'] = $cartsetID;
-			$cartwall['page'] = 0;
-			$db->insert('cartwalls',$cartwall,true);
-			$scriptdir['cartsetid'] = $cartsetID;
+			$db->insert('aw_sets_groups',$gperm,false);
+			$AwWall = array();
+			$AwWall['name'] = "New Page";
+			$AwWall['set_id'] = $AwSetID;
+			$AwWall['page'] = 0;
+			$db->insert('aw_walls',$AwWall,true);
+			$scriptdir['set_id'] = $AwSetID;
 			$scriptdir['dirid'] = $dirID;
 			$scriptdir['linktype'] = 0;
-			$db->insert('cartsetsdir',$scriptdir,true);
+			$db->insert('aw_sets_dir',$scriptdir,true);
 		}
 	}
 	

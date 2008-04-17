@@ -9,7 +9,7 @@ MVCUtils::includeModel('Model', 'tkfecommon');
 /**
  * Model for user management
  */
-class DPSStationAddCartPageModel extends Model {
+class DPSStationAddAwWallModel extends Model {
 	
 	const module = 'DPS';
 	
@@ -17,15 +17,15 @@ class DPSStationAddCartPageModel extends Model {
 		global $cfg;
 		$db = Database::getInstance($cfg['DPS']['dsn']);
 	
-		$cartsetID = pg_escape_string($this->fieldData['cartset']);
-		$sql = "SELECT COUNT(*) FROM cartwalls WHERE cartsetid = $cartsetID";
+		$AwSetID = pg_escape_string($this->fieldData['AwSet']);
+		$sql = "SELECT COUNT(*) FROM aw_walls WHERE set_id = $AwSetID";
 		$page = $db->getOne($sql);
 		
-		$pageInfo['cartsetid'] = $cartsetID;
+		$pageInfo['set_id'] = $AwSetID;
 		$pageInfo['name'] = "New Page";
 		$pageInfo['description'] = "";
 		$pageInfo['page'] = $page;
-		$db->insert('cartwalls',$pageInfo,true);
+		$db->insert('aw_walls',$pageInfo,true);
 	}
 		
 	protected function processInvalid() {

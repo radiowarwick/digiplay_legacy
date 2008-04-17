@@ -9,7 +9,7 @@ MVCUtils::includeModel('Model', 'tkfecommon');
 /**
  * Model for user management
  */
-class DPSStationDeleteCartsetModel extends Model {
+class DPSStationDeleteAwSetModel extends Model {
 	
 	const module = 'DPS';
 	
@@ -17,31 +17,31 @@ class DPSStationDeleteCartsetModel extends Model {
 		global $cfg;
 		$db = Database::getInstance($cfg['DPS']['dsn']);
 		$loc = 1;
-		$cartsetID = pg_escape_string($this->fieldData['cartset']);
-		if($cartsetID != '' && is_numeric($cartsetID)) {
+		$AwSetID = pg_escape_string($this->fieldData['AwSet']);
+		if($AwSetID != '' && is_numeric($AwSetID)) {
 			
 			$sql = "SELECT val, id FROM configuration 
-				WHERE location = $loc AND parameter = 'station_cartset'";
+				WHERE location = $loc AND parameter = 'station_aw_set'";
 			$userset = $db->getRow($sql);
-			if($userset['val'] == $cartsetID) {
+			if($userset['val'] == $AwSetID) {
 				$conf['val'] = '';
 				$where = "id = " . $userset['id'];
 				$db->update('configuration',$conf,$where,true);
 			}
-			$sql = "SELECT id FROM cartwalls WHERE cartsetid = " . $cartsetID;
-			$cartwalls = $db->getColumn($sql);
-			foreach($cartwalls as $wallID) {
-				$where = "cartwallid = " . $wallID;
-				$db->delete('cartsaudio',$where,true);
+			$sql = "SELECT id FROM aw_walls WHERE set_id = " . $AwSetID;
+			$AwWalls = $db->getColumn($sql);
+			foreach($AwWalls as $wallID) {
+				$where = "wall_id = " . $wallID;
+				$db->delete('aw_items',$where,true);
 			}
-			$where = "cartsetid = " . $cartsetID;
-			$db->delete('cartwalls',$where,true);
-			$where = "cartsetid = " . $cartsetID;
-			$db->delete('cartsetsusers',$where,true);
-			$db->delete('cartsetsgroups',$where,true);
-			$db->delete('cartsetsdir',$where,true);
-			$where = "id = " . $cartsetID;
-			$db->delete('cartsets',$where,true);
+			$where = "set_id = " . $AwSetID;
+			$db->delete('aw_walls',$where,true);
+			$where = "set_id = " . $AwSetID;
+			$db->delete('aw_sets_users',$where,true);
+			$db->delete('aw_sets_groups',$where,true);
+			$db->delete('aw_sets_dir',$where,true);
+			$where = "id = " . $AwSetID;
+			$db->delete('aw_sets',$where,true);
 		}
 	}
 		

@@ -9,7 +9,7 @@ MVCUtils::includeModel('Model', 'tkfecommon');
 /**
  * Model for user management
  */
-class DPSUserUpdateActCartsetModel extends Model {
+class DPSUserUpdateActAwSetModel extends Model {
 	
 	const module = 'DPS';
 	

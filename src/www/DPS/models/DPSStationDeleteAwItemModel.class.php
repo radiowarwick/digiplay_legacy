@@ -9,7 +9,7 @@ MVCUtils::includeModel('Model', 'tkfecommon');
 /**
  * Model for user management
  */
-class DPSStationUpdateAwItemModel extends Model {
+class DPSStationDeleteAwItemModel extends Model {
 	
 	const module = 'DPS';
 	
@@ -18,26 +18,12 @@ class DPSStationUpdateAwItemModel extends Model {
 		$db = Database::getInstance($cfg['DPS']['dsn']);
 		$AwItemID = pg_escape_string($this->fieldData['AwItemID']);
 		
-		if($AwItemID != '') {
-			$audio = $this->fieldData['audioID'];
-			$style = $this->fieldData['style'];
-			$text="";
-			$subStr = explode("\n",$_POST["text"]);
-			foreach($subStr as $value){
-				$text = $text . pg_escape_string($value) . "\n";
-			}
-			$text = rtrim($text,"\n");
-			if($text != '' && $AwItemID != '' && is_numeric($AwItemID)) {
-				$AwItem = array();
-				$AwItem['text'] = $text;
-				$AwItem['audio_id'] = $audio;
-				$AwItem['style_id'] = $style;
-				$atWhere = "id = " . $AwItemID;
-				$db->update('aw_items', $AwItem, $atWhere, true);
-			}
+		if($AwItemID != '' && is_numeric($AwItemID)) {
+			$atWhere = "id = " . $AwItemID;
+			$db->delete('aw_items', $atWhere, true);
 		}
 	}
-		
+	
 	protected function processInvalid() {
 		//No invalid processing required
 		if($this->errors['text']) {
@@ -50,6 +36,6 @@ class DPSStationUpdateAwItemModel extends Model {
 			MVCUtils::redirect(MVCUtils::getTemplateID('dpssteditawitem.tpl'),
 				array("AwItemID" => $this->fieldData['AwItemID'], "error" => "audioID"));
 		}
-	}	
+	}
 }
 ?>

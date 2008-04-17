@@ -9,7 +9,7 @@ MVCUtils::includeModel('Model', 'tkfecommon');
 /**
  * Model for user management
  */
-class DPSStationAddCartsetModel extends Model {
+class DPSStationAddAwSetModel extends Model {
 	
 	const module = 'DPS';
 	
@@ -43,33 +43,33 @@ class DPSStationAddCartsetModel extends Model {
 		$name = pg_escape_string($this->fieldData['name']);
 		$desc = pg_escape_string($this->fieldData['desc']);
 		if($name != '') {
-			$cartset = array();
+			$AwSet = array();
 			$perm = array();
-			$cartset['name'] = $name;
-			$cartset['description'] = $desc;
-			$cartset['id'] = "#id#";
-			$cartsetID = $db->insert('cartsets',$cartset,true);
-			$perm['userid'] = $cfg['DPS']['systemUserID'];
-			$perm['cartsetid'] = $cartsetID;
+			$AwSet['name'] = $name;
+			$AwSet['description'] = $desc;
+			$AwSet['id'] = "#id#";
+			$AwSetID = $db->insert('aw_sets',$AwSet,true);
+			$perm['user_id'] = $cfg['DPS']['systemUserID'];
+			$perm['set_id'] = $AwSetID;
 			$perm['permissions'] = 'B' . $cfg['DPS']['fileRWO'] . 'B';
-			$db->insert('cartsetsusers',$perm,false);
-			$gperm['groupid'] = $cfg['DPS']['allusersgroupid'];
-			$gperm['cartsetid'] = $cartsetID;
+			$db->insert('aw_sets_users',$perm,false);
+			$gperm['group_id'] = $cfg['DPS']['allusersgroupid'];
+			$gperm['set_id'] = $AwSetID;
 			$gperm['permissions'] = 'B' . $cfg['DPS']['fileR'] . 'B';
-			$db->insert('cartsetsgroups',$gperm,false);
-			$gperm['groupid'] = $cfg['Auth']['AdminGroup'];
-			$gperm['cartsetid'] = $cartsetID;
+			$db->insert('aw_sets_groups',$gperm,false);
+			$gperm['group_id'] = $cfg['Auth']['AdminGroup'];
+			$gperm['set_id'] = $AwSetID;
 			$gperm['permissions'] = 'B' . $cfg['DPS']['fileRWO'] . 'B';
-			$db->insert('cartsetsgroups',$gperm,false);
-			$dir['cartsetid'] = $cartsetID;
-			$dir['dirid'] = $dirID;
+			$db->insert('aw_sets_groups',$gperm,false);
+			$dir['set_id'] = $AwSetID;
+			$dir['dir_id'] = $dirID;
 			$dir['linktype'] = 0;
-			$db->insert('cartsetsdir',$dir,true);
-			$cartwall = array();
-			$cartwall['name'] = "New Page";
-			$cartwall['cartsetid'] = $cartsetID;
-			$cartwall['page'] = 0;
-			$db->insert('cartwalls',$cartwall,true);
+			$db->insert('aw_sets_dir',$dir,true);
+			$AwWall = array();
+			$AwWall['name'] = "New Page";
+			$AwWall['set_id'] = $AwSetID;
+			$AwWall['page'] = 0;
+			$db->insert('aw_walls',$AwWall,true);
 		}
 	}
 		

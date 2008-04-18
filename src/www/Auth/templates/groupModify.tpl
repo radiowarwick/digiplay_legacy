@@ -89,7 +89,7 @@
 						<td width="40%" valign="top"><h3>Users:</h3>
 							<ul>
 								{foreach from=$VIEWER.userinfo key="userid" item="user"}
-									<li>
+									<li><font size="-2">
 									{if $user.inGroup}
 										<b>{$user.username}</b>
 									{else}
@@ -97,22 +97,22 @@
 									{/if}
 									[
 									{if $user.inGroup}
-									+ {templateLink id=$VIEWER.templateID text="-" 
+									{templateLink id=$VIEWER.templateID text="remove" 
 										_formName="groupRealmForm" 
 										_moduleName="Auth" 
 										_task="userRemove" 
 										_groupToEdit=$DATA.groupToEdit 
 										_rguid=$userid}
 									{else}
-									{templateLink id=$VIEWER.templateID text="+" 
+									{templateLink id=$VIEWER.templateID text="add" 
 										_formName="groupRealmForm" 
 										_moduleName="Auth" 
 										_task="userAdd" 
 										_groupToEdit=$DATA.groupToEdit 
-										_rguid=$userid} -
+										_rguid=$userid}
 									{/if}
 									]
-									</li>
+									</font></li>
 								{/foreach}
 							</ul>
 						</td>

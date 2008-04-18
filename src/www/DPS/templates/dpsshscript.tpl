@@ -5,8 +5,7 @@
 				{if $ERRORS.dpsUserDelScript.scriptID != ''}
 				<div class="frame_musicboxerror">{$ERRORS.dpsUserDelScript.scriptID}</div>
 				{/if}
-				{foreach from=$VIEWER.scripts item=script}
-				<img src="DPS/images/showScript.png" alt="Show Script">
+				{foreach from=$VIEWER.scripts item=script}<br>
 				{templateLink id="45" text=$script.text _scriptID=$script.id}<br>
 				{if $script.parentperm.1 == "1"}
 				<div class="showPlanInteract">

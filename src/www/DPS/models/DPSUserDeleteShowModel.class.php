@@ -20,9 +20,9 @@ class DPSUserDeleteShowModel extends Model {
 		if(is_numeric($showID)) {
 			$where = "showplanid = " . $showID;
 			$db->delete('showitems',$where,true);
-			$db->delete('showplandir',$where,true);
-			$db->delete('showplanusers',$where,true);
-			$db->delete('showplangroups',$where,true);
+			$db->delete('showplansdir',$where,true);
+			$db->delete('showplansusers',$where,true);
+			$db->delete('showplansgroups',$where,true);
 			$where = "id = " . $showID;
 			$db->delete('showplans',$where,true);
 		}

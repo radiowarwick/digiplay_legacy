@@ -50,15 +50,15 @@ class DPSUserAddShowModel extends Model {
 			$newsperm['showplanid'] = $showID;
 			$newsperm['userid'] = $userID;
 			$newsperm['permissions'] = 'B' . $cfg['DPS']['fileRWO'] . 'B';
-			$db->insert('showplanusers',$newsperm,false); //for binary
+			$db->insert('showplansusers',$newsperm,false); //for binary
 			$gperm['groupid'] = $cfg['Auth']['AdminGroup'];
 			$gperm['showplanid'] = $showID;
 			$gperm['permissions'] = 'B' . $cfg['DPS']['fileRWO'] . 'B';
-			$db->insert('showplangroups',$gperm,false);
+			$db->insert('showplansgroups',$gperm,false);
 			$showdir['showplanid'] = $showID;
 			$showdir['dirid'] = $dirID;
 			$showdir['linktype'] = 0;
-			$db->insert('showplandir',$showdir,true);
+			$db->insert('showplansdir',$showdir,true);
 	}
 		
 	protected function processInvalid() {

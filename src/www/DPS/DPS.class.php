@@ -146,7 +146,7 @@ class DPS extends Module  {
 		//CARTSETS
 		//#######
 		if(strpos($type,'c') !== false) {
-			$sql = "SELECT * from v_tree_cartset 
+			$sql = "SELECT * from v_tree_aw_sets 
 			WHERE
 				parent = $dirID AND 
 				permissions & B'$readPerm' = '$readPerm' AND 

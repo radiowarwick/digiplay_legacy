@@ -8,10 +8,10 @@ include_once($cfg['MVC']['dir']['root'] . '/MVCUtils.class.php');
 MVCUtils::includeValidator('ValidatorRule', 'MVC');
 
 /**
- * Check that the system owns a cartwall.
+ * Check that the system owns a audiowall.
  *
  */
-class DPSSystemCartwallOwnValidator extends ValidatorRule {
+class DPSSystemAwWallOwnValidator extends ValidatorRule {
 	
 	public function isValid(&$data) {
 		global $cfg;
@@ -19,18 +19,18 @@ class DPSSystemCartwallOwnValidator extends ValidatorRule {
 		if(!is_numeric($data)) {
 			return false;
 		}
-		$cartwallID = $data;
+		$awwallID = $data;
 	
-		$sql = "SELECT COUNT(*) FROM v_tree_cartset, cartwalls
-			WHERE v_tree_cartset.userid = " . $cfg['DPS']['systemUserID'] . "
-			AND v_tree_cartset.id = cartwalls.cartsetid
-			AND cartwalls.id = $cartwallID
-			AND v_tree_cartset.permissions & B '" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
+		$sql = "SELECT COUNT(*) FROM v_tree_aw_sets, aw_walls
+			WHERE v_tree_aw_sets.userid = " . $cfg['DPS']['systemUserID'] . "
+			AND v_tree_aw_sets.id = aw_walls.set_id
+			AND aw_walls.id = $awwallID
+			AND v_tree_aw_sets.permissions & B '" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
 		$check = $db->getOne($sql);
 		if($check > 0) {
 			return true;
 		} else {
-			return "You do not own that cartwall";
+			return "You do not own that audiowall";
 		}
 	}
 }

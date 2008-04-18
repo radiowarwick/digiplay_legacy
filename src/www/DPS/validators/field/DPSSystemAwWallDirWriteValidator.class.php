@@ -8,10 +8,10 @@ include_once($cfg['MVC']['dir']['root'] . '/MVCUtils.class.php');
 MVCUtils::includeValidator('ValidatorRule', 'MVC');
 
 /**
- * Check that the system owns a cartwall.
+ * Check that the system owns a audiowall.
  *
  */
-class DPSSystemCartwallDirWriteValidator extends ValidatorRule {
+class DPSSystemAwWallDirWriteValidator extends ValidatorRule {
 	
 	public function isValid(&$data) {
 		global $cfg;
@@ -19,11 +19,11 @@ class DPSSystemCartwallDirWriteValidator extends ValidatorRule {
 		if(!is_numeric($data)) {
 			return false;
 		}
-		$cartwallID = $data;
+		$awwallID = $data;
 	
-		$sql = "SELECT v_tree_cartset.parent FROM v_tree_cartset, cartwalls
-			WHERE v_tree_cartset.id = cartwalls.cartsetid
-			AND cartwalls.id = $cartwallID";
+		$sql = "SELECT v_tree_aw_sets.parent FROM v_tree_aw_sets, aw_walls
+			WHERE v_tree_aw_sets.id = aw_walls.set_id
+			AND aw_walls.id = $awwallID";
 		$parentID = $db->getOne($sql);
 		$sql = "SELECT COUNT(*) FROM v_tree_dir
 			WHERE v_tree_dir.userid = " . $cfg['DPS']['systemUserID'] . "

@@ -8,10 +8,10 @@ include_once($cfg['MVC']['dir']['root'] . '/MVCUtils.class.php');
 MVCUtils::includeValidator('ValidatorRule', 'MVC');
 
 /**
- * Check that a user can edit a cart.
+ * Check that a user can edit an audiowall item.
  *
  */
-class DPSUserCartEditValidator extends ValidatorRule {
+class DPSUserAwItemEditValidator extends ValidatorRule {
 	
 	public function isValid(&$data) {
 		global $cfg;
@@ -20,22 +20,22 @@ class DPSUserCartEditValidator extends ValidatorRule {
 			return false;
 		}
 		
-		$cartID = $data;
+		$awitemID = $data;
 		$flag = false;
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
 		
-		$sql = "SELECT COUNT(*) FROM v_tree_cartset, cartwalls, cartsaudio
-			WHERE v_tree_cartset.userid = $userID
-			AND v_tree_cartset.id = cartwalls.cartsetid
-			AND cartwalls.id = cartsaudio.cartwallid
-			AND cartsaudio.id = $cartID
-			AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileW'] . "' = '" . $cfg['DPS']['fileW'] . "'";
+		$sql = "SELECT COUNT(*) FROM v_tree_aw_sets, aw_walls, aw_items
+			WHERE v_tree_aw_sets.userid = $userID
+			AND v_tree_aw_sets.id = aw_walls.set_id
+			AND aw_walls.id = aw_items.wall_id
+			AND aw_items.id = $awitemID
+			AND v_tree_aw_sets.permissions & B'" . $cfg['DPS']['fileW'] . "' = '" . $cfg['DPS']['fileW'] . "'";
 		$check = $db->getOne($sql);
 		if($check > 0) {
 			return true;
 		}
-		return "You do not have access to edit that cartset";
+		return "You do not have access to edit that audiowall set";
 	}
 }
 ?>

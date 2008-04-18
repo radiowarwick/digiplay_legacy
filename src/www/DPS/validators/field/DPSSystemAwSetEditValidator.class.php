@@ -8,10 +8,10 @@ include_once($cfg['MVC']['dir']['root'] . '/MVCUtils.class.php');
 MVCUtils::includeValidator('ValidatorRule', 'MVC');
 
 /**
- * Check that the system can edit a cartset.
+ * Check that the system can edit a audiowall set.
  *
  */
-class DPSSystemCartsetEditValidator extends ValidatorRule {
+class DPSSystemAwSetEditValidator extends ValidatorRule {
 	
 	public function isValid(&$data) {
 		global $cfg;
@@ -19,17 +19,17 @@ class DPSSystemCartsetEditValidator extends ValidatorRule {
 		if(!is_numeric($data)) {
 			return false;
 		}
-		$cartID = $data;
+		$awitemID = $data;
 		
-		$sql = "SELECT COUNT(*) FROM v_tree_cartset
+		$sql = "SELECT COUNT(*) FROM v_tree_aw_sets
 			WHERE userid = " . $cfg['DPS']['systemUserID'] . "
-			AND id = $cartID
+			AND id = $awitemID
 			AND permissions & B'" . $cfg['DPS']['fileW'] . "' = '" . $cfg['DPS']['fileW'] . "'";
 		$check = $db->getOne($sql);
 		if($check > 0) {
 			return true;
 		} else {
-			return "You do not have access to edit that cartset";
+			return "You do not have access to edit that audiowall set";
 		}
 	}
 }

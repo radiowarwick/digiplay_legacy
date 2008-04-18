@@ -8,23 +8,23 @@ include_once($cfg['MVC']['dir']['root'] . '/MVCUtils.class.php');
 MVCUtils::includeValidator('ValidatorRule', 'MVC');
 
 /**
- * Check that aa user owns a cartset
+ * Check that a user owns an audiowall set
  *
  */
-class DPSUserCartsetDirWriteValidator extends ValidatorRule {
+class DPSUserAwSetDirWriteValidator extends ValidatorRule {
 	public function isValid(&$data) {
 		global $cfg;
 		$db = Database::getInstance($cfg['DPS']['dsn']);
 		if(!is_numeric($data)) {
 			return false;
 		}
-		$cartID = $data;
+		$awitemID = $data;
 		$flag = false;
 	
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
-		$sql = "SELECT v_tree_cartset.parent FROM v_tree_cartset
-			WHERE v_tree_cartset.id = $cartID";
+		$sql = "SELECT v_tree_aw_set.parent FROM v_tree_aw_set
+			WHERE v_tree_aw_set.id = $awitemID";
 		$parentID = $db->getOne($sql);
 		$sql = "SELECT COUNT(*) FROM v_tree_dir
 			WHERE v_tree_dir.userid = $userID

@@ -63,14 +63,14 @@
 				tree.loadXML(hrefstr + "&id=dir1");
 			}
 			
-			//Open a window to move a cartset
-			function moveCartset() {
+			//Open a window to move an awset
+			function moveAwSet() {
 				window.name = "dpsmain";
 				var left=0;
 				var top=20;
 				var title = "MoveFile";
 				var Nurl = siteRoot + "?" +
-					"templateID=48&cartsetID=" + String(currentVal).substring(3,String(currentVal).length);
+					"templateID=48&awsetID=" + String(currentVal).substring(3,String(currentVal).length);
 				var settings="width=800,height=600,top=20,left=0,scrollbars=yes," + 
 					"location=no,directories=no,status=no,menubar=no,toolbar=no,resizable=no";
 				win=window.open(Nurl,title,settings);
@@ -171,7 +171,7 @@
 				if (browserType == "gecko" ) {
 					document.folderLayer = document.getElementById('folderBar');
 					document.jingleLayer = document.getElementById('jingleBar');
-					document.cartsetLayer = document.getElementById('cartsetBar');
+					document.awsetLayer = document.getElementById('awsetBar');
 					document.scriptLayer = document.getElementById('scriptBar');
 					document.showLayer = document.getElementById('showBar');
 
@@ -183,9 +183,9 @@
 					document.dircDelete = document.getElementById('dircDelete');
 					document.dircMove = document.getElementById('dircMove');
 					document.dircUpload = document.getElementById('dircUpload');
-					document.cartsetcEdit = document.getElementById('cartsetcEdit');
-					document.cartsetcMove = document.getElementById('cartsetcMove');
-					document.cartsetcDelete = document.getElementById('cartsetcDelete');
+					document.awsetcEdit = document.getElementById('awsetcEdit');
+					document.awsetcMove = document.getElementById('awsetcMove');
+					document.awsetcDelete = document.getElementById('awsetcDelete');
 					document.scriptcView = document.getElementById('scriptcView');
 					document.scriptcEdit = document.getElementById('scriptcEdit');
 					document.scriptcMove = document.getElementById('scriptcMove');
@@ -198,10 +198,10 @@
 					document.dirrtext = document.getElementById('dirrtext');
 					document.dirRename = document.getElementById('dirRename');
 					document.dirDelete = document.getElementById('dirDelete');
-					document.cartsetView = document.getElementById('cartsetView');
-					document.cartsetEdit = document.getElementById('cartsetEdit');
-					document.cartsetMove = document.getElementById('cartsetMove');
-					document.cartsetDelete = document.getElementById('cartsetDelete');
+					document.awsetView = document.getElementById('awsetView');
+					document.awsetEdit = document.getElementById('awsetEdit');
+					document.awsetMove = document.getElementById('awsetMove');
+					document.awsetDelete = document.getElementById('awsetDelete');
 					document.scriptView = document.getElementById('scriptView');
 					document.scriptEdit = document.getElementById('scriptEdit');
 					document.scriptDelete = document.getElementById('scriptDelete');
@@ -211,7 +211,7 @@
 				} else if (browserType == "ie") {
 					document.folderLayer = document.all['folderBar'];
 					document.jingleLayer = document.all['jingleBar'];
-					document.cartsetLayer = document.all['cartsetBar'];
+					document.awsetLayer = document.all['awsetBar'];
 					document.scriptLayer = document.all['scriptBar'];
 					document.showLayer = document.all['showBar'];
 
@@ -223,9 +223,9 @@
 					document.dircDelete = document.all['dircDelete'];
 					document.dircMove = document.all['dircMove'];
 					document.dircUpload = document.all['dircUpload'];
-					document.cartsetcEdit = document.all['cartsetcEdit'];
-					document.cartsetcMove = document.all['cartsetcMove'];
-					document.cartsetcDelete = document.all['cartsetcDelete'];
+					document.awsetcEdit = document.all['awsetcEdit'];
+					document.awsetcMove = document.all['awsetcMove'];
+					document.awsetcDelete = document.all['awsetcDelete'];
 					document.scriptcEdit = document.all['scriptcEdit'];
 					document.scriptcView = document.all['scriptcView'];
 					document.scriptcMove = document.all['scriptcMove'];
@@ -238,10 +238,10 @@
 					document.dirrtext = document.all['dirrtext'];
 					document.dirRename = document.all['dirRename'];
 					document.dirDelete = document.all['dirDelete'];
-					document.cartsetView = document.all['cartsetView'];
-					document.cartsetEdit = document.all['cartsetEdit'];
-					document.cartsetMove = document.all['cartsetMove'];
-					document.cartsetDelete = document.all['cartsetDelete'];
+					document.awsetView = document.all['awsetView'];
+					document.awsetEdit = document.all['awsetEdit'];
+					document.awsetMove = document.all['awsetMove'];
+					document.awsetDelete = document.all['awsetDelete'];
 					document.scriptView = document.all['scriptView'];
 					document.scriptEdit = document.all['scriptEdit'];
 					document.scriptDelete = document.all['scriptDelete'];
@@ -251,7 +251,7 @@
 				} else {
 					document.folderLayer = document.layers['folderBar'];
 					document.jingleLayer = document.layers['jingleBar'];
-					document.cartsetLayer = document.layers['cartsetBar'];
+					document.awsetLayer = document.layers['awsetBar'];
 					document.scriptLayer = document.layers['scriptBar'];
 					document.showLayer = document.layers['showBar'];
 
@@ -263,9 +263,9 @@
 					document.dircDelete = document.layers['dircDelete'];
 					document.dircMove = document.layers['dircMove'];
 					document.dircUpload = document.layers['dircUpload'];
-					document.cartsetcEdit = document.layers['cartsetcEdit'];
-					document.cartsetcMove = document.layers['cartsetcMove'];
-					document.cartsetcDelete = document.layers['cartsetcDelete'];
+					document.awsetcEdit = document.layers['awsetcEdit'];
+					document.awsetcMove = document.layers['awsetcMove'];
+					document.awsetcDelete = document.layers['awsetcDelete'];
 					document.scriptcView = document.layers['scriptcView'];
 					document.scriptcEdit = document.layers['scriptcEdit'];
 					document.scriptcMove = document.layers['scriptcMove'];
@@ -278,10 +278,10 @@
 					document.dirrtext = document.layers['dirrtext'];
 					document.dirRename = document.layers['dirRename'];
 					document.dirDelete = document.layers['dirDelete'];
-					document.cartsetView = document.layers['cartsetView'];
-					document.cartsetEdit = document.layers['cartsetEdit'];
-					document.cartsetMove = document.layers['cartsetMove'];
-					document.cartsetDelete = document.layers['cartsetDelete'];
+					document.awsetView = document.layers['awsetView'];
+					document.awsetEdit = document.layers['awsetEdit'];
+					document.awsetMove = document.layers['awsetMove'];
+					document.awsetDelete = document.layers['awsetDelete'];
 					document.scriptView = document.layers['scriptView'];
 					document.scriptEdit = document.layers['scriptEdit'];
 					document.scriptDelete = document.layers['scriptDelete'];
@@ -292,7 +292,7 @@
 				if((String(val).substring(0,3)) == "jgl") {
 					//show&hide sections
 					document.folderLayer.style.display = "none";
-					document.cartsetLayer.style.display = "none";
+					document.awsetLayer.style.display = "none";
 					document.scriptLayer.style.display = "none";
 					document.jingleLayer.style.display = "block";
 					document.showLayer.style.display = "none";
@@ -322,7 +322,7 @@
 				} else if ((String(val).substring(0,3)) == "dir") {
 					//show&hide sections
 					document.folderLayer.style.display = "block";
-					document.cartsetLayer.style.display = "none";
+					document.awsetLayer.style.display = "none";
 					document.scriptLayer.style.display = "none";
 					document.jingleLayer.style.display = "none";
 					document.showLayer.style.display = "none";
@@ -367,7 +367,7 @@
 				} else if ((String(val).substring(0,3)) == "crt") {
 					//show&hide sections
 					document.folderLayer.style.display = "none";
-					document.cartsetLayer.style.display = "block";
+					document.awsetLayer.style.display = "block";
 					document.scriptLayer.style.display = "none";
 					document.jingleLayer.style.display = "none";
 					document.showLayer.style.display = "none";
@@ -377,34 +377,34 @@
 					parentNode = tree.getParentId(val);
 					parentPerm = tree.getUserData(parentNode,"perm");
 					if((String(parentPerm).substring(1,2)) == "1") {
-						document.cartsetcMove.style.display = "block";
-						document.cartsetcDelete.style.display = "block";
+						document.awsetcMove.style.display = "block";
+						document.awsetcDelete.style.display = "block";
 					} else {
-						document.cartsetcMove.style.display = "none";
-						document.cartsetcDelete.style.display = "none";
+						document.awsetcMove.style.display = "none";
+						document.awsetcDelete.style.display = "none";
 					}
 					if((String(nodePerm).substring(1,2)) == "1") {
-						document.cartsetcEdit.style.display = "block";
+						document.awsetcEdit.style.display = "block";
 					} else {
-						document.cartsetcEdit.style.display = "none";
+						document.awsetcEdit.style.display = "none";
 					}
 					
 					//Update links
-					document.cartsetView.href = 
+					document.awsetView.href = 
 						siteRoot + "?" +
-						"templateID=26&cartset=" + String(val).substring(3,String(val).length);
-					document.cartsetEdit.href = 
+						"templateID=26&awset=" + String(val).substring(3,String(val).length);
+					document.awsetEdit.href = 
 						siteRoot + "?" +
-						"templateID=25&cartset=" + String(val).substring(3,String(val).length);
-					document.cartsetDelete.href = 
+						"templateID=25&awset=" + String(val).substring(3,String(val).length);
+					document.awsetDelete.href = 
 						siteRoot + "?" + 
-						"templateID=" + templateID + "&formName=dpsUserCartsetDelForm&" + 
+						"templateID=" + templateID + "&formName=dpsUserAwSetDelForm&" + 
 						"moduleName=DPS&" +
-						"cartset=" + String(val).substring(3,String(val).length);
+						"awset=" + String(val).substring(3,String(val).length);
 				} else if ((String(val).substring(0,3)) == "scr") {
 					//show&hide sections
 					document.folderLayer.style.display = "none";
-					document.cartsetLayer.style.display = "none";
+					document.awsetLayer.style.display = "none";
 					document.scriptLayer.style.display = "block";
 					document.jingleLayer.style.display = "none";
 					document.showLayer.style.display = "none";
@@ -444,7 +444,7 @@
 				} else if ((String(val).substring(0,3)) == "shp") {
 					//show&hide sections
 					document.folderLayer.style.display = "none";
-					document.cartsetLayer.style.display = "none";
+					document.awsetLayer.style.display = "none";
 					document.scriptLayer.style.display = "none";
 					document.jingleLayer.style.display = "none";
 					document.showLayer.style.display = "block";
@@ -493,7 +493,7 @@
 					<img class="frame_sidebarlogo" src="DPS/images/homenavshow.png" alt="Studio">
 					<div class="frame_sidebarmusic">{templateLink id="31" text="Music Library"}</div>
 					<div class="frame_sidebarsue">{templateLink id="32" text="Sue Stamp"}</div>
-					<div class="frame_sidebarstudio">{templateLink id="33" text="Studio Cartwalls"}</div>
+					<div class="frame_sidebarstudio">{templateLink id="33" text="Studio Audiowalls"}</div>
 					<div class="frame_studiosidebarlinks">
 						{templateLink id="34" text="Information"}<br />
 						{templateLink id="54" text="My Showplans"}<br />

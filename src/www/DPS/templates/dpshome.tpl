@@ -46,7 +46,7 @@
 				</div>
 				<div class="home_studioNav">
 					<div class="home_studioNavTitle">
-			{templateLink id="33" text="<img src='DPS/images/homenavstudio.png' alt='Studio Cartwalls'>"}
+			{templateLink id="33" text="<img src='DPS/images/homenavstudio.png' alt='Studio Audiowalls'>"}
 					</div>
 					<div class="home_studioNavDesc">
 			{templateLink id="33" text="Edit your jingles"}

@@ -4,7 +4,7 @@
 */
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 
-class DPSUserCartsetsViewer extends Viewer {
+class DPSUserAwSetViewer extends Viewer {
 
 	const module = 'DPS';
 
@@ -12,7 +12,7 @@ class DPSUserCartsetsViewer extends Viewer {
 		global $cfg;
 		parent::setupTemplate();
 
-		// user cartsets
+		// user awsets
 		$db = Database::getInstance($cfg['DPS']['dsn']);
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
@@ -20,41 +20,41 @@ class DPSUserCartsetsViewer extends Viewer {
 		
 		$sql = "SELECT usersconfigs.val FROM configs, usersconfigs
 			WHERE configs.id = usersconfigs.configid
-				AND configs.name = 'default_cartset'
+				AND configs.name = 'default_awset'
 				AND usersconfigs.userid = " . $userID;
 		$userset = $db->getOne($sql);
 		
 		$sql = "SELECT val FROM configuration 
 			WHERE location = $loc
-				AND parameter='station_cartset'";
+				AND parameter='station_awset'";
 		$stationset = $db->getOne($sql);
 		if($stationset != '') {
-			$sql = "SELECT cartsets.id as id, cartsets.name as name,
-					cartsets.description as desc
-				FROM cartsets
+			$sql = "SELECT aw_sets.id as id, aw_sets.name as name,
+					aw_sets.description as desc
+				FROM aw_sets
 				WHERE id = $stationset";
-			$scartset = $db->getRow($sql);
+			$sawset = $db->getRow($sql);
 		} else {
-			$scartset = "None";
+			$sawset = "None";
 		}
 		
-		$sql = "SELECT * from v_tree_cartset 
-			WHERE v_tree_cartset.userid = $userID 
-				AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] .
+		$sql = "SELECT * from v_tree_aw_sets 
+			WHERE v_tree_aw_sets.userid = $userID 
+				AND v_tree_aw_sets.permissions & B'" . $cfg['DPS']['fileR'] .
 					"' = '" . $cfg['DPS']['fileR'] . "'";
-		$cartsets = $db->getAll($sql);
+		$awsets = $db->getAll($sql);
 
-		foreach ($cartsets as &$cartset) {
-			if($userset == $cartset['id']) {
-				$cartset['active'] = 't';
+		foreach ($awsets as &$awset) {
+			if($userset == $awset['id']) {
+				$awset['active'] = 't';
 			} else {
-				$cartset['active'] = 'f';
+				$awset['active'] = 'f';
 			}
 			$sql = "SELECT BIT_OR(permissions) 
 				FROM v_tree_dir 
-				WHERE v_tree_dir.id = {$cartset['parent']}
+				WHERE v_tree_dir.id = {$awset['parent']}
 					AND v_tree_dir.userid = $userID";
-			$cartset['parentperm'] = $db->getOne($sql);
+			$awset['parentperm'] = $db->getOne($sql);
 		}
 
 		$this->assign('access_playlist',AuthUtil::getDetailedUserrealmAccess(
@@ -63,8 +63,8 @@ class DPSUserCartsetsViewer extends Viewer {
 			array(1), $userID));
 		$this->assign('studioAccess',AuthUtil::getDetailedUserrealmAccess(
 			array(3,21,34), $userID));
-		$this->assign('cartsets', $cartsets);
-		$this->assign('stationcartset',$scartset);
+		$this->assign('awsets', $awsets);
+		$this->assign('stationawset',$sawset);
 	}
 }
 ?>

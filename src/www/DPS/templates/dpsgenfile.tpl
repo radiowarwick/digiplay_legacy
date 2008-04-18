@@ -53,20 +53,20 @@
 		</div>
 	</div>
 	
-	<div id="cartsetBar" class="folderBar">
+	<div id="awsetBar" class="folderBar">
 		<div class="fileLink">
-			<a id="cartsetEdit" href="{$CONFIG.general.siteRoot}?templateID={$VIEWER.templateID}">
-				<img src="DPS/images/cartsetEdit.png" alt="Edit Carset"> Edit Cartset
+			<a id="awsetEdit" href="{$CONFIG.general.siteRoot}?templateID={$VIEWER.templateID}">
+				<img src="DPS/images/awsetEdit.png" alt="Edit Audiowall set"> Edit Audiowall set
 			</a>
 		</div>
 		<div class="fileLink">
-			<a id="cartsetMove" href="javascript:moveCartset();">
-				<img src="DPS/images/cartsetMove.png" alt="Move Cartset"> Move Cartset
+			<a id="awsetMove" href="javascript:moveAwSet();">
+				<img src="DPS/images/awsetMove.png" alt="Move Audiowall set"> Move Audiowall set
 			</a>
 		</div>
 		<div class="fileLink">
-			<a id="cartsetDel" href="{$CONFIG.general.siteRoot}?templateID={$VIEWER.templateID}">
-				<img src="DPS/images/cartsetDel.png" alt="Delete Cartset"> Delete Cartset
+			<a id="awsetDel" href="{$CONFIG.general.siteRoot}?templateID={$VIEWER.templateID}">
+				<img src="DPS/images/awsetDel.png" alt="Delete Audiowall set"> Delete Audiowall set
 			</a>
 		</div>
 	</div>

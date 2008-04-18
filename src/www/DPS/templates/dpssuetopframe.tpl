@@ -10,7 +10,7 @@
 					<img class="frame_sidebarlogo" src="DPS/images/homenavsue.png" alt="Sue Stamp">
 					<div class="frame_sidebarmusic">{templateLink id="31" text="Music Library"}</div>
 					<div class="frame_sidebarshow">{templateLink id="34" text="Show Planning"}</div>
-					<div class="frame_sidebarstudio">{templateLink id="33" text="Studio Cartwalls"}</div>
+					<div class="frame_sidebarstudio">{templateLink id="33" text="Studio Audiowalls"}</div>
 					<div class="frame_suesidebarlinks">
 					{templateLink id="32" text="Information"}<br>
 					{if Access_ViewSue}

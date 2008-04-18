@@ -41,12 +41,12 @@
 		<div class='subTitle'>You do not have permission to move that item</div>
 	{else}
 		<div class='alignleft'>
-			<div class='bigTitle'>Advanced Properties: {$VIEWER.cartset.name}</div>
-			<form name="dpsUserMoveCarsetForm" method="post" action="{$CONFIG.general.siteRoot}">
-				<input type="hidden" name="formName" value="dpsUserMoveCartsetForm" />
+			<div class='bigTitle'>Advanced Properties: {$VIEWER.awset.name}</div>
+			<form name="dpsUserMoveAwSetForm" method="post" action="{$CONFIG.general.siteRoot}">
+				<input type="hidden" name="formName" value="dpsUserMoveAwSetForm" />
 				<input type="hidden" name="moduleName" value="DPS" />
 				<input type="hidden" name="templateID" value="22" />
-				<input type="hidden" name="cartsetID" value="{$VIEWER.cartset.id}" />
+				<input type="hidden" name="awsetID" value="{$VIEWER.awset.id}" />
 				<input type="hidden" id="newparent" name="newParent" value="{$VIEWER.folder.parent}" />
 				{if $VIEWER.own == 't'}
 <!--				<div class='subTitle'>Select the items permissions from the options below</div>

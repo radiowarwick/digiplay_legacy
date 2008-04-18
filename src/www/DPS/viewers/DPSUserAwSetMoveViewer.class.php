@@ -4,7 +4,7 @@
 */
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 
-class DPSUserCartsetMoveViewer extends Viewer {
+class DPSUserAwSetMoveViewer extends Viewer {
 
 	const module = 'DPS';
 	protected $activeNode = 'foldersTree';
@@ -15,19 +15,19 @@ class DPSUserCartsetMoveViewer extends Viewer {
 		$db = Database::getInstance($cfg['DPS']['dsn']);
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
-		$cartsetID = pg_escape_string($this->fieldData['cartsetID']);
+		$awsetID = pg_escape_string($this->fieldData['awsetID']);
 		$flag = false;
-		if(!is_numeric($cartsetID)) {
+		if(!is_numeric($awsetID)) {
 			$this->assign('permError', 't');
 		} else {
-			$sql = "SELECT count(*) FROM v_tree_cartset
-				WHERE id = $cartsetID
+			$sql = "SELECT count(*) FROM v_tree_aw_set
+				WHERE id = $awsetID
 					AND	userid = $userID
 					AND permissions & B'" . $cfg['DPS']['fileW'] . "' = '"
 						. $cfg['DPS']['fileW'] . "'";
 			if($db->getOne($sql) > 0) {
-				$sql = "SELECT dirid FROM cartsetsdir
-					WHERE cartsetid = $cartsetID";
+				$sql = "SELECT dirid FROM aw_setsdir
+					WHERE set_id = $awsetID";
 				$dirID = $db->getOne($sql);
 				"SELECT count(*) FROM v_tree_dir
 					WHERE id = $dirID
@@ -41,12 +41,12 @@ class DPSUserCartsetMoveViewer extends Viewer {
 		}
 		
 		if($flag) {
-			$sql = "SELECT * FROM cartsets 
-				WHERE id = " . pg_escape_string($cartsetID);
-			$cartset = $db->getRow($sql);
+			$sql = "SELECT * FROM aw_sets 
+				WHERE id = " . pg_escape_string($awsetID);
+			$awset = $db->getRow($sql);
 			
-			$sql = "SELECT count(*) FROM v_tree_cartset
-				WHERE id = $cartsetID
+			$sql = "SELECT count(*) FROM v_tree_aw_set
+				WHERE id = $awsetID
 					AND	userid = $userID
 					AND permissions & B'" . $cfg['DPS']['fileO'] . "' = '".
 						$cfg['DPS']['fileO'] . "'";
@@ -55,7 +55,7 @@ class DPSUserCartsetMoveViewer extends Viewer {
 				$this->assign('own', 't');
 			}
 			
-			$this->assign('cartset', $cartset);
+			$this->assign('awset', $awset);
 			$this->assign('treeType', '');
 		} else {
 			$this->assign('permError', 't');

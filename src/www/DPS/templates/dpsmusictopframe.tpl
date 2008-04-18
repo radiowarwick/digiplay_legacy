@@ -10,7 +10,7 @@
 		<img class="frame_sidebarlogo" src="DPS/images/homenavmusic.png" alt="Music Library">
 		<div class="frame_sidebarshow">{templateLink id="34" text="Show Planning"}</div>
 		<div class="frame_sidebarsue">{templateLink id="32" text="Sue Stamp"}</div>
-		<div class="frame_sidebarstudio">{templateLink id="33" text="Studio Cartwalls"}</div>
+		<div class="frame_sidebarstudio">{templateLink id="33" text="Studio Audiowalls"}</div>
 		<div class="frame_musicsidebarlinks">
 			{templateLink id="31" text="Information"}<br>
 			{templateLink id="20" text="Search tracks"}<br>

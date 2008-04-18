@@ -35,7 +35,7 @@
 	  <img class="frame_sidebarlogo" src="DPS/images/homenavshow.png" alt="Show">
 	  <div class="frame_sidebarmusic">{templateLink id="31" text="Music Library"}</div>
 	  <div class="frame_sidebarshow">{templateLink id="32" text="Sue Stamp"}</div>
-	  <div class="frame_sidebarsue">{templateLink id="33" text="Studio Cartwalls"}</div>
+	  <div class="frame_sidebarsue">{templateLink id="33" text="Studio Audiowalls"}</div>
 	  <div class="frame_studiosidebarlinks">
 	    {templateLink id="34" text="Information"}<br />
 	    {templateLink id="54" text="My Showplans"}<br />

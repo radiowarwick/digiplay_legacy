@@ -35,9 +35,9 @@
 		<div class="frame_sidebarsue">{templateLink id="32" text="Sue Stamp"}</div>
 		<div class="frame_studiosidebarlinks">
 			{templateLink id="33" text="Information"}<br>
-			{templateLink id="23" text="Personal Cartwalls"}<br>
+			{templateLink id="23" text="Personal Audiowalls"}<br>
 			{if $studio == 't'}
-			{templateLink id="27" text="Station Cartwalls"}<br>
+			{templateLink id="27" text="Station Audiowalls"}<br>
 			{/if}
 			{if $access_playlist == 't'}
 			{templateLink id="39" text="Playlists"}<br>

@@ -55,25 +55,25 @@
 		</div>
 	</div>
 
-	<div id="cartsetBar" class="folderBar">
-		<div id="cartsetcView" class="fileLink">
-			<a id="cartsetView" href="{$CONFIG.general.siteRoot}?templateID={$VIEWER.templateID}">
-				<img src="DPS/images/cartsetEdit.png" alt="View Carset"> View Cartset
+	<div id="awsetBar" class="folderBar">
+		<div id="awsetcView" class="fileLink">
+			<a id="awsetView" href="{$CONFIG.general.siteRoot}?templateID={$VIEWER.templateID}">
+				<img src="DPS/images/awsetEdit.png" alt="View Audiowall set"> View Audiowall set
 			</a>
 		</div>
-		<div id="cartsetcEdit" class="fileLink">
-			<a id="cartsetEdit" href="{$CONFIG.general.siteRoot}?templateID={$VIEWER.templateID}">
-				<img src="DPS/images/cartsetEdit.png" alt="Edit Carset"> Edit Cartset
+		<div id="awsetcEdit" class="fileLink">
+			<a id="awsetEdit" href="{$CONFIG.general.siteRoot}?templateID={$VIEWER.templateID}">
+				<img src="DPS/images/awsetEdit.png" alt="Edit Audiowall set"> Edit Audiowall set
 			</a>
 		</div>
-		<div id="cartsetcMove" class="fileLink">
-			<a id="cartsetMove" href="javascript:moveCartset();">
-				<img src="DPS/images/cartsetMove.png" alt="Move Cartset"> Move Cartset
+		<div id="awsetcMove" class="fileLink">
+			<a id="awsetMove" href="javascript:moveAwSet();">
+				<img src="DPS/images/awsetMove.png" alt="Move Audiowall set"> Move Audiowall set
 			</a>
 		</div>
-		<div id="cartsetcDelete" class="fileLink">
-			<a id="cartsetDelete" href="{$CONFIG.general.siteRoot}?templateID={$VIEWER.templateID}">
-				<img src="DPS/images/cartsetDel.png" alt="Delete Cartset"> Delete Cartset
+		<div id="awsetcDelete" class="fileLink">
+			<a id="awsetDelete" href="{$CONFIG.general.siteRoot}?templateID={$VIEWER.templateID}">
+				<img src="DPS/images/awsetDel.png" alt="Delete Audiowall set"> Delete Audiowall set
 			</a>
 		</div>
 	</div>

@@ -5,7 +5,7 @@
 */
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 
-class DPSStationEditCartViewer extends Viewer {
+class DPSStationEditAwItemViewer extends Viewer {
 
 	const module = 'DPS';
 	protected $activeNode = 'foldersTree';
@@ -15,18 +15,18 @@ class DPSStationEditCartViewer extends Viewer {
 		parent::setupTemplate();
 
 		$db = Database::getInstance($cfg['DPS']['dsn']);
-		$cartID = pg_escape_string($this->fieldData['cartID']);
+		$awitemID = pg_escape_string($this->fieldData['awitemID']);
 
-		//CHECK USERS PERMISION TO VIEW CART
-		if($cartID == "New" || !is_numeric($cartID)) {
-			$cartwallID = pg_escape_string($this->fieldData['cartwallID']);
+		//CHECK USERS PERMISION TO VIEW AW ITEM
+		if($awitemID == "New" || !is_numeric($awitemID)) {
+			$awwallID = pg_escape_string($this->fieldData['awwallID']);
 			$flag = false;
-			if($cartwallID != '' && is_numeric($cartwallID)) {
-				$sql = "SELECT count(*) from v_tree_cartset, cartwalls 
-				WHERE v_tree_cartset.userid = " . $cfg['DPS']['systemUserID'] . " 
-					AND v_tree_cartset.id = cartwalls.cartsetid 
-					AND cartwalls.id = $cartwallID 
-					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] .
+			if($awwallID != '' && is_numeric($awwallID)) {
+				$sql = "SELECT count(*) from v_tree_aw_sets, aw_walls 
+				WHERE v_tree_aw_sets.userid = " . $cfg['DPS']['systemUserID'] . " 
+					AND v_tree_aw_sets.id = aw_walls.set_id 
+					AND aw_walls.id = $awwallID 
+					AND v_tree_aw_sets.permissions & B'" . $cfg['DPS']['fileR'] .
 						"' = '" . $cfg['DPS']['fileR'] . "'";
 				$check = $db->getOne($sql);
 				if($check > 0) {
@@ -37,20 +37,20 @@ class DPSStationEditCartViewer extends Viewer {
 			}
 			if($flag) {
 				$this->assign('new', 't');
-				$this->assign('cartwallID', $this->fieldData['cartwallID']);
-				$this->assign('cartPos', $this->fieldData['cartPos']);
+				$this->assign('awwallID', $this->fieldData['awwallID']);
+				$this->assign('awitemPos', $this->fieldData['awitemPos']);
 			} else {
 				$this->assign('permError', 't');
 			}
 		} else {
 			$flag = false;
-			if($cartID != '' && is_numeric($cartID)) {
-				$sql = "SELECT count(*) from v_tree_cartset, cartwalls, cartsaudio 
-				WHERE v_tree_cartset.userid = " . $cfg['DPS']['systemUserID'] . " 
-					AND cartsaudio.cartwallid = cartwalls.id 
-					AND v_tree_cartset.id = cartwalls.cartsetid 
-					AND cartsaudio.id = $cartID 
-					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] .
+			if($awitemID != '' && is_numeric($awitemID)) {
+				$sql = "SELECT count(*) from v_tree_aw_sets, aw_walls, aw_items 
+				WHERE v_tree_aw_sets.userid = " . $cfg['DPS']['systemUserID'] . " 
+					AND aw_items.wall_id = aw_walls.id 
+					AND v_tree_aw_sets.id = aw_walls.set_id 
+					AND aw_items.id = $awitemID 
+					AND v_tree_aw_sets.permissions & B'" . $cfg['DPS']['fileR'] .
 						"' = '" . $cfg['DPS']['fileR'] . "'";
 				$check = $db->getOne($sql);
 				if($check > 0) {
@@ -60,61 +60,61 @@ class DPSStationEditCartViewer extends Viewer {
 				}
 			}
 			if($flag) {
-				$sql = "SELECT cartsaudio.id AS id, cartsaudio.text AS text, 
-					cartsaudio.audioid AS audioID, cartwalls.cartsetid AS cartset, 
-					cartsaudio.cartstyleid AS styleID,cartsaudio.cart AS cart 
-				FROM cartsaudio, cartwalls 
-				WHERE cartsaudio.cartwallid = cartwalls.id 
-					AND cartsaudio.id = " . $cartID;
-				$cart = $db->getRow($sql);
-				$this->assign('cartInfo', $cart);
+				$sql = "SELECT aw_items.id AS id, aw_items.text AS text, 
+					aw_items.audio_id AS audioID, aw_walls.set_id AS awset, 
+					aw_items.style_id AS styleID, aw_items.item AS item 
+				FROM aw_items, aw_walls 
+				WHERE aw_items.wall_id = aw_walls.id 
+					AND aw_items.id = " . $awitemID;
+				$awitem = $db->getRow($sql);
+				$this->assign('awitemInfo', $awitem);
 			} else {
 				$this->assign('permError', 't');
 			}
 		}
 
 		if($flag) {
-			$sql= "SELECT * FROM cartstyles ORDER BY name asc";
+			$sql= "SELECT * FROM aw_styles ORDER BY name asc";
 			$styles = $db->getAll($sql);
 
 			$auth = Auth::getInstance();
 			$userID = $auth->getUserID();
 
 			//CHECK IF ANYONE ELSE CAN READ PERMS (IE NEED TO USE ALL USERS TREE)
-			if($cartID == "New") {
-				$sql = "SELECT count(*) from v_tree_cartset_explicit, cartwalls 
-				WHERE v_tree_cartset_explicit.cause = {$cfg['DPS']['allusersgroupid']}
-					AND v_tree_cartset_explicit.id = cartwalls.cartsetid
-					AND cartwalls.id = $cartwallID
-					AND v_tree_cartset_explicit.causetype = 'group'
-					AND v_tree_cartset_explicit.permissions & B'" . $cfg['DPS']['fileR'] .
+			if($awitemID == "New") {
+				$sql = "SELECT count(*) from v_tree_aw_set_explicit, aw_walls 
+				WHERE v_tree_aw_set_explicit.cause = {$cfg['DPS']['allusersgroupid']}
+					AND v_tree_aw_set_explicit.id = aw_walls.set_id
+					AND aw_walls.id = $awwallID
+					AND v_tree_aw_set_explicit.causetype = 'group'
+					AND v_tree_aw_set_explicit.permissions & B'" . $cfg['DPS']['fileR'] .
 						"' = '" . $cfg['DPS']['fileR'] . "'";
 				$user_count = $db->getOne($sql);
-				$sql = "SELECT count(*) from v_tree_cartset_inherited, cartwalls 
-				WHERE v_tree_cartset_inherited.cause = {$cfg['DPS']['allusersgroupid']}
-					AND v_tree_cartset_inherited.id = cartwalls.cartsetid
-					AND cartwalls.id = $cartwallID
-					AND v_tree_cartset_inherited.causetype = 'group'
-					AND v_tree_cartset_inherited.permissions & B'" . $cfg['DPS']['fileR'] .
+				$sql = "SELECT count(*) from v_tree_aw_set_inherited, aw_walls 
+				WHERE v_tree_aw_set_inherited.cause = {$cfg['DPS']['allusersgroupid']}
+					AND v_tree_aw_set_inherited.id = aw_walls.set_id
+					AND aw_walls.id = $awwallID
+					AND v_tree_aw_set_inherited.causetype = 'group'
+					AND v_tree_aw_set_inherited.permissions & B'" . $cfg['DPS']['fileR'] .
 						"' = '" . $cfg['DPS']['fileR'] . "'";
 				$user_count = $user_count + $db->getOne($sql);
 			} else {
-				$sql = "SELECT count(*) from v_tree_cartset_explicit, cartwalls, cartsaudio 
-				WHERE v_tree_cartset_explicit.cause = {$cfg['DPS']['allusersgroupid']}
-					AND v_tree_cartset_explicit.id = cartwalls.cartsetid
-					AND cartwalls.id = cartsaudio.cartwallid
-					AND cartsaudio.id = $cartID
-					AND v_tree_cartset_explicit.causetype = 'group'
-					AND v_tree_cartset_explicit.permissions & B'" . $cfg['DPS']['fileR'] .
+				$sql = "SELECT count(*) from v_tree_aw_set_explicit, aw_walls, aw_items 
+				WHERE v_tree_aw_set_explicit.cause = {$cfg['DPS']['allusersgroupid']}
+					AND v_tree_aw_set_explicit.id = aw_walls.set_id
+					AND aw_walls.id = aw_items.wall_id
+					AND aw_items.id = $awitemID
+					AND v_tree_aw_set_explicit.causetype = 'group'
+					AND v_tree_aw_set_explicit.permissions & B'" . $cfg['DPS']['fileR'] .
 						"' = '" . $cfg['DPS']['fileR'] . "'";
 				$user_count = $db->getOne($sql);
-				$sql = "SELECT count(*) FROM v_tree_cartset_inherited, cartwalls, cartsaudio 
-				WHERE v_tree_cartset_inherited.cause = {$cfg['DPS']['allusersgroupid']}
-					AND v_tree_cartset_inherited.id = cartwalls.cartsetid
-					AND cartwalls.id = cartsaudio.cartwallid
-					AND cartsaudio.id = $cartID
-					AND v_tree_cartset_inherited.causetype = 'group'
-					AND v_tree_cartset_inherited.permissions & B'" . $cfg['DPS']['fileR'] .
+				$sql = "SELECT count(*) FROM v_tree_aw_set_inherited, aw_walls, aw_items 
+				WHERE v_tree_aw_set_inherited.cause = {$cfg['DPS']['allusersgroupid']}
+					AND v_tree_aw_set_inherited.id = aw_walls.set_id
+					AND aw_walls.id = aw_items.wall_id
+					AND aw_items.id = $awitemID
+					AND v_tree_aw_set_inherited.causetype = 'group'
+					AND v_tree_aw_set_inherited.permissions & B'" . $cfg['DPS']['fileR'] .
 						"' = '" . $cfg['DPS']['fileR'] . "'";
 				$user_count = $user_count + $db->getOne($sql);
 			}

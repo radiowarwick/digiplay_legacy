@@ -4,7 +4,7 @@
 */
 include_once($cfg['DBAL']['dir']['root'] . '/Database.class.php');
 
-class DPSUserCartwallsViewer extends Viewer {
+class DPSUserAwWallsViewer extends Viewer {
 
 	const module = 'DPS';
 
@@ -14,16 +14,16 @@ class DPSUserCartwallsViewer extends Viewer {
 
 		$db = Database::getInstance($cfg['DPS']['dsn']);
 //    $db_web = Database::getInstance($cfg['DPS']['dsn_web']);
-		$cartset = pg_escape_string($this->fieldData['cartset']);
+		$awset = pg_escape_string($this->fieldData['awset']);
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
 		$flag = false;
 		
-		if($cartset != '' && is_numeric($cartset)) {
-			$sql = "SELECT count(*) from v_tree_cartset 
-				WHERE v_tree_cartset.userid = $userID 
-					AND v_tree_cartset.id = $cartset 
-					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileR'] .
+		if($awset != '' && is_numeric($awset)) {
+			$sql = "SELECT count(*) from v_tree_aw_set 
+				WHERE v_tree_aw_set.userid = $userID 
+					AND v_tree_aw_set.id = $awset 
+					AND v_tree_aw_set.permissions & B'" . $cfg['DPS']['fileR'] .
 						"' = '" . $cfg['DPS']['fileR'] . "'";
 			$check = $db->getOne($sql);
 			if($check > 0) {
@@ -37,11 +37,11 @@ class DPSUserCartwallsViewer extends Viewer {
 				$page = 0;
 			}
 
-			$sql = "SELECT * FROM cartwalls 
-				WHERE cartsetid = $cartset AND page = $page";
-			$cartwall = $db->getRow($sql);
+			$sql = "SELECT * FROM aw_walls 
+				WHERE set_id = $awset AND page = $page";
+			$awwall = $db->getRow($sql);
 
-			$sql = "SELECT count(*) FROM cartwalls WHERE cartsetid = " . $cartset;
+			$sql = "SELECT count(*) FROM aw_walls WHERE set_id = " . $awset;
 			$pages = $db->getOne($sql);
 			$pageArray = array();
 			for($i=0; $i < $pages; $i++) {
@@ -52,67 +52,67 @@ class DPSUserCartwallsViewer extends Viewer {
 				}
 			}
 			for($i=0; $i<12; $i++) {
-				$tcart = array();
-				$sql = "SELECT cartsaudio.id AS id, cartsaudio.audioid AS audio, 
-					cartsaudio.text AS name, cartsaudio.cart AS cart, 
+				$tawitem = array();
+				$sql = "SELECT aw_items.id AS id, aw_items.audio_id AS audio, 
+					aw_items.text AS name, aw_items.item AS item, 
 					audio.length_smpl AS len 
-				FROM cartwalls, cartsaudio, audio 
-				WHERE cartwalls.cartsetid = " . $cartset . " 
-					AND cartwalls.id = cartsaudio.cartwallid 
-					AND cartsaudio.audioid = audio.id 
-					AND cartwalls.page = " . $page . " 
-					AND cartsaudio.cart = " . $i;
-				$tcart = $db->getRow($sql);
-				$tcart['name'] = str_replace("\n","<br>",$tcart['name']);
-				if(isset($tcart['audioid'])) {
-					$mins = floor($tcart['len']/44100/60);
-					$secs = round(($tcart['len'] - $mins*44100*60)/44100);
+				FROM aw_walls, aw_items, audio 
+				WHERE aw_walls.set_id = " . $awset . " 
+					AND aw_walls.id = aw_items.wall_id 
+					AND aw_items.audio_id = audio.id 
+					AND aw_walls.page = " . $page . " 
+					AND aw_items.item = " . $i;
+				$tawitem = $db->getRow($sql);
+				$tawitem['name'] = str_replace("\n","<br>",$tawitem['name']);
+				if(isset($tawitem['audioid'])) {
+					$mins = floor($tawitem['len']/44100/60);
+					$secs = round(($tawitem['len'] - $mins*44100*60)/44100);
 					if($mins != 0) {
-						$tcart['length'] = $mins . "m " . $secs . "s";
+						$tawitem['length'] = $mins . "m " . $secs . "s";
 					} else {
-						$tcart['length'] = $secs . "s";
+						$tawitem['length'] = $secs . "s";
 					}
-					$sql = "SELECT cartstyleprops.value AS value,
-							cartproperties.name AS name
-						FROM cartsaudio, cartstyle, cartstyleprops, cartproperties
-						WHERE cartsaudio.id = " . $tcart['id'] . " 
-							AND cartsaudio.styleid = cartstyle.id 
-							AND cartstyle.id = cartstyleprops.styleid 
-							AND cartstyleprops.propertyid = cartproperties.id";
-					$cartprop = $db->getAll($sql);
-					foreach($cartprop as $prop) {
+					$sql = "SELECT aw_styles_props.value AS value,
+							aw_props.name AS name
+						FROM aw_items, aw_styles, aw_styles_props, aw_props
+						WHERE aw_items.id = " . $tawitem['id'] . " 
+							AND aw_items.styleid = aw_styles.id 
+							AND aw_styles.id = aw_styles_props.styleid 
+							AND aw_styles_props.propertyid = aw_props.id";
+					$aw_prop = $db->getAll($sql);
+					foreach($aw_prop as $prop) {
 						if($prop['name'] == 'ForeColourRGB') {
-							$tcart['ForeColour']['r'] = (int)((int)$prop['value'] / (256*256));
-							$tcart['ForeColour']['g'] = (int)(($prop['value']
-								-$tcart['ForeColour']['r']*256*256) / 256);
-							$tcart['ForeColour']['b'] = (int)(($prop['value']
-								-$tcart['ForeColour']['r']*256*256
-								-$tcart['ForeColour']['g']*256));
+							$tawitem['ForeColour']['r'] = (int)((int)$prop['value'] / (256*256));
+							$tawitem['ForeColour']['g'] = (int)(($prop['value']
+								-$tawitem['ForeColour']['r']*256*256) / 256);
+							$tawitem['ForeColour']['b'] = (int)(($prop['value']
+								-$tawitem['ForeColour']['r']*256*256
+								-$tawitem['ForeColour']['g']*256));
 						} elseif($prop['name'] == 'BackColourRGB') {
-							$tcart['BackColour']['r'] = (int)((int)$prop['value'] / (256*256));
-							$tcart['BackColour']['g'] = (int)(($prop['value']
-								-$tcart['BackColour']['r']*256*256) / 256);
-							$tcart['BackColour']['b'] = ($prop['value']
-								-$tcart['BackColour']['r']*256*256
-								-$tcart['BackColour']['g']*256);
+							$tawitem['BackColour']['r'] = (int)((int)$prop['value'] / (256*256));
+							$tawitem['BackColour']['g'] = (int)(($prop['value']
+								-$tawitem['BackColour']['r']*256*256) / 256);
+							$tawitem['BackColour']['b'] = ($prop['value']
+								-$tawitem['BackColour']['r']*256*256
+								-$tawitem['BackColour']['g']*256);
 						}
 					}
 				} else {
-					$tcart['name'] = '<b>[BLANK]</b>';
-					$tcart['ForeColour']['r'] = 100;
-					$tcart['ForeColour']['g'] = 100;
-					$tcart['ForeColour']['b'] = 100;
-					$tcart['BackColour']['r'] = 220;
-					$tcart['BackColour']['g'] = 220;
-					$tcart['BackColour']['b'] = 220;
+					$tawitem['name'] = '<b>[BLANK]</b>';
+					$tawitem['ForeColour']['r'] = 100;
+					$tawitem['ForeColour']['g'] = 100;
+					$tawitem['ForeColour']['b'] = 100;
+					$tawitem['BackColour']['r'] = 220;
+					$tawitem['BackColour']['g'] = 220;
+					$tawitem['BackColour']['b'] = 220;
 				}
-				$this->assign('cart' . ($i+1), $tcart);
+				$this->assign('awitem' . ($i+1), $tawitem);
 			}
 
-			$sql = "SELECT count(*) from v_tree_cartset 
-				WHERE v_tree_cartset.userid = $userID 
-					AND v_tree_cartset.id = $cartset 
-					AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileW'] .
+			$sql = "SELECT count(*) from v_tree_aw_set 
+				WHERE v_tree_aw_set.userid = $userID 
+					AND v_tree_aw_set.id = $awset 
+					AND v_tree_aw_set.permissions & B'" . $cfg['DPS']['fileW'] .
 						"' = '" . $cfg['DPS']['fileW'] . "'";
 			$check = $db->getOne($sql);
 			if($check > 0) {
@@ -120,13 +120,13 @@ class DPSUserCartwallsViewer extends Viewer {
 			}
 			$this->assign('access_playlist',AuthUtil::getDetailedUserrealmAccess(
 				array(3,21,33), $userID));
-			$this->assign('cartwall',$cartwall);
+			$this->assign('awwall',$awwall);
 			$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(
 				array(1), $userID));
 			$this->assign('studioAccess',AuthUtil::getDetailedUserrealmAccess(
 				array(3,21,34), $userID));
 			$this->assign('pagelink',$pageArray);
-			$this->assign('cartsetID',$cartset);
+			$this->assign('awsetID',$awset);
 		} else {
 			$this->assign('permError','t');
 		}

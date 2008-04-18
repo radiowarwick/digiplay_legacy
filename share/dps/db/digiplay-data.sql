@@ -465,7 +465,7 @@ INSERT INTO templates VALUES (19, 'dpstrequest.tpl', 'DPSTrackRequestViewer', 19
 INSERT INTO templates VALUES (20, 'dpsmsearch.tpl', 'DPSMusicSearchViewer', 28, 'DPS');
 INSERT INTO templates VALUES (21, 'dpshelp.tpl', 'DPSHelpViewer', 19, 'DPS');
 INSERT INTO templates VALUES (22, 'dpssteditawitemredirect.tpl', 'Viewer', 19, 'DPS');
-INSERT INTO templates VALUES (23, 'dpsstuserawsets.tpl', 'DPSUserAwSetsViewer', 19, 'DPS');
+INSERT INTO templates VALUES (23, 'dpsstuserawsets.tpl', 'DPSUserAwSetViewer', 19, 'DPS');
 INSERT INTO templates VALUES (24, 'dpssteditawitem.tpl', 'DPSUserEditAwItemViewer', 19, 'DPS');
 INSERT INTO templates VALUES (25, 'dpssteditawwall.tpl', 'DPSUserEditAwWallViewer', 19, 'DPS');
 INSERT INTO templates VALUES (26, 'dpsstviewawwall.tpl', 'DPSUserAwWallsViewer', 19, 'DPS');

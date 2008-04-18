@@ -210,6 +210,7 @@ CREATE OR REPLACE FUNCTION f_audio_delete()
 		DELETE FROM aw_items WHERE audio_id = OLD.id;
 		UPDATE showitems SET audioid = NULL WHERE audioid = OLD.id;
 		DELETE FROM binsaudio WHERE audioid = OLD.id;
+		RETURN OLD;
 	END $$ LANGUAGE 'plpgsql';
 
 -- f_showplans_delete()
@@ -217,9 +218,10 @@ CREATE OR REPLACE FUNCTION f_showplans_delete()
 	RETURNS TRIGGER AS $$
 	BEGIN
 		DELETE FROM showitems WHERE showplanid = OLD.id;
-		DELETE FROM showplandir WHERE showplanid = OLD.id;
+		DELETE FROM showplansdir WHERE showplanid = OLD.id;
 		DELETE FROM showplansusers WHERE showplanid = OLD.id;
 		DELETE FROM showplansgroups WHERE showplanid = OLD.id;
+		RETURN OLD;
 	END $$ LANGUAGE 'plpgsql';
 	
 -- f_scripts_delete()
@@ -230,6 +232,7 @@ CREATE OR REPLACE FUNCTION f_scripts_delete()
 		DELETE FROM scriptsdir WHERE scriptid = OLD.id;
 		DELETE FROM scriptsusers WHERE scriptid = OLD.id;
 		DELETE FROM scriptsgroups WHERE scriptid = OLD.id;
+		RETURN OLD;
 	END $$ LANGUAGE 'plpgsql';
 	
 	

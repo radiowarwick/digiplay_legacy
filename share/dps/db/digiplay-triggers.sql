@@ -122,6 +122,10 @@ CREATE OR REPLACE FUNCTION f_aw_sets_delete()
 		DELETE FROM aw_sets_users WHERE set_id = OLD.id;
 		DELETE FROM aw_sets_groups WHERE set_id = OLD.id;
 		DELETE FROM aw_sets_dir WHERE set_id = OLD.id;
+        DELETE FROM usersconfigs USING configs 
+            WHERE configs.id = usersconfigs.configid
+            AND configs.name = 'default_aw_set'
+            AND usersconfigs.val = CAST(OLD.id AS VARCHAR);
 		RETURN OLD;
 	END $$ LANGUAGE 'plpgsql';
 

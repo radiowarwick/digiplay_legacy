@@ -50,19 +50,19 @@ class DPSLoginModel extends Model {
 				$db->insert('dirgroups',$sql_gperm,false);
 			}
 		if(is_null($userlastlogin) && !is_null($usercurlogin)){
-		$cartset = array();
+		$awset = array();
 		$sql = "SELECT id FROM configs WHERE configs.name = 'user_lastlogin'";
-		$cartset['configid'] = $db->getOne($sql);
-		$cartset['val'] = $usercurlogin['val'];
-		$cartset['userid'] = $userID;
-		$db->insert('usersconfigs', $cartset, true);
+		$awset['configid'] = $db->getOne($sql);
+		$awset['val'] = $usercurlogin['val'];
+		$awset['userid'] = $userID;
+		$db->insert('usersconfigs', $awset, true);
 		} elseif(is_null($userlastlogin) && is_null($usercurlogin)) {
-		$cartset = array();
+		$awset = array();
 		$sql = "SELECT id FROM configs WHERE configs.name = 'user_lastlogin'";
-		$cartset['configid'] = $db->getOne($sql);
-		$cartset['val'] = time();
-		$cartset['userid'] = $userID;
-		$db->insert('usersconfigs', $cartset, true);
+		$awset['configid'] = $db->getOne($sql);
+		$awset['val'] = time();
+		$awset['userid'] = $userID;
+		$db->insert('usersconfigs', $awset, true);
 		} elseif (!is_null($userlastlogin) && is_null($usercurlogin)){
 		$logint = array();
 		$logint['val'] = time();
@@ -76,12 +76,12 @@ class DPSLoginModel extends Model {
 		}
 	
 		if(is_null($usercurlogin)){
-		$cartset = array();
+		$awset = array();
 		$sql = "SELECT id FROM configs WHERE configs.name = 'user_curlogin'";
-		$cartset['configid'] = $db->getOne($sql);
-		$cartset['val'] = time();
-		$cartset['userid'] = $userID;
-		$db->insert('usersconfigs', $cartset, true);
+		$awset['configid'] = $db->getOne($sql);
+		$awset['val'] = time();
+		$awset['userid'] = $userID;
+		$db->insert('usersconfigs', $awset, true);
 		} else {
 		$logint = array();
 		$logint['val'] = time();

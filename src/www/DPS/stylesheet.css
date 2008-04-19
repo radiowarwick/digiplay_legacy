@@ -1154,31 +1154,31 @@ div.showPlanInteract {
   padding-left:	22px;
 }
 
-/* Cartwall stuff */
-div.cartwallinfoR {
+/* Audiowall stuff */
+div.awwallinfoR {
   float:  right;
   font-size:	9pt;
   margin: 0px;
 }
-div.cartwallinfo {
+div.awwallinfo {
   width:  454px;
   position: relative;
 }
 
-div.cartwallinfoL  {
+div.awwallinfoL  {
   float: left;
   padding-top:	4px;
   font-size:  10pt;
   margin: 1px;
   width:  300px;
 }
-div.cartwallinfoL b {
+div.awwallinfoL b {
   border: 1px solid #000000;
   font-weight: bold;
   padding:  1px;
 }
 
-div.cartwallPage {
+div.awwallPage {
   background: rgb(0,0,0);
   float: left;
   position:  relative; left:7px;
@@ -1188,10 +1188,10 @@ div.cartwallPage {
   padding: 0px;
   margin: 0px;
 }
-div[class = cartwallPage] {
+div[class = awwallPage] {
   width:  150px;
 }
-div.cartwallpagenum {
+div.awwallpagenum {
   padding-top:	3px;
   padding-right:  0px;
   float:	left;
@@ -1199,26 +1199,26 @@ div.cartwallpagenum {
   width:  110px;
   overflow: hidden;
 }
-img.cartwallPageL {
+img.awwallPageL {
   float:  left;
   border: 0px;
   padding-left:	0px;
   position: relative; right: 3px;
 }
-div[class = cartwallPageL] {
+div[class = awwallPageL] {
   position: relative; right: 0px;
 }
-img.cartwallPageR {
+img.awwallPageR {
   float:  right;
   border: 0px;
   padding:  0px;
   position: relative; left: 3px;
 }
-div[class = cartwallPageL] {
+div[class = awwallPageL] {
   position: relative; left: 0px;
 }
 
-div.cartwallPage b {
+div.awwallPage b {
   padding-top:	2px;
   padding-left: 1px;
   padding-right:  1px;
@@ -1227,74 +1227,74 @@ div.cartwallPage b {
   background: rgb(189,3,3);
   color:  #ffffff;
 }
-div.cartwallPage a {
+div.awwallPage a {
   color: #ffffff;
 }
-table.cartwall {
+table.awwall {
   border:  1px solid black;
   border-collapse: collapse;
 }
-table.cartwall td{
+table.awwall td{
   text-align:  center;
   border:  1px solid black;
   width:  150px;
   height: 103px;
   position: relative;
 }
-div.EcartText {
+div.EawitemText {
 text-align: left;
   height: 40px;
   font-size:  10pt;
   font-weight:	bold;
 }
-div.EcartTime {
+div.EawitemTime {
   height: 20px;
   float:  left;
   font-size:  10pt;
   color:  #666666;
 }
-div.EcartChange {
+div.EawitemChange {
   height: 20px;
   font-size:  10pt;
   float:  right;
 }
-div.EcartBlank {
+div.EawitemBlank {
   color:  #999999;
   font-weight:	bold;
   padding-bottom:  7px;
 }
-div.EcartAdd a{
+div.EawitemAdd a{
   color:  rgb(189,3,3);
   font-weight:	bold;
 }
-div.EcartwallPerms {
+div.EawwallPerms {
   float:  left;
   width:  300px;
   font-size:      10pt;
   font-weight: bold;
 }
-div.EcartwallPerms b {
+div.EawwallPerms b {
   color:  #01A6C9;
   font-size:	  12pt;
   font-weight: bold;
   padding-left:	3px;
 }
-div.EcartwallSubmit {
+div.EawwallSubmit {
   float:  left;
   position: relative; left:50px;
 }
-div.EditCartDetails {
+div.EditAwItemDetails {
   width:  250px;
   float:  left;
 }
-div.EditCartFile {
+div.EditAwItemFile {
   width:  350px;
   float:  left;
 }
-div.EditCartDetail {
+div.EditAwItemDetail {
   font-weight:	bold;
 }
-div.EditCartDetailSub {
+div.EditAwItemDetailSub {
   position: relative; top: 25px; left:  35px;
 }
 
@@ -1365,7 +1365,7 @@ td.userTableDetail {
   border-right: 0px solid #000000;
   border-bottom: 1px solid #000000;
 }
-div.userdefaultcartset {
+div.userdefaultawset {
   color:  #ff0000;
 }
 div.alignleft {
@@ -1432,7 +1432,7 @@ div.jingleBar {
 	height:	32px;
 	overflow:	hidden;
 }
-div.cartsetBar {
+div.awsetBar {
 	display:	block;
 	height:	32px;
 	overflow:	hidden;

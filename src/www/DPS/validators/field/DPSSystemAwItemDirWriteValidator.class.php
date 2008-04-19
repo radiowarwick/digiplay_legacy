@@ -20,8 +20,8 @@ class DPSSystemAwItemDirWriteValidator extends ValidatorRule {
 			return false;
 		}
 		$awitemID = $data;
-		$sql = "SELECT v_tree_aw_set.parent FROM v_tree_aw_set, awwalls, awitems
-			WHERE v_tree_aw_set.id = awwalls.set_id
+		$sql = "SELECT v_tree_aw_sets.parent FROM v_tree_aw_sets, awwalls, awitems
+			WHERE v_tree_aw_sets.id = awwalls.set_id
 			AND aw_walls.id = audioitems.wall_id
 			AND aw_items.id = $awitemID";
 		$parentID = $db->getOne($sql);

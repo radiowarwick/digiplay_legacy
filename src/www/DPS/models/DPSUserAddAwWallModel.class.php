@@ -17,15 +17,15 @@ class DPSUserAddAwWallModel extends Model {
 		global $cfg;
 		$db = Database::getInstance($cfg['DPS']['dsn']);
 	
-		$cartsetID = pg_escape_string($this->fieldData['cartset']);
-		$sql = "SELECT COUNT(*) FROM cartwalls WHERE cartsetid = $cartsetID";
+		$awsetID = pg_escape_string($this->fieldData['awset']);
+		$sql = "SELECT COUNT(*) FROM aw_walls WHERE set_id = $awsetID";
 		$page = $db->getOne($sql);
 		
-		$pageInfo['cartsetid'] = $cartsetID;
+		$pageInfo['set_id'] = $awsetID;
 		$pageInfo['name'] = "New Page";
 		$pageInfo['description'] = "";
 		$pageInfo['page'] = $page;
-		$db->insert('cartwalls',$pageInfo,true);
+		$db->insert('aw_walls',$pageInfo,true);
 	}
 		
 	protected function processInvalid() {

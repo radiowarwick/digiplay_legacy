@@ -66,7 +66,7 @@ class DPSUserAddAwSetModel extends Model {
 			$AwWall['page'] = 0;
 			$db->insert('aw_walls',$AwWall,true);
 			$scriptdir['set_id'] = $AwSetID;
-			$scriptdir['dirid'] = $dirID;
+			$scriptdir['dir_id'] = $dirID;
 			$scriptdir['linktype'] = 0;
 			$db->insert('aw_sets_dir',$scriptdir,true);
 		}

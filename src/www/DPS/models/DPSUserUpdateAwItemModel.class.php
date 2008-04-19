@@ -16,9 +16,9 @@ class DPSUserUpdateAwItemModel extends Model {
 	protected function processValid(){
 		global $cfg;
 		$db = Database::getInstance($cfg['DPS']['dsn']);
-		$cartID = pg_escape_string($this->fieldData['cartID']);
+		$awitemID = pg_escape_string($this->fieldData['awitemID']);
 		
-		if($cartID != '') {
+		if($awitemID != '') {
 			$audio = $this->fieldData['audioID'];
 			$style = $this->fieldData['style'];
 			$text="";
@@ -27,13 +27,13 @@ class DPSUserUpdateAwItemModel extends Model {
 				$text = $text . pg_escape_string($value) . "\n";
 			}
 			$text = rtrim($text,"\n");
-			if($text != '' && $cartID != '' && is_numeric($cartID)) {
-				$cart = array();
-				$cart['text'] = $text;
-				$cart['audioid'] = $audio;
-				$cart['cartstyleid'] = $style;
-				$atWhere = "id = " . $cartID;
-				$db->update('cartsaudio', $cart, $atWhere, true);
+			if($text != '' && $awitemID != '' && is_numeric($awitemID)) {
+				$awitem = array();
+				$awitem['text'] = $text;
+				$awitem['audio_id'] = $audio;
+				$awitem['style_id'] = $style;
+				$atWhere = "id = " . $awitemID;
+				$db->update('aw_items', $awitem, $atWhere, true);
 			}
 		}
 	}
@@ -41,14 +41,14 @@ class DPSUserUpdateAwItemModel extends Model {
 	protected function processInvalid(){
 		//No invalid processing required
 		if($this->errors['text']) {
-			MVCUtils::redirect(MVCUtils::getTemplateID('dpssteditcart.tpl'),
-				array("cartID" => $this->fieldData['cartID'], "error" => "text"));
+			MVCUtils::redirect(MVCUtils::getTemplateID('dpssteditawitem.tpl'),
+				array("awitemID" => $this->fieldData['awitemID'], "error" => "text"));
 		} elseif($this->errors['style']) {
-			MVCUtils::redirect(MVCUtils::getTemplateID('dpssteditcart.tpl'),
-				array("cartID" => $this->fieldData['cartID'], "error" => "style"));
+			MVCUtils::redirect(MVCUtils::getTemplateID('dpssteditawitem.tpl'),
+				array("awitemID" => $this->fieldData['awitemID'], "error" => "style"));
 		} elseif($this->errors['audioID']) {
-			MVCUtils::redirect(MVCUtils::getTemplateID('dpssteditcart.tpl'),
-				array("cartID" => $this->fieldData['cartID'], "error" => "audioID"));
+			MVCUtils::redirect(MVCUtils::getTemplateID('dpssteditawitem.tpl'),
+				array("awitemID" => $this->fieldData['awitemID'], "error" => "audioID"));
 		}
 	}
 }

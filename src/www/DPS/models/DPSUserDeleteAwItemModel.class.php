@@ -16,10 +16,10 @@ class DPSUserDeleteAwItemModel extends Model {
 	protected function processValid() {
 		global $cfg;
 		$db = Database::getInstance($cfg['DPS']['dsn']);
-		$cartID = pg_escape_string($this->fieldData['cartID']);
-		if($cartID != '' && is_numeric($cartID)) {
-			$atWhere = "id = " . $cartID;
-			$db->delete('cartsaudio', $atWhere, true);
+		$awitemID = pg_escape_string($this->fieldData['awitemID']);
+		if($awitemID != '' && is_numeric($awitemID)) {
+			$atWhere = "id = " . $awitemID;
+			$db->delete('awitems', $atWhere, true);
 		}
 	}
 		

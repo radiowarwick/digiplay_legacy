@@ -20,7 +20,7 @@ class DPS extends Module  {
 	* j - show jingles
 	* a - show adverts
 	* r - show prerecs
-	* c - show cartsets
+	* c - show awsets
 	* s - show scripts
 	* p - show show plan
 	* m - show music
@@ -51,7 +51,7 @@ class DPS extends Module  {
 					userid = $userID AND (
 					itemtype = 'dir' ";
 				if(strpos($type,'c') !== false) {
-					$sql = $sql . " OR itemtype = 'cartset' ";
+					$sql = $sql . " OR itemtype = 'aw_set' ";
 				}
 				if(strpos($type,'s') !== false) {
 					$sql = $sql . " OR itemtype = 'script' ";
@@ -143,7 +143,7 @@ class DPS extends Module  {
 		}
 
 		//#######
-		//CARTSETS
+		//AUDIOWALL SETS
 		//#######
 		if(strpos($type,'c') !== false) {
 			$sql = "SELECT * from v_tree_aw_sets 
@@ -155,7 +155,7 @@ class DPS extends Module  {
 			$files = $db->getAll($sql);
 			foreach($files as $file) {
 				$list = $list . '<item text="' . htmlspecialchars($file['name']) . 
-					'" id="crt' . $file['id'] . '" im0="cartset16.png">';
+					'" id="crt' . $file['id'] . '" im0="awset16.png">';
 				$list = $list . '<userdata name="perm">' . $file['permissions'] . '</userdata>';
 				$list = $list . '</item>';
 			}
@@ -223,7 +223,7 @@ class DPS extends Module  {
 	/*$type [j][a][c][s]
 	* j - show jingles
 	* a - show adverts
-	* c - show cartsets
+	* c - show awsets
 	* s - show scripts
 	* p - show show plan
 	* m - show music
@@ -255,7 +255,7 @@ class DPS extends Module  {
 					dirgroups.permissions & B'$readPerm' = '$readPerm' AND 
 					dirgroups.groupid = $groupID";
 				if(strpos($type,'c') !== false) {
-					$sql = $sql . " OR itemtype = 'cartset' ";
+					$sql = $sql . " OR itemtype = 'aw_set' ";
 				}
 				if(strpos($type,'s') !== false) {
 					$sql = $sql . " OR itemtype = 'script' ";
@@ -328,21 +328,21 @@ class DPS extends Module  {
 		}
 
 		//#######
-		//CARTSETS
+		//AUDIOWALL SETS
 		//#######
 		if(strpos($type,'c') !== false) {
-			$sql = "SELECT cartsets.name AS name, cartsets.id AS id 
-			FROM cartsets, cartsetsdir, cartsetsgroups 
+			$sql = "SELECT aw_sets.name AS name, aw_sets.id AS id 
+			FROM aw_sets, aw_sets_dir, aw_sets_groups 
 			WHERE
-				cartsetsdir.dirid = $dirID AND 
-				cartsetsdir.cartsetid = cartsets.id AND 
-				cartsetsgroups.cartsetid = cartsets.id AND 
-				cartsetsgroups.permissions & B'$readPerm' = '$readPerm' AND 
-				cartsetsgroups.groupid = $groupID 
+				aw_sets_dir.dir_id = $dirID AND 
+				aw_sets_dir.set_id = aw_sets.id AND 
+				aw_sets_groups.set_id = aw_sets.id AND 
+				aw_sets_groups.permissions & B'$readPerm' = '$readPerm' AND 
+				aw_sets_groups.group_id = $groupID 
 			ORDER BY name asc";
 			$files = $db->getAll($sql);
 			foreach($files as $file) {
-				$list = $list . '<item text="' . htmlspecialchars($file['name']) . '" id="crt' . $file['id'] . '" im0="cartset16.png">';
+				$list = $list . '<item text="' . htmlspecialchars($file['name']) . '" id="crt' . $file['id'] . '" im0="awset16.png">';
 				$list = $list . '<userdata name="perm">' . $file['permissions'] . '</userdata>';
 				$list = $list . '</item>';
 			}

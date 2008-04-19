@@ -16,99 +16,101 @@ class DPSUserUpdateAwWallModel extends Model {
 	protected function processValid() {
 		global $cfg;
 		$db = Database::getInstance($cfg['DPS']['dsn']);
-		
+        		
 		$name = pg_escape_string($this->fieldData['name']);
 		$desc = pg_escape_string($this->fieldData['desc']);
-		$cartwallID = pg_escape_string($this->fieldData['cartwallID']);
+        
+        $awwallID = pg_escape_string($this->fieldData['awwallID']);
 		if($this->fieldData['Submit'] == "Remove Page") {
-			$sql = "SELECT cartsetid FROM cartwalls WHERE id=" . $cartwallID;
-			$cartsetID = $db->getOne($sql);
-			$sql = "SELECT COUNT(*) FROM cartwalls WHERE cartsetid=" . $cartsetID;
+			$sql = "SELECT set_id FROM aw_walls WHERE id=" . $awwallID;
+			$awsetID = $db->getOne($sql);
+			$sql = "SELECT COUNT(*) FROM aw_walls WHERE set_id=" . $awsetID;
 			$check = $db->getOne($sql);
 			//cant delete last page
 			if($check > 1) {
-				$where = "cartwallid = " . $cartwallID;
-				$db->delete('cartsaudio', $where, true);
-				$where = "id = " . $cartwallID;
-				$db->delete('cartwalls', $where, true);
+				$where = "wall_id = " . $awwallID;
+				$db->delete('aw_items', $where, true);
+				$where = "id = " . $awwallID;
+				$db->delete('aw_walls', $where, true);
 				$page = pg_escape_string($this->fieldData['page']);
-				$sql = "SELECT * FROM cartwalls
-					WHERE cartsetid=" . $cartsetID . "
+				$sql = "SELECT * FROM aw_walls
+					WHERE set_id=" . $awsetID . "
 					AND page > $page ORDER BY page asc";
 				$pages = $db->getAll($sql);
 				foreach($pages as $p) {
 					$update['page'] = ($p['page'] - 1);
 					$where = "id = " . $p['id'];
-					$db->update('cartwalls',$update,$where,true);
+					$db->update('aw_walls',$update,$where,true);
 				}
 			}
-		} elseif($name != '' && $cartwallID != '' && is_numeric($cartwallID)) {
-			$cartwall = array();
-			$cartwall['name'] = $name;
-			$cartwall['description'] = $desc;
-			$atWhere = "id = " . $cartwallID;
-			$db->update('cartwalls', $cartwall, $atWhere, true);
+		} elseif($name != '' && $awwallID != '' && is_numeric($awwallID)) {
+			$awwall = array();
+			$awwall['name'] = $name;
+			$awwall['description'] = $desc;
+			$atWhere = "id = " . $awwallID;
+			$db->update('aw_walls', $awwall, $atWhere, true);
 			
-			$auth = Auth::getInstance();
+            $auth = Auth::getInstance();
 			$userID = $auth->getUserID();
-			$sql = "SELECT COUNT(*) FROM v_tree_cartset, cartwalls
-				WHERE v_tree_cartset.userid = $userID
-				AND v_tree_cartset.id = cartwalls.cartsetid
-				AND cartwalls.id = $cartwallID
-				AND v_tree_cartset.permissions & B'" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
+			$sql = "SELECT COUNT(*) FROM v_tree_aw_sets, aw_walls
+				WHERE v_tree_aw_sets.userid = $userID
+				AND v_tree_aw_sets.id = aw_walls.set_id
+				AND aw_walls.id = $awwallID
+				AND v_tree_aw_sets.permissions & B'" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
 			$check = $db->getOne($sql);
 			if($check > 0) {
-				$sql = "SELECT cartsetid FROM cartwalls 
-					WHERE id = $cartwallID LIMIT 1";
-				$cartsetID = $db->getOne($sql);
-				$where = "cartsetid = $cartsetID 
-					AND groupid = " . $cfg['DPS']['allusersgroupid'];
-				$db->delete('cartsetsgroups',$where,true);
+				$sql = "SELECT set_id FROM aw_walls 
+					WHERE id = $awwallID LIMIT 1";
+				$awsetID = $db->getOne($sql);
+				$where = "set_id = $awsetID 
+					AND group_id = " . $cfg['DPS']['allusersgroupid'];
+				$db->delete('aw_sets_groups',$where,true);
 				
-				$sql = "SELECT COUNT(*) FROM cartsaudio, cartwalls 
-					WHERE cartsaudio.cartwallid = cartwalls.id
-					AND cartwalls.cartsetid = " . $cartsetID;
-				$cartcount = $db->getOne($sql);
-				$sql = "SELECT count(*) FROM (SELECT cartsaudio.audioid 
-					FROM cartsaudio, cartwalls, v_tree_audio
-					WHERE cartwalls.cartsetid = $cartsetID
-						AND cartsaudio.cartwallid = cartwalls.id
-						AND cartsaudio.audioid = v_tree_audio.id
+				$sql = "SELECT COUNT(*) FROM aw_items, aw_walls 
+					WHERE aw_items.wall_id = aw_walls.id
+					AND aw_walls.set_id = " . $awsetID;
+				$awitemcount = $db->getOne($sql);
+				$sql = "SELECT count(*) FROM (SELECT aw_items.audio_id 
+					FROM aw_items, aw_walls, v_tree_audio
+					WHERE aw_walls.set_id = $awsetID
+						AND aw_items.wall_id = aw_walls.id
+						AND aw_items.audio_id = v_tree_audio.id
 						AND v_tree_audio.permissions & B'" . $cfg['DPS']['fileR'] . "'
 					 = '" . $cfg['DPS']['fileR'] . "'
-					GROUP BY cartsaudio.audioid) as Q1";
+					GROUP BY aw_items.audio_id) as Q1";
 					
 				$permCount = $db->getOne($sql);
-				if($permCount >= $cartcount) {
+				if($permCount >= $awitemcount) {
 					if($this->fieldData['readAll'] == "on"
 						&& $this->fieldData['writeAll'] == "on") {
 						$perm = array();
-						$perm['groupid'] = $cfg['DPS']['allusersgroupid'];
-						$perm['cartsetid'] = $cartsetID;
+						$perm['group_id'] = $cfg['DPS']['allusersgroupid'];
+						$perm['set_id'] = $awsetID;
 						$perm['permissions'] = $cfg['DPS']['fileRW'];
-						$db->insert('cartsetsgroups',$perm,false);
+						$db->insert('aw_sets_groups',$perm,false);
 					}elseif($this->fieldData['writeAll'] == "on") {
 						$perm = array();
-						$perm['groupid'] = $cfg['DPS']['allusersgroupid'];
-						$perm['cartsetid'] = $cartsetID;
+						$perm['group_id'] = $cfg['DPS']['allusersgroupid'];
+						$perm['set_id'] = $awsetID;
 						$perm['permissions'] = $cfg['DPS']['fileRW'];
-						$db->insert('cartsetsgroups',$perm,false);
+						$db->insert('aw_sets_groups',$perm,false);
 					}elseif($this->fieldData['readAll'] == "on") {
 						$perm = array();
-						$perm['groupid'] = $cfg['DPS']['allusersgroupid'];
-						$perm['cartsetid'] = $cartsetID;
+						$perm['group_id'] = $cfg['DPS']['allusersgroupid'];
+						$perm['set_id'] = $awsetID;
 						$perm['permissions'] = $cfg['DPS']['fileR'];
-						$db->insert('cartsetsgroups',$perm,false);
+						$db->insert('aw_sets_groups',$perm,false);
 					}
 				} else {
 					$this->errors['model'] =
-						"All audio elements in this cartset must be public";
+						"All audio elements in this audiowall set must be public";
 				}
 			}
 		}
 	}
 		
 	protected function processInvalid() {
+        print "Invalid";
 		//No invalid processing required
 	}
 }

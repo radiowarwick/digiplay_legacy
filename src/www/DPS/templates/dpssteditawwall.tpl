@@ -41,7 +41,7 @@
   <table class="awwall">
     <tr>
       <td>
-	{if $VIEWER.awwall1.audioid == "none"}
+	{if $VIEWER.awitem1.audioid == "none"}
 	<div class='EawitemBlank'>[BLANK]</div>
 	<div class='EawitemAdd'><a href="javascript:NewWindow('?templateID=24&awitemID=New&awitemPos=0&awwallID={$VIEWER.awwall.id}','acepopup','640','480');">Add</a></div>
 	{else}

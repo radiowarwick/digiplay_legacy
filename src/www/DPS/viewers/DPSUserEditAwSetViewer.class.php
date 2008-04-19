@@ -20,10 +20,10 @@ class DPSUserEditAwSetViewer extends Viewer {
 		$flag = false;
 		
 		if($awset != '' && is_numeric($awset)) {
-			$sql = "SELECT count(*) from v_tree_aw_set 
-				WHERE v_tree_aw_set.userid = $userID 
-					AND v_tree_aw_set.id = $awset 
-					AND v_tree_aw_set.permissions & B'" . $cfg['DPS']['fileW'] .
+			$sql = "SELECT count(*) from v_tree_aw_sets 
+				WHERE v_tree_aw_sets.userid = $userID 
+					AND v_tree_aw_sets.id = $awset 
+					AND v_tree_aw_sets.permissions & B'" . $cfg['DPS']['fileW'] .
 						"' = '" . $cfg['DPS']['fileW'] . "'";
 			$check = $db->getOne($sql);
 			if($check > 0) {
@@ -58,7 +58,7 @@ class DPSUserEditAwSetViewer extends Viewer {
 
 			for($i=0; $i<12; $i++) {
 				$tawitem = array();
-				$sql = "SELECT aw_items.id AS id, aw_items.audioid AS audio, 
+				$sql = "SELECT aw_items.id AS id, aw_items.audio_id AS audio, 
 						aw_items.text AS name, aw_items.item AS item, 
 						audio.length_smpl AS len, audio.title AS title 
 					FROM aw_walls, aw_items, audio 
@@ -70,7 +70,7 @@ class DPSUserEditAwSetViewer extends Viewer {
 				$tawitem = $db->getRow($sql);
 				$tawitem['name'] = str_replace("\n","<br>",$tawitem['name']);
 				
-				if(isset($tawitem['audioid'])) {
+				if(isset($tawitem['audio'])) {
 					$mins = floor($tawitem['len']/44100/60);
 					$secs = round(($tawitem['len'] - $mins*44100*60)/44100);
 					if($mins != 0) {
@@ -81,9 +81,9 @@ class DPSUserEditAwSetViewer extends Viewer {
 					$sql = "SELECT aw_styles_props.value AS value,
 							aw_props.name AS name
 						FROM aw_items, aw_styles, aw_styles_props, aw_props
-						WHERE aw_items.id = " . $tawitem['audioid'] . " 
-							AND aw_items.styleid = aw_styles.id 
-							AND aw_styles.id = aw_styles_props.styleid 
+						WHERE aw_items.id = " . $tawitem['audio'] . " 
+							AND aw_items.style_id = aw_styles.id 
+							AND aw_styles.id = aw_styles_props.style_id 
 							AND aw_styles_props.prop_id = aw_props.id";
 					$awprop = $db->getAll($sql);
 
@@ -120,7 +120,7 @@ class DPSUserEditAwSetViewer extends Viewer {
 			$auth = Auth::getInstance();
 			$userID = $auth->getUserID();
 
-			$sql = "SELECT parent FROM v_tree_aw_set WHERE id = $awset";
+			$sql = "SELECT parent FROM v_tree_aw_sets WHERE id = $awset";
 			$dirID = $db->getOne($sql);
 			$sql = "SELECT count(*) 
 				FROM v_tree_dir 
@@ -131,14 +131,14 @@ class DPSUserEditAwSetViewer extends Viewer {
 			$check = $db->getOne($sql);
 			if($check > 0) {
 				$this->assign('owner','t');
-				$sql = "SELECT count(*) from v_tree_aw_set_explicit 
+				$sql = "SELECT count(*) from v_tree_aw_sets_explicit 
 				WHERE cause = {$cfg['DPS']['allusersgroupid']}
 					AND id = $awset 
 					AND causetype = 'group'
 					AND permissions & B'" . $cfg['DPS']['fileR'] .
 						"' = '" . $cfg['DPS']['fileR'] . "'";
 				$check = $db->getOne($sql);
-				$sql = "SELECT count(*) from v_tree_aw_set_inherited 
+				$sql = "SELECT count(*) from v_tree_aw_sets_inherited 
 				WHERE cause = {$cfg['DPS']['allusersgroupid']}
 					AND id = $awset 
 					AND causetype = 'group'
@@ -148,14 +148,14 @@ class DPSUserEditAwSetViewer extends Viewer {
 				if($check > 0) {
 					$this->assign('groupread','t');
 				}
-				$sql = "SELECT count(*) from v_tree_aw_set_explicit 
+				$sql = "SELECT count(*) from v_tree_aw_sets_explicit 
 				WHERE cause = {$cfg['DPS']['allusersgroupid']}
 					AND id = $awset 
 					AND causetype = 'group'
 					AND permissions & B'" . $cfg['DPS']['fileW'] .
 						"' = '" . $cfg['DPS']['fileW'] . "'";
 				$check = $db->getOne($sql);
-				$sql = "SELECT count(*) from v_tree_aw_set_inherited 
+				$sql = "SELECT count(*) from v_tree_aw_sets_inherited 
 				WHERE cause = {$cfg['DPS']['allusersgroupid']}
 					AND id = $awset 
 					AND causetype = 'group'

@@ -19,8 +19,8 @@ class DPSUserAddAwItemModel extends Model {
 		
 		$audio = $this->fieldData['audioID'];
 		$style = $this->fieldData['style'];
-		$AwWall = $this->fieldData['AwWallID'];
-		$AwItemPos = $this->fieldData['AwItemPos'];
+		$AwWall = $this->fieldData['awwallID'];
+		$AwItemPos = $this->fieldData['awitemPos'];
 		
 		$text="";
 		$subStr = explode("\n",$_POST["text"]);

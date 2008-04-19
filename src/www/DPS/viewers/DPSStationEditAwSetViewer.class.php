@@ -21,10 +21,10 @@ class DPSStationEditAwSetViewer extends Viewer {
 		$userID = $auth->getUserID();
 		$flag = false;
 		if($awset != '' && is_numeric($awset)) {
-			$sql = "SELECT count(*) from v_tree_aw_set 
-				WHERE v_tree_aw_set.userid = " . $cfg['DPS']['systemUserID'] . " 
-					AND v_tree_aw_set.id =  $awset 
-					AND v_tree_aw_set.permissions & B'" . $cfg['DPS']['fileR'] .
+			$sql = "SELECT count(*) from v_tree_aw_sets 
+				WHERE v_tree_aw_sets.userid = " . $cfg['DPS']['systemUserID'] . " 
+					AND v_tree_aw_sets.id =  $awset 
+					AND v_tree_aw_sets.permissions & B'" . $cfg['DPS']['fileR'] .
 						"' = '" . $cfg['DPS']['fileR'] . "'";
 			$check = $db->getOne($sql);
 			if($check > 0) {
@@ -115,7 +115,7 @@ class DPSStationEditAwSetViewer extends Viewer {
 			}
 
 			//IF SYSTEM OWNS THIS, CHECK TO SEE IF OTHER PEOPLE HAVE READ/WRITE
-			$sql = "SELECT parent FROM v_tree_aw_set WHERE id = $awset";
+			$sql = "SELECT parent FROM v_tree_aw_sets WHERE id = $awset";
 			$dirID = $db->getOne($sql);
 			$sql = "SELECT count(*) 
 				FROM v_tree_dir 
@@ -126,14 +126,14 @@ class DPSStationEditAwSetViewer extends Viewer {
 			$check = $db->getOne($sql);
 			if($check > 0) {
 				$this->assign('owner','t');
-				$sql = "SELECT count(*) from v_tree_aw_set_explicit 
+				$sql = "SELECT count(*) from v_tree_aw_sets_explicit 
 				WHERE cause = {$cfg['DPS']['allusersgroupid']}
 					AND id = $awset 
 					AND causetype = 'group'
 					AND permissions & B'" . $cfg['DPS']['fileR'] .
 						"' = '" . $cfg['DPS']['fileR'] . "'";
 				$check = $db->getOne($sql);
-				$sql = "SELECT count(*) from v_tree_aw_set_inherited 
+				$sql = "SELECT count(*) from v_tree_aw_sets_inherited 
 				WHERE cause = {$cfg['DPS']['allusersgroupid']}
 					AND id = $awset 
 					AND causetype = 'group'
@@ -143,14 +143,14 @@ class DPSStationEditAwSetViewer extends Viewer {
 				if($check > 0) {
 					$this->assign('groupread','t');
 				}
-				$sql = "SELECT count(*) from v_tree_aw_set_explicit 
+				$sql = "SELECT count(*) from v_tree_aw_sets_explicit 
 				WHERE cause = {$cfg['DPS']['allusersgroupid']}
 					AND id = $awset 
 					AND causetype = 'group'
 					AND permissions & B'" . $cfg['DPS']['fileW'] .
 						"' = '" . $cfg['DPS']['fileW'] . "'";
 				$check = $db->getOne($sql);
-				$sql = "SELECT count(*) from v_tree_aw_set_inherited 
+				$sql = "SELECT count(*) from v_tree_aw_sets_inherited 
 				WHERE cause = {$cfg['DPS']['allusersgroupid']}
 					AND id = $awset 
 					AND causetype = 'group'

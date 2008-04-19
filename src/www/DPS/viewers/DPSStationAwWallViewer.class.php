@@ -108,10 +108,10 @@ class DPSStationAwWallViewer extends Viewer {
 			$userID = $auth->getUserID();
 
 			if($awset != '' && is_numeric($awset)) {
-				$sql = "SELECT count(*) FROM v_tree_aw_set 
-					WHERE v_tree_aw_set.userid = " . $cfg['DPS']['systemUserID'] . " 
-						AND v_tree_aw_set.id = $awset 
-						AND v_tree_aw_set.permissions & B'" . $cfg['DPS']['fileW'] .
+				$sql = "SELECT count(*) FROM v_tree_aw_sets 
+					WHERE v_tree_aw_sets.userid = " . $cfg['DPS']['systemUserID'] . " 
+						AND v_tree_aw_sets.id = $awset 
+						AND v_tree_aw_sets.permissions & B'" . $cfg['DPS']['fileW'] .
 							"' = '" . $cfg['DPS']['fileW'] . "'";
 				$check = $db->getOne($sql);
 				if($check > 0) {

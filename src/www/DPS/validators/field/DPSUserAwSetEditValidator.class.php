@@ -27,6 +27,7 @@ class DPSUserAwSetEditValidator extends ValidatorRule {
 			WHERE v_tree_aw_sets.userid = $userID
 			AND v_tree_aw_sets.id = $awitemID
 			AND v_tree_aw_sets.permissions & B'" . $cfg['DPS']['fileW'] . "' = '" . $cfg['DPS']['fileW'] . "'";
+
 		$check = $db->getOne($sql);
 		if($check > 0) {
 			return true;

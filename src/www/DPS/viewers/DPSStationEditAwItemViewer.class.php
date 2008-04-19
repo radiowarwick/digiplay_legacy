@@ -82,39 +82,39 @@ class DPSStationEditAwItemViewer extends Viewer {
 
 			//CHECK IF ANYONE ELSE CAN READ PERMS (IE NEED TO USE ALL USERS TREE)
 			if($awitemID == "New") {
-				$sql = "SELECT count(*) from v_tree_aw_set_explicit, aw_walls 
-				WHERE v_tree_aw_set_explicit.cause = {$cfg['DPS']['allusersgroupid']}
-					AND v_tree_aw_set_explicit.id = aw_walls.set_id
+				$sql = "SELECT count(*) from v_tree_aw_sets_explicit, aw_walls 
+				WHERE v_tree_aw_sets_explicit.cause = {$cfg['DPS']['allusersgroupid']}
+					AND v_tree_aw_sets_explicit.id = aw_walls.set_id
 					AND aw_walls.id = $awwallID
-					AND v_tree_aw_set_explicit.causetype = 'group'
-					AND v_tree_aw_set_explicit.permissions & B'" . $cfg['DPS']['fileR'] .
+					AND v_tree_aw_sets_explicit.causetype = 'group'
+					AND v_tree_aw_sets_explicit.permissions & B'" . $cfg['DPS']['fileR'] .
 						"' = '" . $cfg['DPS']['fileR'] . "'";
 				$user_count = $db->getOne($sql);
-				$sql = "SELECT count(*) from v_tree_aw_set_inherited, aw_walls 
-				WHERE v_tree_aw_set_inherited.cause = {$cfg['DPS']['allusersgroupid']}
-					AND v_tree_aw_set_inherited.id = aw_walls.set_id
+				$sql = "SELECT count(*) from v_tree_aw_sets_inherited, aw_walls 
+				WHERE v_tree_aw_sets_inherited.cause = {$cfg['DPS']['allusersgroupid']}
+					AND v_tree_aw_sets_inherited.id = aw_walls.set_id
 					AND aw_walls.id = $awwallID
-					AND v_tree_aw_set_inherited.causetype = 'group'
-					AND v_tree_aw_set_inherited.permissions & B'" . $cfg['DPS']['fileR'] .
+					AND v_tree_aw_sets_inherited.causetype = 'group'
+					AND v_tree_aw_sets_inherited.permissions & B'" . $cfg['DPS']['fileR'] .
 						"' = '" . $cfg['DPS']['fileR'] . "'";
 				$user_count = $user_count + $db->getOne($sql);
 			} else {
-				$sql = "SELECT count(*) from v_tree_aw_set_explicit, aw_walls, aw_items 
-				WHERE v_tree_aw_set_explicit.cause = {$cfg['DPS']['allusersgroupid']}
-					AND v_tree_aw_set_explicit.id = aw_walls.set_id
+				$sql = "SELECT count(*) from v_tree_aw_sets_explicit, aw_walls, aw_items 
+				WHERE v_tree_aw_sets_explicit.cause = {$cfg['DPS']['allusersgroupid']}
+					AND v_tree_aw_sets_explicit.id = aw_walls.set_id
 					AND aw_walls.id = aw_items.wall_id
 					AND aw_items.id = $awitemID
-					AND v_tree_aw_set_explicit.causetype = 'group'
-					AND v_tree_aw_set_explicit.permissions & B'" . $cfg['DPS']['fileR'] .
+					AND v_tree_aw_sets_explicit.causetype = 'group'
+					AND v_tree_aw_sets_explicit.permissions & B'" . $cfg['DPS']['fileR'] .
 						"' = '" . $cfg['DPS']['fileR'] . "'";
 				$user_count = $db->getOne($sql);
-				$sql = "SELECT count(*) FROM v_tree_aw_set_inherited, aw_walls, aw_items 
-				WHERE v_tree_aw_set_inherited.cause = {$cfg['DPS']['allusersgroupid']}
-					AND v_tree_aw_set_inherited.id = aw_walls.set_id
+				$sql = "SELECT count(*) FROM v_tree_aw_sets_inherited, aw_walls, aw_items 
+				WHERE v_tree_aw_sets_inherited.cause = {$cfg['DPS']['allusersgroupid']}
+					AND v_tree_aw_sets_inherited.id = aw_walls.set_id
 					AND aw_walls.id = aw_items.wall_id
 					AND aw_items.id = $awitemID
-					AND v_tree_aw_set_inherited.causetype = 'group'
-					AND v_tree_aw_set_inherited.permissions & B'" . $cfg['DPS']['fileR'] .
+					AND v_tree_aw_sets_inherited.causetype = 'group'
+					AND v_tree_aw_sets_inherited.permissions & B'" . $cfg['DPS']['fileR'] .
 						"' = '" . $cfg['DPS']['fileR'] . "'";
 				$user_count = $user_count + $db->getOne($sql);
 			}

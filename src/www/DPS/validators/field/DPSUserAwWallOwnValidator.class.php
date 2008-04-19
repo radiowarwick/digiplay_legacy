@@ -26,7 +26,7 @@ class DPSUserAwWallOwnValidator extends ValidatorRule {
 			WHERE v_tree_aw_sets.userid = $userID
 			AND v_tree_aw_sets.id = aw_walls.set_id
 			AND aw_walls.id = $awwallID
-			AND v_tree_aw_set.permissions & B'" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
+			AND v_tree_aw_sets.permissions & B'" . $cfg['DPS']['fileO'] . "' = '" . $cfg['DPS']['fileO'] . "'";
 		$check = $db->getOne($sql);
 		if($check > 0) {
 			return true;

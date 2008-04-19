@@ -23,8 +23,8 @@ class DPSUserAwSetDirWriteValidator extends ValidatorRule {
 	
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
-		$sql = "SELECT v_tree_aw_set.parent FROM v_tree_aw_set
-			WHERE v_tree_aw_set.id = $awitemID";
+		$sql = "SELECT v_tree_aw_sets.parent FROM v_tree_aw_set
+			WHERE v_tree_aw_sets.id = $awitemID";
 		$parentID = $db->getOne($sql);
 		$sql = "SELECT COUNT(*) FROM v_tree_dir
 			WHERE v_tree_dir.userid = $userID

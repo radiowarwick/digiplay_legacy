@@ -16,7 +16,7 @@ class DPSStationUpdateActAwSetModel extends Model {
 	protected function processValid() {
 		global $cfg;
 		$db = Database::getInstance($cfg['DPS']['dsn']);
-		$AwSetID = pg_escape_string($this->fieldData['AwSet']);
+		$AwSetID = pg_escape_string($this->fieldData['awset']);
 		$AwSet = array();
 		$AwSet['val'] = $AwSetID;
 		$atWhere = "parameter = 'station_aw_set'";

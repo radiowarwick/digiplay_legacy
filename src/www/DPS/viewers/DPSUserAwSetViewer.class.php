@@ -20,13 +20,13 @@ class DPSUserAwSetViewer extends Viewer {
 		
 		$sql = "SELECT usersconfigs.val FROM configs, usersconfigs
 			WHERE configs.id = usersconfigs.configid
-				AND configs.name = 'default_awset'
+				AND configs.name = 'default_aw_set'
 				AND usersconfigs.userid = " . $userID;
 		$userset = $db->getOne($sql);
 		
 		$sql = "SELECT val FROM configuration 
 			WHERE location = $loc
-				AND parameter='station_awset'";
+				AND parameter='station_aw_set'";
 		$stationset = $db->getOne($sql);
 		if($stationset != '') {
 			$sql = "SELECT aw_sets.id as id, aw_sets.name as name,

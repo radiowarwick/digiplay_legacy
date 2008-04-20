@@ -1,6 +1,5 @@
 {include file="rfile:dpsstudiotopframe.tpl" title="RaW Digiplay Manager" studio=$VIEWER.studioAccess access_playlist=$VIEWER.access_playlist}
-<br><br>
-<div class='bigTitle'>Audiowall Profiles</div>
+<div class='bigTitle'>Personal Audiowall Sets</div>
 
 <div class='subTitle'>You currently have the following audiowall sets available:</div>
 	<table border=1 class='stationtable'>
@@ -23,7 +22,7 @@
 	{else}
 		<tr>
 			<th colspan=5 class="stationTableName">
-				no station audiowall set selected
+				No station-wide audiowall set selected.
 			</th>
 		</tr>
 	{/if}
@@ -52,7 +51,7 @@
 				<div class="userdefaultawset">default awset</div>
 				{else}
 					{if $awset.permissions.0 == '1'}
-				{templateLink id=$VIEWER.templateID _awset=$awset.id text="use in your digiplay profile" _awset=$awset.id _formName="dpsUserActAwSetForm" _moduleName="DPS"}
+				{templateLink id=$VIEWER.templateID _awset=$awset.id text="use in your profile" _awset=$awset.id _formName="dpsUserActAwSetForm" _moduleName="DPS"}
 					{/if}
 				{/if}
 			</td>
@@ -61,12 +60,12 @@
 {if !$VIEWER.awsets}
 		<tr>
 			<th colspan=5 class="stationTableName">
-				no user audiowall sets exist
+				No user audiowall sets exist.
 			</th>
 		</tr>
 {/if}
 	</table>
-<div class='statiosubtitle'>Create new audiowall</div>
+<div class='statiosubtitle'>Create new audiowall set</div>
 <form name="dpsUserNewAwSetForm" method="post" action="{$CONFIG.general.siteRoot}">
 	<input type="hidden" name="formName" value="dpsUserNewAwSetForm" />
 	<input type="hidden" name="moduleName" value="DPS" />

@@ -1,5 +1,5 @@
 {include file="rfile:dpsstudiotopframe.tpl" title="RaW Digiplay Manager" studio="t" access_playlist=$VIEWER.access_playlist}
-<div class='bigTitle'>Station Audiowall Profiles</div>
+<div class='bigTitle'>Station Audiowall Sets</div>
 	{if $VIEWER.awsets}
 	<div class='subTitle'>Currently there are following audiowall sets available:</div>
 	{/if}

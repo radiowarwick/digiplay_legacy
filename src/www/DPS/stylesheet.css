@@ -1365,8 +1365,10 @@ td.userTableDetail {
   border-right: 0px solid #000000;
   border-bottom: 1px solid #000000;
 }
+/* Display of active audiowall set */
 div.userdefaultawset {
-  color:  #ff0000;
+  color:  #00cc00;
+  font-weight: bold;
 }
 div.alignleft {
   text-align:	left;

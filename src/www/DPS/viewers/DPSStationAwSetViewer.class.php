@@ -25,7 +25,7 @@ class DPSStationAwSetViewer extends Viewer {
 
 		$sql = "SELECT val FROM configuration 
 			WHERE location = $loc 
-				AND parameter = 'station_awset'";
+				AND parameter = 'station_aw_set'";
 		$userset = $db->getOne($sql);
 
 		foreach ($awsets as &$awset) {

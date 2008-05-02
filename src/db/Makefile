@@ -8,7 +8,12 @@ FILES	=	usersgroupsdir.dia audiosets.dia audio.dia scripts.dia \
 
 $(TARGET): $(FILES)
 	rm -f $(TARGET) $(TARGET).bak
-	$(TEDIA) $(FLAGS) -o $(TARGET) $(FILES)
+	$(TEDIA) $(FLAGS) -o $(TARGET).tmp $(FILES)
+	cat $(TARGET).tmp | grep -v "drop index" \
+					| grep -v "drop table" \
+					| grep -v "drop constraint" \
+					> $(TARGET)
+	rm $(TARGET).tmp
 
 all: db
 default: all

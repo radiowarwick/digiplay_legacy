@@ -58,38 +58,39 @@ class DPSHomeViewer extends Viewer {
 		
 		//Show on now
 		putenv("TZ=GB");
-		$current_time = date("Y-m-d H:i:s", time());
-		$sql = "SELECT shows.* FROM shows , schedule 
-			WHERE(shows.id = schedule.showid 
-			AND '$current_time' > schedule.start 
-			AND '$current_time' <= schedule.finish);";
+		//$current_time = date("Y-m-d H:i:s", time());
+		$current_time = time();
+		$sql = "SELECT web_shows.* FROM web_shows , web_schedule 
+			WHERE(web_shows.showid = web_schedule.showid 
+			AND '$current_time' > web_schedule.starttime 
+			AND '$current_time' <= web_schedule.endtime);";
 		$showC = $db_web->getRow($sql);
 		if(!$showC) {
-			$sql = "SELECT * FROM shows 
+			$sql = "SELECT * FROM web_shows 
 				WHERE id = " . pg_escape_string($cfg['DPS']['defaultShowID']);
 			$showC = $db_web->getRow($sql);
 		}
 		
 		//Show on next
-		$sql = "SELECT shows.* FROM shows, schedule 
-			WHERE (shows.id = schedule.showid 
-			AND '$current_time' < schedule.start) 
-			ORDER BY schedule.start ASC LIMIT 1;";
+		$sql = "SELECT web_shows.* FROM web_shows, web_schedule 
+			WHERE (web_shows.showid = web_schedule.showid 
+			AND '$current_time' < web_schedule.starttime) 
+			ORDER BY web_schedule.starttime ASC LIMIT 1;";
 		$showN = $db_web->getRow($sql);
 		if(!$showN) {
-			$sql = "SELECT * FROM shows 
+			$sql = "SELECT * FROM web_shows 
 				WHERE id = " . pg_escape_string($cfg['DPS']['defaultShowID']);
 			$showN = $db_web->getRow($sql);
 		}
 		
 		//Show just on
-		$sql = "SELECT shows.* FROM shows, schedule 
-			WHERE(shows.id = schedule.showid 
-			AND '$current_time' > schedule.finish) 
-			ORDER BY schedule.finish DESC LIMIT 1;";
+		$sql = "SELECT web_shows.* FROM web_shows, web_schedule 
+			WHERE(web_shows.showid = web_schedule.showid 
+			AND '$current_time' > web_schedule.endtime) 
+			ORDER BY web_schedule.endtime DESC LIMIT 1;";
 		$showL = $db_web->getRow($sql);
 		if(!$showL) {
-			$sql = "SELECT * FROM shows 
+			$sql = "SELECT * FROM web_shows 
 				WHERE id = " . pg_escape_string($cfg['DPS']['defaultShowID']);
 			$showL = $db_web->getRow($sql);
 		}

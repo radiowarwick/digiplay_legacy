@@ -2,8 +2,8 @@
 	</div>
         <div class="copyright">Copyright &#169 RaW 1251AM, 2006</div>
       </div>    
-      <div class="frame_halfTitleBar">
-	<div class="frame_halfTitleL">
+      <div class="frame_fullTitleBar">
+	<div class="frame_fullTitleL">
 	  {templateLink id="12" text="<img class='home_title' src='../../DPS/images/hometitle.gif' alt='Raw Digiplay Manager'>"}
 	  <img class="home_titleOverlap" src="../../DPS/images/hometitlebgMid.png">
 	</div>

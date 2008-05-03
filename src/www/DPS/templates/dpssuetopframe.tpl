@@ -73,6 +73,7 @@
 					</form>
 				</div>
 				<div class="frame_suenextbox">
+					<br><br>
 					<b>Coming up soon:</b><br>
 					{$nexttrack.artist} - {templateLink id="10" text=$nexttrack.title _trackID=$nexttrack.id}<br>
 				</div>

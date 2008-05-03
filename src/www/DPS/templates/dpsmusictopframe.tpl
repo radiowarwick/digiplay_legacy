@@ -60,9 +60,9 @@
 		</div>
 
 		<div class="frame_musicrequestbox">
+			<br><br>
 			{if $RequestTrack}
-			Can't find the track you're after?<br>
-			<b>Request it</b>
+			Can't find a track?	<b>Request it</b>
 			{if $ERRORS.artist}
 			<div class="frame_musicboxerror">{$ERRORS.artist}</div>
 			{elseif $ERRORS.title}
@@ -75,7 +75,6 @@
 				<input type="text" name="artist" size=17 maxlength=50 value="Artist"> 
 				<input type="text" name="title" size=17 maxlength=50 value="Title"><br>
 				<input class="frame_musicrequestcmd" type="submit" value="Request"><br>
-				{templateLink id="19" text="View requested tracks"}
 			</form>
 			{else}
 				You do not have permission to request tracks.

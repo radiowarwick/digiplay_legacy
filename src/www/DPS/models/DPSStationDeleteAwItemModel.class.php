@@ -16,7 +16,7 @@ class DPSStationDeleteAwItemModel extends Model {
 	protected function processValid() {
 		global $cfg;
 		$db = Database::getInstance($cfg['DPS']['dsn']);
-		$AwItemID = pg_escape_string($this->fieldData['AwItemID']);
+		$AwItemID = pg_escape_string($this->fieldData['awitemID']);
 		
 		if($AwItemID != '' && is_numeric($AwItemID)) {
 			$atWhere = "id = " . $AwItemID;
@@ -28,13 +28,13 @@ class DPSStationDeleteAwItemModel extends Model {
 		//No invalid processing required
 		if($this->errors['text']) {
 			MVCUtils::redirect(MVCUtils::getTemplateID('dpssteditawitem.tpl'),
-				array("AwItemID" => $this->fieldData['AwItemID'], "error" => "text"));
+				array("AwItemID" => $this->fieldData['awitemID'], "error" => "text"));
 		} elseif($this->errors['style']) {
 			MVCUtils::redirect(MVCUtils::getTemplateID('dpssteditawitem.tpl'),
-				array("AwItemID" => $this->fieldData['AwItemID'], "error" => "style"));
+				array("AwItemID" => $this->fieldData['awitemID'], "error" => "style"));
 		} elseif($this->errors['audioID']) {
 			MVCUtils::redirect(MVCUtils::getTemplateID('dpssteditawitem.tpl'),
-				array("AwItemID" => $this->fieldData['AwItemID'], "error" => "audioID"));
+				array("AwItemID" => $this->fieldData['awitemID'], "error" => "audioID"));
 		}
 	}
 }

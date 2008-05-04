@@ -19,8 +19,8 @@ class DPSStationAddAwItemModel extends Model {
 	
 		$audio = $this->fieldData['audioID'];
 		$style = $this->fieldData['style'];
-		$AwWall = $this->fieldData['AwWallID'];
-		$AwItemPos = $this->fieldData['AwItemPos'];
+		$AwWall = $this->fieldData['awwallID'];
+		$AwItemPos = $this->fieldData['awitemPos'];
 	
 		$text="";
 		$subStr = explode("\n",$_POST["text"]);
@@ -52,21 +52,21 @@ class DPSStationAddAwItemModel extends Model {
 		MVCUtils::redirect(
 			MVCUtils::getTemplateID('dpsststationeditawitem.tpl'),
 			array("AwItemID" => "New",
-				"AwWallID" => $this->fieldData['AwWallID'],
-				"AwItemPos" => $this->fieldData['AwItemPos'], "error" => "text"));
+				"AwWallID" => $this->fieldData['awwallID'],
+				"AwItemPos" => $this->fieldData['awitemPos'], "error" => "text"));
 		} elseif($this->errors['style']) {
 			MVCUtils::redirect(
 				MVCUtils::getTemplateID('dpsststationeditawitem.tpl'),
 				array("AwItemID" => "New",
-					"AwWallID" => $this->fieldData['AwWallID'],
-					"AwItemPos" => $this->fieldData['AwItemPos'],
+					"AwWallID" => $this->fieldData['awwallID'],
+					"AwItemPos" => $this->fieldData['awitemPos'],
 					"error" => "style"));
 		} elseif($this->errors['audioID']) {
 			MVCUtils::redirect(
 				MVCUtils::getTemplateID('dpsststationeditawitem.tpl'),
 				array("AwItemID" => "New",
-					"AwWallID" => $this->fieldData['AwWallID'],
-					"AwItemPos" => $this->fieldData['AwItemPos'],
+					"AwWallID" => $this->fieldData['awwallID'],
+					"AwItemPos" => $this->fieldData['awitemPos'],
 					"error" => "audioID"));
 		}
 	}

@@ -61,21 +61,21 @@ class DPSStationUpdateAwWallModel extends Model {
 						"' = '" . $cfg['DPS']['fileW'] . "'";
 			$check = $db->getOne($sql);
 			if($check > 0) {
-				$where = "set_id = $AwSetID AND groupid = " . $cfg['DPS']['allusersgroupid'];
+				$where = "set_id = $AwSetID AND group_id = " . $cfg['DPS']['allusersgroupid'];
 				$db->delete('aw_sets_groups',$where,true);
 				
 				$sql = "SELECT COUNT(*) FROM aw_items, aw_walls 
 					WHERE aw_items.wall_id = aw_walls.id
 					AND aw_walls.set_id = " . $AwSetID;
 				$AwItemscount = $db->getOne($sql);
-				$sql = "SELECT count(*) FROM (SELECT aw_items.audioid 
+				$sql = "SELECT count(*) FROM (SELECT aw_items.audio_id 
 					FROM aw_items, aw_walls, v_tree_audio
 					WHERE aw_walls.set_id = $AwSetID
 						AND aw_items.wall_id = aw_walls.id
-						AND aw_items.audioid = v_tree_audio.id
+						AND aw_items.audio_id = v_tree_audio.id
 						AND v_tree_audio.permissions & B'" . $cfg['DPS']['fileR'] . "'
 					 = '" . $cfg['DPS']['fileR'] . "'
-					GROUP BY aw_items.audioid) as Q1";
+					GROUP BY aw_items.audio_id) as Q1";
 
 				$permCount = $db->getOne($sql);
 				if($permCount == $AwItemscount) {

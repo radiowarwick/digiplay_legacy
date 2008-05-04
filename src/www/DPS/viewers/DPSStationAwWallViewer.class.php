@@ -69,7 +69,7 @@ class DPSStationAwWallViewer extends Viewer {
 						$awitem['length'] = $secs . "s";
 					}
 					$sql = "SELECT aw_styles_props.value AS value, 
-						aw_item_props.name AS name
+						aw_props.name AS name
 					FROM aw_items, aw_styles, aw_styles_props, aw_props
 					WHERE aw_items.id = " . $awitem['id'] . " 
 						AND aw_items.style_id = aw_styles.id 
@@ -94,15 +94,15 @@ class DPSStationAwWallViewer extends Viewer {
 						}
 					}
 				} else {
-					$tawitem['name'] = '<b>[BLANK]</b>';
-					$tawitem['ForeColour']['r'] = 100;
-					$tawitem['ForeColour']['g'] = 100;
-					$tawitem['ForeColour']['b'] = 100;
-					$tawitem['BackColour']['r'] = 220;
-					$tawitem['BackColour']['g'] = 220;
-					$tawitem['BackColour']['b'] = 220;
+					$awitem['name'] = '<b>[BLANK]</b>';
+					$awitem['ForeColour']['r'] = 100;
+					$awitem['ForeColour']['g'] = 100;
+					$awitem['ForeColour']['b'] = 100;
+					$awitem['BackColour']['r'] = 220;
+					$awitem['BackColour']['g'] = 220;
+					$awitem['BackColour']['b'] = 220;
 				}
-				$this->assign('awitem' . ($i+1), $tawitem);
+				$this->assign('awitem' . ($i+1), $awitem);
 			}
 			$auth = Auth::getInstance();
 			$userID = $auth->getUserID();

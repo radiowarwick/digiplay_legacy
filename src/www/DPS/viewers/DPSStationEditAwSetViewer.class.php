@@ -56,13 +56,13 @@ class DPSStationEditAwSetViewer extends Viewer {
 
 			for($i=0; $i<12; $i++) {
 				$tawitem = array();
-				$sql = "SELECT aw_items.id AS id, aw_items.audioid AS audio,
+				$sql = "SELECT aw_items.id AS id, aw_items.audio_id AS audio,
 								aw_items.text AS name, aw_items.item AS item,
 								audio.length_smpl AS len, audio.title AS title 
 							FROM aw_walls, aw_items, audio 
 							WHERE aw_walls.set_id = $awset
 							AND aw_walls.id = aw_items.wall_id 
-							AND aw_items.audioid = audio.id 
+							AND aw_items.audio_id = audio.id 
 							AND aw_walls.page = $page 
 							AND aw_items.item = $i";
 				$tawitem = $db->getRow($sql);

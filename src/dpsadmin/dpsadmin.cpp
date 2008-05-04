@@ -434,8 +434,8 @@ void processMusic() {
                 // if we're importing everything, import the first entry in the
                 // remaining items. This is then removed so reduce size by one
                 else if (target_md5 == "") {
-                    L_INFO(LOG_DB,"Importing " + A->at(DPS_INBOX,0).md5 + " ["
-                                    + A->at(DPS_INBOX,0).title + "]");
+                    L_INFO(LOG_DB,"Importing " + A->at(DPS_INBOX,offset).md5 + " ["
+                                    + A->at(DPS_INBOX,offset).title + "]");
                     try {
                         A->add(offset);
                     }

@@ -17,7 +17,7 @@ class DPSStationAddAwWallModel extends Model {
 		global $cfg;
 		$db = Database::getInstance($cfg['DPS']['dsn']);
 	
-		$AwSetID = pg_escape_string($this->fieldData['AwSet']);
+		$AwSetID = pg_escape_string($this->fieldData['awset']);
 		$sql = "SELECT COUNT(*) FROM aw_walls WHERE set_id = $AwSetID";
 		$page = $db->getOne($sql);
 		

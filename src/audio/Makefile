@@ -25,7 +25,7 @@ SHARED_MODS	=	Thread
 HDRS		=	Audio.h
 
 # Compiler and linker options
-LIBS		=	-lm -lpthread
+LIBS		=	-lm -lpthread -lFLAC++
 
 POSTCOMPILE =  ln -sf lib$(OUT_BASE).so.$(VERSION) lib$(OUT_BASE).so
 

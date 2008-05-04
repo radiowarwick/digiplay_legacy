@@ -10,6 +10,7 @@ class DPSStudioPlaylistViewer extends Viewer {
 	const module = 'DPS';
 	
 	protected function setupTemplate() {
+        print "Playlist viewer\n";
 		global $cfg;
 		parent::setupTemplate();
 		

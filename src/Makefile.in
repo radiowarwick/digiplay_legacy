@@ -29,9 +29,9 @@ QT_HDRS		=
 # Define compiler and linker flags depending on whether we're
 # compiling a standard executable or a shared library
 CCINC		:=	-I$(ROOT)/src -I$(ROOT)/components -I/usr/include/postgresql -DDEBUG=4
-CCFLAGS		:=	$(DPSFLAGS) -pg -Wall -O3 -D_THREAD_SAFE \
+CCFLAGS		:=	$(DPSFLAGS) -Wall -O3 -D_THREAD_SAFE \
 				-D'VERSION="$(VERSION)"' -D'DPSDIR="$(DPSDIR)"'
-LDFLAGS		:=	-pg -L$(ROOT)/src/audio -o $(DEST)/$(OUTPUT) 
+LDFLAGS		:=	-L$(ROOT)/src/audio -o $(DEST)/$(OUTPUT) 
 
 # if QT is enabled, we need to include the necessary compiler and 
 # linker options. We also need to make a few more objects and generate
@@ -40,7 +40,7 @@ ifeq ($(QT_ENABLED),yes)
 	CCINC	+=	-I/usr/share/qt3/mkspecs/default -I/usr/include/qt3
 	CCFLAGS	+=	-pipe -W -D_REENTRANT -DQT_NO_DEBUG -DQT_THREAD_SUPPORT \
 				-DQT_SHARED
-	LIBS	+=	-L/usr/share/qt3/lib -L/usr/X11R6/lib -lqt-mt -lXext -lX11
+	LIBS	+=	-L/usr/share/qt3/lib -L/usr/X11R6/lib -lqt-mt #-lXext -lX11
 	QT_OBJS	=	$(addprefix moc_,$(APP_QTOBJS)) \
 				$(addprefix $(ROOT)/src/moc_,$(SHARED_QTOBJS))
 endif

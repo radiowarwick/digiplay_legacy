@@ -1,3 +1,17 @@
+digiplay (0.99.10-1) unstable; urgency=low
+
+  * Fixed not reading reclibid in XML read
+  * Fixed missing album names
+  * Fixed package name not being read in INFO read
+
+ -- Chris Cantwell <ccantwell@radio.warwick.ac.uk>  Sun, 04 May 2008 12:05:46 +0100
+
+digiplay (0.99.9-2) unstable; urgency=low
+
+  * Further fixes to website audiowall management
+
+ -- Chris Cantwell <ccantwell@radio.warwick.ac.uk>  Sat, 03 May 2008 13:36:54 +0100
+
 digiplay (0.99.9-1) unstable; urgency=low
 
   * Fixed sueplay not triggering next track after a short <10s track.

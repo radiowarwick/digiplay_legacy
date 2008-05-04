@@ -79,7 +79,7 @@ class DPSHomeViewer extends Viewer {
 		$showN = $db_web->getRow($sql);
 		if(!$showN) {
 			$sql = "SELECT * FROM web_shows 
-				WHERE id = " . pg_escape_string($cfg['DPS']['defaultShowID']);
+				WHERE showid = " . pg_escape_string($cfg['DPS']['defaultShowID']);
 			$showN = $db_web->getRow($sql);
 		}
 		
@@ -91,7 +91,7 @@ class DPSHomeViewer extends Viewer {
 		$showL = $db_web->getRow($sql);
 		if(!$showL) {
 			$sql = "SELECT * FROM web_shows 
-				WHERE id = " . pg_escape_string($cfg['DPS']['defaultShowID']);
+				WHERE showid = " . pg_escape_string($cfg['DPS']['defaultShowID']);
 			$showL = $db_web->getRow($sql);
 		}
 		

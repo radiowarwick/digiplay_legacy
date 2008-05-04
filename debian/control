@@ -7,13 +7,13 @@ Standards-Version: 3.7.2
 
 Package: libdpsaudio
 Architecture: i386
-Depends: libc6, libstdc++6, libgcc1, libflac++6
+Depends: libc6, libstdc++6, libgcc1, libflac++6, libflac8
 Description: Digital playout system audio component library.
  This library provides the audio routines for the digital playout system.
 
 Package: libdpsaudio-dev
 Architecture: all
-Depends: libflac++-dev
+Depends: libflac++-dev, libflac-dev
 Description: Digital playout system audio component library header files.
 
 Package: dps-common
@@ -28,7 +28,7 @@ Description: Digital playout system common files.
 
 Package: dps-studio-manage
 Architecture: i386
-Depends: libc6, libpq5, libqt3-mt, libxext6, libx11-6, libstdc++6, libgcc1, libssl0.9.8, dps-common
+Depends: libc6, libpq5, libqt3-mt, libstdc++6, libgcc1, libssl0.9.8, dps-common
 Recommends: dps-mgmt, dps-doc, qt3-qtconfig
 Suggests: dps-studio-playout
 Description: Digital playout system management software
@@ -47,7 +47,7 @@ Description: Digital playout system management software
 
 Package: dps-studio-play
 Architecture: i386
-Depends: libc6, libpq5, libqt3-mt, libxext6, libx11-6, libstdc++6, libgcc1, libdpsaudio, dps-common
+Depends: libc6, libpq5, libqt3-mt, libstdc++6, libgcc1, libdpsaudio, dps-common
 Recommends: dps-mgmt, dps-doc, qt3-qtconfig
 Suggests: dps-studio-manage
 Description: Digital playout system broadcast software.
@@ -64,7 +64,7 @@ Description: Digital playout system broadcast software.
 
 Package: dps-sustainer
 Architecture: i386
-Depends: libc6, libpq5, libstdc++6, libgcc1, libreadline5, libflac++6, libdpsaudio, dps-common
+Depends: libc6, libpq5, libstdc++6, libgcc1, libdpsaudio, dps-common
 Recommends: dps-doc
 Description: Digital playout system sustainer service.
  Digiplay is a multi-studio digital playout system. It strives to provide
@@ -87,7 +87,7 @@ Description: Digital playout system management tool.
 
 Package: dps-mgmt
 Architecture: i386
-Depends: libc6, libpq5, libstdc++6, libgcc1, libssl0.9.8, libreadline5, dps-common
+Depends: libc6, libpq5, libstdc++6, libgcc1, libssl0.9.8, dps-common
 Recommends: dps-doc
 Description: Digital playout system management tool.
  Digiplay is a multi-studio digital playout system. It strives to provide
@@ -98,7 +98,7 @@ Description: Digital playout system management tool.
 
 Package: dps-database
 Architecture: all
-Depends: postgresql-8.1, postgresql-client-8.1, dps-common
+Depends: postgresql-8.3, postgresql-client-8.3, dps-common
 Recommends: dps-mgmt, dps-doc
 Description: Digital playout system database schema and installation tool.
  Digiplay is a multi-studio digital playout system. It strives to provide

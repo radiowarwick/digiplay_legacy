@@ -103,7 +103,7 @@ if [ `$PSQL -ls | grep " $DBNAME " | wc -l` == "1" ]; then
 		printf "done\n"
 		printf " -> Current sustainer playlist saved to 'sustainer.bak'\n"
 		printf " -> Backing up existing database..."
-		if [ `$PSQL -ls | grep ${DBNAME}_bak | wc -l` == "1"]; then
+		if [ `$PSQL -ls | grep ${DBNAME}_bak | wc -l` == "1" ]; then
 			$PSQL -qc "DROP DATABASE ${DBNAME}_bak;" template1
 		fi
 		$PSQL -qc "ALTER DATABASE ${DBNAME} RENAME TO ${DBNAME}_bak;" template1

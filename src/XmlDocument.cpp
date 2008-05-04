@@ -152,6 +152,9 @@ void XmlDocument::read_element(XmlElement *E, string *content, unsigned int star
 	// Extract and CDATA if present
 	text = "";
 	while (i < end && content->at(i) != '<'){
+//        if (i+1 < end && content->at(i) == '<' && content->at(i+1) == '/') {
+//            break;
+//        }
 		text += content->at(i);
 		i++;
 	}

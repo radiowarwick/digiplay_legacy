@@ -169,7 +169,7 @@ void ArchiveManager::add(unsigned int index) {
 
 	// get the required track
 	track t = trackInbox.at(index);
-    t.creation_date = dps_current_time();
+    //t.creation_date = dps_current_time();
     t.import_date = dps_current_time();
 
 	// if we've not already processed the audio file, do so now
@@ -432,22 +432,23 @@ std::vector<track> ArchiveManager::readXML(string filename) {
         track t;
         t.md5 = root->get_attribute("md5").value;
     	t.md5_archive = A;
-        t.rip_result = root->get_attribute("ripresult").value;
+
+        s = root->get_attribute("filetype").value;
+        if (s == "raw")         t.ftype = AUDIO_FILETYPE_RAW;
+        else if (s == "flac")   t.ftype = AUDIO_FILETYPE_FLAC;
+        else if (s == "wav")    t.ftype = AUDIO_FILETYPE_WAV;
+
         t.creation_date 
             = atoi(root->get_attribute("creationdate").value.c_str());
         t.creator = root->get_attribute("creator").value;
         t.import_date = atoi(root->get_attribute("importdate").value.c_str());
+        t.rip_result = root->get_attribute("ripresult").value;
 
         s = root->get_attribute("type").value;
         if (s == "music")       t.type = AUDIO_TYPE_MUSIC;
         else if (s == "jingle") t.type = AUDIO_TYPE_JINGLE;
         else if (s == "advert") t.type = AUDIO_TYPE_ADVERT;
         else if (s == "prerec") t.type = AUDIO_TYPE_PREREC;
-
-        s = root->get_attribute("filetype").value;
-        if (s == "raw")         t.ftype = AUDIO_FILETYPE_RAW;
-        else if (s == "flac")   t.ftype = AUDIO_FILETYPE_FLAC;
-        else if (s == "wav")    t.ftype = AUDIO_FILETYPE_WAV;
         
         tracks.push_back(t);
     }
@@ -457,7 +458,7 @@ std::vector<track> ArchiveManager::readXML(string filename) {
         XmlElement* e = root->get_element(i);
         // sanity check
         if (e->get_name() != "segment") {
-            L_WARNING(LOG_DB,"Malformed XML document");
+            L_WARNING(LOG_DB,"Malformed XML document: no 'segment' block");
             continue;
         }
 
@@ -469,7 +470,7 @@ std::vector<track> ArchiveManager::readXML(string filename) {
             if (f->get_name() == "artist")
                 tracks.at(i).artists.push_back(f->get_attribute("name").value);
             if (f->get_name() == "album") {
-                for (unsigned int j = 0; j < f->count_elements(); j++) {
+                for (unsigned int j = 0; j < f->count_attributes(); j++) {
                     xmlAttribute g = f->get_attribute(j);
         	        if (g.name == "name") 
                         tracks.at(i).album = g.value;
@@ -486,21 +487,31 @@ std::vector<track> ArchiveManager::readXML(string filename) {
             if (f->get_name() == "censor")
                 tracks.at(i).censor = (f->get_cdata() == "Yes");
             if (f->get_name() == "jingle") {
-                s = f->get_attribute("type").value;
-                if (s == "generic") 
+                if (f->has_attribute("type")) {
+                    s = f->get_attribute("type").value;
+                    if (s == "generic" || s == "") 
+                        tracks.at(i).jtype = JINGLE_TYPE_GENERIC;
+                    else if (s == "ident") 
+                        tracks.at(i).jtype = JINGLE_TYPE_IDENT;
+                    else if (s == "contact") 
+                        tracks.at(i).jtype = JINGLE_TYPE_CONTACT;
+                    else if (s == "news")
+                        tracks.at(i).jtype = JINGLE_TYPE_NEWS;
+                    else if (s == "show")
+                        tracks.at(i).jtype = JINGLE_TYPE_SHOW;
+                }
+                else {
                     tracks.at(i).jtype = JINGLE_TYPE_GENERIC;
-                else if (s == "ident") 
-                    tracks.at(i).jtype = JINGLE_TYPE_IDENT;
-                else if (s == "contact") 
-                    tracks.at(i).jtype = JINGLE_TYPE_CONTACT;
-                else if (s == "news")
-                    tracks.at(i).jtype = JINGLE_TYPE_NEWS;
-                else if (s == "show")
-                    tracks.at(i).jtype = JINGLE_TYPE_SHOW;
+                }
                 XmlElement* g = f->get_element("package");
                 tracks.at(i).package = g->get_attribute("name").value;
                 tracks.at(i).package_desc 
                     = g->get_attribute("description").value;
+            }
+            if (f->get_name() == "advert") {
+                tracks.at(i).company = f->get_attribute("company").value;
+                tracks.at(i).advert_desc 
+                    = f->get_attribute("description").value;
             }
             if (f->get_name() == "smpl") {
                 for (unsigned int k = 0; k < f->count_attributes(); k++) {
@@ -566,22 +577,31 @@ void ArchiveManager::writeXML(std::string filename, track t) {
 
     // Write segment
 	e2 = e1->add_element("segment");
+    // title
 	e2->add_element("title", t.title);
-	if (t.type == AUDIO_TYPE_MUSIC) {
-		e3 = e2->add_element("album");
-		e3->add_attribute("name",t.album);
-        e3->add_attribute("origin",t.origin);
-		e3->add_element("released", t.release_date);
-		e3->add_element("reclibid", t.reclibid);
-	}
+    // artists
     for (unsigned int i = 0; i < t.artists.size(); i++) {
         e3 = e2->add_element("artist");
         e3->add_attribute("name",t.artists.at(i));
     }
+    // album
+	if (t.type == AUDIO_TYPE_MUSIC) {
+		e3 = e2->add_element("album");
+		e3->add_attribute("name",t.album);
+        e3->add_attribute("origin",t.origin);
+		e3->add_attribute("released", t.release_date);
+		e3->add_attribute("reclibid", t.reclibid);
+	}
+    // track number
 	e2->add_element("tracknum", dps_itoa(t.tracknum));
-    if (t.censor) e2->add_element("censor","Yes");
-    else e2->add_element("censor","No");
-
+    // censor flag
+    if (t.censor) {
+        e2->add_element("censor","Yes");
+    }
+    else {
+        e2->add_element("censor","No");
+    }
+    // jingle
     if (t.type == AUDIO_TYPE_JINGLE) {
         e3 = e2->add_element("jingle");
         switch (t.jtype) {
@@ -600,7 +620,13 @@ void ArchiveManager::writeXML(std::string filename, track t) {
         e4->add_attribute("name",t.package);
         e4->add_attribute("description",t.package_desc);
     }
-
+    // advert
+    if (t.type == AUDIO_TYPE_ADVERT) {
+        e3 = e2->add_element("advert");
+        e3->add_attribute("company",t.company);
+        e3->add_attribute("description",t.advert_desc);
+    }
+    // smpl
 	e3 = e2->add_element("smpl");
 	e3->add_attribute("length",dps_itoa(t.length_smpl));
 	e3->add_attribute("trim_start",dps_itoa(t.trim_start_smpl));
@@ -655,6 +681,7 @@ track ArchiveManager::readInfo(std::string filename) {
 	        }
 	        if (buffer.substr(0,6) == "album:") {
 	            t.album = buffer.substr(7, buffer.length() - 7);
+                t.package = t.album;
 	            continue;
 	        }
 	        if (buffer.substr(0,9) == "reclibid:") {
@@ -1018,7 +1045,7 @@ void ArchiveManager::addJingle(track t) {
         removeTrack(t.md5);
 
         // See if the jingle package exists
-        SQL = "SELECT * FROM jinglepkgs WHERE name='" + t.album + "'";
+        SQL = "SELECT * FROM jinglepkgs WHERE name='" + t.package + "'";
         R = DB->exec("ArchiveManagerAddJingle",SQL);
         if (R.size() > 0) pkg_id = atoi(R[0][0].c_str());
         // if not, create it

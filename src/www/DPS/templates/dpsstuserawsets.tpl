@@ -48,7 +48,7 @@
 			</td>
 			<td class="userTableDetail">
 				{if $awset.active == 't'}
-				<div class="userdefaultawset">default awset</div>
+				<div class="userdefaultawset">default audiowall set</div>
 				{else}
 					{if $awset.permissions.0 == '1'}
 				{templateLink id=$VIEWER.templateID _awset=$awset.id text="use in your profile" _awset=$awset.id _formName="dpsUserActAwSetForm" _moduleName="DPS"}

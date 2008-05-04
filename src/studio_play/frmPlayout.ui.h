@@ -77,7 +77,7 @@ void frmPlayout::init() {
 	connect(remotes, SIGNAL(player3_pause()),
 								audioPlayer3, SLOT(pause()));
 
-    // Get the active station and user cartset id from config
+    // Get the active station and user awset id from config
     conf = new Config("digiplay");
     stnAudioWallId = atoi(conf->getParam("station_aw_set").c_str());
     usrAudioWallId = atoi(conf->getParam("user_aw_set").c_str());

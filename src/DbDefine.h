@@ -17,7 +17,7 @@
 
 #define ALBUM_NONE "1"
 
-#define CONFIG_DEFAULTCARTSET "1"
+#define CONFIG_DEFAULTAWSET "1"
 
 enum AUDIO_TYPE {
     AUDIO_TYPE_MUSIC = 1,

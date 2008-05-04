@@ -38,10 +38,10 @@ AudioWallManager::~AudioWallManager() {
 
 }
 
-void AudioWallManager::load(unsigned int cartset) {
-	_cartset = cartset;
+void AudioWallManager::load(unsigned int awset) {
+	_awset = awset;
 
-    if (cartset == 0) {
+    if (awset == 0) {
     	for (unsigned int i = 0; i < _pages.size(); i++) {
     		for (unsigned int j = 0; j < _A->getSize(); j++) {
     			delete _pages[i]->items[j];
@@ -56,7 +56,7 @@ void AudioWallManager::load(unsigned int cartset) {
                             "SELECT max(aw_walls.page) "
                             "FROM aw_walls,aw_sets "
                             "WHERE aw_walls.set_id = " 
-							 	+ dps_itoa(cartset))[0][0].c_str()) + 1;
+							 	+ dps_itoa(awset))[0][0].c_str()) + 1;
     for (int i = _pages.size() - 1; i > pagecount - 1; i--) {
         for (int j = 0; j < _A->getSize(); j++) {
             delete _pages[i]->items[j];
@@ -72,7 +72,7 @@ void AudioWallManager::load(unsigned int cartset) {
 	}
     PqxxResult R = DB->exec("AudioWallManagerLoad",
                         "SELECT * FROM v_audiowalls WHERE set_id = "
-                        + dps_itoa(cartset) + " ORDER BY page, prop_name");
+                        + dps_itoa(awset) + " ORDER BY page, prop_name");
 	DB->abort("AudioWallManagerLoad");
 	
 	string file = "";

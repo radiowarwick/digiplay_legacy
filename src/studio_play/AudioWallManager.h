@@ -47,15 +47,15 @@ class AudioWallManager : public QObject {
 	public:
 		AudioWallManager( AudioWall *A );
 		~AudioWallManager();
-		void load(unsigned int cartset);
-		int getCartset() {return _cartset;}
+		void load(unsigned int awset);
+		int getAwSet() {return _awset;}
 
 	private:
 		AudioWall *_A;
         DataAccess *DB;
 		QString _username;
 		vector<Page*> _pages;
-		int _cartset;
+		int _awset;
 };
 
 #endif

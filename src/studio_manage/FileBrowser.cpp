@@ -53,7 +53,7 @@ QPixmap *fileAudio = 0;
 QPixmap *fileJingle = 0;
 QPixmap *fileAdvert = 0;
 QPixmap *fileScript = 0;
-QPixmap *fileCartset = 0;
+QPixmap *fileAwSet = 0;
 QPixmap *fileShowplan = 0;
 
 Directory::Directory( Directory * parent, const int my_id, 
@@ -155,7 +155,7 @@ void Directory::setOpen( bool o ) {
                 }
                 else if (type == "aw_set") {
                     F = new FileItem(this,name,"AudioWall Set");
-                    F->setPixmap( fileCartset );
+                    F->setPixmap( fileAwSet );
                 }
                 else if (type == "script") {
                     F = new FileItem(this,name,"Script");
@@ -229,7 +229,7 @@ DirectoryView::DirectoryView( QWidget *parent, const char *name, bool sdo )
         fileJingle = new QPixmap(path + "/images/jingle16.png");
         fileAdvert = new QPixmap(path + "/images/jingle16.png");
         fileScript = new QPixmap(path + "/images/script16.png");
-        fileCartset = new QPixmap(path + "/images/awset16.png");
+        fileAwSet = new QPixmap(path + "/images/awset16.png");
         fileShowplan = new QPixmap(path + "/images/info16.png");
     }
 

@@ -681,7 +681,7 @@
 </includes>
 <slots>
     <slot>customEvent( QCustomEvent * event )</slot>
-    <slot>updateCartset( QString index )</slot>
+    <slot>updateAwSet( QString index )</slot>
     <slot>btnLoginClicked()</slot>
 </slots>
 <functions>

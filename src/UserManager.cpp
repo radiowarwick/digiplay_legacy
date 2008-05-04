@@ -75,7 +75,7 @@ void UserManager::add(User u, std::string T) {
         DB->exec(T,SQL);
         // Set default user config values
         SQL = "INSERT INTO usersconfigs (userid, configid, val) VALUES ("
-                + user_id + "," + CONFIG_DEFAULTCARTSET + ",'')";
+                + user_id + "," + CONFIG_DEFAULTAWSET + ",'')";
         DB->exec(T,SQL);
 
         // Commit new user

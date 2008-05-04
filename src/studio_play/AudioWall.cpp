@@ -90,7 +90,7 @@ void AudioWall::resizeEvent (QResizeEvent *e) {
 }
 
 /**
- * Sets a cartwall item for a single button on a cartwall.
+ * Sets an audiowall item for a single button on a audiowall.
  */
 void AudioWall::setButton(unsigned short page, unsigned short index,
 							AudioWallItemSpec newItem) {
@@ -137,7 +137,7 @@ void AudioWall::setCaption(unsigned short page, QString text) {
 }
 
 /**
- * Adds a page of cartwall buttons to the wall list
+ * Adds a page of audiowall buttons to the wall list
  */
 void AudioWall::addPage() {
     AudioWallPage* P = new AudioWallPage;
@@ -166,7 +166,7 @@ void AudioWall::addPage() {
     // Resize the buttons on the page to the correct layout
     resizePage(_pages.size() - 1);
    
-    // If we're loading from an empty cartwall, display first page
+    // If we're loading from an empty audiowall, display first page
     if ( ! _loaded ) {
         _loaded = true;
         displayPage(0);
@@ -177,7 +177,7 @@ void AudioWall::addPage() {
 }
 
 /**
- * Deletes the specified cartwall (and buttons) from the wall list
+ * Deletes the specified audiowall (and buttons) from the wall list
  */
 void AudioWall::deletePage(unsigned int index) {
     const char *routine = "AudioWall::deletePage";
@@ -219,7 +219,7 @@ void AudioWall::deletePage(unsigned int index) {
 }
 
 /**
- * Displays the specified cartwall buttons, hiding any other buttons
+ * Displays the specified audiowall buttons, hiding any other buttons
  */
 void AudioWall::displayPage(unsigned int index) {
     const char *routine = "AudioWall::displayPage";

@@ -174,7 +174,7 @@ void frmStudioManage::init() {
     connect ( tabPanelFileBrowser, SIGNAL( showplanSelected( DpsShowplan& ) ),
                 sp, SLOT( loadShowplan( DpsShowplan& ) ) );
     connect ( tabPanelFileBrowser, SIGNAL( awSetSelected( QString ) ),
-                this, SLOT( updateCartset( QString ) ) );
+                this, SLOT( updateAwSet( QString ) ) );
     connect ( sp, SIGNAL( scriptSelected( int ) ),
                 tabPanelScript, SLOT( loadScript( int ) ) );
     connect ( sp, SIGNAL( scriptDeselected() ),
@@ -225,7 +225,7 @@ void frmStudioManage::customEvent(QCustomEvent *event) {
     }
 }
 */
-void frmStudioManage::updateCartset( QString index ) {
+void frmStudioManage::updateAwSet( QString index ) {
     conf->setParam("user_aw_set",index.ascii());
 }
 

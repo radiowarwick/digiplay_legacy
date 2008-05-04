@@ -37,7 +37,7 @@ class DataAccess;
 enum DpsObjectType {
     DPS_OBJECT, DPS_SHOWPLAN, DPS_SHOWITEM, 
     DPS_SHOWTRACK, DPS_SHOWJINGLE, DPS_SHOWADVERT, DPS_SHOWNOTE,
-    DPS_SHOWSCRIPT, DPS_CARTSET
+    DPS_SHOWSCRIPT, DPS_AWSET
 };
 
 /**
@@ -217,13 +217,13 @@ class DpsShowNote : public DpsShowItem {
 };
 
 /**
- * Representation of a cartset.
+ * Representation of a awset.
  * \todo implement.
  */
-class DpsCartset : public DpsObject {
+class DpsAwSet : public DpsObject {
     private:
-        DpsCartset();
-        virtual ~DpsCartset();
+        DpsAwSet();
+        virtual ~DpsAwSet();
 
     private:
 };

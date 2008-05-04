@@ -58,7 +58,7 @@ class TabPanelFileBrowser : public TabPanel {
         void advertSelected( QString md5 );
         /// Emitted when a script is selected from the browser.
         void scriptSelected( DpsShowScript& S );
-        /// Emitted when a cartset is selected from the browser.
+        /// Emitted when a audiowall set is selected from the browser.
         void awsetSelected( QString index );
         /// Emitted when a showplan is selected from the browser.
         void showplanSelected( DpsShowplan& s );

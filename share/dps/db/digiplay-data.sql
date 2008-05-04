@@ -472,7 +472,7 @@ INSERT INTO templates VALUES (26, 'dpsstviewawwall.tpl', 'DPSUserAwWallsViewer',
 INSERT INTO templates VALUES (27, 'dpsststationawsets.tpl', 'DPSStationAwSetViewer', 39, 'DPS');
 INSERT INTO templates VALUES (28, 'dpsststationeditawwall.tpl', 'DPSStationEditAwSetViewer', 39, 'DPS');
 INSERT INTO templates VALUES (29, 'dpsststationeditawitem.tpl', 'DPSStationEditAwItemViewer', 39, 'DPS');
-INSERT INTO templates VALUES (30, 'dpsststationviewAwWall.tpl', 'DPSStationAwWallsViewer', 39, 'DPS');
+INSERT INTO templates VALUES (30, 'dpsststationviewawwall.tpl', 'DPSStationAwWallViewer', 39, 'DPS');
 INSERT INTO templates VALUES (31, 'dpsmusicfront.tpl', 'DPSMusicFrontViewer', 19, 'DPS');
 INSERT INTO templates VALUES (32, 'dpssuefront.tpl', 'DPSSueFrontViewer', 19, 'DPS');
 INSERT INTO templates VALUES (33, 'dpsstudiofront.tpl', 'DPSStudioFrontViewer', 19, 'DPS');

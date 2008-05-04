@@ -94,7 +94,7 @@ void AudioWallManager::load(unsigned int cartset) {
 		file = R[i]["path"].c_str();
 		md5 = R[i]["md5"].c_str();
 		file += "/" + md5.substr(0,1) + "/" + md5;
-		item = atoi(R[i]["cart"].c_str());
+		item = atoi(R[i]["item"].c_str());
 		page = atoi(R[i]["page"].c_str());
 		text = R[i]["text"].c_str();
 		start = atoi(R[i]["start"].c_str());
@@ -117,7 +117,7 @@ void AudioWallManager::load(unsigned int cartset) {
 		}
 
 		while (i < R.size() && atoi(R[i]["page"].c_str()) == page
-							&& atoi(R[i]["cart"].c_str()) == item) {
+							&& atoi(R[i]["item"].c_str()) == item) {
 			p = R[i]["prop_name"].c_str();
             if (p == "ForeColourRGB") {
 				fgColour = QRgb(atoi(R[i]["prop_value"].c_str()));

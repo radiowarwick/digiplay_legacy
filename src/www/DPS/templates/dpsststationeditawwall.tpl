@@ -30,7 +30,7 @@
 	{if $pages.id == $VIEWER.awwall.page}
 	  <b>{$pages.num}</b> 
 	{else}
-	  {templateLink id=$VIEWER.templateID text=$pages.num _awitemset=$VIEWER.awitemsetID _page=$pages.id} 
+	  {templateLink id=$VIEWER.templateID text=$pages.num _awset=$VIEWER.awsetID _page=$pages.id} 
 	{/if}
       {/foreach}
       <a href='{$CONFIG.general.siteRoot}?templateID={$VIEWER.templateID}&awwallID={$VIEWER.awwall.id}&awset={$VIEWER.awsetID}&page={$VIEWER.awwall.page}&moduleName=DPS&formName=dpsStationAddAwWallPageForm'>+</a>

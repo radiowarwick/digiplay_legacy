@@ -12,8 +12,8 @@ LocationManager::LocationManager() {
     defaults["channel_2"] = "/dev/dsp1";
     defaults["channel_3"] = "/dev/dsp2";
     defaults["channel_4"] = "/dev/dsp3";
-    defaults["station_cartset"] = "0";
-    defaults["user_cartset"] = "0";
+    defaults["station_aw_set"] = "0";
+    defaults["user_aw_set"] = "0";
     defaults["userid"] = "0";
     defaults["next_on_showplan"] = "";
     defaults["player1_md5"] = "";

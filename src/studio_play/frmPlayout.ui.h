@@ -59,7 +59,7 @@ void frmPlayout::init() {
     audioPlayer3 = new AudioPlayer(this,"audioPlayer3",3);
     audioPlayer3->setGeometry(10,510,540,240);
 
-    triggerConfig = new QtTrigger("triggerConfig","trig_id1");
+    triggerConfig = new QtTrigger("triggerConfig","t_configuration");
     connect(triggerConfig, SIGNAL(trigger()),
                                 this, SLOT(configChanged()));
 
@@ -79,8 +79,8 @@ void frmPlayout::init() {
 
     // Get the active station and user cartset id from config
     conf = new Config("digiplay");
-    stnAudioWallId = atoi(conf->getParam("station_cartset").c_str());
-    usrAudioWallId = atoi(conf->getParam("user_cartset").c_str());
+    stnAudioWallId = atoi(conf->getParam("station_aw_set").c_str());
+    usrAudioWallId = atoi(conf->getParam("user_aw_set").c_str());
 
 	// Creae the station audio wall
     stnAudioWall = new AudioWall(this,"stnAudioWall",4,3);
@@ -115,8 +115,8 @@ void frmPlayout::destroy() {
 }
 
 void frmPlayout::configChanged() {
-    unsigned int s = atoi(conf->getParam("station_cartset").c_str());
-    unsigned int u = atoi(conf->getParam("user_cartset").c_str());
+    unsigned int s = atoi(conf->getParam("station_aw_set").c_str());
+    unsigned int u = atoi(conf->getParam("user_aw_set").c_str());
     if (s != stnAudioWallId && stnAudioWallMan) {
         stnAudioWallId = s;
         if (stnAudioWallId != 0) {

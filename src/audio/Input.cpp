@@ -116,7 +116,7 @@ void Input::getAudio(AudioPacket* audioData) {
         cacheLock.unlock();
         
         // Update counters with the end sample position
-        updateCounters(f_end_byte/4);
+        updateCounters(f_length_byte/4);
         
         // Stop the caching and reset
         stop();

@@ -982,7 +982,7 @@ void ArchiveManager::addTrack(track t) {
                     "end_smpl, intro_smpl, extro_smpl, type, creator, "
                     "creation_date, import_date, title, music_album, "
                     "music_track, music_released, sustainer, censor, "
-                    "lifespan, origin, reclibid, filetype) "
+                    "lifespan, origin, reclibid, rip_result, filetype) "
                 "VALUES ('" + t.md5 + "'," + dps_itoa(t.md5_archive.id) + ","
                 + dps_itoa(t.length_smpl) + "," + dps_itoa(t.trim_start_smpl) 
                 + "," + dps_itoa(t.trim_end_smpl) + "," 
@@ -991,7 +991,8 @@ void ArchiveManager::addTrack(track t) {
                 + dps_itoa(t.import_date) + ",'" + t.title + "',"
                 + dps_itoa(album_id) + "," + dps_itoa(t.tracknum) + ","
                 + dps_itoa(atoi(t.release_date.c_str()))
-                + ",'f','f',1,'" + t.origin + "','" + t.reclibid + "','raw')";
+                + ",'f','f',1,'" + t.origin + "','" + t.rip_result + "','"
+                + t.reclibid + "','raw')";
         DB->exec("ArchiveManagerAddTrack",SQL);
         SQL = "SELECT last_value FROM audio_id_seq";
         R = DB->exec("ArchiveManagerAddTrack",SQL);
@@ -1067,14 +1068,14 @@ void ArchiveManager::addJingle(track t) {
         SQL = "INSERT INTO audio (md5, archive, length_smpl, start_smpl, "
                 "end_smpl, intro_smpl, extro_smpl, type, creator, "
                 "creation_date, import_date, title, sustainer, censor, "
-                "lifespan, music_album) "
+                "lifespan, music_album, rip_result) "
                 "VALUES ('" + t.md5 + "'," + dps_itoa(t.md5_archive.id) + "," 
                 + dps_itoa(t.length_smpl) + "," + dps_itoa(t.trim_start_smpl) 
                 + "," + dps_itoa(t.trim_end_smpl) + "," 
                 + dps_itoa(t.fade_in_smpl) + "," + dps_itoa(t.fade_out_smpl) 
                 +  ",2,1," + dps_itoa(dps_current_time()) + "," 
                 +dps_itoa(dps_current_time()) + ",'" + t.title 
-                + "','f','f',1,1)";
+                + "','f','f',1,1,'" + t.rip_result + "')";
         DB->exec("ArchiveManagerAddJingle",SQL);
         SQL = "SELECT last_value FROM audio_id_seq";
         R = DB->exec("ArchiveManagerAddJingle",SQL);
@@ -1150,14 +1151,16 @@ void ArchiveManager::addAdvert(track t) {
         SQL = "INSERT INTO audio (md5, archive, length_smpl, start_smpl, "
                 "end_smpl, intro_smpl, extro_smpl, type, creator, "
                 "creation_date, import_date, title, sustainer, censor, "
-                "lifespan, music_album, advert_company, advert_description) "
+                "lifespan, music_album, rip_result, advert_company, "
+                "advert_description) "
                 "VALUES ('" + t.md5 + "'," + dps_itoa(t.md5_archive.id) + "," 
                 + dps_itoa(t.length_smpl) + "," + dps_itoa(t.trim_start_smpl) 
                 + "," + dps_itoa(t.trim_end_smpl) + "," 
                 + dps_itoa(t.fade_in_smpl) + "," + dps_itoa(t.fade_out_smpl) 
                 +  ",2,1," + dps_itoa(dps_current_time()) + "," 
                 +dps_itoa(dps_current_time()) + ",'" + t.title 
-                + "','f','f',1,1," + companyid + ",'" + t.advert_desc + "')";
+                + "','f','f',1,1,'" + t.rip_result + "'," + companyid + ",'" 
+                + t.advert_desc + "')";
         DB->exec("ArchiveManagerAddAdvert",SQL);
         SQL = "SELECT last_value FROM audio_id_seq";
         R = DB->exec("ArchiveManagerAddAdvert",SQL);
@@ -1226,7 +1229,7 @@ void ArchiveManager::addPrerec(track t) {
         SQL = "INSERT INTO audio (md5, archive, length_smpl, start_smpl, "
                     "end_smpl, intro_smpl, extro_smpl, type, creator, "
                     "creation_date, import_date, title, "
-                    "sustainer, censor, "
+                    "sustainer, censor, rip_result"
                     "lifespan, origin, filetype) "
                 "VALUES ('" + t.md5 + "'," + dps_itoa(t.md5_archive.id) + ","
                 + dps_itoa(t.length_smpl) + "," + dps_itoa(t.trim_start_smpl) 
@@ -1234,7 +1237,8 @@ void ArchiveManager::addPrerec(track t) {
                 + dps_itoa(t.fade_in_smpl) + "," + dps_itoa(t.fade_out_smpl) 
                 +  ",1,1,"  + dps_itoa(t.creation_date) + "," 
                 + dps_itoa(t.import_date) + ",'" + t.title + "',"
-                + ",'f','f',1,'" + t.origin + "','" + "','raw')";
+                + ",'f','f','" + t.rip_result + "',1,'" + t.origin + "','" 
+                + "','raw')";
         DB->exec("ArchiveManagerAddPrerec",SQL);
         SQL = "SELECT last_value FROM audio_id_seq";
         R = DB->exec("ArchiveManagerAddPrerec",SQL);

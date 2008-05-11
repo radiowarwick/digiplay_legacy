@@ -42,11 +42,14 @@ void OutputDsp::receiveMessage(PORT inPort, MESSAGE message) {
             audioState = STATE_PAUSE;
             break;
         case STOP:
-            if (isThreadActive()) {
-                threadKill();
-                threadWait();
-            }
             audioState = STATE_STOP;
+            //if (isThreadActive()) {
+            //    cout << "Kill thread" << endl;
+            //    threadKill();
+            //    cout << "Wait for thread" << endl;
+            //    threadWait();
+            //    cout << "Thread stopped" << endl;
+            //}
             break;
         default:
             break;
@@ -87,21 +90,22 @@ void OutputDsp::threadExecute() {
 
 	while (!threadTestKill()) {
         if (audioState == STATE_STOP) {
-            usleep(100);
+            usleep(10000);
             continue;
         }
         
         if (audioState == STATE_PAUSE) {
-            usleep(100);
+            usleep(1000);
             continue;
         }
         
         if (!(C = connectedDevice(IN0))) {
-            usleep(100);
+            usleep(10000);
             continue;
         }
-        
+
 		C->getAudio(buffer);
+
 		for (unsigned int i = 0; i < PACKET_MULTIPLIER; i++) {
 			if (write (audio, d+(i*AUDIO_BUFFER), AUDIO_BUFFER) 
 													!= AUDIO_BUFFER) {
@@ -111,6 +115,7 @@ void OutputDsp::threadExecute() {
             if (deviceName == "/dev/null") usleep(50);
 		}
 	}
+
 	delete buffer;
 }
 

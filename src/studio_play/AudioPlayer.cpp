@@ -281,7 +281,7 @@ void AudioPlayer::onSetSample() {
     if (_currentSample - _lastSample < 1764) return;
 
     if (! qApp->tryLock()) return;
-    
+        
     _lastSample = _currentSample;
     sldSeek->setValue(_currentSample);
     

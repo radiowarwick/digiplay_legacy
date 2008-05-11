@@ -739,6 +739,22 @@ AS
         AND (audio.archive = archives.id)
     ORDER BY aw_walls.id, aw_items.item, aw_props.id;
 
+-- v_playlists
+CREATE OR REPLACE VIEW v_playlists
+AS
+	SELECT	audio.md5,
+			audio.title,
+			artists.name AS artist,
+			audio.length_smpl,
+			playlists.id AS playlistid,
+			playlists.name AS playlist
+	FROM	audio, audioplaylists, playlists, audioartists, artists
+    WHERE   (audioartists.audioid = audio.id)
+    	AND (audioartists.artistid = artists.id)
+    	AND (audioplaylists.audioid = audio.id)
+    	AND (audioplaylists.playlistid = playlists.id)
+ 	ORDER BY playlistid, title;
+ 	
 -- v_scripts
 CREATE OR REPLACE VIEW v_scripts
 AS

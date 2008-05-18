@@ -22,7 +22,7 @@ class DPSMusicSearchViewer extends Viewer {
 			$offset--;
 		}
 		
-		$searchValue = $this->fieldData['dpsSearchVal'];
+		$searchValue = trim($this->fieldData['dpsSearchVal']);
 		$searchType = $this->fieldData['dpsSearchType'];
 		$letter = pg_escape_string($this->fieldData['dpsSearchLetter']);
 		

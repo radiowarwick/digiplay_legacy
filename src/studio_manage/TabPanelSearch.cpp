@@ -91,6 +91,9 @@ void TabPanelSearch::Library_Search() {
 	searching = true;
 	btnLibrarySearch->setEnabled(false);
 	txtLibrarySearchText->setEnabled(false);
+	TitleCheckBox->setEnabled(false);
+	ArtistCheckBox->setEnabled(false);
+	AlbumCheckBox->setEnabled(false);
     
 	// Check if user has entered required information
     if (txtLibrarySearchText->text() == "") {
@@ -103,6 +106,9 @@ void TabPanelSearch::Library_Search() {
         delete warning;
 		btnLibrarySearch->setEnabled(true);
 		txtLibrarySearchText->setEnabled(true);
+		TitleCheckBox->setEnabled(true);
+		ArtistCheckBox->setEnabled(true);
+		AlbumCheckBox->setEnabled(true);
 		searching = false;
         return;
     }
@@ -118,6 +124,9 @@ void TabPanelSearch::Library_Search() {
         delete warning;
 		btnLibrarySearch->setEnabled(true);
 		txtLibrarySearchText->setEnabled(true);
+		TitleCheckBox->setEnabled(true);
+		ArtistCheckBox->setEnabled(true);
+		AlbumCheckBox->setEnabled(true);
 		searching = false;
         return;
     }
@@ -162,6 +171,9 @@ void TabPanelSearch::processResults() {
 
 		btnLibrarySearch->setEnabled(true);
 		txtLibrarySearchText->setEnabled(true);
+		TitleCheckBox->setEnabled(true);
+		ArtistCheckBox->setEnabled(true);
+		AlbumCheckBox->setEnabled(true);
 		lstSearchResults->setUpdatesEnabled(true);
 		lstSearchResults->triggerUpdate();
 		qApp->unlock();
@@ -188,6 +200,9 @@ void TabPanelSearch::processResults() {
 
 	btnLibrarySearch->setEnabled(true);
 	txtLibrarySearchText->setEnabled(true);
+	TitleCheckBox->setEnabled(true);
+	ArtistCheckBox->setEnabled(true);
+	AlbumCheckBox->setEnabled(true);
 	lstSearchResults->setUpdatesEnabled(true);
 	lstSearchResults->triggerUpdate();
 	txtLibrarySearchText->setFocus();

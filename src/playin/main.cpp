@@ -711,7 +711,7 @@ int main(int argc, char *argv[])
 
 	AM = SM.atArchive(C->getParam("playin_archive"));
 	if (!AM) {
-		cout << "Invalid archive in database or config perameter missing" << endl;
+		cout << "Invalid archive in database or config parameter missing" << endl;
 		exit(1);
 	}
 	base_path = AM->spec().localPath;

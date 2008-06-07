@@ -55,6 +55,7 @@ default:	all
 studio: 	$(AUDIO) $(STUDIO)
 sue:		$(AUDIO) $(SUE)
 backend:	$(ADMIN)
+database:	$(DATABASE)
 
 all: 		$(ALL)
 

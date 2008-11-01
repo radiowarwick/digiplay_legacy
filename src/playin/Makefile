@@ -24,7 +24,7 @@ SHARED_MODS	=	Config dps DbTrigger Thread DataAccess Logger Security \
 HDRS		=
 
 # Compiler and linker options
-LIBS		=	-lncurses -lform -lpq /usr/lib/libpqxx.a -lpthread
+LIBS		=	-lncurses -lform -lpq -lpqxx -lpthread
 
 # Compiled binaries are no longer put in $(ROOT)/bin
 #POSTCOMPILE =   cp cdparanoia $(ROOT)/bin

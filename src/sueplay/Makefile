@@ -22,6 +22,6 @@ SHARED_MODS	=	DataAccess Config Logger Security dps DbTrigger
 HDRS		=
 
 # Compiler and linker options
-LIBS		=	-lpq /usr/lib/libpqxx.a -lm -lpthread -ldpsaudio
+LIBS		=	-lpq -lpqxx -lm -lpthread -ldpsaudio
 
 include $(ROOT)/src/Makefile.in

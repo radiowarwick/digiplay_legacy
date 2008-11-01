@@ -784,7 +784,8 @@ int main(int argc, char *argv[])
 			dup2(fdpair[1],2);
 			close(fdpair[1]);
 			close(fdpair[0]);
-			execlp("cdparanoia", "cdparanoia", "-Q", NULL);
+			execlp("cdparanoia", "cdparanoia", "-Q", 
+					"-d", device.c_str(), NULL);
 			_exit(0);
 			
 		default:
@@ -827,7 +828,9 @@ int main(int argc, char *argv[])
 					tracks[i].uid[4], tracks[i].uid[5], tracks[i].uid[6], tracks[i].uid[7],
 					tracks[i].uid[8], tracks[i].uid[9], tracks[i].uid[10], tracks[i].uid[11],
 					tracks[i].uid[12], tracks[i].uid[13], tracks[i].uid[14], tracks[i].uid[15]);
-				execlp("cdparanoia", "cdparanoia", "-e", "-r", "-Y", buf2, buf, NULL);
+				execlp("cdparanoia", "cdparanoia", "-e", "-r", 
+					"-d",device.c_str(),"-Y", buf2, buf, 
+					NULL);
 				_exit(-2);
 			}
 				

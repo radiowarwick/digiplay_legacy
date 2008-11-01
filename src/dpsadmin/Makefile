@@ -24,6 +24,6 @@ SHARED_MODS	=	SystemManager ArchiveManager UserManager GroupManager \
 HDRS		=
 
 # Compiler and linker options
-LIBS		=	-lpq /usr/lib/libpqxx.a -lm -lpthread
+LIBS		=	-lpq -lpqxx -lm -lpthread
 
 include $(ROOT)/src/Makefile.in

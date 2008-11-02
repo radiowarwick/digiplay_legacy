@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 using namespace std;
 
 #include "Input.h"
@@ -23,7 +24,7 @@ Input::Input(unsigned int cache_size) {
     cacheStart = new char[cacheSize];
     if (cacheStart == 0) {
         cout << "ERROR: Cannot allocate memory for cache" << endl;
-        exit(-1);
+        throw -1;
     }
     cacheEnd = cacheStart + cacheSize;
     cacheRead = cacheStart;

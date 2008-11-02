@@ -20,7 +20,7 @@ TriggerRoot::TriggerRoot() {
         }
         catch (const std::exception &e) {
         	L_ERROR(LOG_DB,e.what());
-        	exit(-1);
+        	throw -1;
         }
         enabled = true;
 		threadStart();

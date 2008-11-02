@@ -23,6 +23,7 @@
  */
 
 #include <iostream>
+#include <cstdlib>
 using std::endl;
 
 #include "FileBrowser.h"

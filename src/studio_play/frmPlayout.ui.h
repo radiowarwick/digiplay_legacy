@@ -22,6 +22,7 @@
  *
  */
 #include <qapplication.h>
+#include <cstdlib>
 
 #include "Config.h"
 #include "QtTrigger.h"

@@ -22,6 +22,7 @@
  */
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 
 #include "dirent.h"
 #include "sys/types.h"
@@ -184,11 +185,11 @@ void ConfigManager::processConfigFile(std::string application) {
 	if (DB_CONNECT == "") {
 		L_CRITICAL(LOG_CONFIG,"Missing config file " + f
 								+ " or syntax error in file.");
-		exit(-1);
+		throw -1;
 	}
 	if (LOCATION == "") {
 		L_CRITICAL(LOG_CONFIG,"'LOCATION' not specificed in " + f);
-		exit(-1);
+		throw -1;
 	}
 }
 

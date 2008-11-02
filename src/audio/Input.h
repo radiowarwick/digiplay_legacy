@@ -6,7 +6,7 @@
 
 #include "Component.h"
 
-class Audio::Counter;
+class Counter;
 
 
 /** 

@@ -24,6 +24,8 @@
  */
 #include <string>
 #include <iostream>
+#include <cstdlib>
+#include <cstring>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <getopt.h>
@@ -81,7 +83,7 @@ void processOptions(int argc, char *argv []) {
                 std::cout << "USAGE: " << argv[0]
                         << " [--debug|--verbose|--quiet] [-h|--help]"
                         << " [-v|--version] [--daemon] [--now-playing]" << std::endl;
-                exit(0);
+                throw -1;
                 break;
             }
             case 'v': {
@@ -95,12 +97,12 @@ void processOptions(int argc, char *argv []) {
     }
     if (detach && print_info) {
         L_ERROR(LOG_DB,"Printed output only available when attached to the console");
-        exit(-1);
+        throw -1;
     }
 
     if (logDebug + logVerbose + logQuiet > 1) {
         L_ERROR(LOG_DB,"Only one verbosity level may be specified");
-        exit(-1);
+        throw -1;
     }
     if (logDebug) Logger::setDisplayLevel(INFO);
     if (logVerbose) Logger::setDisplayLevel(WARNING);
@@ -141,7 +143,7 @@ void detachProcess() {
     // Check we fork()-ed correctly
     if (pid < 0) {
         L_CRITICAL(LOG_SUEPLAY, "Unable to fork() daemon.");
-        exit(-1);
+        throw -1;
     }
     // Quite parent process
     if (pid > 0) {

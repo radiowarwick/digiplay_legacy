@@ -21,6 +21,7 @@
  *
  */
 #include <string>
+#include <cstdlib>
 using namespace std;
 
 #include "Logger.h"

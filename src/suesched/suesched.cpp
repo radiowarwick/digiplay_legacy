@@ -23,6 +23,7 @@
  *
  */
 #include <iostream>
+#include <cstring>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <signal.h>

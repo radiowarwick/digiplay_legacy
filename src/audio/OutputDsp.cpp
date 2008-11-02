@@ -110,7 +110,7 @@ void OutputDsp::threadExecute() {
 			if (write (audio, d+(i*AUDIO_BUFFER), AUDIO_BUFFER) 
 													!= AUDIO_BUFFER) {
 				cout << "Failed to write all of buffer" << endl;
-				abort();
+				throw -1;
 			}
             if (deviceName == "/dev/null") usleep(50);
 		}
@@ -130,7 +130,7 @@ void OutputDsp::initialise(string device) {
 	audio = open(device.c_str(), O_WRONLY, 0);
 	if (audio == -1) {
 		cout << "FAILED: unable to open " << device << endl;
-		abort();
+		throw audio;
 	}
 
     // Output settings

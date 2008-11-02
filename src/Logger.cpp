@@ -22,6 +22,7 @@
  */
 #include <sstream>
 #include <iostream>
+#include <cstdlib>
 using namespace std;
 
 #include "Logger.h"
@@ -106,7 +107,7 @@ void Logger::log(LOG_TYPE type, const char* routine, string message,
 void Logger::initLogDir() {
     if (appName == "") {
         cout << "ERROR: Application name not set!" << endl;
-        exit(-1);
+        throw -1;
     }
     if (!logFile) {
 	    string filename = "/var/log/dps/" + appName + ".log";

@@ -25,6 +25,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <cstdlib>
 using std::endl;
 
 #include <pqxx/pqxx>

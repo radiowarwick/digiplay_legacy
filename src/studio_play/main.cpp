@@ -66,21 +66,21 @@ int main( int argc, char * argv[] )
                 std::cout << "USAGE: " << argv[0] 
                         << " [--debug|--verbose|--quiet] [-h|--help]" 
                         << " [-v|--version]" << std::endl;
-                exit(0);
+                return 0;
                 break;
             }
             case 'v': {
                 std::cout.precision(1);
                 std::cout << "DPS Studio Playout Application Version "
                             << VERSION << std::endl;
-                exit(0);
+                return 0;
                 break;
             }
         }
     }
     if (logDebug + logVerbose + logQuiet > 1) {
         L_ERROR(LOG_DB,"Only one verbosity level may be specified");
-        exit(-1);
+        return -1;
     }
     if (logDebug) Logger::setDisplayLevel(INFO);
     if (logVerbose) Logger::setDisplayLevel(WARNING);

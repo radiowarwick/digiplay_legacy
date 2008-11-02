@@ -20,6 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include <cstdlib>
 #include <string>
 using namespace std;
 
@@ -123,7 +124,7 @@ void SystemManager::createArchive(string name, string localPath,
     if (rv != 0) {
         L_ERROR(LOG_DB,"Unable to create archive directory structure.");
         L_ERROR(LOG_DB," -> shell code is " + dps_itoa(rv));
-		exit(1);
+		throw -1;
     }
 	command = "cd " + localPath + "; ";
     command += "mkdir -p 0 1 2 3 4 5 6 7 8 9 a b c d e f inbox trash";
@@ -131,7 +132,7 @@ void SystemManager::createArchive(string name, string localPath,
     if (rv != 0) {
         L_ERROR(LOG_DB,"Unable to create archive directory structure.");
         L_ERROR(LOG_DB," -> shell code is " + dps_itoa(rv));
-		exit(1);
+		throw -1;
     }
 
     // Now add this archive to the system.

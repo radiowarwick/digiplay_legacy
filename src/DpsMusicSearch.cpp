@@ -24,6 +24,8 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <cstdlib>
+#include <algorithm>
 
 #include "DataAccess.h"
 #include "DpsMusicSearch.h"

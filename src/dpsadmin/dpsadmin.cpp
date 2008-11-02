@@ -23,6 +23,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <cstdlib>
 using namespace std;
 
 #include "sys/stat.h"
@@ -101,7 +102,7 @@ int main(int argc, char *argv[]) {
 	parseCommand(argc,argv);
     if (logVerbose + logDebug + logQuiet > 1) {
         cerr << "ERROR: Only one verbosity level should be specified." << endl;
-        exit(-1);
+        return -1;
     }
 
     // configure logging
@@ -118,13 +119,13 @@ int main(int argc, char *argv[]) {
         cout << "Digital Playout System Administration Tool" << endl;
         cout << "Copyright (c) 2005-2007 Chris Cantwell" << endl;
         cout << "Version " << VERSION << endl;
-        exit(0);
+        return 0;
     }
 
     // Display help if requested
     if (options["help"] == "yes") {
         displayUsage();
-        exit(0);
+        return 0;
     }
 
     // Perform the action
@@ -176,11 +177,11 @@ void parseCommand(int argc, char *argv[]) {
 	}
     if (t > 1) {
         L_ERROR(LOG_DB,"Only one task may be specified.");
-        exit(-1);
+        throw -1;
     }
     if (c > 1) {
         L_ERROR(LOG_DB,"Only one command may be specified.");
-        exit(-1);
+        throw -1;
     }
 }
 
@@ -285,17 +286,17 @@ void processArchive() {
         string name = options["add"];
         if (options["local-path"] == "") {
             L_ERROR(LOG_DB,"No 'local-path' specified");
-            exit(-1);
+            throw -1;
         }
     if (options["remote-path"] == "") {
             L_ERROR(LOG_DB,"No 'remote-path' specified");
-            exit(-1);
+            throw -1;
         }
         L_INFO(LOG_DB,"Adding existing archive '" + name + "' to database...");
 
         if (Sys->atArchive(name)) {
             L_ERROR(LOG_DB,"'" + name + "' already exists");
-            exit(-1);
+            throw -1;
         }
         Sys->addArchive(name,options["local-path"],options["remote-path"]);
         L_INFO(LOG_DB,"Complete!");
@@ -308,7 +309,7 @@ void processArchive() {
 
         if (!Sys->atArchive(name)) {
             L_ERROR(LOG_DB,"Archive '" + name + "' does not exist!");
-            exit(-1);
+            throw -1;
         }
         for (short i = 0; i < Sys->sizeArchive(); i++) {
             if (Sys->atArchive(i)->spec().name == name) {
@@ -349,17 +350,17 @@ void processArchive() {
         string name = options["create"];
         if (options["local-path"] == "") {
             L_ERROR(LOG_DB,"No 'local-path' specified");
-            exit(-1);
+            throw -1;
         }
         if (options["remote-path"] == "") {
             L_ERROR(LOG_DB,"No 'remote-path' specified");
-            exit(-1);
+            throw -1;
         }
         L_INFO(LOG_DB,"Creating archive '" + name + "'...");
 
         if (Sys->atArchive(name)) {
             L_ERROR(LOG_DB,"'" + name + "' already exists");
-            exit(-1);
+            throw -1;
         }
         
         Sys->createArchive(name,options["local-path"],options["remote-path"]);
@@ -375,7 +376,7 @@ void processArchive() {
         string name = options["upgrade"];
         if (!Sys->atArchive(name)) {
             L_ERROR(LOG_DB,"Archive '" + name + "' doesn't exist.");
-            exit(-1);
+            throw -1;
         }
 
         Sys->atArchive(name)->upgradeInfo();

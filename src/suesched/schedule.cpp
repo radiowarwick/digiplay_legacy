@@ -56,7 +56,7 @@ void schedule::remove(unsigned short position) {
     
     if (position >= S->size()) {
         L_CRITICAL(LOG_SUESCHED,"Invalid ID to remove");
-        exit(-1);
+        throw -1;
     }
     S->erase(S->begin() + position);
 }

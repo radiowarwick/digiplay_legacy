@@ -35,11 +35,6 @@
 #include "audio/Counter.h"
 
 // Forward declarations
-class Audio::Input;
-class Audio::InputRaw;
-class Audio::InputFlac;
-class Audio::OutputDsp;
-
 class QGroupBox;
 class QPushButton;
 class QLabel;

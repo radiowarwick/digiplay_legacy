@@ -1,4 +1,5 @@
 #include <string>
+#include <cstdlib>
 
 #include "Logger.h"
 #include "DataAccess.h"

@@ -22,6 +22,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include <cstdlib>
+
 #include <qapplication.h>
 #include <qmessagebox.h>
 
@@ -86,7 +88,7 @@ void frmStudioManage::init() {
     else {
         cout << "unknown authentication method: ";
         cout << conf->getParam("auth_method") << endl;
-        exit(-1);
+        throw -1;
     }
     userConfig = new UserConfig(authModule);
 	cout << "success." << endl;

@@ -46,6 +46,7 @@ this can be achieved by running apt-get install <package-list> where
 	libreadline5-dev
 	libncurses5-dev
 	libqt3-mt-dev
+	libldap2-dev
 	libcdparanoia0 (for playin application)
 	libflac++-dev (for new flac audio encoding)
 This will implicitly install the actual libraries as well. Other distributions

@@ -742,7 +742,7 @@ AS
 -- v_playlists
 CREATE OR REPLACE VIEW v_playlists
 AS
-	SELECT	audio.md5,
+	SELECT	audio.id,
 			audio.title,
 			artists.name AS artist,
 			audio.length_smpl,

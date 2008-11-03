@@ -47,6 +47,7 @@ this can be achieved by running apt-get install <package-list> where
 	libncurses5-dev
 	libqt3-mt-dev
 	libcdparanoia0 (for playin application)
+	libflac++-dev (for new flac audio encoding)
 This will implicitly install the actual libraries as well. Other distributions
 and/or package management systems may require manual installation of these
 libraries.

@@ -141,7 +141,7 @@ void TabPanelPlaylist::processPlaylistUpdate() {
                             R[i]["artist"].c_str(),
                             R[i]["title"].c_str(),
                             dps_prettyTime(atoi(R[i]["length_smpl"].c_str())),
-                            R[i]["md5"].c_str());
+                            R[i]["id"].c_str());
                 new_track->setPixmap(0,*pixTrack);
                 last_track = new_track;
             }

@@ -13,7 +13,6 @@ class DPSUserAwWallsViewer extends Viewer {
 		parent::setupTemplate();
 
 		$db = Database::getInstance($cfg['DPS']['dsn']);
-//    $db_web = Database::getInstance($cfg['DPS']['dsn_web']);
 		$awset = pg_escape_string($this->fieldData['awset']);
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();

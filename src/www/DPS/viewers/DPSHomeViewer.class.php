@@ -13,7 +13,6 @@ class DPSHomeViewer extends Viewer {
 		parent::setupTemplate();
 		
 		$db = Database::getInstance($cfg['DPS']['dsn']);
-		$db_web = Database::getInstance($cfg['DPS']['dsn_web']);
 		
 		//System Track count
 		$query = "SELECT count(audio.id) FROM audio";
@@ -38,13 +37,25 @@ class DPSHomeViewer extends Viewer {
 		$mins = round($sueSamps/44100/60 - $hours*60 - $days*24*60);
 		$sueLength = $days . "days " . $hours . "h " . $mins . "m";
 		
-		//Sue playing now/next
+		//Sue playing Now
+		$query = "SELECT track_title, track_artist
+			FROM log
+			WHERE location = 0
+			ORDER BY datetime DESC LIMIT 1";
+		$suePlayingNow = $db->getAll($query);
+		foreach($suePlayingNow as $key => &$track) {
+			$track['artist'] = $track['track_artist'];
+			$track['title'] = $track['track_title'];
+		}
+			
+
+		//Sue playing next
 		$query = "SELECT audio.title AS title, audio.id AS id 
 			FROM sustschedule, audio 
 			WHERE sustschedule.audioid = audio.id 
-			ORDER BY sustschedule.id ASC LIMIT 2";
-		$suePlaying = $db->getAll($query);
-		foreach($suePlaying as $key => &$track) {
+			ORDER BY sustschedule.id ASC LIMIT 1";
+		$suePlayingNext = $db->getAll($query);
+		foreach($suePlayingNext as $key => &$track) {
 			$sql = "SELECT DISTINCT artists.name as name 
 				FROM artists, audioartists 
 				WHERE audioartists.audioid = " . $track['id'] . " 
@@ -60,40 +71,40 @@ class DPSHomeViewer extends Viewer {
 		putenv("TZ=GB");
 		//$current_time = date("Y-m-d H:i:s", time());
 		$current_time = time();
-		$sql = "SELECT web_shows.* FROM web_shows , web_schedule 
-			WHERE(web_shows.showid = web_schedule.showid 
-			AND '$current_time' > web_schedule.starttime 
-			AND '$current_time' <= web_schedule.endtime);";
-		$showC = $db_web->getRow($sql);
+		$sql = "SELECT txshows.* FROM txshows , txschedule 
+			WHERE(txshows.id = txschedule.txshowid 
+			AND '$current_time' > txschedule.starttime 
+			AND '$current_time' <= txschedule.endtime);";
+		$showC = $db->getRow($sql);
 		if(!$showC) {
-			$sql = "SELECT * FROM web_shows 
-				WHERE showid = " 
+			$sql = "SELECT * FROM txshows 
+				WHERE id = " 
                 . pg_escape_string($cfg['DPS']['defaultShowID']);
-			$showC = $db_web->getRow($sql);
+			$showC = $db->getRow($sql);
 		}
 		
 		//Show on next
-		$sql = "SELECT web_shows.* FROM web_shows, web_schedule 
-			WHERE (web_shows.showid = web_schedule.showid 
-			AND '$current_time' < web_schedule.starttime) 
-			ORDER BY web_schedule.starttime ASC LIMIT 1;";
-		$showN = $db_web->getRow($sql);
+		$sql = "SELECT txshows.* FROM txshows, txschedule 
+			WHERE (txshows.id = txschedule.txshowid 
+			AND '$current_time' < txschedule.starttime) 
+			ORDER BY txschedule.starttime ASC LIMIT 1;";
+		$showN = $db->getRow($sql);
 		if(!$showN) {
-			$sql = "SELECT * FROM web_shows 
-				WHERE showid = " . pg_escape_string($cfg['DPS']['defaultShowID']);
-			$showN = $db_web->getRow($sql);
+			$sql = "SELECT * FROM txshows 
+				WHERE id = " . pg_escape_string($cfg['DPS']['defaultShowID']);
+			$showN = $db->getRow($sql);
 		}
 		
 		//Show just on
-		$sql = "SELECT web_shows.* FROM web_shows, web_schedule 
-			WHERE(web_shows.showid = web_schedule.showid 
-			AND '$current_time' > web_schedule.endtime) 
-			ORDER BY web_schedule.endtime DESC LIMIT 1;";
-		$showL = $db_web->getRow($sql);
+		$sql = "SELECT txshows.* FROM txshows, txschedule 
+			WHERE(txshows.id = txschedule.txshowid 
+			AND '$current_time' > txschedule.endtime) 
+			ORDER BY txschedule.endtime DESC LIMIT 1;";
+		$showL = $db->getRow($sql);
 		if(!$showL) {
-			$sql = "SELECT * FROM web_shows 
-				WHERE showid = " . pg_escape_string($cfg['DPS']['defaultShowID']);
-			$showL = $db_web->getRow($sql);
+			$sql = "SELECT * FROM txshows 
+				WHERE id = " . pg_escape_string($cfg['DPS']['defaultShowID']);
+			$showL = $db->getRow($sql);
 		}
 		
 		$auth = Auth::getInstance();
@@ -114,8 +125,8 @@ class DPSHomeViewer extends Viewer {
 		$this->assign('lengthOfTracks', $systemLength);
 		$this->assign('suePlaylistTracks', $sueTracks);
 		$this->assign('suePlaylistLength', $sueLength);
-		$this->assign('sueLastTrack', $suePlaying[0]);
-		$this->assign('sueNextTrack', $suePlaying[1]);
+		$this->assign('sueLastTrack', $suePlayingNow[0]);
+		$this->assign('sueNextTrack', $suePlayingNext[0]);
 		$this->assign('scheduleCurrent', $showC);
 		$this->assign('scheduleNext', $showN);
 		$this->assign('scheduleLast', $showL);

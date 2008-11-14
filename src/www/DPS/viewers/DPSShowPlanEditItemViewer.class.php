@@ -67,7 +67,7 @@ class DPSShowPlanEditItemViewer extends Viewer {
 							$item['audioLen'] = $stuff['len'];
 							$item['niceAudioLength'] = 
 								str_pad(floor((($stuff['len']/44100)/60)),2,"0",STR_PAD_LEFT) .
-								":" . str_pad((($stuff['len']/44100)%60),2,"0",STR_PAD_LEFT);
+								":" . str_pad((ceil($stuff['len']/44100)%60),2,"0",STR_PAD_LEFT);
 						} else {
 							$item['nature'] = 'unknown';
 						}

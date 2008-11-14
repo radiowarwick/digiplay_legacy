@@ -74,7 +74,7 @@
 					<div class="home_sueBox">
 						<img src="DPS/images/homesueplaylist.gif" alt="Sue Playlist"><br>
 						<table class="home_playlist">
-							<tr><th>Last track:</th><td>{$VIEWER.sueLastTrack.artist} - {templateLink id="10" text=$VIEWER.sueLastTrack.title _trackID=$VIEWER.sueLastTrack.id}</td></tr>
+							<tr><th>Current track:</th><td>{$VIEWER.sueLastTrack.artist} - {$VIEWER.sueLastTrack.title _track}</td></tr>
 							<tr><th>Next track:</th><td>{$VIEWER.sueNextTrack.artist} - {templateLink id="10" text=$VIEWER.sueNextTrack.title _trackID=$VIEWER.sueNextTrack.id}</td></tr>
 						</table>
 						<!--{templateLink id="47" text="Further playlist"}--><br>

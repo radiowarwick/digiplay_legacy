@@ -992,8 +992,8 @@ void ArchiveManager::addTrack(track t) {
                 + dps_itoa(t.import_date) + ",'" + t.title + "',"
                 + dps_itoa(album_id) + "," + dps_itoa(t.tracknum) + ","
                 + dps_itoa(atoi(t.release_date.c_str()))
-                + ",'f','f',1,'" + t.origin + "','" + t.rip_result + "','"
-                + t.reclibid + "','raw')";
+                + ",'f','f',1,'" + t.origin + "','" + t.reclibid + "','"
+                + t.rip_result + "','raw')";
         DB->exec("ArchiveManagerAddTrack",SQL);
         SQL = "SELECT last_value FROM audio_id_seq";
         R = DB->exec("ArchiveManagerAddTrack",SQL);

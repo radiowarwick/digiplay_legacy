@@ -266,7 +266,8 @@ Config::~Config() {
 	instanceCount--;
 	if (M) CM->removeClient(M);
 	if (instanceCount == 0) {
-		delete CM;
+		// For some reason trying to delete the ConfigManager causes a hang
+		//delete CM;
 	}
 }
 

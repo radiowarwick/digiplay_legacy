@@ -614,6 +614,7 @@ void processUser() {
         }
         delete C;
     }
+    delete U;
 }
 
 /**

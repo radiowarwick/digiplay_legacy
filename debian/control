@@ -112,7 +112,7 @@ Package: dps-www
 Architecture: all
 Depends: apache2 (>= 2.2.6-2), libapache2-mod-php5 (>= 5.2.4-2), 
 	php5 (>= 5.2.4-2), php5-ldap (>= 5.2.4-2), php5-pgsql (>= 5.2.4-2), 
-	smarty (>= 2.6.18-2), fckeditor (>= 1:2.5.1-1), php-db, php-pear, 
+	smarty (>= 2.6.19-1), fckeditor (>= 1:2.6.2-1), php-db, php-pear, 
     php5-cli, dps-mgmt
 Recommends: dps-doc
 Description: Digital playout system web application.

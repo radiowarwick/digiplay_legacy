@@ -35,7 +35,7 @@ my $time_received = time();
 # get header fields and trim them to remove leading and trailing spaces
 my $h_subject = trim($email->head->get("Subject"));
 my $h_from    = trim($email->head->get("From"));
-my $h_spam    = trim($email->head->get("X-Spam-Flag"));
+my $h_spam    = trim($email->head->get("X-Spam-Flag-RaW"));
 
 # use a MIME parser to parse the email
 my $parser = MIME::Parser->new;
@@ -51,7 +51,7 @@ foreach $entity ($top->parts_DFS) {
 	if ($entity->bodyhandle) {
 		if ( ($entity->effective_type eq "text/plain" && !$html) 
 				|| $entity->effective_type eq "text/html") {
-			$body = $entity->bodyhandle->as_string; 
+			$body = $entity->bodyhandle->as_string;
 		}
 		if ( $effectivetype eq "text/html") { $html = 1; }
 	}
@@ -66,6 +66,8 @@ foreach $accept_subject (@allowed_subjects) {
 
 # If it's good, put it in the database
 if ( $accept_flag ) {
+    $h_subject =~ s/\\//;
+    $body =~ s/\\//;
 	$dbh = DBI->connect($db_connect, $dbuser, $dbpass, {AutoCommit => 1 }) 
 				|| die "Cannot connect to database";
 	$SQL="INSERT INTO email (sender,subject,body,new_flag,datetime) VALUES (" 

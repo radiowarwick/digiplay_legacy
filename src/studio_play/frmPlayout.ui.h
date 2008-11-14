@@ -107,8 +107,6 @@ void frmPlayout::init() {
         L_INFO(LOG_DB,"Attempting to drop to unprivilaged user.");
         dropPrivilage();
     }
-
-    
 }
 
 void frmPlayout::destroy() {

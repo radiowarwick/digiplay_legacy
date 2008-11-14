@@ -279,7 +279,7 @@ void AudioPlayer::onMessage() {
 }
 
 void AudioPlayer::onSetSample() {
-    if (_currentSample - _lastSample < 1764) return;
+    if (_state == STATE_PLAY && _currentSample - _lastSample < 1764) return;
 
     if (! qApp->tryLock()) return;
         

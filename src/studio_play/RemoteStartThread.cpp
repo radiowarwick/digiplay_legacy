@@ -37,7 +37,7 @@ RemoteStartThread::RemoteStartThread() {
 
 void RemoteStartThread::threadExecute() {
     const char* routine = "RemoteStartThread::run";
-    char *error;
+    char *error = new char[256];
 	mutex.lock();
 	stopped = FALSE;
 	mutex.unlock();
@@ -100,11 +100,10 @@ void RemoteStartThread::threadExecute() {
 				}
 				old_status = status;
 			}
-
-		usleep(100000);
+			usleep(100000);
 		}
 	}
-
+	delete[] error;
 }
 
 void RemoteStartThread::start() {

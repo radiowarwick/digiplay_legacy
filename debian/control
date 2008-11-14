@@ -75,7 +75,7 @@ Description: Digital playout system sustainer service.
 
 Package: dps-playin
 Architecture: i386
-Depends: libncurses5, libc6, libstdc++6, libgcc1, cdparanoia, dps-common
+Depends: libncurses5, libc6, libstdc++6, libgcc1, libpqxx-2.6.9ldbl, cdparanoia, dps-common
 Recommends: dps-doc
 Description: Digital playout system management tool.
  Digiplay is a multi-studio digital playout system. It strives to provide

@@ -2,12 +2,17 @@ digiplay (0.99.10-5) unstable; urgency=low
 
   * Fixed XML import of tracks (missing length, swapped reclibid and
           ripresult).
+  * Fixed dpsadmin not terminating when parsing LDAP
   * Fixed playin XML output not compliant with XML DTD.
   * Playlist feature on website fixed.
   * Removed dependency on RaW website database.
   * Fixed time mode change button on studio_play while stopped. 
+  * Fixed package dependencies
+  * Default item length set when adding music to a showplan item on website.
+  * Fixed incorrect paging of music search pages.
+  * Other minor template and link fixes on website.
 
- -- Chris Cantwell <ccantwell@radio.warwick.ac.uk>  Sat, 15 Nov 2008 16:45:09 +0000
+ -- Chris Cantwell <ccantwell@radio.warwick.ac.uk>  Sat, 15 Nov 2008 18:47:54 +0000
 
 digiplay (0.99.10-4) unstable; urgency=low
 

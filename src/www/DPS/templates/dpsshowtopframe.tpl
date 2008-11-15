@@ -37,7 +37,7 @@
 	    <div class="frame_submenuitem">{templateLink id="34" text="Information"}</div>
 	    <div class="frame_submenuitem">{templateLink id="54" text="My Showplans"}</div>
 	    <div class="frame_submenuitem">{templateLink id="44" text="My Scripts"}</div>
-        <div class="frame_submenuitem">{templateLink id="50" text="My Files"}</div>
+        <div class="frame_submenuitem">{templateLink id="51" text="My Files"}</div>
 
 	  </div>
 	  <div class="frame_sidebarmusic">{templateLink id="31" text="Music Library"}</div>

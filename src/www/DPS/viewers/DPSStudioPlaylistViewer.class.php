@@ -54,14 +54,9 @@ class DPSStudioPlaylistViewer extends Viewer {
 			$searchResult = DPS::showPlaylist($playlistID);
 		}
 
-		$pages = 1; 
-		$pageArray[] = $pages;
-		$rNum = $rNum-$cfg['DPS']['resultLimit'];
-		while($rNum > $cfg['DPS']['resultLimit']) {
-			$pages++;
-			$pageArray[] = $pages;
-			$rNum = $rNum-$cfg['DPS']['resultLimit'];
-		}
+		$pages = ceil($rNum / $cfg['DPS']['resultLimit']);
+        //fill the array $pageArray with values from 1 to $pages (default increment is 1)
+        $pageArray = range(1, $pages);
 
 		$sql = "SELECT * FROM playlists";
 		$playlists = $db->getAll($sql);

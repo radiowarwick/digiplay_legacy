@@ -54,14 +54,9 @@ class DPSMusicSearchViewer extends Viewer {
 			$searchInfo = "Found $rNum results matching your query";
 		}
 		
-		$pages = 1; 
-		$pageArray[] = $pages;
-		$rNum = $rNum-$cfg['DPS']['resultLimit'];
-		while($rNum > $cfg['DPS']['resultLimit']) {
-			$pages++;
-			$pageArray[] = $pages;
-			$rNum = $rNum-$cfg['DPS']['resultLimit'];
-		}
+		$pages = ceil($rNum / $cfg['DPS']['resultLimit']);
+        //fill the $pageArray array with values from 1 to $pages 
+		$pageArray = range(1, $pages);
 		
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();

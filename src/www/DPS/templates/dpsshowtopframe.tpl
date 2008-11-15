@@ -33,15 +33,17 @@
       <div class="frame_bottom">
 	<div class="frame_showsidebar">
 	  <img class="frame_sidebarlogo" src="DPS/images/homenavshow.png" alt="Show">
+	  <div class="frame_studiosidebarlinks">
+	    <div class="frame_submenuitem">{templateLink id="34" text="Information"}</div>
+	    <div class="frame_submenuitem">{templateLink id="54" text="My Showplans"}</div>
+	    <div class="frame_submenuitem">{templateLink id="44" text="My Scripts"}</div>
+        <div class="frame_submenuitem">{templateLink id="50" text="My Files"}</div>
+
+	  </div>
 	  <div class="frame_sidebarmusic">{templateLink id="31" text="Music Library"}</div>
 	  <div class="frame_sidebarshow">{templateLink id="32" text="Sue Stamp"}</div>
 	  <div class="frame_sidebarsue">{templateLink id="33" text="Studio Audiowalls"}</div>
-	  <div class="frame_studiosidebarlinks">
-	    {templateLink id="34" text="Information"}<br />
-	    {templateLink id="54" text="My Showplans"}<br />
-	    {templateLink id="44" text="My Scripts"}<br />
-	    {templateLink id="51" text="My Files"}
-	  </div>
+
         </div>
         <div class="frame_rightside">
           <div class="frame_content">

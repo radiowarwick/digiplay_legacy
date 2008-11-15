@@ -8,17 +8,18 @@
 			<div class="frame_bottom">
 	<div class="frame_musicsidebar">
 		<img class="frame_sidebarlogo" src="DPS/images/homenavmusic.png" alt="Music Library">
+		<div class="frame_musicsidebarlinks">
+			<div class="frame_submenuitem">{templateLink id="31" text="Information"}</div>
+			<div class="frame_submenuitem">{templateLink id="20" text="Search tracks"}</div>
+			{if $RequestTrack}
+			<div class="frame_submenuitem">{templateLink id="19" text="View requested tracks"}</div>
+			{/if}
+			<div class="frame_submenuitem">{templateLink id="38" text="View censored tracks"}</div>
+		</div>
 		<div class="frame_sidebarshow">{templateLink id="34" text="Show Planning"}</div>
 		<div class="frame_sidebarsue">{templateLink id="32" text="Sue Stamp"}</div>
 		<div class="frame_sidebarstudio">{templateLink id="33" text="Studio Audiowalls"}</div>
-		<div class="frame_musicsidebarlinks">
-			{templateLink id="31" text="Information"}<br>
-			{templateLink id="20" text="Search tracks"}<br>
-			{if $RequestTrack}
-			{templateLink id="19" text="View requested tracks"}<br>
-			{/if}
-			{templateLink id="38" text="View censored tracks"}<br>
-		</div>
+
 				</div>
 				<div class="frame_rightside">
 		<div class="frame_musicsearchbox">

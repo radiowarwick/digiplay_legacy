@@ -8,21 +8,22 @@
 			<div class="frame_bottom">
 				<div class="frame_suesidebar">
 					<img class="frame_sidebarlogo" src="DPS/images/homenavsue.png" alt="Sue Stamp">
+					<div class="frame_suesidebarlinks">
+					<div class="frame_submenuitem">{templateLink id="32" text="Information"}</div>
+					{if Access_ViewSue}
+					<div class="frame_submenuitem">{templateLink id="40" text="View Sue Playlist"}</div>
+					{/if}
+					{if Access_EditSue}
+					<div class="frame_submenuitem">{templateLink id="35" text="Add to Sue Playlist"}</div>
+					{/if}
+					{if Access_SueStats}
+					<div class="frame_submenuitem">{templateLink id="36" text="Sue Stamp's Statistics"}</div>
+					{/if}
+				</div>
 					<div class="frame_sidebarmusic">{templateLink id="31" text="Music Library"}</div>
 					<div class="frame_sidebarshow">{templateLink id="34" text="Show Planning"}</div>
 					<div class="frame_sidebarstudio">{templateLink id="33" text="Studio Audiowalls"}</div>
-					<div class="frame_suesidebarlinks">
-					{templateLink id="32" text="Information"}<br>
-					{if Access_ViewSue}
-					{templateLink id="40" text="View Sue Playlist"}<br>
-					{/if}
-					{if Access_EditSue}
-					{templateLink id="35" text="Add to Sue Playlist"}<br>
-					{/if}
-					{if Access_SueStats}
-					{templateLink id="36" text="Sue Stamp's Statistics"}<br>
-					{/if}
-				</div>
+
 			</div>
 			<div class="frame_rightside">
 				<div class="frame_suesearchbox">

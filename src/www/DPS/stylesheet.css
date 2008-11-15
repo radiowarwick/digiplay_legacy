@@ -475,6 +475,8 @@ div.frame_musicsidebar {
   float:  left;
   width:  180px;
   background-color: #015769;
+  min-height: 600px;
+  height: 600px;
 }
 
 div.frame_musicsidebar img {
@@ -489,6 +491,8 @@ div.frame_suesidebar {
   float:  left;
   width:  180px;
   background-color: #0186A3;
+  min-height: 600px;
+  height: 600px;
 }
 div.frame_showsidebar {
   margin-top:	32px;
@@ -496,16 +500,20 @@ div.frame_showsidebar {
   float:  left;
   width:  180px;
   background-color: #017289;
+  min-height: 600px;
+  height: 600px;
 }
 div.frame_showsidebar img {
   padding-top:	15px;
 }
 div.frame_studiosidebar {
-  margin-top:	32px;
-  padding:	1px;
+  margin-top:	30px;
+  padding:	1px 0px;
   float:  left;
   width:  180px;
   background-color: #01A6C9;
+  min-height: 600px;
+  height: 600px;
 }
 div.frame_studiosidebar img {
   padding-top:	15px;
@@ -555,7 +563,7 @@ div[class = frame_suesearchbox] {
   width:  318px;
 }
 img.frame_sidebarlogo {
-  margin-bottom:  20px;
+  margin-bottom:  5px;
 }
 
 div.frame_musicrequestbox {
@@ -615,8 +623,7 @@ div.frame_sidebarshow {
   color:  #ffffff;
   font-weight:	bold;
   font-size:  14pt;
-  padding:  1px;
-  width:  178px;
+  width:  179px;
   border-style:	solid;
   border-color:	#000000;
   border-top-width: 1px;
@@ -625,13 +632,17 @@ div.frame_sidebarshow {
   border-right-width: 0px;
   background-color: #017289;
   margin-bottom:  5px;
+  padding: 1px 0px 1px 0px;
+  text-align:center;
+}
+div.frame_sidebarshow a:hover {
+  color: white;
 }
 div.frame_sidebarsue {
   color:  #ffffff;
   font-weight:	bold;
   font-size:  14pt;
-  padding:  1px;
-  width:  178px;
+  width:  179px;
   border-style:	solid;
   border-color:	#000000;
   border-top-width: 1px;
@@ -640,28 +651,37 @@ div.frame_sidebarsue {
   border-right-width: 0px;
   background-color: #0186A3;
   margin-bottom:  5px;
+  padding: 1px 0px 1px 0px;
+  text-align:center;
+}
+div.frame_sidebarsue a:hover {
+  color: white;
 }
 div.frame_sidebarmusic {
   color:  #ffffff;
   font-weight:	bold;
   font-size:  14pt;
-  padding:  1px;
-  width:  178px;
+  width:  179px;
   border-style:	solid;
-  border-color:	#000000;
   border-top-width: 1px;
   border-bottom-width:	1px;
   border-left-width:  0px;
   border-right-width: 0px;
+  border-color:	#000000;
   background-color: #015769;
   margin-bottom:  5px;
+  padding-left: 5px;
+  padding: 1px 0px 1px 0px;
+  text-align:center;
+}
+div.frame_sidebarmusic a:hover {
+  color: white;
 }
 div.frame_sidebarstudio {
   color:  #ffffff;
   font-weight:	bold;
   font-size:  14pt;
-  padding:  1px;
-  width:  178px;
+  width:  179px;
   border-style:	solid;
   border-color:	#000000;
   border-top-width: 1px;
@@ -670,6 +690,11 @@ div.frame_sidebarstudio {
   border-right-width: 0px;
   background-color: #01A6C9;
   margin-bottom:  5px;
+  text-align:center;
+  padding: 1px 0px 1px 0px;
+}
+div.frame_sidebarstudio a:hover {
+  color: white;
 }
 div.frame_sidebarshow a {
   color:  #ffffff;
@@ -685,8 +710,7 @@ div.frame_sidebarmusic a {
 }
 
 div.frame_showsidebarlinks {
-  margin-top: 300px;
-  margin-bottom:  5px;
+  margin-bottom:  10px;
   padding:  1px;
 }
 
@@ -694,8 +718,7 @@ div.frame_showsidebarlinks a {
   color:  #B1F0FE
 }
 div.frame_studiosidebarlinks {
-  margin-top: 300px;
-  margin-bottom:  5px;
+  margin-bottom:  10px;
   padding:  1px;
 }
 
@@ -703,8 +726,7 @@ div.frame_studiosidebarlinks a {
   color:  #B1F0FE
 }
 div.frame_suesidebarlinks {
-  margin-top: 300px;
-  margin-bottom:  5px;
+  margin-bottom:  10px;
   padding:  1px;
 }
 
@@ -712,14 +734,23 @@ div.frame_suesidebarlinks a {
   color:  #B1F0FE
 }
 div.frame_musicsidebarlinks {
-  margin-top: 300px;
-  margin-bottom:  5px;
+  margin-bottom:  10px;
   padding:  1px;
 }
 
 div.frame_musicsidebarlinks a {
   color:  #B1F0FE
 }
+
+div.frame_submenuitem {
+  font-weight: bold;
+  margin: 0px 5px;
+  padding: 6px 0px 0px 0px;
+}
+div.frame_submenuitem a:hover {
+  color: #B1F0FE;
+}
+
 /* 
  * Titles and subtitles here
  */

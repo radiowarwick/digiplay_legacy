@@ -30,20 +30,21 @@
 			<div class="frame_bottom">
 	<div class="frame_studiosidebar">
 		<img class="frame_sidebarlogo" src="DPS/images/homenavstudio.png" alt="Studio">
+		<div class="frame_studiosidebarlinks">
+            <div class="frame_submenuitem">{templateLink id="33" text="Information"}</div>
+			<div class="frame_submenuitem">{templateLink id="23" text="Personal Audiowalls"}</div>
+			{if $studio == 't'}
+			<div class="frame_submenuitem">{templateLink id="27" text="Station Audiowalls"}</div>
+			{/if}
+			{if $access_playlist == 't'}
+			<div class="frame_submenuitem">{templateLink id="39" text="Playlists"}</div>
+			{/if}
+	        <div class="frame_submenuitem">{templateLink id="51" text="My Files"}</div>
+		</div>
 		<div class="frame_sidebarmusic">{templateLink id="31" text="Music Library"}</div>
 		<div class="frame_sidebarshow">{templateLink id="34" text="Show Planning"}</div>
 		<div class="frame_sidebarsue">{templateLink id="32" text="Sue Stamp"}</div>
-		<div class="frame_studiosidebarlinks">
-			{templateLink id="33" text="Information"}<br>
-			{templateLink id="23" text="Personal Audiowalls"}<br>
-			{if $studio == 't'}
-			{templateLink id="27" text="Station Audiowalls"}<br>
-			{/if}
-			{if $access_playlist == 't'}
-			{templateLink id="39" text="Playlists"}<br>
-			{/if}
-			{templateLink id="51" text="My Files"}
-		</div>
+
 				</div>
 				<div class="frame_rightside">
 					<div class="frame_content">

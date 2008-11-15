@@ -235,5 +235,5 @@ std::string dps_prettyTime(long samples) {
 }
 
 long dps_current_time() {
-	    return (long)time(NULL) - 946080000;
+	    return (long)time(NULL);
 }

@@ -10,7 +10,6 @@ class DPSStudioPlaylistViewer extends Viewer {
 	const module = 'DPS';
 	
 	protected function setupTemplate() {
-        print "Playlist viewer\n";
 		global $cfg;
 		parent::setupTemplate();
 		
@@ -27,16 +26,9 @@ class DPSStudioPlaylistViewer extends Viewer {
 			$offset--;
 		}
 
+        $resultType = $this->fieldData['dpsResultType'];
 		$searchValue = $this->fieldData['dpsSearchVal'];
 		$searchType = $this->fieldData['dpsSearchType'];
-		$letter = $this->fieldData['dpsSearchLetter'];
-		if($searchType == '' && $letter != '') {
-			if($letter == "*") {
-				$searchType = 'Number';
-			} else {
-				$searchType = 'Letter';
-			}
-		}
 
 		if($this->fieldData['dpsSortType'] != '') {
 			$sesh = Session::getInstance();
@@ -51,11 +43,15 @@ class DPSStudioPlaylistViewer extends Viewer {
 			}
 		}
 
-		if($searchValue != '') {
-			$searchResult = DPS::searchAudio($searchValue,$searchType,
-				$sortType,$offset,'');
-			$rNum = DPS::searchPageAudio($searchValue,$searchType,'');
-			$searchInfo = "Found $rNum results matching your query";
+		if ($resultType == 'Search') {
+			if($searchValue != '') {
+				$searchResult = DPS::searchPlaylistAudio($searchValue,$searchType,
+					$sortType,$offset,'',$playlistID);
+				$rNum = DPS::searchPageAudio($searchValue,$searchType,'');
+				$searchInfo = "Found $rNum results matching your query";
+            }
+        } else if ($resultType == 'View') {
+			$searchResult = DPS::showPlaylist($playlistID);
 		}
 
 		$pages = 1; 
@@ -70,11 +66,12 @@ class DPSStudioPlaylistViewer extends Viewer {
 		$sql = "SELECT * FROM playlists";
 		$playlists = $db->getAll($sql);
 
-		$sql = "SELECT * FROM playlists WHERE id = " . pg_escape_string($playlistID);
-		$playlist = $db->getRow($sql);
-
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
+
+        $sql = "SELECT * FROM playlists WHERE id = ".pg_escape_string($playlistID);
+        $playlist = $db->getRow($sql);
+
 
 		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
 		$this->assign('studioAccess',AuthUtil::getDetailedUserrealmAccess(
@@ -87,8 +84,8 @@ class DPSStudioPlaylistViewer extends Viewer {
 		$this->assign('pages', $pageArray);
 		$this->assign('searchType', $searchType);
 		$this->assign('searchValue', $searchValue);
-		$this->assign('searchLetter', $letter);
 		$this->assign('sortType',$sortType);
+        $this->assign('resultType',$resultType);
 	}
 }
 ?>

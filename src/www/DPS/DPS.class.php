@@ -715,6 +715,58 @@ class DPS extends Module  {
 		return $rNum;
 	}
 
+	public static function searchPlaylistAudio($searchValue,$searchType,$sortType,$offset,$sust,$playlistID) {
+        global $cfg;
+        $db = Database::getInstance($cfg['DPS']['dsn']);
+
+        $searchResult = DPS::searchAudio($searchValue,$searchType,$sortType,$offset,$sust);
+        foreach($searchResult as $key => &$track) {
+            $query = "SELECT count(*)
+                      FROM audioplaylists
+                      WHERE audioid = ".$track['id']."
+                      AND playlistid = $playlistID";
+            $rows = $db->GetOne($query);
+            if ($rows == 1) {
+                $track['playlist'] = 't';
+            }
+        }
+
+        return $searchResult;
+    }
+
+    public static function showPlaylist($playlistID) {
+        global $cfg;
+        $db = Database::getInstance($cfg['DPS']['dsn']);
+
+        $query = "SELECT audio.title AS title, audio.id AS id,
+                  't' as playlist, audio.flagged as flagged,
+				  audio.censor as censor, artists.name as artist, 
+				  audio.reclibid as reclibid, audio.end_smpl as end_smpl,
+				  audio.origin as origin, albums.name as album, 
+				  audio.start_smpl as start_smpl
+			      FROM audio, artists, audioartists, audiodir, audiotypes, albums, audioplaylists 
+			      WHERE audio.type = audiotypes.id 
+				  AND audio.music_album = albums.id 
+				  AND audiotypes.name = 'Music' 
+				  AND audio.id = audiodir.audioid 
+				  AND audioartists.artistid = artists.id 
+				  AND audioartists.audioid = audio.id 
+	              AND audioplaylists.audioid = audio.id
+                  AND audioplaylists.playlistid = $playlistID";
+
+		$searchResult = $db->getAll($query);
+
+        $number = 0;
+        foreach($searchResult as $key => &$track) {
+            $samples = $track['end_smpl'] - $track['start_smpl'];
+            $track['length'] = floor((($samples/44100)/60)) . "mins " . (($samples/44100)%60) . "secs.";
+            $track['searchNumber'] = $number;
+            $number = $number + 1;
+        }
+
+		return $searchResult;
+    }
+
 }
 
 

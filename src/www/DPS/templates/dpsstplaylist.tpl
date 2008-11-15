@@ -1,14 +1,16 @@
 {include file="rfile:dpsstudiotopframe.tpl" title="RaW Digiplay Manager" access_playlist='t' studio=$VIEWER.studioAccess}
-    <div class="studioPlaylists">Select Playlist:
+    <div>Select Playlist:
         {foreach from=$VIEWER.playlists item="playlist"}
-            {templateLink id=$VIEWER.templateID text=$playlist.name
+            | {templateLink id=$VIEWER.templateID text=$playlist.name
                 _dpsPlaylistID=$playlist.id _dpsSortType=$VIEWER.sortType
                     _dpsSearchType=$VIEWER.searchType
                     _dpsSearchVal=$VIEWER.searchValue
                     _dpsResultType=$VIEWER.resultType}
         {/foreach}
+        |
     </div>
-    <div class="bigTitle">Add to Playlist: {$VIEWER.playlist.name}</div>
+    <div>&nbsp;</div>
+    <div class="bigTitle">{if $VIEWER.resultType == 'View' }View{else}Add to{/if} Playlist: {$VIEWER.playlist.name}</div>
     <br style="&7b;clear:both;&7c;" />
     <form name="dpsPlaylistSearchForm" method="post" action="{$CONFIG.general.siteRoot}" style="float:left">
         <input type="hidden" name="formName" value="dpsPlaylistSearchForm" />

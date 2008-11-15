@@ -189,7 +189,7 @@ void ArchiveManager::add(unsigned int index) {
 
     // Save a copy for writing out XML later
     track t_save = t;
-
+    
 	// escape data before adding to database
 	t.title = DB->esc(t.title);
     for (unsigned int i = 0; i < t.artists.size(); i++) {
@@ -530,8 +530,25 @@ std::vector<track> ArchiveManager::readXML(string filename) {
                         tracks.at(i).fade_out_smpl = x;
                 }
             }
+            
+			if (tracks.at(i).length_smpl == 0) {
+				// Attempt to open audio file to check it's there
+				ifstream* f_raw = new ifstream(
+		                              filename.substr(0,filename.length() - 4).c_str(), 
+									  ios::in|ios::binary|ios::ate
+		                          );
+				if (!f_raw->good()) {
+				    tracks.at(i).length_smpl = 0;
+				}
+			    else {
+		    		tracks.at(i).length_smpl = f_raw->tellg() / 4;
+		    	}
+				f_raw->close();
+				delete f_raw;
+			}
         }
 	}
+
 	return tracks;
 }
 
@@ -1370,7 +1387,6 @@ void ArchiveManager::cleanInfo(track *t) {
  */
 void ArchiveManager::trimAudio(track *t) {
     const char* routine = "ArchiveManager::trimAudio";
-
 #define BLOCK_SAMPLES 4096
 #define SAMPLE_TOL 512		// Approx 2% = -42dB
     if (t->md5 == "") return;

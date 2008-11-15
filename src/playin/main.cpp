@@ -654,39 +654,36 @@ void generate_xml(struct cd_track t, char mcn[]) {
 	write(fd, buf, len);
 	len = snprintf(buf, 1023, "\t<segment>\n");
 	write(fd, buf, len);
+	// Title
 	len = snprintf(buf, 1023, "\t\t<title>%s</title>\n", t.title);
 	write(fd, buf, len);
-	len = snprintf(buf, 1023, "\t\t<album name=\"%s\"\n", t.album);
-	write(fd, buf, len);
-	len = snprintf(buf, 1023, "\t\t\torigin=\"%s\">\n", t.origin);
-	write(fd, buf, len);
-	if (strlen(t.year_rel))
-		len = snprintf(buf, 1023, "\t\t\t<released>%s</released>\n", t.year_rel);
-	else 
-		len = snprintf(buf, 1023, "\t\t\t<released />\n");
-	write(fd, buf, len);
-	if (strlen(t.reclibid))
-		len = snprintf(buf, 1023, "\t\t\t<reclibid>%s</reclibid>\n", t.reclibid);	
-	else
-		len = snprintf(buf, 1023, "\t\t\t<reclibid />\n");
-	write(fd, buf, len);
-	len = snprintf(buf, 1023, "\t\t</album>\n");
-	write(fd, buf, len);
+	// Artist
 	len = snprintf(buf, 1023, "\t\t<artist name=\"%s\" />\n", t.artists);
 	write(fd, buf, len);
+	// Album info (name, origin, released, reclibid)
+	len = snprintf(buf, 1023, "\t\t<album name=\"%s\"\n", t.album);
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "\t\t\torigin=\"%s\"\n", t.origin);
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "\t\t\treleased=\"%s\"\n", t.year_rel);
+	write(fd, buf, len);
+	len = snprintf(buf, 1023, "\t\t\treclibid=\"%s\" />\n", t.reclibid);	
+	write(fd, buf, len);
+	// Track number
 	len = snprintf(buf, 1023, "\t\t<tracknum>%d</tracknum>\n", t.num);
 	write(fd, buf, len);
 	len = snprintf(buf, 1023, "\t\t<censor>No</censor>\n");
 	write(fd, buf, len);
-	len = snprintf(buf, 1023, "\t\t<smpl length=\"\"\n");
+	// Track length data
+	len = snprintf(buf, 1023, "\t\t<smpl length=\"0\"\n");
 	write(fd, buf, len);
-	len = snprintf(buf, 1023, "\t\t\ttrim_start=\"\"\n");
+	len = snprintf(buf, 1023, "\t\t\ttrim_start=\"0\"\n");
 	write(fd, buf, len);
-	len = snprintf(buf, 1023, "\t\t\ttrim_end=\"\"\n");
+	len = snprintf(buf, 1023, "\t\t\ttrim_end=\"0\"\n");
 	write(fd, buf, len);
-	len = snprintf(buf, 1023, "\t\t\tfade_in=\"\"\n");
+	len = snprintf(buf, 1023, "\t\t\tfade_in=\"0\"\n");
 	write(fd, buf, len);
-	len = snprintf(buf, 1023, "\t\t\tfade_out=\"\" />\n");
+	len = snprintf(buf, 1023, "\t\t\tfade_out=\"0\" />\n");
 	write(fd, buf, len);
 	len = snprintf(buf, 1023, "\t</segment>\n");
 	write(fd, buf, len);

@@ -60,16 +60,16 @@
 			<div class="frame_bottom">
 				<div class="frame_showsidebar">
 					<img class="frame_sidebarlogo" src="DPS/images/homenavadmin.png" alt="Admin">
+					<div class="frame_studiosidebarlinks">
+						<div class="frame_submenuitem">{templateLink id="1" text="Users"}</div>
+						<div class="frame_submenuitem">{templateLink id="2" text="Groups"}</div>
+						<div class="frame_submenuitem">{templateLink id="5" text="Location Management"}</div>
+						<div class="frame_submenuitem">{templateLink id="4" text="Configuration"}</div>
+					</div>
 					<div class="frame_sidebarmusic">{templateLink id="31" text="Music Library"}</div>
 					<div class="frame_sidebarshow">{templateLink id="34" text="Show Planning"}</div>
 					<div class="frame_sidebarsue">{templateLink id="32" text="Sue Stamp"}</div>
 					<div class="frame_sidebarstudio">{templateLink id="33" text="Studio Audiowalls"}</div>
-					<div class="frame_studiosidebarlinks">
-						{templateLink id="1" text="Users"}<br />
-						{templateLink id="2" text="Groups"}<br />
-						{templateLink id="5" text="Location Management"}<br />
-						{templateLink id="4" text="Configuration"}
-					</div>
 							</div>
 							<div class="frame_rightside">
 								<div class="frame_content">

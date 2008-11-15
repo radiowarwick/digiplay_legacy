@@ -580,8 +580,8 @@ class DPS extends Module  {
 			}
 			$track['artist'] = rtrim($track['artist']," & ");
 			$track['searchNumber'] = $number;
-			$samples = $track['end_smpl'];
-			$track['length'] = $tracksLen = round((($samples/44100)/60)) .  "mins " . (($samples/44100)%60) . "secs.";
+			$samples = $track['end_smpl'] - $track['start_smpl'];
+			$track['length'] = $tracksLen = floor((($samples/44100)/60)) . "mins " . ceil((($samples/44100)%60)) . "secs.";
 			$number++;
 		}
 		return $searchResult;
@@ -779,7 +779,7 @@ class DPS extends Module  {
         $number = 0;
         foreach($searchResult as $key => &$track) {
             $samples = $track['end_smpl'] - $track['start_smpl'];
-            $track['length'] = floor((($samples/44100)/60)) . "mins " . (($samples/44100)%60) . "secs.";
+            $track['length'] = floor((($samples/44100)/60)) . "mins " . ceil((($samples/44100)%60)) . "secs.";
             $track['searchNumber'] = $number;
             $number = $number + 1;
         }

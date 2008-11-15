@@ -62,7 +62,7 @@ class DPSUserAwSetViewer extends Viewer {
 		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(
 			array(1), $userID));
 		$this->assign('studioAccess',AuthUtil::getDetailedUserrealmAccess(
-			array(3,21,34), $userID));
+			array(3,21,35), $userID));
 		$this->assign('awsets', $awsets);
 		$this->assign('stationawset',$sawset);
 	}

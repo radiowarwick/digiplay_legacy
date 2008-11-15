@@ -734,9 +734,27 @@ class DPS extends Module  {
         return $searchResult;
     }
 
-    public static function showPlaylist($playlistID) {
+    public static function countPlaylist($playlistID) {
         global $cfg;
         $db = Database::getInstance($cfg['DPS']['dsn']);
+
+        $query = "SELECT count(audio.id)
+			      FROM audio, audiotypes, audioplaylists, audiodir
+			      WHERE audio.type = audiotypes.id 
+				  AND audiotypes.name = 'Music' 
+				  AND audio.id = audiodir.audioid 
+	              AND audioplaylists.audioid = audio.id
+                  AND audioplaylists.playlistid = $playlistID";
+
+		return $db->getOne($query);
+    }
+
+    public static function showPlaylist($playlistID, $sortType, $offset) {
+        global $cfg;
+        $db = Database::getInstance($cfg['DPS']['dsn']);
+        $resultOffset = $offset * $cfg['DPS']['resultLimit'];
+        $resultLimit = pg_escape_string($cfg['DPS']['resultLimit']);
+        $sortType = pg_escape_string($sortType);
 
         $query = "SELECT audio.title AS title, audio.id AS id,
                   't' as playlist, audio.flagged as flagged,
@@ -752,7 +770,9 @@ class DPS extends Module  {
 				  AND audioartists.artistid = artists.id 
 				  AND audioartists.audioid = audio.id 
 	              AND audioplaylists.audioid = audio.id
-                  AND audioplaylists.playlistid = $playlistID";
+                  AND audioplaylists.playlistid = $playlistID
+                  ORDER BY $sortType
+                  LIMIT $resultLimit OFFSET $resultOffset";
 
 		$searchResult = $db->getAll($query);
 

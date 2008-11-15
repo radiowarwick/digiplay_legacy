@@ -118,7 +118,7 @@
                     {/foreach}
                 </table>
                 <div class="sueplaylistpage">
-                    {if $VIEWER.searchValue != ""}
+                    {if $VIEWER.resultType == "View" or $VIEWER.searchValue != ""}
                         Page: 
                         {foreach from=$VIEWER.pages item=page}
                             | {templateLink id=$VIEWER.templateID text=$page

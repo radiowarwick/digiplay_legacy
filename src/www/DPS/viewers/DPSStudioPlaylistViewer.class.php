@@ -48,10 +48,12 @@ class DPSStudioPlaylistViewer extends Viewer {
 				$searchResult = DPS::searchPlaylistAudio($searchValue,$searchType,
 					$sortType,$offset,'',$playlistID);
 				$rNum = DPS::searchPageAudio($searchValue,$searchType,'');
-				$searchInfo = "Found $rNum results matching your query";
+				//$searchInfo = "Found $rNum results matching your query";
             }
         } else if ($resultType == 'View') {
-			$searchResult = DPS::showPlaylist($playlistID);
+			$searchResult = DPS::showPlaylist($playlistID, $sortType, $offset);
+            $rNum = DPS::countPlaylist($playlistID);
+            //$searchInfo = "Found $rNum results in the playlist";
 		}
 
 		$pages = ceil($rNum / $cfg['DPS']['resultLimit']);

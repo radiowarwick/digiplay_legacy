@@ -470,8 +470,8 @@ div.frame_titleR img {
 }
 
 div.frame_musicsidebar {
-  margin-top:	32px;
-  padding:	1px;
+  margin-top:	30px;
+  padding:	1px 0px;
   float:  left;
   width:  180px;
   background-color: #015769;
@@ -486,8 +486,8 @@ div.frame_suesidebar img {
   padding-top:	15px;
 }
 div.frame_suesidebar {
-  margin-top:	32px;
-  padding:	1px;
+  margin-top:	30px;
+  padding:	1px 0px;
   float:  left;
   width:  180px;
   background-color: #0186A3;
@@ -495,8 +495,8 @@ div.frame_suesidebar {
   height: 600px;
 }
 div.frame_showsidebar {
-  margin-top:	32px;
-  padding:	1px;
+  margin-top:	30px;
+  padding:	1px 0px;
   float:  left;
   width:  180px;
   background-color: #017289;

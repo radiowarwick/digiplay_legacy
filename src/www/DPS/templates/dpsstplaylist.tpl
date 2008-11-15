@@ -7,7 +7,7 @@
                     _dpsSearchVal=$VIEWER.searchValue
                     _dpsResultType=$VIEWER.resultType}
         {/foreach}
-        |
+        | ({templateLink id=71 text="Edit"})
     </div>
     <div>&nbsp;</div>
     <div class="bigTitle">{if $VIEWER.resultType == 'View' }View{else}Add to{/if} Playlist: {$VIEWER.playlist.name}</div>

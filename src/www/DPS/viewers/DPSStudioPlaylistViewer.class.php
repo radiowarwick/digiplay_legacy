@@ -72,7 +72,7 @@ class DPSStudioPlaylistViewer extends Viewer {
 
 		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
 		$this->assign('studioAccess',AuthUtil::getDetailedUserrealmAccess(
-			array(3,21,34), $userID));
+			array(3,21,33), $userID));
 		$this->assign('playlists',$playlists);
 		$this->assign('playlist',$playlist);
 		$this->assign('page', $offset);

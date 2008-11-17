@@ -138,4 +138,5 @@
             </form>
         {/if}
         <br style="&7b;clear:both;&7c;" />
+	</div>
 {include file="rfile:dpsstudiobottomframe.tpl" Admin=$VIEWER.Admin}

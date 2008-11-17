@@ -32,6 +32,7 @@
 		</tr>
 	{/foreach}
 	</table>
+	<br />
 <div class='subTitle'>Create new audiowall</div>
 <form name="dpsStationNewAwSetForm" method="post" action="{$CONFIG.general.siteRoot}">
 	<input type="hidden" name="formName" value="dpsStationNewAwSetForm" />

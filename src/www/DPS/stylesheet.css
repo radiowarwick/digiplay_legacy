@@ -604,12 +604,12 @@ div.frame_musicrequestbox a{
 
 div.frame_content {
   clear:  both;
-  width:  604px;
-  padding:  1px;
-	padding-top:	33px;
+  width:  600px;
+  padding:  10px;
+	padding-top:	40px;
   padding-bottom: 10px;
-  border-style:	solid;
-  border-color:	#000000;
+/*  border-style:	solid;
+  border-color:	#000000;*/
   border-top-width: 0px;
   border-bottom-width:	1px;
   border-left-width:  1px;

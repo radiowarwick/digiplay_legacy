@@ -19,7 +19,7 @@ class DPSStationUpdateAwWallModel extends Model {
 		
 		$name = pg_escape_string($this->fieldData['name']);
 		$desc = pg_escape_string($this->fieldData['desc']);
-		$AwWallID = pg_escape_string($this->fieldData['AwWallID']);
+		$AwWallID = pg_escape_string($this->fieldData['awwallID']);
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
 		if($this->fieldData['Submit'] == "Remove Page") {

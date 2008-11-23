@@ -153,9 +153,30 @@ void TabPanelSearch::Library_Search() {
 
 void TabPanelSearch::threadExecute() {	
 	// Perform search
-	SearchResults = library_engine->query(txtLibrarySearchText->text());
-	// Display results
-	processResults();
+    try
+    {
+	    SearchResults = library_engine->query(txtLibrarySearchText->text());
+    	// Display results
+
+    }
+    catch ( string str )
+    {
+        qApp->lock();
+        dlgWarn *warning = new dlgWarn(getPanel(), "");
+        warning->setTitle("Oops!");
+        warning->setWarning(str);
+        warning->setQuestion(false);
+        warning->exec();
+        delete warning;
+		btnLibrarySearch->setEnabled(true);
+		txtLibrarySearchText->setEnabled(true);
+		TitleCheckBox->setEnabled(true);
+		ArtistCheckBox->setEnabled(true);
+		AlbumCheckBox->setEnabled(true);
+		searching = false;
+        qApp->unlock();
+    }
+	    processResults();
 }    
 
 void TabPanelSearch::processResults() {

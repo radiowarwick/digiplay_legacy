@@ -63,9 +63,9 @@ void RemoteStartThread::threadExecute() {
 					//Check to see whether it was a play or pause command
 					//NOTE:  This line is "hardware inverted" in the port
 					//so the software logic for this line is swapped - 
-					//(status & 0x80) == 0x80 as opposed to
-					//(status & 0x80) != 0x80 as all the other lines
-					if ((status & 0x80) == 0x80) {
+					//(status & 0x80) != 0x80 as opposed to
+					//(status & 0x80) == 0x80 as all the other lines
+					if ((status & 0x80) != 0x80) {
 						//Play player 1
 						emit player1_play();
 					}
@@ -77,7 +77,7 @@ void RemoteStartThread::threadExecute() {
 				//Check to see if it was the "Ack" line which changed
 				if ((changed & 0x40) == 0x40) {
 					//Check to see whether it was a play or pause command
-					if ((status & 0x40) != 0x40) {
+					if ((status & 0x40) == 0x40) {
 						//Play player 2
 						emit player2_play();
 					}
@@ -89,7 +89,7 @@ void RemoteStartThread::threadExecute() {
 				//Check to see if it was the "Paper Out" line which changed
 				if ((changed & 0x20) == 0x20) {
 					//Check to see whether it was a play or pause command
-					if ((status & 0x20) != 0x20) {
+					if ((status & 0x20) == 0x20) {
 						//Play player 3
 						emit player3_play();
 					}

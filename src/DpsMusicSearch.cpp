@@ -65,19 +65,34 @@ std::vector<DpsShowTrack> DpsMusicSearch::query(std::string search_string) {
                    strQueryString.begin(), ::tolower);
 
     // Remove "the" if it's at the start
-    if (strQueryString.substr(0,4) == "the ") {
-        strQueryString = strQueryString.substr(4,strQueryString.length() - 4);
-    }
+    // This is no longer needed as the fulltext query handles it
 
     strQueryString = DB->esc(strQueryString);
     lastQuery_string = strQueryString;
 
-    stringstream ssSearchTerms(strQueryString);
-	while (ssSearchTerms >> buf)
-		searchTerms.push_back(buf);
-	noTerms = searchTerms.size();
+    // Check to see if there are any lexemes in the query
+    SQL = "SELECT numnode(plainto_tsquery('" + strQueryString + "'));";
 
-	SQL = "SELECT id, md5, artist, title, album, censor FROM v_audio_music "
+    PqxxResult R2;
+    try {
+        R2 = DB->exec("MusicQueryCheck",SQL);
+        DB->abort("MusicQueryCheck");
+    }
+    catch (...) {
+        DB->abort("MusicQueryCheck");
+        L_ERROR(LOG_DB,"Failed to check query for lexemes.");
+        throw;
+    }
+
+    if (string(R2[0]["numnode"].c_str()) == "0")
+    {
+        throw string("Your Search Is Too Vague.\nPlease Be More Specific.");
+    } 
+    else
+{
+
+
+	SQL = "SELECT id, md5, artist, title, album, censor, querytree(plainto_tsquery('" + strQueryString + "')::tsquery) FROM v_audio_music "
  		    "WHERE dir = 2";
 
     int censor_start = atoi(conf->getParam("censor_start").c_str());
@@ -102,7 +117,38 @@ std::vector<DpsShowTrack> DpsMusicSearch::query(std::string search_string) {
             searchAlbum_flag == false) {
         /* Do nothing */
     }
-    else if (searchTitle_flag == true) {
+    else
+    {
+        bool needsDelimitor = false;
+        SQL += " AND to_tsvector(";
+        if (searchTitle_flag == true)
+        {
+            SQL += "title";
+            needsDelimitor = true;
+        }
+        if (searchArtist_flag == true)
+        {
+            if (needsDelimitor)
+            {
+                SQL += " || ' ' || ";
+                needsDelimitor = false;
+            }
+            SQL += "artist";
+            needsDelimitor = true;
+        }
+        if (searchAlbum_flag == true)
+        {
+            if (needsDelimitor)
+            {
+                SQL += " || ' ' || ";
+                needsDelimitor = false;
+            }
+            SQL += "album";
+        }
+        SQL += ")::tsvector @@ plainto_tsquery('" + strQueryString + "')::tsquery ORDER BY title";
+    }
+
+        /*if (searchTitle_flag == true) {
         SQL += " AND (title ILIKE '%";
 			for (i=0; i < noTerms - 1; i++) {
 				SQL += searchTerms.at(i) + "%' OR title ILIKE '%";
@@ -147,7 +193,7 @@ std::vector<DpsShowTrack> DpsMusicSearch::query(std::string search_string) {
 			SQL += searchTerms.at(i) + "%' OR album ILIKE '%";
 		}
 		SQL += searchTerms.at(i) + "%') ORDER BY title";
-    }
+    }*/
 
     if (searchLimit_value > 0) {
         SQL += " LIMIT " + dps_itoa(searchLimit_value);
@@ -170,6 +216,7 @@ std::vector<DpsShowTrack> DpsMusicSearch::query(std::string search_string) {
 	    Q->push_back(DpsShowTrack(R[i]["id"].c_str()));
 
 	return *Q;
+}
 }
 
 bool DpsMusicSearch::searchTitle() {

@@ -371,6 +371,14 @@ void Showplan::selectionChanged(QListViewItem* x) {
         // Change the selected item pointer to the new item.
 		selectedItem = y;
     }
+    else //item has already been loaded so disable all buttons
+    {
+        btnMoveUp->setEnabled(false);
+        btnMoveDown->setEnabled(false);
+        btnMoveTop->setEnabled(false);
+        btnMoveBottom->setEnabled(false);
+        btnDelete->setEnabled(false);
+    }
 }
 
 void Showplan::scriptDone() {

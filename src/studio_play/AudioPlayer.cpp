@@ -224,11 +224,13 @@ void AudioPlayer::log() {
 }
 
 void AudioPlayer::play() {
-    if (_state == STATE_PLAY) {
-        audioFilereader->pause();
-    }
-    else {
-        audioFilereader->play();
+    if (audioFilereader) {
+        if (_state == STATE_PLAY) {
+            audioFilereader->pause();
+        }
+        else {
+            audioFilereader->play();
+        }
     }
 }
 

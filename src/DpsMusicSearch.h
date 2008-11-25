@@ -31,6 +31,9 @@
 #include "DataAccess.h"
 #include "DpsObject.h"
 #include "Config.h"
+#include "Exception.h"
+
+NEW_EXCEPTION(DpsMusicSearchError);
 
 class DpsMusicSearch {
 

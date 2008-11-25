@@ -159,12 +159,12 @@ void TabPanelSearch::threadExecute() {
     	// Display results
 
     }
-    catch ( string str )
+    catch ( DpsMusicSearchError &e )
     {
         qApp->lock();
         dlgWarn *warning = new dlgWarn(getPanel(), "");
         warning->setTitle("Oops!");
-        warning->setWarning(str);
+        warning->setWarning(e.what());
         warning->setQuestion(false);
         warning->exec();
         delete warning;

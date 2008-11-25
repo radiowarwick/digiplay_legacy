@@ -86,7 +86,7 @@ std::vector<DpsShowTrack> DpsMusicSearch::query(std::string search_string) {
 
     if (string(R2[0]["numnode"].c_str()) == "0")
     {
-        throw string("Your Search Is Too Vague.\nPlease Be More Specific.");
+        throw DpsMusicSearchError(MKEX("Your Search Is Too Vague.\nPlease Be More Specific."));
     } 
     else
 {

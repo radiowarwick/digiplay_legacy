@@ -103,11 +103,9 @@ void frmPlayout::init() {
     // Initialise remote starts
 	remotes->start();
     usleep(100000);
-
-    if (isRoot()) {
-        L_INFO(LOG_DB,"Attempting to drop to unprivilaged user.");
-        dropPrivilage();
-    }
+    L_INFO(LOG_DB,"Started remotes");
+	
+	losePrivilage();
 }
 
 void frmPlayout::destroy() {

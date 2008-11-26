@@ -44,6 +44,7 @@
 #include "Auth.h"
 #include "AuthLdap.h"
 #include "AuthPsql.h"
+#include "Security.h"
 
 #include "clockThread.h"
 #include "Config.h"
@@ -188,6 +189,8 @@ void frmStudioManage::init() {
     cout << "Setting initial configuration values..." << flush;
     conf->setParam("next_on_showplan","");
     cout << "done." << endl;
+    
+    losePrivilage();
 }
 
 void frmStudioManage::destroy() {

@@ -2,6 +2,8 @@
 using std::cout;
 using std::endl;
 
+#include "Security.h"
+
 #include "OutputDsp.h"
 using Audio::OutputDsp;
 
@@ -127,7 +129,9 @@ void OutputDsp::threadExecute() {
 void OutputDsp::initialise(string device) {
     // Open audio device
     deviceName = device;
+    gainPrivilage();
 	audio = open(device.c_str(), O_WRONLY, 0);
+	dropPrivilage();
 	if (audio == -1) {
 		cout << "FAILED: unable to open " << device << endl;
 		throw audio;

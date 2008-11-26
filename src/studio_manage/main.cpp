@@ -55,6 +55,12 @@ int main( int argc, char * argv[] )
     Logger::setLogLevel(INFO);
     Logger::setDisplayLevel(ERROR);
     Logger::initLogDir();
+
+    if (isRoot()) {
+        L_INFO(LOG_DB,"Attempting to drop to unprivilaged user.");
+        dropPrivilage();
+    }
+
     while (1) {
         int v;
         int option_index = 0;
@@ -84,11 +90,6 @@ int main( int argc, char * argv[] )
     if (logDebug) Logger::setDisplayLevel(INFO);
     if (logVerbose) Logger::setDisplayLevel(WARNING);
     if (logQuiet) Logger::setDisplayLevel(CRITICAL);
-
-	if (isRoot()) {
-		L_INFO(LOG_DB,"Attempting to drop to unprivilaged user.");
-		dropPrivilage();
-	}
 
 	// Create new application and main window
     QApplication a( argc, argv );

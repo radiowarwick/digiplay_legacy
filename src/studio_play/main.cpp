@@ -56,6 +56,12 @@ int main( int argc, char * argv[] )
     Logger::setLogLevel(INFO);
     Logger::setDisplayLevel(ERROR);
     Logger::initLogDir();
+
+    if (isRoot()) {
+        L_INFO(LOG_DB,"Attempting to drop to unprivilaged user.");
+        dropPrivilage();
+    }
+
     while (1) {
         int v;
         int option_index = 0;

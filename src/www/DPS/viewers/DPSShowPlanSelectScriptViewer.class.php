@@ -20,7 +20,9 @@ class DPSShowPlanSelectScriptViewer extends Viewer {
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
 		$date = time();
+        
 		if(is_numeric($itemID) && isset($itemID)) {
+            // GET SHOW INFO
 			$show_query = "SELECT DISTINCT BIT_OR(v_tree_showplan.permissions) 
 			FROM showitems, v_tree_showplan 
 			WHERE showitems.showplanid = v_tree_showplan.id AND 
@@ -41,6 +43,8 @@ class DPSShowPlanSelectScriptViewer extends Viewer {
 				$show['niceAirTime'] = date("g a",$show['showdate']);
 				$show['niceCreateDate'] = date("d/m/y",$show['creationdate']);
 				$show['niceCreateTime'] = date("g a",$show['creationdate']);
+
+                // GET ITEM INFO
 				$items_sql = "SELECT * FROM showitems
 					WHERE showplanid = " . $show['id'] . "
 					ORDER BY position ASC";
@@ -85,10 +89,32 @@ class DPSShowPlanSelectScriptViewer extends Viewer {
 					$time = $time + $item['length'];
 					$i++;
 				}
-				$this->assign('folder', $folder);
-				$this->assign('treeType', 's');
 				$this->assign('show', $show);
 				$this->assign('item', $items[$i]);
+
+                // GET LIST OF SCRIPTS
+                $script_query = "SELECT scripts.*, v_tree_script.permissions
+				    FROM v_tree_script, scripts
+				    WHERE v_tree_script.userid = $userID
+					    AND v_tree_script.id = scripts.id
+					    AND v_tree_script.permissions & B'{$cfg['DPS']['fileR']}' = '{$cfg['DPS']['fileR']}'
+			        ORDER BY scripts.name asc";
+		        $scripts = $db->getAll($script_query);
+		
+                foreach($scripts as &$script) {
+    			    $script['niceCreateDate'] = date("d/m/y",$script['creationdate']);
+	    		    $script['niceCreateTime'] = date("g a",$script['creationdate']);
+    	    		$script['text'] = $script['name'] . " - " .
+	    	    	$script['niceCreateDate'] . " - " . $script['niceCreateTime'];
+		    	    $sql = "SELECT BIT_OR(v_tree_dir.permissions) 
+			    	    FROM v_tree_script, v_tree_dir 
+    				    WHERE v_tree_script.id = {$script['id']}
+	    				    AND v_tree_script.parent = v_tree_dir.id
+    	    				AND v_tree_dir.userid = $userID";
+	    	    	$script['parentperm'] = $db->getOne($sql);
+		        }
+		
+                $this->assign('scripts', $scripts);
 			} else {
 				$this->assign('error',
 					'You do not have permission to edit that item.');

@@ -282,6 +282,13 @@ void AudioWall::resizePage(unsigned int index) {
  */
 void AudioWall::configurePageNav() {
     qApp->lock();
+    if (!_loaded) {
+		btnPageNext->setEnabled(false);
+		btnPageNext->setEnabled(false);
+        lblPageNum->setText("No AudioWall\nLoaded");
+        qApp->unlock();
+        return;
+    }
 	if (_currentPage == _pages.size() - 1) {
 		btnPageNext->setEnabled(false);
 	}

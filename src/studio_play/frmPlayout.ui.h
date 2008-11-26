@@ -60,6 +60,7 @@ void frmPlayout::init() {
     audioPlayer3 = new AudioPlayer(this,"audioPlayer3",3);
     audioPlayer3->setGeometry(10,510,540,240);
 
+    conf = new Config("digiplay");
     triggerConfig = new QtTrigger("triggerConfig","t_configuration");
     connect(triggerConfig, SIGNAL(trigger()),
                                 this, SLOT(configChanged()));
@@ -79,11 +80,10 @@ void frmPlayout::init() {
 								audioPlayer3, SLOT(pause()));
 
     // Get the active station and user awset id from config
-    conf = new Config("digiplay");
     stnAudioWallId = atoi(conf->getParam("station_aw_set").c_str());
     usrAudioWallId = atoi(conf->getParam("user_aw_set").c_str());
 
-	// Creae the station audio wall
+	// Create the station audio wall
     stnAudioWall = new AudioWall(this,"stnAudioWall",4,3);
 	stnAudioWall->setGeometry(560,0,460,373);
 	stnAudioWallMan = new AudioWallManager(stnAudioWall);
@@ -121,7 +121,7 @@ void frmPlayout::configChanged() {
             stnAudioWallMan->load(stnAudioWallId);
         }
     }
-    if (u != usrAudioWallId && usrAudioWallId) {
+    if (u != usrAudioWallId && usrAudioWallMan) {
         usrAudioWallId = u;
     //    if (usrAudioWallId != 0) {
             cout<< "Doing load" << endl;

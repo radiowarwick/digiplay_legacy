@@ -65,20 +65,6 @@ void frmPlayout::init() {
     connect(triggerConfig, SIGNAL(trigger()),
                                 this, SLOT(configChanged()));
 
-    remotes = new RemoteStartThread();
-	connect(remotes, SIGNAL(player1_play()),
-								audioPlayer1, SLOT(play()));
-	connect(remotes, SIGNAL(player1_pause()),
-								audioPlayer1, SLOT(pause()));
-	connect(remotes, SIGNAL(player2_play()),
-								audioPlayer2, SLOT(play()));
-	connect(remotes, SIGNAL(player2_pause()),
-								audioPlayer2, SLOT(pause()));
-	connect(remotes, SIGNAL(player3_play()),
-								audioPlayer3, SLOT(play()));
-	connect(remotes, SIGNAL(player3_pause()),
-								audioPlayer3, SLOT(pause()));
-
     // Get the active station and user awset id from config
     stnAudioWallId = atoi(conf->getParam("station_aw_set").c_str());
     usrAudioWallId = atoi(conf->getParam("user_aw_set").c_str());
@@ -100,10 +86,29 @@ void frmPlayout::init() {
     audioWallOutput->addAudioWall(stnAudioWall);
     audioWallOutput->addAudioWall(usrAudioWall);
 
-    // Initialise remote starts
-	remotes->start();
-    usleep(100000);
-    L_INFO(LOG_DB,"Started remotes");
+	try {
+    	remotes = new RemoteStartThread();
+		connect(remotes, SIGNAL(player1_play()),
+									audioPlayer1, SLOT(play()));
+		connect(remotes, SIGNAL(player1_pause()),
+									audioPlayer1, SLOT(pause()));
+		connect(remotes, SIGNAL(player2_play()),
+									audioPlayer2, SLOT(play()));
+		connect(remotes, SIGNAL(player2_pause()),
+									audioPlayer2, SLOT(pause()));
+		connect(remotes, SIGNAL(player3_play()),
+									audioPlayer3, SLOT(play()));
+		connect(remotes, SIGNAL(player3_pause()),
+									audioPlayer3, SLOT(pause()));
+
+	    // Initialise remote starts
+		remotes->start();
+
+	    L_INFO(LOG_DB,"Started remotes");
+	}
+	catch (int e) {
+		L_ERROR(LOG_AUDIOHW, "Initialisation of remote starts failed.");
+	}
 	
 	losePrivilage();
 }

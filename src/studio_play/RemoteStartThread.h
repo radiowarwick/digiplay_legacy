@@ -35,6 +35,7 @@ class RemoteStartThread : public QObject,
 	
 	public:
 		RemoteStartThread();
+		~RemoteStartThread();
 		void threadExecute();
         void start();
 		void stop();

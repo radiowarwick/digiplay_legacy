@@ -32,16 +32,11 @@
 #define ADDRESS 0x378
 
 RemoteStartThread::RemoteStartThread() {
-	stopped = TRUE;
-}
-
-void RemoteStartThread::threadExecute() {
-    const char* routine = "RemoteStartThread::run";
+    const char* routine = "RemoteStartThread::RemoteStartThread";
     char *error = new char[256];
-	mutex.lock();
-	stopped = FALSE;
-	mutex.unlock();
-	
+
+	stopped = TRUE;
+
 	gainPrivilage();
 	
 	//Open the parallel port
@@ -50,66 +45,82 @@ void RemoteStartThread::threadExecute() {
         sprintf(error, "Couldn't open parallel port at address %x\n", ADDRESS);
 	    L_ERROR(LOG_AUDIOHW, error);
 	    dropPrivilage();
+	    delete[] error;
+	    throw -1;
 	}
 	else {
 		//If the port has been opened, log a confirmation message
         sprintf(error, "Succesfully opened parallel port at address %x\n", ADDRESS);
 	    L_INFO(LOG_AUDIOHW, error);
 	    dropPrivilage();
-	    
-		while(!stopped) {
-			//Read in a byte from the parallel port status register
-			status = inb(ADDRESS+1);
-			//Check to see if the value has changed
-			if (status != old_status) {
-				//If it has, extract the bits that have changed (XOR)
-				int changed = status^old_status;
-				//Check to see if it was the "Busy" line which changed
-				if ((changed & 0x80) == 0x80) {
-					//Check to see whether it was a play or pause command
-					//NOTE:  This line is "hardware inverted" in the port
-					//so the software logic for this line is swapped - 
-					//(status & 0x80) != 0x80 as opposed to
-					//(status & 0x80) == 0x80 as all the other lines
-					if ((status & 0x80) != 0x80) {
-						//Play player 1
-						emit player1_play();
-					}
-					else {
-						//Pause player 1
-						emit player1_pause();
-					}
-				}
-				//Check to see if it was the "Ack" line which changed
-				if ((changed & 0x40) == 0x40) {
-					//Check to see whether it was a play or pause command
-					if ((status & 0x40) == 0x40) {
-						//Play player 2
-						emit player2_play();
-					}
-					else {
-						//Pause player 2
-						emit player2_pause();
-					}
-				}
-				//Check to see if it was the "Paper Out" line which changed
-				if ((changed & 0x20) == 0x20) {
-					//Check to see whether it was a play or pause command
-					if ((status & 0x20) == 0x20) {
-						//Play player 3
-						emit player3_play();
-					}
-					else {
-						//Pause player 3
-						emit player3_pause();
-					}
-				}
-				old_status = status;
-			}
-			usleep(100000);
-		}
 	}
 	delete[] error;
+}
+
+
+RemoteStartThread::~RemoteStartThread() {
+	threadKill();
+	threadWait();
+}
+
+		
+void RemoteStartThread::threadExecute() {
+    const char* routine = "RemoteStartThread::run";
+	mutex.lock();
+	stopped = FALSE;
+	mutex.unlock();
+	
+	while(!stopped) {
+		//Read in a byte from the parallel port status register
+		status = inb(ADDRESS+1);
+		//Check to see if the value has changed
+		if (status != old_status) {
+			//If it has, extract the bits that have changed (XOR)
+			int changed = status^old_status;
+			//Check to see if it was the "Busy" line which changed
+			if ((changed & 0x80) == 0x80) {
+				//Check to see whether it was a play or pause command
+				//NOTE:  This line is "hardware inverted" in the port
+				//so the software logic for this line is swapped - 
+				//(status & 0x80) != 0x80 as opposed to
+				//(status & 0x80) == 0x80 as all the other lines
+				if ((status & 0x80) != 0x80) {
+					//Play player 1
+					emit player1_play();
+				}
+				else {
+					//Pause player 1
+					emit player1_pause();
+				}
+			}
+			//Check to see if it was the "Ack" line which changed
+			if ((changed & 0x40) == 0x40) {
+				//Check to see whether it was a play or pause command
+				if ((status & 0x40) == 0x40) {
+					//Play player 2
+					emit player2_play();
+				}
+				else {
+					//Pause player 2
+					emit player2_pause();
+				}
+			}
+			//Check to see if it was the "Paper Out" line which changed
+			if ((changed & 0x20) == 0x20) {
+				//Check to see whether it was a play or pause command
+				if ((status & 0x20) == 0x20) {
+					//Play player 3
+					emit player3_play();
+				}
+				else {
+					//Pause player 3
+					emit player3_pause();
+				}
+			}
+			old_status = status;
+		}
+		usleep(100000);
+	}
 }
 
 void RemoteStartThread::start() {

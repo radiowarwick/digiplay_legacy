@@ -1141,6 +1141,9 @@ table.showEdititem td {
 	border:	1px solid #000000;
 	margin:	4px;
 }
+table.showItems td.upDown {
+    text-align: center;
+}
 div.showLinks {
 	float: left;
 	margin:	2px;
@@ -1497,4 +1500,8 @@ div.fileselect {
 	height:	400px;
 	max-height:	400px;
 	border:	1px solid #000000;
+}
+
+a img {
+    border: 0px;
 }

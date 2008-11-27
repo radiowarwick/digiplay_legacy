@@ -20,11 +20,17 @@ class DPSUserFileDirectoryModel extends Model {
 		$uploaddir = $cfg['DPS']['dir']['uploadDir'];
 		
 		if (!is_dir($uploaddir)) {
-			$this->errors['form'] = "$uploaddir is not a directory.";
-			return;
-		}
+			$this->errors['form'] = "Upload direcotry does not exist. Please
+                contact the administrator.";
+            BasicLogger::logMessage("$uploaddir is not a directory.", "DPS", "debug");
+            DPSUserFileDirectoryModel::processInvalid();
+		    return;
+        }
 		if (!is_writeable($uploaddir)) {
-			$this->errors['form'] = "$uploaddir is not writeable.";
+			$this->errors['form'] = "Upload directory is not writeable. Please
+                contact the administrator.";
+            BasicLogger::logMessage("$uploaddir is not writeable.", "DPS", "debug");
+            DPSUserFileDirectoryModel::processInvalid();
 			return;
 		}
 
@@ -34,7 +40,7 @@ class DPSUserFileDirectoryModel extends Model {
 		
 		// Move the uploaded file from the system tmp dir to the DPS/uploads dir.
 		if (move_uploaded_file($_FILES['ufile']['tmp_name'], $uploadfile . ".wav")) {
-			// Determine various properties of file
+            // Determine various properties of file
 			if($this->fieldData['type'] == "advert") {
 				$type="3";
 				$typeID = $cfg['DPS']['AdvertTypeID'];
@@ -93,7 +99,7 @@ class DPSUserFileDirectoryModel extends Model {
 						// failed to import the file
 						BasicLogger::logMessage(
 							"Error recieved when uploading file: '" . $id . "'",
-							'error');
+							"DPS", 'error');
 						$this->errors['form'] = "Unable to import file (file may be of invalid type): " . $id;
 						exec("rm $uploadfile.wav");
 						exec("rm $uploadfile.info");

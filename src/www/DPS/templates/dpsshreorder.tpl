@@ -40,26 +40,22 @@
 				{$item.audioTitle}
 				{/if}
 			</td>
+			<td width=40px class="upDown">	
 			{if $item.position == 1}
-			<td width=40px>	
+			    <img src='DPS/images/moveupdisabled18.png' alt='Up'>
+            {else}
+				{templateLink id=$VIEWER.templateID text="<img src='DPS/images/moveup18.png' alt='Up'>" _itemID=$item.id
+                    _formName="dpsUserShowItemUp" _moduleName="DPS" _showID=$VIEWER.show.id}
+            {/if}
 			</td>
-			<td width=40px>
-				{templateLink id=$VIEWER.templateID text="<img scr='DPS/images/showUnfinished.png' alt='Down'>" _itemID=$item.id _formName="dpsUserShowItemDown" _moduleName="DPS" _showID=$VIEWER.show.id}
+			<td width=40px class="upDown">
+			{if $item.position == $VIEWER.itemCount}
+			    <img src='DPS/images/movedowndisabled18.png' alt='Down'>
+            {else}
+				{templateLink id=$VIEWER.templateID text="<img src='DPS/images/movedown18.png' alt='Down'>" _itemID=$item.id
+                    _formName="dpsUserShowItemDown" _moduleName="DPS" _showID=$VIEWER.show.id}
+            {/if}
 			</td>
-			{elseif $item.position == $VIEWER.itemCount}
-			<td>	
-				{templateLink id=$VIEWER.templateID text="<img scr='DPS/images/showUnfinished.png' alt='Up'>" _itemID=$item.id _formName="dpsUserShowItemUp" _moduleName="DPS" _showID=$VIEWER.show.id}
-			</td>
-			<td>
-			</td>
-			{else}
-			<td>	
-				{templateLink id=$VIEWER.templateID text="<img scr='DPS/images/showUnfinished.png' alt='Up'>" _itemID=$item.id _formName="dpsUserShowItemUp" _moduleName="DPS" _showID=$VIEWER.show.id}
-			</td>
-			<td>
-				{templateLink id=$VIEWER.templateID text="<img scr='DPS/images/showUnfinished.png' alt='Down'>" _itemID=$item.id _formName="dpsUserShowItemDown" _moduleName="DPS" _showID=$VIEWER.show.id}
-			</td>
-			{/if}
 			<td>
 				{templateLink id="58" text="Edit" _itemID=$item.id}<br>{templateLink id=$VIEWER.templateID text="Erase" _itemID=$item.id _formName="dpsUserDelShowItem" _moduleName="DPS" _showID=$VIEWER.show.id}
 			</td>

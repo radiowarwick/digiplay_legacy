@@ -16,15 +16,15 @@ class DPSUserTrackShowModel extends Model {
 	protected function processValid(){
 		global $cfg;
 		$db = Database::getInstance($cfg['DPS']['dsn']);
-        $query = "SELECT length FROM showitems
+        $query = "SELECT length, scriptid FROM showitems
                   WHERE id = " . pg_escape_string($this->fieldData['itemID']);
-        $showitemlength = $db->getone($query);
+        $showiteminfo = $db->getRow($query);
 		$where = "id = " . pg_escape_string($this->fieldData['itemID']);
 		$show['audioid'] = pg_escape_string($this->fieldData['audioID']);
 		$query = "SELECT length_smpl FROM audio
                   WHERE id = ". $show['audioid'];
         $audioitemlength = ceil($db->getone($query)/44100);
-        if($showitemlength == 0){
+        if($showiteminfo['scriptid'] == null){
             $show['length'] = $audioitemlength;
         }
         $db->update('showitems',$show,$where,true);

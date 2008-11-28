@@ -164,7 +164,7 @@ void TabPanelSearch::threadExecute() {
         qApp->lock();
         dlgWarn *warning = new dlgWarn(getPanel(), "");
         warning->setTitle("Oops!");
-        warning->setWarning(e.what());
+        warning->setWarning(e.getMessage());
         warning->setQuestion(false);
         warning->exec();
         delete warning;

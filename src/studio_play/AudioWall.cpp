@@ -286,6 +286,7 @@ void AudioWall::configurePageNav() {
 		btnPageNext->setEnabled(false);
 		btnPageNext->setEnabled(false);
         lblPageNum->setText("No AudioWall\nLoaded");
+        grpFrame->setTitle("");
         qApp->unlock();
         return;
     }

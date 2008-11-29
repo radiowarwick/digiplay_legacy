@@ -21,6 +21,11 @@ class DPSUserEditScript extends Model {
 		$item['contents'] = $this->fieldData['content'];
 		$item['length'] = (60*$this->fieldData['mins'] + $this->fieldData['secs']);
 		$db->update('scripts',$item,$where,true);
+
+        if (isset($this->fieldData['Submit']))
+        {
+            MVCUtils::redirect(44);
+        }
 	}
 	
 	protected function processInvalid() {

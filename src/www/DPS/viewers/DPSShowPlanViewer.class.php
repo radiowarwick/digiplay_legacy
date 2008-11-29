@@ -42,7 +42,7 @@ class DPSShowPlanViewer extends Viewer {
 			$show['niceCreateDate'] = date("d/m/y",$show['creationdate']);
 			$show['niceCreateTime'] = date("H:i",$show['creationdate']);
 			$show['text'] = $show['name'] . " - " . $show['niceAirDate'] .
-				" - " . $show['niceAirTime'];
+				" - " . $show['niceAirTime'] . " (" . AuthUtil::getUsername($show['userid']) . ")";
 			$sql = "SELECT BIT_OR(v_tree_dir.permissions) 
 				FROM v_tree_showplan, v_tree_dir 
 				WHERE v_tree_showplan.id = {$show['id']}
@@ -56,7 +56,7 @@ class DPSShowPlanViewer extends Viewer {
 			$show['niceCreateDate'] = date("d/m/y",$show['creationdate']);
 			$show['niceCreateTime'] = date("H:i",$show['creationdate']);
 			$show['text'] = $show['name'] . " - " . $show['niceAirDate'] .
-				" - " . $show['niceAirTime'];
+				" - " . $show['niceAirTime'] . " (" . AuthUtil::getUsername($show['userid']) . ")";
 			$sql = "SELECT BIT_OR(v_tree_dir.permissions) 
 				FROM v_tree_showplan, v_tree_dir 
 				WHERE v_tree_showplan.id = {$show['id']}
@@ -72,6 +72,8 @@ class DPSShowPlanViewer extends Viewer {
 		$this->assign('pShowCount', $pShowCount);
 		$this->assign('doneShows', $doneShows);
 		$this->assign('dShowCount', $dShowCount);
+
+        $this->assign('deleteID', $this->fieldData['deleteID']);
 	}
 }
 

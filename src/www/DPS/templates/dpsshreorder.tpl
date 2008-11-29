@@ -23,7 +23,7 @@
 	<div class="subTitle">Click the arrows to move the items</div>
 	<table class="showItems" width=100%>
 		<tr>
-			<th>No.</th><th>Time</th><th>Element</th><th colspan="2">Move</th><th>Options</th>
+			<th>No.</th><th>Time</th><th>Element</th><th>Nature</th><th colspan="2">Move</th>
 		</tr>
 		{foreach from=$VIEWER.showItems item=item}
 		<tr>
@@ -35,9 +35,17 @@
 			</td>
 			<td>
 				<b>{$item.title}</b>
-				{if $item.audioTitle != ''}
-				<br />
-				{$item.audioTitle}
+			</td>
+			<td>
+                {if $item.nature != 'unknown'}
+				    {$item.nature}:
+                    {templateLink id=18 _trackID=$item.audioid text=$item.audioTitle}
+                {/if}
+                {if $item.nature != 'unknown' && $item.scriptid != ''}
+                    <br/>
+                {/if}
+				{if $item.scriptid != ''}
+				    Script: {templateLink id="45" _scriptID=$item.scriptid text=$item.scriptName}
 				{/if}
 			</td>
 			<td width=40px class="upDown">	
@@ -56,11 +64,18 @@
                     _formName="dpsUserShowItemDown" _moduleName="DPS" _showID=$VIEWER.show.id}
             {/if}
 			</td>
-			<td>
-				{templateLink id="58" text="Edit" _itemID=$item.id}<br>{templateLink id=$VIEWER.templateID text="Erase" _itemID=$item.id _formName="dpsUserDelShowItem" _moduleName="DPS" _showID=$VIEWER.show.id}
-			</td>
 		</tr>
 		{/foreach}
+        <tr>
+            <td></td>
+            <td><b>{$VIEWER.endTime}</b></td>
+            <td colspan="4" style="text-align:center;"><b>END</b></td>
+        </tr>
 	</table>
+    <form method="GET" action="">
+        <input type="hidden" name="templateID" value="55" />
+        <input type="hidden" name="showID" value="{$VIEWER.show.id}" />
+        <input type="submit" value="Done" />
+    </form>
 {/if}
 {include file="rfile:dpsshowbottomframe.tpl" Admin=$VIEWER.Admin}

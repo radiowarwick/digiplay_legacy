@@ -3,7 +3,6 @@
 	{$VIEWER.error}
 {else}
 	<div class="showPlanList">
-	<div class="rightLinks">{templateLink id="44" text="<< Back to your scripts"}</div>
 		<div class="bigTitle">
 			{$VIEWER.script.name}
 		</div>
@@ -29,7 +28,9 @@
 		Length (mm:ss): <input type=text name="mins" maxlength=2 size=2 value="{$VIEWER.script.m}" />:<input type=text name="secs" maxlength=2 size=2 value="{$VIEWER.script.s}" /><br />
 		<hr>
 		<textarea name="content" cols=70 rows=20>{$VIEWER.script.contents}</textarea><br />
-		<input type="Submit" name="Submit" value="Submit" />
+		<input type="Submit" name="Save" value="Save" />
+		<input type="Submit" name="Submit" value="Save &amp; Return" />
+	    {templateLink id="44" text=" Cancel"}
 		{else}
 		<b>Name:</b> {$VIEWER.script.name}<br />
 		<b>Length (mm:ss):</b> {$VIEWER.script.m}:{$VIEWER.script.s}<br />

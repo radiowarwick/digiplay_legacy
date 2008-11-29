@@ -20,7 +20,7 @@
 		<form name="dpsUserEditShow" method="post" action="{$CONFIG.general.siteRoot}">
 		<input type="hidden" name="formName" value="dpsUserEditShow" />
 		<input type="hidden" name="moduleName" value="DPS" />
-		<input type="hidden" name="templateID" value="{$VIEWER.templateID}" />
+		<input type="hidden" name="templateID" value="55" />
 		<input type="hidden" name="showID" value="{$VIEWER.show.id}" />
 		Name: <input type="text" name="name" value="{$VIEWER.show.name}"/><br />
 		{if $ERRORS.dpsUserEditShow.form != ''}
@@ -45,6 +45,7 @@
 		<!--<b>Participants: </b> People, Many many people<br />
 		<a href="">Edit details and participants</a>-->
 		<input type="Submit" name="Submit" value="Submit" />
+	    {templateLink id="55" text=" Cancel" _showID=$VIEWER.show.id}
 		</form>
 		{else}
 		Name: {$VIEWER.show.name}<br />
@@ -59,7 +60,6 @@
 	  <img src="DPS/images/showUnfinished.png" alt="Uninished"> Unfinished<br>
 	  <img src="DPS/images/showReady.png" alt="Ready"> Finished & ready<br>
 	</div>
-	<div class="rightLinks">{templateLink id="54" text="<< Back to your shows"}</div>
 	<br style="&7b;clear:both;&7c;" />
 {/if}
 {include file="rfile:dpsshowbottomframe.tpl" Admin=$VIEWER.Admin}

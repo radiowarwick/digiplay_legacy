@@ -1099,9 +1099,18 @@ div.showPlanList {
   float:  left;
   font-size:  10pt;
 }
+div.showPlanItem {
+  margin-left: 20px;
+}
+div.showPlanButtons {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+/*
 div.showPlanList a {
 	color:	#000000;
 }
+*/
 div.showPlanHelp {
   float:  right;
   width:  140px;

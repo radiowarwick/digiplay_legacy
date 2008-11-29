@@ -19,6 +19,9 @@ class DPSUserScriptShowModel extends Model {
 		$where = "id = " . pg_escape_string($this->fieldData['itemID']);
 		$show['scriptid'] = pg_escape_string($this->fieldData['scriptID']);
 		$db->update('showitems',$show,$where,true);
+
+        $query = "SELECT length FROM showitems WHERE id = " . $this->fieldData['itemID'];
+        $elementlength = $db->getone($query); 
 	}
 		
 	protected function processInvalid() {

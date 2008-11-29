@@ -16,7 +16,13 @@
 			{$VIEWER.show.name}
 		</div>
 
-	  <i>{$VIEWER.show.niceAirDate} - {$VIEWER.show.niceAirTime}</i><br>
+	  <i>{$VIEWER.show.niceAirDate} - {$VIEWER.show.niceAirTime}</i>
+		{if $VIEWER.show.permissions.1 == "1" &&
+            $VIEWER.done != 't' &&
+            $VIEWER.show.completed != 't'}
+			- {templateLink id="57" text="Edit Name and Time" _showID=$VIEWER.show.id}
+		{/if}
+      <br>
 		<b>Length: </b> {$VIEWER.show.niceLength}<br />
 		<!--<b>Genre: </b> Pop/Speech<br />-->
 		<b>Producer: </b> {$VIEWER.show.niceProducer}<br />
@@ -28,7 +34,6 @@
 	  <img src="DPS/images/showUnfinished.png" alt="Uninished"> Unfinished<br>
 	  <img src="DPS/images/showReady.png" alt="Ready"> Finished & ready<br>
 	</div>
-	<div class="rightLinks">{templateLink id="54" text="<< Back to your shows"}</div>
 	<br style="&7b;clear:both;&7c;" />
 	<hr>
 	{if $VIEWER.write == "t" && $VIEWER.done != 't'}
@@ -57,21 +62,18 @@
 				<b>{$item.niceTime}</b>
 			</td>
 			<td>
-				<b>{$item.title}</b><br>
-				{$item.audioTitle}
+	    		<b>{templateLink id="58" text=$item.title _itemID=$item.id}</b>
 			</td>
 			<td>
-				{if $item.nature == 'music'}
-				Music
-				{elseif $item.nature == 'jingle'}
-				Jingle
-				{elseif $item.nature == 'advert'}
-				Advert
-				{else}
-				Other
-				{/if}
+                {if $item.nature != 'unknown'}
+				    {$item.nature}:
+                    {templateLink id=18 _trackID=$item.audioid text=$item.audioTitle}
+                {/if}
+                {if $item.nature != 'unknown' && $item.scriptid != ''}
+                    <br/>
+                {/if}
 				{if $item.scriptid != ''}
-				+<br />{templateLink id="45" _scriptID=$item.scriptid text=$item.scriptName}
+				    Script: {templateLink id="45" _scriptID=$item.scriptid text=$item.scriptName}
 				{/if}
 			</td>
 			<td>
@@ -82,11 +84,25 @@
 			</td>
 			{if $VIEWER.write == "t" && $VIEWER.done != 't' && $VIEWER.show.completed != 't'}
 			<td>
-				{templateLink id="58" text="Edit" _itemID=$item.id}<br>{templateLink id=$VIEWER.templateID text="Erase" _itemID=$item.id _formName="dpsUserDelShowItem" _moduleName="DPS" _showID=$VIEWER.show.id}
+                {if $VIEWER.deleteID == $item.id}
+                    Are You Sure?<br/>
+                    {templateLink id=$VIEWER.templateID text="Yes"
+                        _itemID=$item.id _formName="dpsUserDelShowItem" _moduleName="DPS" _showID=$VIEWER.show.id}
+                    |
+                    {templateLink id=$VIEWER.templateID text="No" _showID=$VIEWER.show.id}
+                {else}
+                    {templateLink id=$VIEWER.templateID text="Delete"
+                        _showID=$VIEWER.show.id _deleteID=$item.id}
+                {/if}
 			</td>
 			{/if}
 		</tr>
 		{/foreach}
+        <tr>
+            <td><b>{$VIEWER.endTime}</b></td>
+            <td colspan="5" style="text-align:center;"><b>END</b></td>
+        </tr>
 	</table>
+
 {/if}
 {include file="rfile:dpsshowbottomframe.tpl" Admin=$VIEWER.Admin}

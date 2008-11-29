@@ -30,7 +30,8 @@ class DPSShowUserScriptViewer extends Viewer {
 			$script['niceCreateDate'] = date("d/m/y",$script['creationdate']);
 			$script['niceCreateTime'] = date("g a",$script['creationdate']);
 			$script['text'] = $script['name'] . " - " .
-			$script['niceCreateDate'] . " - " . $script['niceCreateTime'];
+			$script['niceCreateDate'] . " - " . $script['niceCreateTime'] . " (" .
+            AuthUtil::getUsername($script['userid']) . ")";
 			$sql = "SELECT BIT_OR(v_tree_dir.permissions) 
 				FROM v_tree_script, v_tree_dir 
 				WHERE v_tree_script.id = {$script['id']}
@@ -42,7 +43,8 @@ class DPSShowUserScriptViewer extends Viewer {
 		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
 		$this->assign('scripts', $scripts);
 		$this->assign('scriptCount', $scriptCount);
-	}
+        $this->assign('deleteID', $this->fieldData['deleteID']);
+    }
 }
 
 ?>

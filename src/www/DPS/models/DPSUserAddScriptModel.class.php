@@ -58,6 +58,8 @@ class DPSUserAddScriptModel extends Model {
 		$scriptdir['dirid'] = $dirID;
 		$scriptdir['linktype'] = 0;
 		$db->insert('scriptsdir',$scriptdir,true);
+
+        MVCUtils::redirect(45, array("scriptID" => $scriptID));
 	}
 		
 	protected function processInvalid() {

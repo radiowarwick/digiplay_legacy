@@ -29,22 +29,19 @@
 			</td>
 			<td>
 				<b>{$VIEWER.item.title}</b>
-				{if $VIEWER.item.audioTitle != ''}
-				<br />{$VIEWER.item.audioTitle}
-				{/if}
 			</td>
 			<td>
-        {if $VIEWER.item.nature == 'music'}
-				Music
-				{elseif $VIEWER.item.nature == 'jingle'}
-				Jingle
-				{elseif $VIEWER.item.nature == 'advert'}
-				Advert
-				{else}
-				Other
-				{/if}
+                {if $VIEWER.item.nature != 'unknown'}
+				    {$VIEWER.item.nature}:
+                    {templateLink id=18 _trackID=$VIEWER.item.audioid
+                        text=$VIEWER.item.audioTitle}
+                {/if}
+                {if $VIEWER.item.nature != 'unknown' && $VIEWER.item.scriptid != ''}
+                    <br/>
+                {/if}
 				{if $VIEWER.item.scriptid != ''}
-				+<br />{templateLink id="45" _scriptID=$VIEWER.item.scriptid text=$VIEWER.item.scriptName}
+				    Script: {templateLink id="45"
+                                _scriptID=$VIEWER.item.scriptid text=$VIEWER.item.scriptName}
 				{/if}
 			</td>
 			<td>

@@ -24,7 +24,10 @@ class DPSUserAddShowItemModel extends Model {
 		$showitem['position'] = $pos;
 		$showitem['title'] = 'New Item';
 		$showitem['length'] = 0;
-		$db->insert('showitems',$showitem,true);
+        $showitem['id'] = '#id#';
+		$itemID = $db->insert('showitems',$showitem,true);
+
+        MVCUtils::redirect("58", array("itemID" => $itemID));
 	}
 		
 	protected function processInvalid(){

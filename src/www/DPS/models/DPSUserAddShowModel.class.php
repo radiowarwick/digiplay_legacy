@@ -59,6 +59,8 @@ class DPSUserAddShowModel extends Model {
 			$showdir['dirid'] = $dirID;
 			$showdir['linktype'] = 0;
 			$db->insert('showplansdir',$showdir,true);
+
+            MVCUtils::redirect("55", array("showID" => $showID));
 	}
 		
 	protected function processInvalid() {

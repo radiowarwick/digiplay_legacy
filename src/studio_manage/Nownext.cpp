@@ -49,7 +49,7 @@ Nownext::Nownext(QWidget *parent, const char* name)
 	connect(trigger, SIGNAL(trigger()),
 	                 this, SLOT(updateDisplay()));
     draw();
-	threadStart();
+	//threadStart();
 }
 
 Nownext::~Nownext() {

@@ -6,10 +6,35 @@ AudioWallItem::AudioWallItem(QWidget* parent, const char* name) :
         QPushButton::QPushButton(parent,name) {
     QObject::connect(this,SIGNAL(pressed()),this,SLOT(play()));
     this->addCounter(this);
+    newItemAvailable = false;
 }
 
 AudioWallItem::~AudioWallItem() {
 
+}
+
+void AudioWallItem::set(AudioWallItemSpec& pItem) {
+	switch (_state) {
+		case STATE_STOP: {
+			if (pItem.file != "") {
+				bgColour = pItem.bgColour;
+				fgColour = pItem.fgColour;
+				text = pItem.text;
+				load(pItem.file.ascii(), pItem.start, pItem.end);
+			}
+			else {
+				text = "";
+			}
+			updateButton(true);
+			break;
+		}
+		case STATE_PLAY: 
+		case STATE_PAUSE: {
+			newItemAvailable = true;
+			newItem = pItem;
+			break;
+		}
+	}
 }
 
 void AudioWallItem::setFont(QFont &F) {
@@ -40,7 +65,13 @@ void AudioWallItem::play() {
             break;
         case STATE_PLAY:
             Audio::InputRaw::stop();
-            updateButton();
+            if (newItemAvailable) {
+            	newItemAvailable = false;
+            	set(newItem);
+            }
+            else {
+            	updateButton();
+            }
             break;
         case STATE_PAUSE:
             break;
@@ -52,6 +83,10 @@ void AudioWallItem::onSetSample() {
 }
 
 void AudioWallItem::onSetState() {
+    if (_state == STATE_STOP && newItemAvailable) {
+    	newItemAvailable = false;
+    	set(newItem);
+    }    	
     updateButton();
 }
 
@@ -59,9 +94,17 @@ void AudioWallItem::onSetTotalSamples() {
     updateButton();
 }
 
-void AudioWallItem::updateButton() {
+void AudioWallItem::updateButton(bool force) {
     unsigned long smpl = Audio::Counter::_currentSample;
-    if (! qApp->tryLock()) return;
+    // Force an update
+    if (force) {
+    	qApp->tryLock();
+    }
+    else {
+    	// Just try and update
+    	if (! qApp->tryLock()) return;
+    }
+    
     if (text == "") {
         QPushButton::setText("");
         QPushButton::setPaletteForegroundColor(QColor(QRgb(0)));

@@ -50,15 +50,6 @@ struct AudioWallPage {
 	unsigned short index;
 };
 
-struct AudioWallItemSpec {
-    QString file;
-    unsigned long start;
-    unsigned long end;
-    QString text;
-    QColor fgColour;
-    QColor bgColour;
-};
-
 class AudioWall :   public QWidget,
                     public Audio::ProcessMixer {
 	Q_OBJECT

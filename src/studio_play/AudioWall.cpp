@@ -269,19 +269,31 @@ void AudioWall::resizePage(unsigned int index) {
 }
 
 /**
+ * Updates the audiowall
+ */
+void AudioWall::updateWall() {
+	configurePageNav();
+}
+
+/**
  * Configures the page navigation display based on current page and page count
  * Also enabled/disables buttons which aren't available
  */
 void AudioWall::configurePageNav() {
     qApp->lock();
-    if (!_loaded) {
+    if (!_loaded || (_pages.size() == 0)) {
 		btnPageNext->setEnabled(false);
-		btnPageNext->setEnabled(false);
+		btnPagePrev->setEnabled(false);
         lblPageNum->setText("No AudioWall\nLoaded");
         grpFrame->setTitle("");
         qApp->unlock();
         return;
     }
+    else {
+    	lblPageNum->setText("Page " + QString::number(_currentPage+1) + "/"
+							+ QString::number(_pages.size()));
+    }
+
 	if (_currentPage == _pages.size() - 1) {
 		btnPageNext->setEnabled(false);
 	}
@@ -294,13 +306,6 @@ void AudioWall::configurePageNav() {
 	else {
 		btnPagePrev->setEnabled(true);
 	}
-    if (_pages.size() == 0) {
-        lblPageNum->setText("No AudioWall\nLoaded");
-    }
-    else {
-    	lblPageNum->setText("Page " + QString::number(_currentPage+1) + "/"
-							+ QString::number(_pages.size()));
-    }
     qApp->unlock();
 }
 

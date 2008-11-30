@@ -60,26 +60,15 @@ void frmPlayout::init() {
     audioPlayer3 = new AudioPlayer(this,"audioPlayer3",3);
     audioPlayer3->setGeometry(10,510,540,240);
 
-    conf = new Config("digiplay");
-    triggerConfig = new QtTrigger("triggerConfig","t_configuration");
-    connect(triggerConfig, SIGNAL(trigger()),
-                                this, SLOT(configChanged()));
-
-    // Get the active station and user awset id from config
-    stnAudioWallId = atoi(conf->getParam("station_aw_set").c_str());
-    usrAudioWallId = atoi(conf->getParam("user_aw_set").c_str());
-
 	// Create the station audio wall
     stnAudioWall = new AudioWall(this,"stnAudioWall",4,3);
 	stnAudioWall->setGeometry(560,0,460,373);
-	stnAudioWallMan = new AudioWallManager(stnAudioWall);
-	stnAudioWallMan->load(stnAudioWallId);
+	stnAudioWallMan = new AudioWallManager(stnAudioWall, "station_aw_set");
 	
     // Create the user audio wall
 	usrAudioWall = new AudioWall(this,"usrAudioWall",4,3);
 	usrAudioWall->setGeometry(560,373,460,373);
-	usrAudioWallMan = new AudioWallManager(usrAudioWall);
-	usrAudioWallMan->load(usrAudioWallId);
+	usrAudioWallMan = new AudioWallManager(usrAudioWall, "user_aw_set");
 
     // Link the audio walls to the fourth channel
     audioWallOutput = new AudioWallDriver(4);
@@ -115,22 +104,4 @@ void frmPlayout::init() {
 
 void frmPlayout::destroy() {
     delete conf;
-}
-
-void frmPlayout::configChanged() {
-    unsigned int s = atoi(conf->getParam("station_aw_set").c_str());
-    unsigned int u = atoi(conf->getParam("user_aw_set").c_str());
-    if (s != stnAudioWallId && stnAudioWallMan) {
-        stnAudioWallId = s;
-        if (stnAudioWallId != 0) {
-            stnAudioWallMan->load(stnAudioWallId);
-        }
-    }
-    if (u != usrAudioWallId && usrAudioWallMan) {
-        usrAudioWallId = u;
-    //    if (usrAudioWallId != 0) {
-            cout<< "Doing load" << endl;
-            usrAudioWallMan->load(usrAudioWallId);
-    //    }
-    }
 }

@@ -31,8 +31,12 @@ using namespace std;
 #include <qfont.h>
 #include <qcolor.h>
 
+#include "MessagingInterface.h"
+
+class QtTrigger;
 class DataAccess;
 class AudioWall;
+class Config;
 struct AudioWallItemSpec;
 
 struct Page {
@@ -42,18 +46,26 @@ struct Page {
     unsigned short index;
 };
 
-class AudioWallManager : public QObject {
+class AudioWallManager : public QObject,
+						 public MessagingInterface {
 	Q_OBJECT
 	public:
-		AudioWallManager( AudioWall *A );
+		AudioWallManager( AudioWall *A, QString name );
 		~AudioWallManager();
-		void load(unsigned int awset);
 		int getAwSet() {return _awset;}
-
+		void load(unsigned int awset);
+		void onMessage();
+		
+	public slots:
+		void refreshWall();
+	
 	private:
+		Config *conf;
+		QtTrigger *triggerAw;
 		AudioWall *_A;
         DataAccess *DB;
 		QString _username;
+		QString _name;
 		vector<Page*> _pages;
 		int _awset;
 };

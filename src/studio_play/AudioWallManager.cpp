@@ -27,16 +27,33 @@ using namespace std;
 #include "dps.h"
 #include "DataAccess.h"
 #include "AudioWall.h"
+#include "Config.h"
+#include "QtTrigger.h"
 
 #include "AudioWallManager.h"
 
-AudioWallManager::AudioWallManager( AudioWall *A ) {
+AudioWallManager::AudioWallManager( AudioWall *A, QString name ) {
 	_A = A;
+	_name = name;
+	conf = new Config("digiplay", this);	
     DB = new DataAccess();
+    onMessage();
+    triggerAw = new QtTrigger("triggerAw","t_audiowall");
+    connect(triggerAw, SIGNAL(trigger()),
+                                this, SLOT(refreshWall()));    
 }
 
 AudioWallManager::~AudioWallManager() {
 
+}
+
+void AudioWallManager::onMessage() {
+	unsigned int awset = atoi(conf->getParam(_name.ascii()).c_str());
+	load(awset);
+}
+
+void AudioWallManager::refreshWall() {
+	load(_awset);
 }
 
 void AudioWallManager::load(unsigned int awset) {
@@ -50,6 +67,7 @@ void AudioWallManager::load(unsigned int awset) {
             _A->deletePage(0);
     	}
     	_pages.resize(0);
+    	_A->updateWall();
         return;
     }
 	short pagecount = atoi(DB->exec("AudioWallManagerLoad",

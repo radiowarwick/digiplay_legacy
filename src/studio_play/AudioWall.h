@@ -71,6 +71,8 @@ class AudioWall :   public QWidget,
         void deletePage(unsigned int index);
         void displayPage(unsigned int index);
 
+		void updateWall();
+		
 	private slots:
 		void nextPage();
 		void prevPage();

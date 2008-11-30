@@ -19,7 +19,7 @@ MODS		=	AudioPacket Component \
 				Output OutputRaw OutputDsp \
 				Process  ProcessMixer ProcessFader \
 				Counter CounterTrigger
-SHARED_MODS	=	Thread
+SHARED_MODS	=	Thread Security Logger
 
 # Global header files on which dependance exists
 HDRS		=	Audio.h

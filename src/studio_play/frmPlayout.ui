@@ -50,7 +50,6 @@
 <variables>
 </variables>
 <slots>
-    <slot>configChanged()</slot>
 </slots>
 <functions>
     <function access="private" specifier="non virtual">init()</function>

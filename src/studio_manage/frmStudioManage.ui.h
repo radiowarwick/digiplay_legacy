@@ -176,7 +176,7 @@ void frmStudioManage::init() {
                 sp, SLOT( addScript( DpsShowScript& ) ) );
     connect ( tabPanelFileBrowser, SIGNAL( showplanSelected( DpsShowplan& ) ),
                 sp, SLOT( loadShowplan( DpsShowplan& ) ) );
-    connect ( tabPanelFileBrowser, SIGNAL( awSetSelected( QString ) ),
+    connect ( tabPanelFileBrowser, SIGNAL( awsetSelected( QString ) ),
                 this, SLOT( updateAwSet( QString ) ) );
     connect ( sp, SIGNAL( scriptSelected( int ) ),
                 tabPanelScript, SLOT( loadScript( int ) ) );

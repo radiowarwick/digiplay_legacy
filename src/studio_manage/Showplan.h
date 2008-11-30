@@ -97,7 +97,6 @@ class Showplan : 	public QWidget,
 
         Config* conf;
         QtTrigger* triggerConfig;
-        //triggerThread* confTrigger;
 
         QWidget* _parent;
 		QGroupBox* grpFrame;

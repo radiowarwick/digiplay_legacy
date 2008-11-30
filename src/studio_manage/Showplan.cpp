@@ -219,6 +219,7 @@ void Showplan::clear(bool prompt) {
 }
 
 void Showplan::remove() {
+	// Return if nothing in the showplan
     if (lstShowPlan->childCount() == 0) return;
     QListViewItem *x = lstShowPlan->selectedItem();
     QListViewItem *y;
@@ -232,13 +233,13 @@ void Showplan::remove() {
         }
         // Otherwise get the item before the selected item
         else {
-            y = lstShowPlan->lastItem()->itemAbove();
+            y = x->itemAbove();
             // If there is such an item, select it, otherwise y is 0
             if ( y ) {
                 lstShowPlan->setSelected(y,true);
             }
         }
-        // Change selection to the new item
+        // Change selection to the new item (null if no item)
         selectionChanged(y);
         // Delete the originally selected item
         delete x;
@@ -308,7 +309,7 @@ void Showplan::moveBottom() {
 void Showplan::clicked(QListViewItem *x) {
     // if no item is clicked, then there should now be nothing selected
     // so disable all the appropriate buttons
-    if (x == 0) {
+    if (!x) {
         btnMoveBottom->setEnabled(false);
         btnMoveDown->setEnabled(false);
         btnMoveUp->setEnabled(false);
@@ -321,12 +322,17 @@ void Showplan::clicked(QListViewItem *x) {
 void Showplan::selectionChanged(QListViewItem* x) {
     // Check if the currently selected item is a script
     // Need to clear script tab, and set item to unloaded state.
-	if ( selectedItem && selectedItem->getType() == 1 &&
-		 	selectedItem->getState() == SHOWPLAN_STATE_LOADED ) {
-		emit scriptDeselected();
-		selectedItem->setState(SHOWPLAN_STATE_UNLOADED);
-	}
-    
+/*    if ( selectedItem ) {
+    	cout << "selectedItem exists" << endl;
+    	cout << selectedItem->getState() << endl;
+    	cout << "blah" << endl;
+		if ( selectedItem->getType() == 1 &&
+			 	selectedItem->getState() == SHOWPLAN_STATE_LOADED ) {
+			emit scriptDeselected();
+			selectedItem->setState(SHOWPLAN_STATE_UNLOADED);
+		}
+    }
+*/
 	// If x is null, we're not having anything selected.
     if ( ! x ) {
         btnMoveUp->setEnabled(false);

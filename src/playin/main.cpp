@@ -216,11 +216,11 @@ void getresult(char **res, char *buf)
 
 void wnd_splash(char *text)
 {
-    char *notice1 = "************************************************";
-    char *notice2 = "*            == IMPORTANT NOTICE ==            *";
-    char *notice3 = "*         This is now for music only!          *";
-    char *notice4 = "* Please upload other items using the website. *";
-    char *notice5 = "************************************************";
+    const char *notice1 = "************************************************";
+    const char *notice2 = "*            == IMPORTANT NOTICE ==            *";
+    const char *notice3 = "*         This is now for music only!          *";
+    const char *notice4 = "* Please upload other items using the website. *";
+    const char *notice5 = "************************************************";
 	int w, h;
 	getmaxyx(win_title, h, w);
 	mvwprintw(win_title, 0, w - strlen(NAME), "%s", NAME);

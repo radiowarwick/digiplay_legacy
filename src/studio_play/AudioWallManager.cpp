@@ -41,7 +41,6 @@ AudioWallManager::~AudioWallManager() {
 
 void AudioWallManager::load(unsigned int awset) {
 	_awset = awset;
-	cout << "Check if no audio wall" << endl;
     if (awset == 0) {
     	for (unsigned int i = 0; i < _pages.size(); i++) {
     		for (unsigned int j = 0; j < _A->getSize(); j++) {
@@ -53,32 +52,27 @@ void AudioWallManager::load(unsigned int awset) {
     	_pages.resize(0);
         return;
     }
-    cout << "retrieve page count" << endl;
 	short pagecount = atoi(DB->exec("AudioWallManagerLoad",
                             "SELECT max(aw_walls.page) "
                             "FROM aw_walls,aw_sets "
                             "WHERE aw_walls.set_id = " 
 							 	+ dps_itoa(awset))[0][0].c_str()) + 1;
-	cout << "delete pages" << endl;
     for (int i = _pages.size() - 1; i > pagecount - 1; i--) {
         for (int j = 0; j < _A->getSize(); j++) {
             delete _pages[i]->items[j];
         }
-        cout << "delete page " << i << endl;
         _A->deletePage(i);
         delete _pages[i];
         _pages.erase(_pages.begin() + i);
     }
-    cout << "add pages" << endl;
 	for (int i = _pages.size(); i < pagecount; i++) {
 		_pages.push_back(new Page);
-		cout << "add a new page" << endl;
         _A->addPage();
 		for (int j = 0; j < _A->getSize(); j++) {
 			_pages[i]->items.push_back(new AudioWallItemSpec);
 		}
 	}
-	cout << "retrieve audiowall items" << endl;
+	
     PqxxResult R = DB->exec("AudioWallManagerLoad",
                         "SELECT * FROM v_audiowalls WHERE set_id = "
                         + dps_itoa(awset) + " ORDER BY page, prop_name");
@@ -108,7 +102,7 @@ void AudioWallManager::load(unsigned int awset) {
 			existsTable[i][j] = false;
 		}
 	}
-	cout << "page count: " << _pages.size() << endl;
+
 	unsigned int i = 0;
 	while (i < R.size()) {
 		file = R[i]["path"].c_str();
@@ -121,9 +115,8 @@ void AudioWallManager::load(unsigned int awset) {
 		end = atoi(R[i]["end"].c_str());
 		title = R[i]["wall_desc"].c_str();
 		// this item exists
-		cout << "page " << page << " item " << item << endl;
 		existsTable[page][item] = true;
-		cout << "b" << endl;
+
         AudioWallItemSpec* I = _pages[page]->items[item];
 		if (I->file != file) changeTable[page][item] = true;
 		I->file = file;
@@ -138,7 +131,7 @@ void AudioWallManager::load(unsigned int awset) {
 			_pages[page]->title = title;
 			_A->setCaption(page,title);
 		}
-		cout << "c" << endl;
+
 		while (i < R.size() && atoi(R[i]["page"].c_str()) == page
 							&& atoi(R[i]["item"].c_str()) == item) {
 			p = R[i]["prop_name"].c_str();
@@ -156,30 +149,23 @@ void AudioWallManager::load(unsigned int awset) {
 			}
 			i++;
 		}
-		cout << "d" << endl;
 	}
 
-	cout << "add non-existing elements" << endl;
-	cout << " exists table size: " << existsTable.size();
 	// Add to change list, those elements which now don't exist
 	for (unsigned int page = 0; page < existsTable.size(); ++page) {
 		for (unsigned int item = 0; item < existsTable[page].size(); ++item) {
 			if (!existsTable[page][item]) {
 				AudioWallItemSpec* I = _pages[page]->items[item];
-				cout << "1" << flush;
 				if (I->file != "" || I->text != "") {
-					cout << "2" << flush;
 					changeTable[page][item] = true;
 					I->file = "";
 					I->text = "";
 				}
-				cout << "3" << endl;
 			}
 		}
 	}
 	
 	// Apply changes
-	cout << "BEGIN APPLYING CHANGES TO AUDIOWALL" << endl;
 	for (unsigned int page = 0; page < changeTable.size(); ++page) {
 		for (unsigned int item = 0; item < changeTable[page].size(); ++item) {
 			if (changeTable[page][item]) {

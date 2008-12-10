@@ -49,7 +49,7 @@
 	      Click a track's title for more information
 	    </div>
 
-	    {if Access_EditSue == 't'}
+	    {if $VIEWER.Access_EditSue == 't'}
 	    <form name="dpsSuePlaylistForm" method="post" action="{$CONFIG.general.siteRoot}">
 	      <input type="hidden" name="formName" value="dpsSuePlaylistForm" />
 	      <input type="hidden" name="moduleName" value="DPS" />
@@ -133,7 +133,7 @@
 		{/if}
 
 	      </div>
-	      {if Access_EditSue == 't'}
+	      {if $VIEWER.Access_EditSue == 't'}
 	      <div class="sueplaylistupdate">
 		<input type="submit" value="Submit">
 	      </div>

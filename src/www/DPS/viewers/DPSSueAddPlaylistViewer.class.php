@@ -25,13 +25,13 @@ class DPSSueAddPlaylistViewer extends Viewer {
 		$searchValue = $this->fieldData['dpsSearchVal'];
 		$searchType = $this->fieldData['dpsSearchType'];
 		$letter = pg_escape_string($this->fieldData['dpsSearchLetter']);
-
 		if($searchType == '' && $letter != '') {
 			if($letter == "*") {
 				$searchType = 'Number';
 			} else {
 				$searchType = 'Letter';
 			}
+			$searchValue = $letter;
 		}
 
 		if($this->fieldData['dpsSortType'] != '') {

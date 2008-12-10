@@ -132,9 +132,6 @@ $cfg['CMS']['fckPath'] = '/usr/share/fckeditor';
 // The URL of the FCKEditor directory
 $cfg['CMS']['fckURL'] = $cfg['general']['toolkitRootURL'] . '/FCKeditor';
 
-// DPS database configuration
-$cfg['DPS']['dsn_web']      = 'pgsql://tcp(dbserver:5433)/dbname';
-
 // Homepage of your site
 $cfg['DPS']['HomeSite'] = $cfg['general']['protocol'] 
                                             . $cfg['general']['domain'];

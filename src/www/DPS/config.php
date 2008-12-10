@@ -13,7 +13,6 @@
  * http://pear.php.net/manual/en/package.database.db.intro-dsn.php
  *
  */
-$cfg['DPS']['dsn_web']      = 'pgsql://tcp(dbserver:5433)/rawwww';
 
 $cfg['DPS']['resultLimit'] = 50;
 $cfg['DPS']['defaultShowID'] = 0;

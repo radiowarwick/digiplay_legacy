@@ -25,7 +25,7 @@ class DPSEditTrackModel extends Model {
 			$trUpdates['origin'] = $this->fieldData['origin'];
 			$auth = Auth::getInstance();
 			$userID = $auth->getUserID();
-			if(AuthUtil::getDetailedUserrealmAccess(array(03,20,24), $userID)) {
+			if(AuthUtil::getDetailedUserrealmAccess(array(24,20,3), $userID)) {
 				if($this->fieldData['playlist'] == "on") {
 					$trUpdates['sustainer'] = 't';
 				} else {

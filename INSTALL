@@ -77,3 +77,13 @@ This stuff isn't tested with the new Make system:
 	make suebackup		(Backup sustainer playlist to SUE_FILE)
 	make suerestore		(Restore sustainer playlist from SUE_FILE)
 						SUE_FILE is specified in the Makefile or on commandline
+
+Website Installation (In Progress)
+----------------------------------
+
+For the Web Import you will need the following packages
+Under debian this can be achieved by running apt-get install <package-list> where
+<package-list> is:
+    perl
+	libdbi-perl
+    libdbd-pg-perl

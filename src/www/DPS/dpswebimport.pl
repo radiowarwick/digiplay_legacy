@@ -7,9 +7,7 @@ use Digest::MD5;
 use DBI;
 use DBD::Pg;
 
-my $destarchive = "fs0-0";
 my $webdir = "/usr/share/dps/www/DPS/uploads";
-my $inbox = "/mnt/fs0-0/audio/inbox";
 my $config_file = "/etc/digiplay.conf";
 $ENV{'PATH'}='/bin:/usr/bin:/usr/local/bin';
 
@@ -41,7 +39,39 @@ while ($line = <CONFIG>) {
     if ($line =~ m/^DB_PASS=(.*)$/) { $dbpass = $1; }
 }
 close (CONFIG);
+
+# Connect to Database
 my $db_connect = "dbi:Pg:dbname=$dbname;host=$dbhost;port=$dbport;";
+my $dbh = DBI->connect($db_connect,"$dbuser","$dbpass") 
+        || die "Cannot connect to database";
+
+# Get name of the current audio archive
+my $SQL = "SELECT val FROM configuration WHERE parameter=\'playin_archive\' AND location=-1;";
+my $sth = $dbh->prepare($SQL);
+my $res = $sth->execute();
+if (!$res) {
+	print "query_failed";
+	exit;
+}
+if ($sth->rows != 1) {
+	print "rowcount_failed";
+	exit;
+}
+my $destarchive = $sth->fetchrow();
+
+# Get location of audio inbox
+my $SQL = "SELECT localpath FROM archives WHERE name=\'$destarchive\';";
+my $sth = $dbh->prepare($SQL);
+my $res = $sth->execute();
+if (!$res) {
+	print "query_failed";
+	exit;
+}
+if ($sth->rows != 1) {
+	print "rowcount_failed";
+	exit;
+}
+my $inbox = $sth->fetchrow() . "inbox";
 
 # Get the time imported and title for hashing
 #my $importtime = time();
@@ -75,9 +105,7 @@ system "mv -i $webdir/$md5.info $inbox/$md5.info";
 system "dpsadmin --archive --upgrade $destarchive";
 system "dpsadmin --music --import-md5 $md5 1>/dev/null";
 
-# connect to database and return row index of new entry
-my $dbh = DBI->connect($db_connect,"$dbuser","$dbpass") 
-        || die "Cannot connect to database";
+# Get row index of new entry from database
 my $SQL = "SELECT id FROM audio WHERE md5=\'$md5\';";
 my $sth = $dbh->prepare($SQL);
 my $res = $sth->execute();

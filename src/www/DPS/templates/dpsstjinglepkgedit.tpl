@@ -32,7 +32,7 @@
 				{templateLink id=18 _trackID=$jingle.id text="Preview"}
 			</td>
 			<td class="userTableOption">
-				{templateLink id=$VIEWER.templateID text="Delete" _formName="dpsStationRemJingleFromPkgForm" _moduleName="DPS" _jingleID=$jingle.id _jinglepkgID=$VIEWER.jinglepkg.id}
+				{templateLink id=$VIEWER.templateID text="Remove from package" _formName="dpsStationRemJingleFromPkgForm" _moduleName="DPS" _jingleID=$jingle.id _jinglepkgID=$VIEWER.jinglepkg.id}
 			</td>
 		</tr>
 	{/foreach}

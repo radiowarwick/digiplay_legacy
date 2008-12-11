@@ -7,7 +7,7 @@
 	{foreach from=$VIEWER.jinglepkgs item=jinglepkg}
 		<tr>
 			<th class="userTableName" style="border-right:1px black solid;">
-				{if $jinglepkg.name == ''}unnamed{else}{$jinglepkg.name}{/if}
+				{if $jinglepkg.name == ''}Default Package{else}{$jinglepkg.name}{/if}
 			</th>
 			<td class="userTableOption" rowspan="2">
 				{templateLink id="72" _jinglepkgID=$jinglepkg.id text="view"}

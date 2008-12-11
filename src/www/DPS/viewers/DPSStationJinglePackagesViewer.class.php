@@ -16,7 +16,7 @@ class DPSStationJinglePackagesViewer extends Viewer {
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
 		$loc = 1;
-		$sql = "SELECT * from jinglepkgs";
+		$sql = "SELECT * from jinglepkgs ORDER BY name";
 
 		$jinglepkgs = $db->getAll($sql);
 

@@ -6,8 +6,8 @@
 	<input type="hidden" name="moduleName" value="DPS" />
 	<input type="hidden" name="templateID" value="{$VIEWER.templateID}" />
 	<input type="hidden" name="jinglepkgID" value="{$VIEWER.jinglepkg.id}" />
-<p>{if $ERRORS.name}<div class='frame_musicboxerror'>{$ERRORS.name}</div>{/if}Package Name: <input type=text name='name' value='{$VIEWER.jinglepkg.name}'></p>
-<p>{if $ERRORS.desc}<div class='frame_musicboxerror'>{$ERRORS.description}</div>{/if}Package Description: <input type=text name='description' value='{$VIEWER.jinglepkg.description}'></p>
+<p>{if $ERRORS.name}<div class='frame_musicboxerror'>{$ERRORS.name}</div>{/if}Package Name: {if $VIEWER.jinglepkg.name != ''}<input type=text name='name' value='{$VIEWER.jinglepkg.name}'>{else}Default Package{/if}</p>
+<p>{if $ERRORS.desc}<div class='frame_musicboxerror'>{$ERRORS.description}</div>{/if}Package Description: {if $VIEWER.jinglepkg.name != ''}<input type=text name='description' value='{$VIEWER.jinglepkg.description}'>{else}Default Jingle Package for newly uploaded jingles{/if}</p>
 {if $VIEWER.access_sue == 1}
 <p>Package Enabled on Sue?:
 	{if $VIEWER.jinglepkg.enabled == 't'}

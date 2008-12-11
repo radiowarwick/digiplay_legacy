@@ -173,6 +173,11 @@ div.home_musicNav {
 div.home_musicNavTitle {
   height: 114px;
 }
+
+div.home_musicNavTitle a {
+  display:block; width:198px; height:114px;
+}
+
 div.home_musicNavDesc {
   height: 20px;
   color:  #ffffff;
@@ -187,6 +192,7 @@ div.home_musicNavDesc {
 
 div.home_musicNavDesc a {
   color:  #ffffff;
+  display:block; width:198px; height:20px;
 }
 
 div.home_showNav {
@@ -197,11 +203,17 @@ div.home_showNav {
 }
 div.home_showNavDesc a {
   color:  #ffffff;
+  display:block; width:198px; height:20px;
 }
 
 div.home_showNavTitle {
   height: 114px;
 }
+
+div.home_showNavTitle a {
+  display:block; width:198px; height:114px;
+}
+
 div.home_showNavDesc {
   height: 20px;
   color:  #ffffff;
@@ -221,16 +233,23 @@ div.home_sueNav {
 }
 div.home_sueNavDesc a {
   color:  #ffffff;
+  display:block; width:198px; height:20px;
 }
 
 
 div.homesueNavDesc a {
   color:  #ffffff;
+  display:block; width:198px; height:20px;
 }
 
 div.home_sueNavTitle {
   height: 114px;
 }
+
+div.home_sueNavTitle a {
+  display:block; width:198px; height:114px;
+}
+
 div.home_sueNavDesc {
   height: 20px;
   color:  #ffffff;
@@ -250,11 +269,17 @@ div.home_studioNav {
 }
 div.home_studioNavDesc a {
   color:  #ffffff;
+  display:block; width:198px; height:20px;
 }
 
 div.home_studioNavTitle {
   height: 114px;
 }
+
+div.home_studioNavTitle a {
+  display:block; width:198px; height:114px;
+}
+
 div.home_studioNavDesc {
   height: 20px;
   color:  #ffffff;

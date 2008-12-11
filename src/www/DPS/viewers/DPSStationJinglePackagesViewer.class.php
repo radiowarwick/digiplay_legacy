@@ -22,8 +22,8 @@ class DPSStationJinglePackagesViewer extends Viewer {
 
 		$this->assign('access_playlist',AuthUtil::getDetailedUserrealmAccess(
 			array(3,21,33), $userID));
-		$this->assign('jingle_admin',AuthUtil::getDetailedUserrealmAccess(
-			array(3,21,34), $userID));
+		$this->assign('access_sue',AuthUtil::getDetailedUserrealmAccess(
+			array(3,20,24), $userID));
 		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
 		$this->assign('jinglepkgs', $jinglepkgs);
 	}

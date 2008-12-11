@@ -16,18 +16,18 @@ class DPSStationEditJinglePkgViewer extends Viewer {
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
 
-		$jinglepkgid = pg_escape_string($this->fieldData['jinglepkg']);
+		$jinglepkgID = pg_escape_string($this->fieldData['jinglepkgID']);
 
-		$sql = "SELECT * FROM jinglepkgs WHERE id = $jinglepkgid";
+		$sql = "SELECT * FROM jinglepkgs WHERE id = $jinglepkgID";
 		$jinglepkg = $db->getRow($sql);
 
-		$sql = "SELECT audio.title, audio.id FROM audio INNER JOIN audiojinglepkgs ON audio.id = audiojinglepkgs.audioid WHERE audiojinglepkgs.jinglepkgid = $jinglepkgid";
+		$sql = "SELECT audio.title, audio.id FROM audio INNER JOIN audiojinglepkgs ON audio.id = audiojinglepkgs.audioid WHERE audiojinglepkgs.jinglepkgid = $jinglepkgID";
 		$jingles = $db->getAll($sql);
 
 		$this->assign('access_playlist',AuthUtil::getDetailedUserrealmAccess(
 			array(3,21,33), $userID));
 		$this->assign('access_sue',AuthUtil::getDetailedUserrealmAccess(
-			array(3,20,24), $userID));
+			array(24,20,3), $userID));
 		$this->assign('Admin',AuthUtil::getDetailedUserrealmAccess(array(1), $userID));
 		$this->assign('jinglepkg', $jinglepkg);
 		$this->assign('jingles', $jingles);

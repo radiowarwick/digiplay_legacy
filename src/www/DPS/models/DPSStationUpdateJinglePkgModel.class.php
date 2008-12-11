@@ -16,26 +16,45 @@ class DPSStationUpdateJinglePkgModel extends Model {
 	protected function processValid() {
 		global $cfg;
 		$db = Database::getInstance($cfg['DPS']['dsn']);
-	
-		$jinglepkgID = pg_escape_string($this->fieldData['jinglepkgID']);
-		if(is_numeric($jinglepkgID) && $jinglepkgID != "" && $jinglepkgID != "*") {
-			$pkgUpdates['name'] = $this->fieldData['name'];
-			$pkgUpdates['description'] = $this->fieldData['description'];
+		$auth = Auth::getInstance();
+		$userID = $auth->getUserID();
 
-			$auth = Auth::getInstance();
-			$userID = $auth->getUserID();
-			if(AuthUtil::getDetailedUserrealmAccess(array(24,20,3), $userID)) {
-				if($this->fieldData['enabled'] == "on") {
-					$pkgUpdates['enabled'] = 't';
-				} else {
-					$pkgUpdates['enabled'] = 'f';
+		if ($this->formName == "dpsStationUpdateJinglePkgForm") {
+
+			$jinglepkgID = pg_escape_string($this->fieldData['jinglepkgID']);
+			if(is_numeric($jinglepkgID) && $jinglepkgID != "" && $jinglepkgID != "*") {
+				$pkgUpdates['name'] = $this->fieldData['name'];
+				$pkgUpdates['description'] = $this->fieldData['description'];
+
+
+				if(AuthUtil::getDetailedUserrealmAccess(array(24,20,3), $userID)) {
+					if($this->fieldData['enabled'] == "on") {
+						$pkgUpdates['enabled'] = 't';
+					} else {
+						$pkgUpdates['enabled'] = 'f';
+					}
+				}
+			
+				$atWhere = "jinglepkgs.id = " . $jinglepkgID;
+				$db->update('jinglepkgs', $pkgUpdates, $atWhere, true);
+				
+			}
+
+		} elseif ($this->formName == "dpsStationRemJingleFromPkgForm") {
+
+			$jingleID = pg_escape_string($this->fieldData['jingleID']);
+			$jinglepkgID = pg_escape_string($this->fieldData['jinglepkgID']);
+			
+			if(AuthUtil::getDetailedUserrealmAccess(array(35,22,3), $userID)) {
+				$sql = "SELECT id FROM audiojinglepkgs WHERE audioid = $jingleID AND jinglepkgid = $jinglepkgID";
+				$rowID = $db->getOne($sql);
+				if ($rowID != 0) {
+					$Where = "id = $rowID";
+					$db->delete('audiojinglepkgs',$Where,true);
 				}
 			}
-			
-			$atWhere = "jinglepkgs.id = " . $jinglepkgID;
-			$db->update('jinglepkgs', $pkgUpdates, $atWhere, true);
-			
 		}
+		
 	}
 	
 	protected function processInvalid() {

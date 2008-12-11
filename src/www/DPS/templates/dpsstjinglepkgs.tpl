@@ -10,10 +10,10 @@
 				{if $jinglepkg.name == ''}unnamed{else}{$jinglepkg.name}{/if}
 			</th>
 			<td class="userTableOption" rowspan="2">
-				{templateLink id="72" _jinglepkg=$jinglepkg.id text="view"}
+				{templateLink id="72" _jinglepkgID=$jinglepkg.id text="view"}
 			</td>
 			<td class="userTableOption" rowspan="2">
-				{templateLink id="70" _jinglepkg=$jinglepkg.id text="edit"}
+				{templateLink id="70" _jinglepkgID=$jinglepkg.id text="edit"}
 			</td>
 			<td class="userTableDetail" rowspan="2">
 				{if $jinglepkg.enabled == 't'}

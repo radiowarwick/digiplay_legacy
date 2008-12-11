@@ -16,12 +16,12 @@ class DPSStationViewJinglePkgViewer extends Viewer {
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
 
-		$jinglepkgid = pg_escape_string($this->fieldData['jinglepkg']);
+		$jinglepkgID = pg_escape_string($this->fieldData['jinglepkgID']);
 
-		$sql = "SELECT * FROM jinglepkgs WHERE id = $jinglepkgid";
+		$sql = "SELECT * FROM jinglepkgs WHERE id = $jinglepkgID";
 		$jinglepkg = $db->getRow($sql);
 
-		$sql = "SELECT audio.title, audio.id FROM audio INNER JOIN audiojinglepkgs ON audio.id = audiojinglepkgs.audioid WHERE audiojinglepkgs.jinglepkgid = $jinglepkgid";
+		$sql = "SELECT audio.title, audio.id FROM audio INNER JOIN audiojinglepkgs ON audio.id = audiojinglepkgs.audioid WHERE audiojinglepkgs.jinglepkgid = $jinglepkgID";
 		$jingles = $db->getAll($sql);
 
 		$this->assign('access_playlist',AuthUtil::getDetailedUserrealmAccess(

@@ -8,7 +8,7 @@
 	<input type="hidden" name="jinglepkgID" value="{$VIEWER.jinglepkg.id}" />
 <p>{if $ERRORS.name}<div class='frame_musicboxerror'>{$ERRORS.name}</div>{/if}Package Name: <input type=text name='name' value='{$VIEWER.jinglepkg.name}'></p>
 <p>{if $ERRORS.desc}<div class='frame_musicboxerror'>{$ERRORS.description}</div>{/if}Package Description: <input type=text name='description' value='{$VIEWER.jinglepkg.description}'></p>
-{if $VIEWER.access.sue == 1}
+{if $VIEWER.access_sue == 1}
 <p>Package Enabled on Sue?:
 	{if $VIEWER.jinglepkg.enabled == 't'}
 		<input type="checkbox" name=enabled checked>
@@ -30,6 +30,9 @@
 			</th>
 			<td class="userTableOption">
 				{templateLink id=18 _trackID=$jingle.id text="Preview"}
+			</td>
+			<td class="userTableOption">
+				{templateLink id=$VIEWER.templateID text="Delete" _formName="dpsStationRemJingleFromPkgForm" _moduleName="DPS" _jingleID=$jingle.id _jinglepkgID=$VIEWER.jinglepkg.id}
 			</td>
 		</tr>
 	{/foreach}

@@ -35,6 +35,7 @@
 			<div class="frame_submenuitem">{templateLink id="23" text="Personal Audiowalls"}</div>
 			{if $studio == 't'}
 			<div class="frame_submenuitem">{templateLink id="27" text="Station Audiowalls"}</div>
+			<div class="frame_submenuitem">{templateLink id="69" text="Jingle Packages"}</div>
 			{/if}
 			{if $access_playlist == 't'}
 			<div class="frame_submenuitem">{templateLink id="39" text="Playlists"}</div>

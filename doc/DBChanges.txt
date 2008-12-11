@@ -36,3 +36,23 @@ insert into
 insert into
     forms (formname, modelclass, modulename, realmid)
     values ('dpsPlaylistManageAddForm', 'DPSPlaylistManageModel', 'DPS', 33);
+
+
+################ BREAK - 11/12/08 ############
+
+
+INSERT INTO
+  templates (templateid, filename, viewerclassname, realmid, modulename)
+  VALUES (69, 'dpsstjinglepkgs.tpl', 'DPSStationJinglePackagesViewer', 35, 'DPS');
+
+INSERT INTO
+  templates (templateid, filename, viewerclassname, realmid, modulename)
+  VALUES (70, 'dpsstjinglepkgedit.tpl', 'DPSStationEditJinglePkgViewer', 35, 'DPS');
+
+INSERT INTO
+    forms (formname, modelclass, modulename, realmid)
+    VALUES ('dpsStationUpdateJinglePkgForm', 'DPSStationUpdateJinglePkgModel', 'DPS', 35);
+
+INSERT INTO
+  templates (templateid, filename, viewerclassname, realmid, modulename)
+  VALUES (72, 'dpsstjinglepkgview.tpl', 'DPSStationViewJinglePkgViewer', 35, 'DPS');

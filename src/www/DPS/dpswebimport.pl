@@ -71,7 +71,7 @@ if ($sth->rows != 1) {
 	print "rowcount_failed";
 	exit;
 }
-my $inbox = $sth->fetchrow() . "inbox";
+my $inbox = $sth->fetchrow() . "/inbox";
 
 # Get the time imported and title for hashing
 #my $importtime = time();

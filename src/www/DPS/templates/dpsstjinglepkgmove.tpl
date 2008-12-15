@@ -6,6 +6,7 @@
 	<input type="hidden" name="moduleName" value="DPS" />
 	<input type="hidden" name="templateID" value="{$VIEWER.templateID}" />
 	<input type="hidden" name="jingleID" value="{$VIEWER.jingleID}" />
+	<input type="hidden" name="audioID" value="{$VIEWER.jingleID}" />
 	<p>Jingle Name: {$VIEWER.jinglename}</p>
 	<p>Current Package: {$VIEWER.currentpkg}</p>
 	<p>Move to Existing Package: <select name="jinglepkgID"><option value="{$VIEWER.currentpkgid}"></option>

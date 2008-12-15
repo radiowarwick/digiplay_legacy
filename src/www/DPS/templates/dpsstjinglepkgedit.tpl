@@ -31,8 +31,13 @@
 			<td class="userTableOption">
 				{templateLink id=18 _trackID=$jingle.id text="Preview"}
 			</td>
+			{if $VIEWER.jinglepkg.name != ''}
 			<td class="userTableOption">
 				{templateLink id=$VIEWER.templateID text="Remove from package" _formName="dpsStationRemJingleFromPkgForm" _moduleName="DPS" _jingleID=$jingle.id _jinglepkgID=$VIEWER.jinglepkg.id}
+			</td>
+			{/if}
+			<td class="userTableOption">
+				{templateLink id=73 text="Change package" _audioID=$jingle.id}
 			</td>
 		</tr>
 	{/foreach}

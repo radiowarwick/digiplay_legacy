@@ -60,3 +60,11 @@ INSERT INTO
 INSERT INTO
     forms (formname, modelclass, modulename, realmid)
     VALUES ('dpsStationRemJingleFromPkgForm', 'DPSStationUpdateJinglePkgModel', 'DPS', 35);
+
+INSERT INTO
+   templates (templateid, filename, viewerclassname, realmid, modulename)
+   VALUES (73, 'dpsstjinglepkgmove.tpl', 'DPSStationMoveJingleViewer', 35, 'DPS');
+
+INSERT INTO
+   forms (formname, modelclass, modulename, realmid)
+   VALUES ('dpsStationMoveJingleForm.tpl', 'DPSStationMoveJingleModel', 'DPS', 35);

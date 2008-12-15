@@ -21,7 +21,12 @@ class DPSStationEditJinglePkgViewer extends Viewer {
 		$sql = "SELECT * FROM jinglepkgs WHERE id = $jinglepkgID";
 		$jinglepkg = $db->getRow($sql);
 
-		$sql = "SELECT audio.title, audio.id FROM audio INNER JOIN audiojinglepkgs ON audio.id = audiojinglepkgs.audioid WHERE audiojinglepkgs.jinglepkgid = $jinglepkgID";
+		if ( count( $jinglepkg ) == 0) {
+                	$sql = "SELECT id FROM jinglepkgs WHERE name = ''";
+                	$jinglepkgID = $db->getOne($sql);
+		}
+
+		$sql = "SELECT audio.title, audio.id FROM audio INNER JOIN audiojinglepkgs ON audio.id = audiojinglepkgs.audioid WHERE audiojinglepkgs.jinglepkgid = $jinglepkgID ORDER BY audio.title";
 		$jingles = $db->getAll($sql);
 
 		$this->assign('access_playlist',AuthUtil::getDetailedUserrealmAccess(

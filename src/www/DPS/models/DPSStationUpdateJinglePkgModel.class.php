@@ -26,8 +26,9 @@ class DPSStationUpdateJinglePkgModel extends Model {
 				if($this->fieldData['name'] != ''){
 					$pkgUpdates['name'] = $this->fieldData['name'];
 				}
-				$pkgUpdates['description'] = $this->fieldData['description'];
-
+				if($this->fieldData['description'] != ''){
+					$pkgUpdates['description'] = $this->fieldData['description'];
+				}
 
 				if(AuthUtil::getDetailedUserrealmAccess(array(24,20,3), $userID)) {
 					if($this->fieldData['enabled'] == "on") {

@@ -23,7 +23,9 @@ class DPSStationUpdateJinglePkgModel extends Model {
 
 			$jinglepkgID = pg_escape_string($this->fieldData['jinglepkgID']);
 			if(is_numeric($jinglepkgID) && $jinglepkgID != "" && $jinglepkgID != "*") {
-				$pkgUpdates['name'] = $this->fieldData['name'];
+				if($this->fieldData['name'] != ''){
+					$pkgUpdates['name'] = $this->fieldData['name'];
+				}
 				$pkgUpdates['description'] = $this->fieldData['description'];
 
 
@@ -51,6 +53,24 @@ class DPSStationUpdateJinglePkgModel extends Model {
 				if ($rowID != 0) {
 					$Where = "id = $rowID";
 					$db->delete('audiojinglepkgs',$Where,true);
+				}
+				
+				$sql = "SELECT COUNT(*) from audiojinglepkgs WHERE jinglepkgid = $jinglepkgID";
+				$remainingjingles = $db->getOne($sql);
+				if ($remainingjingles == 0) {
+					$Where = "id = ". $jinglepkgID;
+					$db->delete('jinglepkgs',$Where,true);
+				}	
+
+				$sql = "SELECT COUNT(*) from audiojinglepkgs WHERE audioid = $jingleID";
+				$remainingpkgs = $db->getOne($sql);
+				if ($remainingpkgs == 0) {
+					$sql = "SELECT id FROM jinglepkgs WHERE name = ''";
+					$defaultid = $db->getOne($sql);
+					$newpkg['audioid'] = $jingleID;
+					$newpkg['jinglepkgid'] = $defaultid;
+					$newpkg['jingletypeid'] = 1;
+					$db->insert('audiojinglepkgs',$newpkg,true);
 				}
 			}
 		}

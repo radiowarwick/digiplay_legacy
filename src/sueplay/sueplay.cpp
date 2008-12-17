@@ -31,6 +31,7 @@
 #include <getopt.h>
 #include <signal.h>
 #include <fcntl.h>
+#include <time.h>
 using namespace std;
 
 #include "audio/Audio.h"
@@ -224,11 +225,12 @@ int main(int argc, char *argv []) {
 	fader[1]->patch(OUT0,mixer,IN1);
 	mixer->patch(OUT0,player,IN0);
 	
-	string md5, id, path, title, artist, ext;
+	string md5, id, path, title, artist, ext, nicetime;
 	long start = 0, end = 0, fade_in = 0, fade_out = 0;
 	long length_smpl = 0;
 	unsigned short active = 0, inactive = 1;
 	bool warn_flag = true;
+	time_t curtime;
 	
 	// Process schedule table until empty
 	while (true) {
@@ -331,7 +333,10 @@ int main(int argc, char *argv []) {
 			L_INFO(LOG_SUEPLAY, "Waiting for channel " + dps_itoa(inactive));
 			trig[inactive]->waitStop();
 			if (print_info) {
-				cout << "Now playing: " << artist << " - " << title << endl;
+				curtime = time(NULL);
+				nicetime = ctime(&curtime);
+				nicetime = nicetime.substr(4,12);
+				cout << nicetime << " | Now playing: " << artist << " - " << title << endl;
 			}
 			L_INFO(LOG_SUEPLAY, "Finished waiting");
 		}
@@ -339,7 +344,10 @@ int main(int argc, char *argv []) {
 			L_INFO(LOG_SUEPLAY, "Playing channel " + dps_itoa(active));
 			ch[active]->play();
 			if (print_info) {
-				cout << "Now playing: " << artist << " - " << title << endl;
+				curtime = time(NULL);
+				nicetime = ctime(&curtime);
+				nicetime = nicetime.substr(4,12);
+				cout << nicetime << " | Now playing: " << artist << " - " << title << endl;
 			}
 		}
 

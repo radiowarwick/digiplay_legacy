@@ -64,8 +64,10 @@ all: 		$(ALL)
 		$(MAKE) -C src/$@; \
 	else \
 		OUTPUT=`find . -name "Makefile.$@" -type f`; \
-		if [ ! "$${OUTPUT:-FAILED}" == "FAILED" ]; then \
+		if [ ! "$${OUTPUT:-NOTFOUND}" = "NOTFOUND" ]; then \
 			find . -name "Makefile.$@" -type f -execdir make -f {} \; ; \
+		else \
+			echo "No such target $@.";\
 		fi; \
 	fi;
 

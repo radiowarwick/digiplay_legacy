@@ -240,8 +240,6 @@ int main(int argc, char *argv []) {
 			// Query database for next track to play
             L_INFO(LOG_SUEPLAY, "Retrieving next track from database.");
 			R = DB->exec("SuePlay",SQL_Item);
-            id = R[0]["audioid"].c_str();
-            R = DB->exec("SuePlay",SQL_Detail + " AND v_audio.id=" + id);
              
 			// If no results, then schedule must have been depleated! Doh!
 			if (R.size() == 0) {
@@ -249,11 +247,14 @@ int main(int argc, char *argv []) {
 					warn_flag = false;
 					L_WARNING(LOG_SUEPLAY, "Schedule is depleated!");
 				}
+				warn_flag = true;
                 // Let's not batter the psql server while we poll for new tracks to play
                 sleep(1);
 				continue;
 			}
-			warn_flag = true;
+			
+			id = R[0]["audioid"].c_str();
+		        R = DB->exec("SuePlay",SQL_Detail + " AND v_audio.id=" + id);
 			
 			// Load the required data from database
 			id = R[0]["id"].c_str();

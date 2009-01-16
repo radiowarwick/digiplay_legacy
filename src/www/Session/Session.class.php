@@ -88,7 +88,7 @@ class Session {
 		if(!isset($_SERVER['HTTP_USER_AGENT']) || !isset($_SERVER['REMOTE_ADDR'])){
 			throw new LoggedException('The values $_SERVER[\'HTTP_USER_AGENT\'] and/or $_SERVER[\'REMOTE_ADDR\'] were not set', 0, self::module, 'error');
 		}
-		$this->useragent = $_SERVER['HTTP_USER_AGENT'];
+		$this->useragent = substr($_SERVER['HTTP_USER_AGENT'], 0, 128);
 		$this->ip = $_SERVER['REMOTE_ADDR'];
 		if(!$this->exists()){
 			$this->sessionIsNew = true;

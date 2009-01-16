@@ -16,7 +16,7 @@ class DPSUserSubFileViewer extends Viewer {
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
 		$dirID = substr($this->fieldData['id'],3);
-		$type = $this->fildData['treeUser'];
+		$type = $this->fieldData['treeUser'];
 
 		if (stristr($_SERVER["HTTP_ACCEPT"],"application/xhtml+xml") ) {
 			header("Content-type: application/xhtml+xml");

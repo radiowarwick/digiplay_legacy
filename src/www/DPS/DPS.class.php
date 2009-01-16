@@ -42,8 +42,10 @@ class DPS extends Module  {
 			userid = $userID 
 		ORDER BY name asc";
 		$dirs = $db->getAll($sql);
+        
 		foreach($dirs as $dir) {
 			if($dir != false) {
+                /*
 				$sql = "SELECT count(*) from v_tree 
 				WHERE
 					parent = " . $dir['id'] . " AND 
@@ -74,12 +76,15 @@ class DPS extends Module  {
 				$sql = $sql . ")";
 				$childCount = $db->getOne($sql);
 				if($childCount > 0) {
+                */
 					$list = $list . '<item text="' . htmlspecialchars($dir['name']) . 
 						'" id="dir' . $dir['id'] . '" im0="folderClosed.gif" child="1" >';
+                /*
 				} else {
 					$list = $list . '<item text="' . htmlspecialchars($dir['name']) . 
 						'" id="dir' . $dir['id'] . '" im0="folderClosed.gif" child="0" >';
 				}
+                */
 				$list = $list . '<userdata name="perm">' . $dir['permissions'] . '</userdata>';
 				$list = $list . '</item>';
 			}
@@ -248,6 +253,7 @@ class DPS extends Module  {
 		$dirs = $db->getAll($sql);
 		foreach($dirs as $dir) {
 			if($dir != false) {
+                /*
 				$sql = "SELECT count(*) from dir, dirgroups 
 				WHERE
 					dir.parent = " . $dir['id'] . " AND 
@@ -272,10 +278,13 @@ class DPS extends Module  {
 				$sql = $sql . ")";
 				$childCount = $db->getOne($sql);
 				if($childCount > 0) {
+                */
 					$list = $list . '<item text="' . htmlspecialchars($dir['name']) . '" id="dir' . $dir['id'] . '" im0="folderClosed.gif" child="1" >';
+                /*
 				} else {
 					$list = $list . '<item text="' . htmlspecialchars($dir['name']) . '" id="dir' . $dir['id'] . '" im0="folderClosed.gif" child="0" >';
 				}
+                */
 				$list = $list . '<userdata name="perm">' . $dir['permissions'] . '</userdata>';
 				$list = $list . '</item>';
 			}

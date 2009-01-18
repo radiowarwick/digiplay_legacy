@@ -16,8 +16,26 @@ class DPSUserDelTrackShowModel extends Model {
 	protected function processValid() {
 		global $cfg;
 		$db = Database::getInstance($cfg['DPS']['dsn']);
-		$where = "id = " . pg_escape_string($this->fieldData['itemID']);
+        $itemID = pg_escape_string($this->fieldData['itemID']);
+		$where = "id = $itemID";
 		$show['audioid'] = null;
+
+        //lookup item length
+        $items_sql = "SELECT * FROM showitems
+                      WHERE id = $itemID";
+        $item = $db->getRow($items_sql);
+        $item_length = $item['length'];
+        $script_id = $item['scriptid'];
+
+        if ($script_id == "")
+        {
+            $show['length'] = 0;
+        }
+        else
+        {
+            //no change
+        }
+
 		$db->update('showitems',$show,$where,true);
 	}
 	

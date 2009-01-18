@@ -21,6 +21,8 @@ class DPSUserTrackShowModel extends Model {
         $showiteminfo = $db->getRow($query);
 		$where = "id = " . pg_escape_string($this->fieldData['itemID']);
 		$show['audioid'] = pg_escape_string($this->fieldData['audioID']);
+
+
 		$query = "SELECT length_smpl FROM audio
                   WHERE id = ". $show['audioid'];
         $audioitemlength = ceil($db->getone($query)/44100);

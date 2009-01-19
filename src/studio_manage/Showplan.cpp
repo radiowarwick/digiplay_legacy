@@ -464,30 +464,36 @@ void Showplan::draw() {
     lstShowPlan->header()->hide();
     
     btnMoveTop = new QPushButton( grpFrame, "btnMoveTop" );
+    btnMoveTop->setAutoDefault( FALSE );
     btnMoveTop->setGeometry( QRect( 10, 600, 75, 60 ) );
     btnMoveTop->setEnabled( FALSE );
     btnMoveTop->setPixmap(QPixmap(path + "/images/movetop32.png"));
 
     btnMoveUp = new QPushButton( grpFrame, "btnMoveUp" );
+    btnMoveUp->setAutoDefault( FALSE );
     btnMoveUp->setGeometry( QRect( 85, 600, 75, 60 ) );
     btnMoveUp->setEnabled( FALSE );
     btnMoveUp->setPixmap(QPixmap(path + "/images/moveup32.png"));
 
     btnDelete = new QPushButton( grpFrame, "btnDelete" );
+    btnDelete->setAutoDefault( FALSE );
     btnDelete->setGeometry( QRect( 160, 600, 75, 60 ) );
     btnDelete->setEnabled( FALSE );
     btnDelete->setPixmap(QPixmap(path + "/images/delete48.png"));
     
     btnClear = new QPushButton( grpFrame, "btnClear" );
+    btnClear->setAutoDefault( FALSE );
     btnClear->setGeometry( QRect( 235, 600, 75, 60 ) );
     btnClear->setPixmap(QPixmap(path + "/images/clear32.png"));
 
     btnMoveBottom = new QPushButton( grpFrame, "btnMoveBottom" );
+    btnMoveBottom->setAutoDefault( FALSE );
     btnMoveBottom->setGeometry( QRect( 385, 600, 75, 60 ) );
     btnMoveBottom->setEnabled( FALSE );
     btnMoveBottom->setPixmap(QPixmap(path + "/images/movebottom32.png"));
 
     btnMoveDown = new QPushButton( grpFrame, "btnMoveDown" );
+    btnMoveDown->setAutoDefault( FALSE );
     btnMoveDown->setGeometry( QRect( 310, 600, 75, 60 ) );
     btnMoveDown->setEnabled( FALSE );
     btnMoveDown->setPixmap(QPixmap(path + "/images/movedown32.png"));

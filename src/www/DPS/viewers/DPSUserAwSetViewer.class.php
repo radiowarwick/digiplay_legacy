@@ -38,7 +38,9 @@ class DPSUserAwSetViewer extends Viewer {
 			$sawset = "None";
 		}
 		
-		$sql = "SELECT * from v_tree_aw_sets 
+		$sql = "SELECT v_tree_aw_sets.*, aw_sets_users.user_id AS userid
+                FROM v_tree_aw_sets LEFT OUTER JOIN aw_sets_users
+                ON aw_sets_users.set_id = v_tree_aw_sets.id
 			WHERE v_tree_aw_sets.userid = $userID 
 				AND v_tree_aw_sets.permissions & B'" . $cfg['DPS']['fileR'] .
 					"' = '" . $cfg['DPS']['fileR'] . "'";
@@ -55,6 +57,7 @@ class DPSUserAwSetViewer extends Viewer {
 				WHERE v_tree_dir.id = {$awset['parent']}
 					AND v_tree_dir.userid = $userID";
 			$awset['parentperm'] = $db->getOne($sql);
+            $awset['userid'] = AuthUtil::getUsername($awset['userid']);
 		}
 
 		$this->assign('access_playlist',AuthUtil::getDetailedUserrealmAccess(

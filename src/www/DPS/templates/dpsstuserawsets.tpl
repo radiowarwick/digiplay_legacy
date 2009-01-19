@@ -8,6 +8,7 @@
 			<th class="stationTableName">
 				{$VIEWER.stationawset.name}
 			</th>
+            <td class="stationTableOption"></td>
 			<td class="stationTableOption">
 				{templateLink id="26" _awset=$VIEWER.stationawset.id text="view"}
 			</td>
@@ -16,7 +17,7 @@
 			<td class="stationTableOption">
 			</td>
 			<td class="stationTableDetail">
-	<div class="userdefaultawset">preloaded</div>
+	            <div class="userdefaultawset">preloaded</div>
 			</td>
 		</tr>
 	{else}
@@ -31,6 +32,7 @@
 			<th class="userTableName">
 				{$awset.name}
 			</th>
+            <td class="userTableAuthor">({$awset.userid})</td>
 			<td class="userTableOption">
 				{if $awset.permissions.0 == '1'}
 				{templateLink id="26" _awset=$awset.id text="view"}

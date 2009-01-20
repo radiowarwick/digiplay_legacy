@@ -70,14 +70,13 @@ class DPSUserUpdateAwWallModel extends Model {
 					WHERE aw_items.wall_id = aw_walls.id
 					AND aw_walls.set_id = " . $awsetID;
 				$awitemcount = $db->getOne($sql);
-				$sql = "SELECT count(*) FROM (SELECT aw_items.audio_id 
+				$sql = "SELECT count(DISTINCT aw_items.audio_id) 
 					FROM aw_items, aw_walls, v_tree_audio
 					WHERE aw_walls.set_id = $awsetID
 						AND aw_items.wall_id = aw_walls.id
 						AND aw_items.audio_id = v_tree_audio.id
 						AND v_tree_audio.permissions & B'" . $cfg['DPS']['fileR'] . "'
-					 = '" . $cfg['DPS']['fileR'] . "'
-					GROUP BY aw_items.audio_id) as Q1";
+					 = '" . $cfg['DPS']['fileR'] . "';";
 					
 				$permCount = $db->getOne($sql);
 				if($permCount >= $awitemcount) {

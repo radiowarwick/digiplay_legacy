@@ -68,7 +68,7 @@ std::vector<std::map<std::string,std::string> > DpsEmail::getEmails() {
 			e["body"] = R[I-i]["body"].c_str();
 			e["id"] = R[I-i]["id"].c_str();
 
-            std::string flag = R[i]["new_flag"].c_str();
+            std::string flag = R[I-i]["new_flag"].c_str();
 			if ( !flag.compare("t") )
 				e["new"] = "t";
 			else

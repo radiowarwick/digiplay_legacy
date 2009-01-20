@@ -66,7 +66,7 @@ class DPSUserUpdateAwWallModel extends Model {
 					AND group_id = " . $cfg['DPS']['allusersgroupid'];
 				$db->delete('aw_sets_groups',$where,true);
 				
-				$sql = "SELECT COUNT(*) FROM aw_items, aw_walls 
+				/*$sql = "SELECT COUNT(*) FROM aw_items, aw_walls 
 					WHERE aw_items.wall_id = aw_walls.id
 					AND aw_walls.set_id = " . $awsetID;
 				$awitemcount = $db->getOne($sql);
@@ -79,7 +79,7 @@ class DPSUserUpdateAwWallModel extends Model {
 					 = '" . $cfg['DPS']['fileR'] . "';";
 					
 				$permCount = $db->getOne($sql);
-				if($permCount >= $awitemcount) {
+				if($permCount >= $awitemcount) {*/
 					if($this->fieldData['readAll'] == "on"
 						&& $this->fieldData['writeAll'] == "on") {
 						$perm = array();
@@ -100,10 +100,10 @@ class DPSUserUpdateAwWallModel extends Model {
 						$perm['permissions'] = $cfg['DPS']['fileR'];
 						$db->insert('aw_sets_groups',$perm,false);
 					}
-				} else {
+				/*} else {
 					$this->errors['model'] =
 						"All audio elements in this audiowall set must be public";
-				}
+				}*/
 			}
 		}
 	}

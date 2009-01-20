@@ -16,7 +16,9 @@ class DPSStationAwSetViewer extends Viewer {
 		$auth = Auth::getInstance();
 		$userID = $auth->getUserID();
 		$loc = 1;
-		$sql = "SELECT * from v_tree_aw_sets 
+		$sql = "SELECT v_tree_aw_sets.*, aw_sets_users.user_id AS userid
+                from v_tree_aw_sets LEFT OUTER JOIN aw_sets_users
+                ON aw_sets_users.set_id = v_tree_aw_sets.id
 			WHERE v_tree_aw_sets.userid = " . $cfg['DPS']['systemUserID'] . " 
 				AND v_tree_aw_sets.permissions & B'" . $cfg['DPS']['fileR'] .
 					"' = '" . $cfg['DPS']['fileR'] . "'";
@@ -39,7 +41,8 @@ class DPSStationAwSetViewer extends Viewer {
 				WHERE v_tree_dir.id = {$awset['parent']}
 					AND v_tree_dir.userid = {$cfg['DPS']['systemUserID']}";
 			$awset['parentperm'] = $db->getOne($sql);
-		}
+		    $awset['userid'] = AuthUtil::getUsername($awset['userid']);
+        }
 
 		$this->assign('access_playlist',AuthUtil::getDetailedUserrealmAccess(
 			array(3,21,33), $userID));

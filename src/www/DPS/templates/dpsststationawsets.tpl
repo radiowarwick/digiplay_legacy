@@ -9,6 +9,7 @@
 			<th class="userTableName">
 				{$awset.name}
 			</th>
+            <td class="userTableAuthor">({$awset.userid})</td>
 			<td class="userTableOption">
 				{templateLink id="30" _awset=$awset.id text="view"}
 			</td>

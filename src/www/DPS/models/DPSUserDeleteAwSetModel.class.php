@@ -23,7 +23,6 @@ class DPSUserDeleteAwSetModel extends Model {
 		if($awsetID != '' && is_numeric($awsetID)) {
 			$where = "id = " . $awsetID;
 			$db->delete('aw_sets',$where,true);
-            print $where;
 		}
 	}
 	

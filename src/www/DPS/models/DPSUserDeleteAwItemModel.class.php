@@ -19,7 +19,7 @@ class DPSUserDeleteAwItemModel extends Model {
 		$awitemID = pg_escape_string($this->fieldData['awitemID']);
 		if($awitemID != '' && is_numeric($awitemID)) {
 			$atWhere = "id = " . $awitemID;
-			$db->delete('awitems', $atWhere, true);
+			$db->delete('aw_items', $atWhere, true);
 		}
 	}
 		

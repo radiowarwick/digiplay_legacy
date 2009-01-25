@@ -27,6 +27,7 @@
 #define CLASS_TAB_PANEL_PLAYLIST
 
 #include "TabPanel.h"
+#include "dps/Dps.h"
 
 class QTabWidget;
 class QPixmap;
@@ -52,7 +53,7 @@ class TabPanelPlaylist : public TabPanel {
 
     signals:
         /// Emitted when a playlist item is selected.
-        void itemSelected( QString md5 );
+        void audioSelected( const DpsAudioItem& pSrc );
 
 	private slots:
         /// Refreshes the contents of the playlist.

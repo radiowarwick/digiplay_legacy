@@ -27,7 +27,7 @@
 #include <qapplication.h>
 #include <qmessagebox.h>
 
-#include "DpsObject.h"
+#include "dps/DpsObject.h"
 #include "Logger.h"
 #include "UserConfig.h"
 #include "TabPanelInfo.h"
@@ -161,29 +161,25 @@ void frmStudioManage::init() {
     sp->configure(authModule);
 	cout << "success." << endl;
 
-    connect ( tabPanelSearch, SIGNAL( itemSelected( QString ) ),
-                sp, SLOT( addTrack( QString ) ) );
-    connect ( tabPanelPlaylist, SIGNAL( itemSelected( QString ) ),
-                sp, SLOT( addTrack( QString ) ) );
+    connect ( tabPanelSearch, SIGNAL( audioSelected( const DpsAudioItem& ) ),
+                sp, SLOT( append( const DpsAudioItem& ) ) );
+    connect ( tabPanelPlaylist, SIGNAL( audioSelected( const DpsAudioItem& ) ),
+                sp, SLOT( append( const DpsAudioItem& ) ) );
 
-    connect ( tabPanelFileBrowser, SIGNAL( trackSelected( QString ) ),
-                sp, SLOT( addTrack( QString ) ) );
-    connect ( tabPanelFileBrowser, SIGNAL( jingleSelected( QString ) ),
-                sp, SLOT( addJingle( QString ) ) );
-    connect ( tabPanelFileBrowser, SIGNAL( advertSelected( QString ) ),
-                sp, SLOT( addAdvert( QString ) ) );
-    connect ( tabPanelFileBrowser, SIGNAL( scriptSelected( DpsShowScript& ) ),
-                sp, SLOT( addScript( DpsShowScript& ) ) );
-    connect ( tabPanelFileBrowser, SIGNAL( showplanSelected( DpsShowplan& ) ),
-                sp, SLOT( loadShowplan( DpsShowplan& ) ) );
+    connect ( tabPanelFileBrowser, SIGNAL( audioSelected( const DpsAudioItem& ) ),
+                sp, SLOT( append( const DpsAudioItem& ) ) );
+    connect ( tabPanelFileBrowser, SIGNAL( scriptSelected( const DpsScriptItem& ) ),
+                sp, SLOT( append( const DpsScriptItem& ) ) );
+    connect ( tabPanelFileBrowser, SIGNAL( showplanSelected( const DpsShowPlan& ) ),
+                sp, SLOT( load( const DpsShowPlan& ) ) );
     connect ( tabPanelFileBrowser, SIGNAL( awsetSelected( QString ) ),
                 this, SLOT( updateAwSet( QString ) ) );
-    connect ( sp, SIGNAL( scriptSelected( int ) ),
-                tabPanelScript, SLOT( loadScript( int ) ) );
-    connect ( sp, SIGNAL( scriptDeselected() ),
-                tabPanelScript, SLOT( clearScript() ) );
-    connect ( tabPanelScript, SIGNAL( scriptDone() ),
-                sp, SLOT( scriptDone() ) );
+//    connect ( sp, SIGNAL( scriptSelected( int ) ),
+//                tabPanelScript, SLOT( loadScript( int ) ) );
+//    connect ( sp, SIGNAL( scriptDeselected() ),
+//                tabPanelScript, SLOT( clearScript() ) );
+//    connect ( tabPanelScript, SIGNAL( scriptDone() ),
+//                sp, SLOT( scriptDone() ) );
 
 	cout << "Interface initialisation complete." << endl;
     cout << "Setting initial configuration values..." << flush;
@@ -302,7 +298,7 @@ void frmStudioManage::btnLoginClicked()
 		if ( dlg->exec() == QDialog::Accepted ){
 		    authModule->closeSession();
             conf->setParam("user_aw_set","0");
-            sp->clear(false);
+            sp->clear();
             tabManage->setCurrentPage(0);
 		    btnLogin->setText("Log In");
 		}

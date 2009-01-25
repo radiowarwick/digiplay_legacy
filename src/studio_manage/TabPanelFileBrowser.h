@@ -26,7 +26,7 @@
 #define CLASS_TAB_PANEL_FILEBROWSER
 
 #include "TabPanel.h"
-#include "DpsObject.h"
+#include "dps/Dps.h"
 
 class QTabWidget;
 class QListViewItem;
@@ -50,18 +50,14 @@ class TabPanelFileBrowser : public TabPanel {
         void configure(Auth *authModule);
 
     signals:
-    	/// Emitted when a track is selected from the browser.
-        void trackSelected( QString md5 );
-        /// Emitted when a jingle is selected from the browser.
-        void jingleSelected( QString md5 );
-        /// Emitted when an advert is selected from the browser.
-        void advertSelected( QString md5 );
+    	/// Emitted when an audio item is selected
+    	void audioSelected( const DpsAudioItem& pAudio );
         /// Emitted when a script is selected from the browser.
-        void scriptSelected( DpsShowScript& S );
+        void scriptSelected( const DpsScriptItem& pScript );
         /// Emitted when a audiowall set is selected from the browser.
         void awsetSelected( QString index );
         /// Emitted when a showplan is selected from the browser.
-        void showplanSelected( DpsShowplan& s );
+        void showplanSelected( const DpsShowPlan& s );
 
     protected slots:
     	/// Handle load events from the FileBrowser object and emit signals.

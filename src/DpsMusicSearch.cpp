@@ -29,18 +29,16 @@
 
 #include "DataAccess.h"
 #include "DpsMusicSearch.h"
-#include "DpsObject.h"
+#include "dps/Dps.h"
 #include "Logger.h"
 
 DpsMusicSearch::DpsMusicSearch() {
     // Create a configuration object
     conf = new Config("digiplay");
-	Q = new std::vector<DpsShowTrack>;
 }
 
 DpsMusicSearch::~DpsMusicSearch() {
     delete conf;
-	delete Q;
 }
 
 /** 
@@ -50,7 +48,7 @@ DpsMusicSearch::~DpsMusicSearch() {
  * word 'The' is going to return a whole lot of results.  Might want
  * to return results incrementally as the search progresses.
  */
-std::vector<DpsShowTrack> DpsMusicSearch::query(std::string search_string) {
+std::vector<DpsAudioItem> DpsMusicSearch::query(std::string search_string) {
 	const char* routine = "DpsMusicSearch::query";
 	strQueryString = search_string;
 
@@ -210,12 +208,12 @@ std::vector<DpsShowTrack> DpsMusicSearch::query(std::string search_string) {
         throw;
     }
 
-	Q->clear();
+	Q.clear();
 
-    for (unsigned int i = 0; i < R.size(); i++)
-	    Q->push_back(DpsShowTrack(R[i]["id"].c_str()));
-
-	return *Q;
+    for (unsigned int i = 0; i < R.size(); i++) {
+	    Q.push_back(DpsAudioItem(atoi(R[i]["id"].c_str())));
+    }
+	return Q;
 }
 }
 

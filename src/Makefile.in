@@ -1,6 +1,6 @@
 # Default command tools
-CC			=	g++
-LD			=	g++
+CC			=	g++ -g
+LD			=	g++ -g
 MOC			?=	@/usr/share/qt3/bin/moc
 UIC			?=	@/usr/share/qt3/bin/uic
 
@@ -16,19 +16,22 @@ APP_OBJ		=	$(addsuffix .o,$(MODS))
 APP_QTOBJS	=	$(addsuffix .o,$(QT_MODS))
 SHARED_OBJS	=	$(addsuffix .o,$(SHARED_MODS))
 SHARED_QTOBJS = $(addsuffix .o,$(SHARED_QT_MODS))
+DPS_OBJ		=	$(addsuffix .o,$(DPS_MODS))
 
 OBJS        =   $(APP_OBJ) $(APP_QTOBJS) \
 				$(addprefix $(ROOT)/src/,$(SHARED_OBJS)) \
-				$(addprefix $(ROOT)/src/,$(SHARED_QTOBJS))
+				$(addprefix $(ROOT)/src/,$(SHARED_QTOBJS)) \
+				$(addprefix $(ROOT)/src/dps/,$(DPS_OBJ))
 HDRS		:=	$(addsuffix .h,$(MODS)) \
 				$(addsuffix .h,$(QT_MODS)) \
-				$(addprefix $(ROOT)/src/,$(addsuffix .h,$(SHARED_MODS)))
+				$(addprefix $(ROOT)/src/,$(addsuffix .h,$(SHARED_MODS)))\
+				$(addprefix $(ROOT)/src/dps,$(addsuffix .h,$(DPS_MODS)))
 QT_OBJS		=
 QT_HDRS		=
 
 # Define compiler and linker flags depending on whether we're
 # compiling a standard executable or a shared library
-CCINC		:=	-I$(ROOT)/src -I$(ROOT)/components -I/usr/include/postgresql -DDEBUG=4
+CCINC		:=	-I$(ROOT)/src -DDEBUG=4
 CCFLAGS		:=	$(DPSFLAGS) -Wall -O3 -D_THREAD_SAFE \
 				-D'VERSION="$(VERSION)"' -D'DPSDIR="$(DPSDIR)"'
 LDFLAGS		:=	-L$(ROOT)/src/audio -o $(DEST)/$(OUTPUT) 

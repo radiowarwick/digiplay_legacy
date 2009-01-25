@@ -41,7 +41,7 @@
 
 #include "Auth.h"
 #include "Logger.h"
-#include "DpsObject.h"
+#include "dps/DpsObject.h"
 
 #include "TabPanelSearch.h"
 
@@ -156,6 +156,7 @@ void TabPanelSearch::threadExecute() {
     try
     {
 	    SearchResults = library_engine->query(txtLibrarySearchText->text());
+	    cout << "Done retreiving results" << endl;
     	// Display results
 
     }
@@ -180,6 +181,7 @@ void TabPanelSearch::threadExecute() {
 }    
 
 void TabPanelSearch::processResults() {
+	cout << "Begin processing results" << endl;
 	// Lock GUI while updating
 	qApp->lock();
 
@@ -207,19 +209,22 @@ void TabPanelSearch::processResults() {
 	
     lstSearchResults->setEnabled(true);
 	QListViewItem *x;
+	cout << SearchResults.size() << endl;
 	for (unsigned int i = 0; i < SearchResults.size(); i++) {
+		cout << "New result" << endl;
 		x = new QListViewItem(  lstSearchResults, lstSearchResults->lastItem(),
-			SearchResults.at(i)["title"],
-			SearchResults.at(i)["artist"],
-			SearchResults.at(i)["album"],
-			dps_itoa(SearchResults.at(i).getId()) 
+			SearchResults[i]["title"],
+			SearchResults[i]["artist"],
+			SearchResults[i]["album"],
+			SearchResults[i]["id"] 
                          );
-		if (SearchResults.at(i)["censor"] == "t") {
+// TODO: Views currently missing censor column
+/*		if (SearchResults[i]["censor"] == "t") {
 			x->setPixmap(0,*pixCensored);
 		} else {
 			x->setPixmap(0,*pixAudio);
 		}
-	}
+*/	}
 
 	btnLibrarySearch->setEnabled(true);
 	txtLibrarySearchText->setEnabled(true);
@@ -240,7 +245,8 @@ void TabPanelSearch::processResults() {
  */
 void TabPanelSearch::playlistAdd(QListViewItem* x) {
 	if (x) {
-        emit itemSelected( x->text(3) );
+		DpsAudioItem vAudio(atoi(x->text(3).ascii()));
+        emit audioSelected( vAudio );
 	}
 }
 

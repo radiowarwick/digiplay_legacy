@@ -60,7 +60,7 @@ class TabPanelSearch : 	public TabPanel,
 		
 	signals:
         /// Emitted when an item is selected from the search results.
-        void itemSelected( QString );
+        void audioSelected( const DpsAudioItem& );
 
 	private slots:
         /// Searches the library.
@@ -79,7 +79,7 @@ class TabPanelSearch : 	public TabPanel,
 	
 		bool searching;
 		Config *conf;
-		vector<DpsShowTrack> SearchResults;
+		vector<DpsAudioItem> SearchResults;
 		DpsMusicSearch* library_engine;
 		QPushButton *btnLibrarySearch;
 		QListView *lstSearchResults;

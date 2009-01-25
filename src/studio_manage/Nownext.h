@@ -33,7 +33,7 @@ using namespace std;
 #include <qmutex.h>
 
 #include "Thread.h"
-#include "DpsObject.h"
+#include "dps/DpsObject.h"
 #include "MessagingInterface.h"
 #include "DataAccess.h"
 #include "Config.h"

@@ -21,11 +21,12 @@ QT_MODS		=	frmStudioManage dlgLogin dlgWarn\
 				TabPanel TabPanelInfo TabPanelEmail\
 				TabPanelSearch TabPanelPlaylist TabPanelLogging\
 				TabPanelScript TabPanelFileBrowser\
-				FileBrowser Showplan Nownext
+				FileBrowser Showplan ShowPlanItem Nownext
 SHARED_MODS	=	Config DpsEmail dps clockThread \
-				Auth AuthLdap AuthPsql Logger UserConfig DpsObject \
+				Auth AuthLdap AuthPsql Logger UserConfig \
 				DataAccess Security Thread DbTrigger MessagingInterface \
 				DpsMusicSearch
+DPS_MODS	=	DpsObject DpsHash DpsTime DpsDate DpsUser DpsGroup DpsAudioItem DpsScriptItem DpsShowItem DpsShowPlan
 SHARED_QT_MODS = QtTrigger
 
 # Global header files on which dependance exists

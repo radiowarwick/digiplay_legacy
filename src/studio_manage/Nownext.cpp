@@ -28,7 +28,7 @@
 #include <qstring.h>
 #include <qpixmap.h>
 
-#include "DpsObject.h"
+#include "dps/DpsObject.h"
 #include "dps.h"
 #include "Logger.h"
 #include "Auth.h"

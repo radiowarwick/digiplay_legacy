@@ -234,7 +234,8 @@ int main(int argc, char *argv []) {
 	
 	// Process schedule table until empty
 	while (true) {
-		L_INFO(LOG_SUEPLAY, "BEGIN LOOP");
+		L_INFO(LOG_SUEPLAY, "Beginning loading next track");
+
 		// Keep trying until successfully loaded a file that exists!
 		do {
 			// Query database for next track to play
@@ -243,18 +244,22 @@ int main(int argc, char *argv []) {
              
 			// If no results, then schedule must have been depleated! Doh!
 			if (R.size() == 0) {
+                // Only warn once, then disable the warning
 				if (warn_flag) {
 					warn_flag = false;
 					L_WARNING(LOG_SUEPLAY, "Schedule is depleated!");
 				}
-				warn_flag = true;
+
                 // Let's not batter the psql server while we poll for new tracks to play
                 sleep(1);
 				continue;
 			}
+            // Reset warn flag so we are warned again when the schedule is
+            // next depleted.
+			warn_flag = true;
 			
 			id = R[0]["audioid"].c_str();
-		        R = DB->exec("SuePlay",SQL_Detail + " AND v_audio.id=" + id);
+		    R = DB->exec("SuePlay",SQL_Detail + " AND v_audio.id=" + id);
 			
 			// Load the required data from database
 			id = R[0]["id"].c_str();

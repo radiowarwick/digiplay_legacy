@@ -45,10 +45,6 @@
 
 #include "Showplan.h"
 
-/* =======================================================================
- * Showplan
- * =======================================================================
- */
 Showplan::Showplan(QWidget *parent, const char* name) 
         : QWidget(parent, name),
           mActive		(0),

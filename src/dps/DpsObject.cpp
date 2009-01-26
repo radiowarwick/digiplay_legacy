@@ -1,15 +1,15 @@
 /*
- * DPS Objects
- * DpsObject.cpp
- * The hierarchy of DPS objects based on the DpsObject base class
+ * DPS Object
+ * DpsObject.h
+ * Base class for all DPS objects
  *
- * Copyright (c) 2006 Chris Cantwell
+ * Copyright (c) 2006-2009 Chris Cantwell
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -30,10 +30,6 @@ using namespace std;
 
 #include "DpsObject.h"
 
-/* =======================================================================
- * DpsObject
- * =======================================================================
- */
 DataAccess* DpsObject::mDB = 0;
 
 DpsObject::DpsObject() 

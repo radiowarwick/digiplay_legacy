@@ -253,15 +253,18 @@ void DpsShowPlan::load(unsigned int pId) {
 		// Load items
 		SQL = "SELECT id FROM showitems WHERE showplanid=" + itoa(pId);
 		R = mDB->exec("DpsShowPlanLoad",SQL);
+	    mDB->abort("DpsShowPlanLoad");
 	    for (unsigned int i = 0; i < R.size(); i++) {
+	    	cout << "Create item " << i << endl;
 	    	mItems.push_back(DpsShowItem(atoi(R[i]["id"].c_str())));
 	    }
-	    mDB->abort("DpsShowPlanLoad");
+	    cout << "Done created items" << endl;
 	}
 	catch (...) {
 		cout << "Error occured loading showplan." << endl;
 		throw -1;
 	}
+	cout << "Done load" << endl;
 	showplanUpdated();
 }
 

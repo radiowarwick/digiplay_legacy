@@ -203,7 +203,8 @@ void ShowPlanItem::setup() {
 							- wPix);
 		lblScriptLength = new QSimpleRichText( txtScriptLength, detailFont);
 		lblScriptLength->setWidth( TIME_WIDTH );
-		lblScriptLength->setWidth( QMIN(TIME_WIDTH, lblScriptLength->widthUsed()));
+		lblScriptLength->setWidth( QMIN(TIME_WIDTH, 
+												lblScriptLength->widthUsed()));
 	}
 	
     mWidthUsed = lv->width();
@@ -213,11 +214,12 @@ void ShowPlanItem::setup() {
     totalHeightText = lblTitle->height() + lblComment->height();
     totalHeightLength = lblLength->height() + lblTime->height();
     if (hasAudio()) {
-    	totalHeightText += lblAudioTitle->height() + lblAudioArtist->height();
+    	totalHeightText += QMAX(hPix, 
+    					lblAudioTitle->height() + lblAudioArtist->height());
     	totalHeightLength += lblAudioLength->height();
     }
     if (hasScript()) {
-    	totalHeightText += lblScriptTitle->height();
+    	totalHeightText += QMAX(hPix, lblScriptTitle->height());
     	totalHeightLength += lblScriptLength->height();
     }
     if ( mIsExpanded ) {
@@ -331,10 +333,14 @@ void ShowPlanItem::paintCell(QPainter *p, const QColorGroup &cg, int column,
 		QRect recAudioLength( lv->columnWidth(0) - 15 - wLength - r, top,
 					wLength,
 					lblAudioLength->height());
-    	top += lblAudioTitle->height();
-		QRect recAudioArtist( r + ITEM_INDENT + 2*wPix, top,
+		QRect recAudioArtist( r + ITEM_INDENT + 2*wPix, 
+					top + lblAudioTitle->height(),
 					lv->columnWidth(0) - 2*r - wLength - ITEM_INDENT - wPix,
 					lblAudioArtist->height());
+		
+		top += QMAX(pxAudio->height(), 
+					lblAudioTitle->height() + lblAudioArtist->height());
+		
 		lblAudioTitle->draw(p, recAudioTitle.left(), recAudioTitle.top(),
 							recAudioTitle, cg, backBrush);
 		lblAudioArtist->draw(p, recAudioArtist.left(), recAudioArtist.top(),
@@ -342,6 +348,22 @@ void ShowPlanItem::paintCell(QPainter *p, const QColorGroup &cg, int column,
 		lblAudioLength->draw(p, recAudioLength.left(), recAudioLength.top(),
 							recAudioLength, cg, backBrush);
 		clip = clip - recAudioTitle - recAudioLength - recAudioArtist;
+    }
+    if (mIsExpanded && hasScript()) {
+    	QRect recScriptTitle( r + ITEM_INDENT + 2*wPix, top,
+    				lv->columnWidth(0) - 2*r - wLength - ITEM_INDENT - wPix,
+    				lblScriptTitle->height());
+    	QRect recScriptLength( lv->columnWidth(0) - 15 - wLength - r, top,
+    				wLength,
+    				lblScriptLength->height());
+    				
+    	top += QMAX(pxScript->height(), lblScriptTitle->height());
+    	
+    	lblScriptTitle->draw(p, recScriptTitle.left(), recScriptTitle.top(),
+    						recScriptTitle, cg, backBrush);
+    	lblScriptLength->draw(p, recScriptLength.left(), recScriptLength.top(),
+    						recScriptLength, cg, backBrush);
+    	clip = clip - recScriptTitle - recScriptLength;
     }
     p->setClipRegion(clip, QPainter::CoordPainter);
     p->fillRect(0,0,width, height(), *backBrush);

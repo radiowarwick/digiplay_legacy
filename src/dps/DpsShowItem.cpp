@@ -253,7 +253,8 @@ void DpsShowItem::loadItem(const unsigned int pId) {
 	PqxxResult R;
 	try {
 		SQL = "SELECT * FROM showitems WHERE id=" + itoa(pId);
-		R = mDB->exec("DpsShowPlanLoad", SQL);
+		R = mDB->exec("DpsShowItemLoad", SQL);
+		mDB->abort("DpsShowItemLoad");
 		if (R.size() != 1) {
 			throw -1;
 		}

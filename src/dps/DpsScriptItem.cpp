@@ -20,6 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include <iostream>
 using namespace std;
 
 #include "DpsScriptItem.h"
@@ -29,11 +30,30 @@ DpsScriptItem::DpsScriptItem() {
 }
 
 DpsScriptItem::DpsScriptItem(unsigned int pId) {
-	
+	string SQL;
+	try {
+		SQL = "SELECT * FROM v_scripts WHERE id=" + itoa(pId);
+		PqxxResult R = mDB->exec("DpsLoadScriptItem", SQL);
+		mDB->abort("DpsLoadScriptItem");
+		if (R.size() != 1) {
+			cout << "Multiple items returned!" << endl;
+			throw -1;
+		}
+		mTitle = string(R[0]["name"].c_str());
+		mContent = string(R[0]["contents"].c_str());
+		mLength = DpsTime(atoi(R[0]["length"].c_str()), DpsTime::Samples);
+	}
+	catch (...) {
+		cout << "Error retrieving data for audioitem" << endl;
+		throw -1;
+	}
 }
 
-DpsScriptItem::DpsScriptItem(const DpsScriptItem& pSrc) {
-	
+DpsScriptItem::DpsScriptItem(const DpsScriptItem& pSrc) 
+		: mTitle		(pSrc.mTitle),
+		  mContent		(pSrc.mContent),
+		  mLength		(pSrc.mLength) {
+
 }
 
 DpsScriptItem::~DpsScriptItem() {

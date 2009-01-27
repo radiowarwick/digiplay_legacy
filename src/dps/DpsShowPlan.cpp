@@ -244,13 +244,12 @@ void DpsShowPlan::load(unsigned int pId) {
 			throw -1;
 		}
 		mId = pId;
-		mName = R[0]["title"].c_str();
+		mName = R[0]["name"].c_str();
 		mOwner = DpsUser(atoi(R[0]["userid"].c_str()));
 		mCreationDate = DpsDate(atoi(R[0]["creationdate"].c_str()));
 		mShowDate = DpsDate(atoi(R[0]["showdate"].c_str()));
 		mCompleted = (string(R[0]["completed"].c_str()) == "t");
 		mStored = true;
-				
 		// Load items
 		SQL = "SELECT id FROM showitems WHERE showplanid=" + itoa(pId);
 		R = mDB->exec("DpsShowPlanLoad",SQL);

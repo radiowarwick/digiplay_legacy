@@ -20,66 +20,96 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#include <iostream>
 #include <string>
 #include <map>
 using namespace std;
 
 #include "DpsAudioItem.h"
 
+/**
+ * Constructor.
+ * Creates a new audio item containing no data and unassocated with an entry
+ * in the database.
+ */
 DpsAudioItem::DpsAudioItem() {
 	
 }
 
+
+/**
+ * Constructor.
+ * Retrieves an audio item from the database with a given ID.
+ * @param	pId			ID of the audio item to retrieve.
+ */
 DpsAudioItem::DpsAudioItem(unsigned int pId) {
 	string SQL;
+	PqxxResult R;
 	try {
 		SQL = "SELECT * FROM v_audio WHERE id=" + itoa(pId);
-		PqxxResult R = mDB->exec("DpsLoadAudioItem", SQL);
+		R = mDB->exec("DpsLoadAudioItem", SQL);
 		mDB->abort("DpsLoadAudioItem");
-		if (R.size() != 1) {
-			cout << "Multiple items returned!" << endl;
-			throw -1;
-		}
-		for (unsigned int i = 0; i < R.columns(); ++i) {
-			mData[R[0][i].name()] = R[0][i].c_str();
-		}
 	}
 	catch (...) {
-		cout << "Error retrieving data for audioitem" << endl;
-		throw -1;
+		throw SQLError(MKEX(itoa(pId)));
+	}
+	if (R.size() != 1) {
+		throw DataError(MKEX(itoa(pId)));
+	}
+	for (unsigned int i = 0; i < R.columns(); ++i) {
+		mData[R[0][i].name()] = R[0][i].c_str();
 	}
 }
 
+
+/**
+ * Constructor.
+ * Retrieve an audio item from the database with a given MD5.
+ * @param	pMd5		MD5 hash of audio item to retrieve.
+ */
 DpsAudioItem::DpsAudioItem(string pMd5) {
 	string SQL;
+	PqxxResult R;
 	try {
 		SQL = "SELECT * FROM v_audio WHERE md5='" + pMd5 + "'";
-		PqxxResult R = mDB->exec("DpsLoadAudioItem", SQL);
+		R = mDB->exec("DpsLoadAudioItem", SQL);
 		mDB->abort("DpsLoadAudioItem");
-		if (R.size() != 1) {
-			cout << "Multiple items returned!" << endl;
-			throw -1;
-		}
-		for (unsigned int i = 0; i < R.columns(); ++i) {
-			mData[R[0][i].name()] = R[0][i].c_str();
-		}
 	}
 	catch (...) {
-		cout << "Error retrieving data for audioitem" << endl;
-		throw -1;
+		throw SQLError(MKEX(pMd5));
 	}	
+	if (R.size() != 1) {
+		throw DataError(MKEX(pMd5));
+	}
+	for (unsigned int i = 0; i < R.columns(); ++i) {
+		mData[R[0][i].name()] = R[0][i].c_str();
+	}
 }
 
+
+/**
+ * Constructor.
+ * Creates a copy of an existing DpsAudioItem.
+ * @param	pSrc		An existing DpsAudioItem to copy.
+ */
 DpsAudioItem::DpsAudioItem(const DpsAudioItem& pSrc) 
 		: mData		(pSrc.mData) {
 	
 }
 
+
+/**
+ * Destructor.
+ */
 DpsAudioItem::~DpsAudioItem() {
 	
 }
 
+
+/**
+ * Determine if another DpsAudioItem is the same as this one.
+ * @param	pSrc		DpsAudioItem to compare with.
+ * @returns				True if item is the same as this one.
+ */
 bool DpsAudioItem::operator==(const DpsAudioItem& pSrc) const {
 	if (mData == pSrc.mData) {
 		return true;
@@ -87,32 +117,58 @@ bool DpsAudioItem::operator==(const DpsAudioItem& pSrc) const {
 	return false;
 }
 
+
+/**
+ * Determine if another DpsAudioItem differs from this one.
+ * @param	pSrc		DpsAudioItem to compare with.
+ * @returns				True if the item differs from this one.
+ */
 bool DpsAudioItem::operator!=(const DpsAudioItem& pSrc) const {
 	return !operator==(pSrc);
 }
 
+
+/**
+ * Replaces the data of this DpsAudioItem with the data of another. Note that
+ * after this operation the current DpsAudioItem will operate on the database
+ * entry associated with the other DpsAudioItem. Thus, this operation makes no
+ * changes to entries in the database.
+ * @param	pSrc		Source DpsAudioItem.
+ * @returns				Reference to this item.
+ */
 DpsAudioItem& DpsAudioItem::operator=(const DpsAudioItem& pSrc) {
 	mData = pSrc.mData;
 	return *this;
 }
 
+
+/**
+ * Returns the requested data element.
+ * @param	pKey		Name of the requested item.
+ * @returns				The value associated with the name.
+ */
 string DpsAudioItem::operator[](string pKey) const {
-/*	cout << "FIND [" << pKey << "]" << endl;
-	for (TDataConstIt x = mData.begin(); x != mData.end(); x++) {
-		cout << x->first << " = " << x->second << endl;
-	} 
-*/	TDataConstIt x = mData.find(pKey);
+	TDataConstIt x = mData.find(pKey);
 	if (x == mData.end()) {
-		cout << "Failed to retrieve item " << pKey << endl;
-		throw -1;
+		throw Error(MKEX("No such data item '" + pKey + "'"));
 	}
 	return x->second;
 }
 
+
+/**
+ * Returns the items database ID.
+ * @returns				ID of the item in the DB.
+ */
 unsigned int DpsAudioItem::getId() const {
 	return atoi(operator[]("id"));
 }
 
+
+/**
+ * Returns the length of an audio item.
+ * @returns				DpsTime containing the length.
+ */
 DpsTime DpsAudioItem::getLength() const {
 	unsigned int smpl = atoi(operator[]("end_smpl"))
 						- atoi(operator[]("start_smpl"));

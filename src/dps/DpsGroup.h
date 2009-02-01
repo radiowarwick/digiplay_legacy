@@ -30,6 +30,8 @@
  */
 class DpsGroup : public DpsObject {
 	public:
+		SUB_EXCEPTION(		Error,		DpsObject::Error);
+		
 		DpsGroup(unsigned int pId = 0);
 		DpsGroup(const DpsGroup& pSrc);
 		virtual ~DpsGroup();

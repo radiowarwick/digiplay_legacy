@@ -32,6 +32,8 @@
  */
 class DpsTime: public DpsObject {
 	public:
+		SUB_EXCEPTION(		Error, 		DpsObject::Error);
+		
 		enum ETimeType {
 			Hours,
 			Minutes,

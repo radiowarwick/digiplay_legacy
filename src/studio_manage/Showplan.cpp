@@ -243,7 +243,7 @@ void Showplan::selectionChanged(QListViewItem* x) {
 		mIsItemSelected = false;
 		return;
 	}
-			
+		
     // If item is unloaded, activate applicable move buttons
     if ( y->getState() == ShowPlanItem::Unloaded ) {
         ShowPlanItem *z = (ShowPlanItem*)x->itemAbove();
@@ -295,10 +295,16 @@ void Showplan::updateNextTrack() {
     }
 
 	try {
-        while (1) if ( x.hasAudio() ) {
-            conf->setParam("next_on_showplan", x.getAudioItem()["md5"]);
-			mLock.unlock();
-            return;
+        while (1) {
+        	if (x == getLastItem()) {
+        		mLock.unlock();
+        		return;
+        	}
+        	if ( x.hasAudio() ) {
+            	conf->setParam("next_on_showplan", x.getAudioItem()["md5"]);
+				mLock.unlock();
+            	return;
+        	}
         }
     	x = getNextItem(x);
 	}

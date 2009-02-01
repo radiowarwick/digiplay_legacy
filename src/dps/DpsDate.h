@@ -31,6 +31,10 @@
  */
 class DpsDate : public DpsObject {
 	public:
+		SUB_EXCEPTION(		Error,		DpsObject::Error);
+		SUB_EXCEPTION_MSG(	RangeError,	Error,
+					"Data out of valid range: ");
+
 		DpsDate();
 		DpsDate(time_t pEpoch);
 		DpsDate(unsigned int pYears, unsigned int pMonths, unsigned int pDays,

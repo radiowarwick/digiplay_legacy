@@ -29,10 +29,14 @@
 #include "DpsObject.h"
 
 /**
- * A Hash object for uniquely identifying other objects
+ * A Hash object for uniquely identifying other objects. The hash stores a
+ * vector of items which are considered to uniquely identify an associated
+ * object. The hash also adds a random element to help ensure uniqueness.
  */
 class DpsHash : public DpsObject {
 	public:
+		SUB_EXCEPTION(		Error,		DpsObject::Error);
+		
 		DpsHash();
 		DpsHash(const std::string& pStr);
 		DpsHash(const unsigned int& pInt);
@@ -42,13 +46,18 @@ class DpsHash : public DpsObject {
 		bool operator==(const DpsHash& pSrc) const;
 		bool operator!=(const DpsHash& pSrc) const;
 		DpsHash& operator=(const DpsHash& pSrc);
+		
 		friend DpsHash& operator<<(DpsHash& pDest, std::string pStr);
 		friend DpsHash& operator<<(DpsHash& pDest, unsigned int pInt);
 		
 	private:
 		std::vector<std::string> mData;
 };
+
+/// Augment a hash with a string.
 DpsHash& operator<<(DpsHash& pDest, std::string pStr);
+
+/// Augment a hash with an integer value.
 DpsHash& operator<<(DpsHash& pDest, unsigned int pInt);
 
 #endif

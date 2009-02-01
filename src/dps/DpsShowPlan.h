@@ -44,6 +44,12 @@
 
 class DpsShowPlan : public DpsObject {
 	public:
+		SUB_EXCEPTION(		Error, 		DpsObject::Error);
+		SUB_EXCEPTION_MSG(	SQLError, 	Error,
+						"Failed to retrieve item: ");
+		SUB_EXCEPTION_MSG(	DataError,	Error,
+						"Multiple items returned for: ");
+	
 		// Constructors/Destructor
 		DpsShowPlan();
 		DpsShowPlan(const unsigned int pId);

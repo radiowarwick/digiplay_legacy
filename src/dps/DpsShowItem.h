@@ -39,6 +39,12 @@
  */
 class DpsShowItem : public DpsObject {
 	public:
+		SUB_EXCEPTION(		Error, 		DpsObject::Error);
+		SUB_EXCEPTION_MSG(	SQLError, 	Error,
+						"Failed to retrieve showitem: ");
+		SUB_EXCEPTION_MSG(	DataError,	Error,
+						"Multiple items returned for showitem: ");
+
 		enum EDpsShowItemState {
 			Unloaded,
 			Loaded,

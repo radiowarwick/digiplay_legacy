@@ -133,24 +133,7 @@ bool DpsShowItem::operator==(const DpsShowItem& pSrc) {
 		return true;
 	}
 	return false;
-/*	if (mName == pSrc.mName 
-			&& mComment == pSrc.mComment
-			&& mHasAudioItem == pSrc.mHasAudioItem
-			&& mHasScriptItem == pSrc.mHasScriptItem ) {
-		if (mHasAudioItem) {
-			if (mAudioItem != pSrc.mAudioItem) {
-				return false;
-			}
-		}
-		if (mHasScriptItem) {
-			if (mScriptItem != pSrc.mScriptItem) {
-				return false;
-			}
-		}
-		return true;
-	}
-	return false;
-*/}
+}
 
 bool DpsShowItem::operator!=(const DpsShowItem& pSrc) {
     return !(operator==(pSrc));
@@ -255,14 +238,19 @@ void DpsShowItem::loadItem(const unsigned int pId) {
 		SQL = "SELECT * FROM showitems WHERE id=" + itoa(pId);
 		R = mDB->exec("DpsShowItemLoad", SQL);
 		mDB->abort("DpsShowItemLoad");
-		if (R.size() != 1) {
-			throw -1;
-		}
-		mName = string(R[0]["title"].c_str());
-		mComment = R[0]["comment"].c_str();
-		mLength = DpsTime(atoi(R[0]["length"].c_str()), DpsTime::Seconds);
-		mHasAudioItem = (string(R[0]["audioid"].c_str()) != "");
-		mHasScriptItem = (string(R[0]["scriptid"].c_str()) != "");
+	}
+	catch (...) {
+		throw SQLError(MKEX(itoa(pId)));
+	}
+	if (R.size() != 1) {
+		throw DataError(MKEX(itoa(pId)));
+	}
+	mName = string(R[0]["title"].c_str());
+	mComment = R[0]["comment"].c_str();
+	mLength = DpsTime(atoi(R[0]["length"].c_str()), DpsTime::Seconds);
+	mHasAudioItem = (string(R[0]["audioid"].c_str()) != "");
+	mHasScriptItem = (string(R[0]["scriptid"].c_str()) != "");
+	try {
 		if (mHasAudioItem) {
 			mAudioItem = DpsAudioItem(atoi(R[0]["audioid"].c_str()));
 		}
@@ -270,8 +258,10 @@ void DpsShowItem::loadItem(const unsigned int pId) {
 			mScriptItem = DpsScriptItem(atoi(R[0]["scriptid"].c_str()));
 		}
 	}
-	catch (...) {
-		cout << "Error occured loading showplan item " << pId << endl;
-		throw -1;
+	catch (DpsAudioItem::Error& e) {
+		throw DataError(MKEX(itoa(pId) + " (audio item)"));
+	}
+	catch (DpsScriptItem::Error& e) {
+		throw DataError(MKEX(itoa(pId) + " (script item)"));
 	}
 }

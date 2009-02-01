@@ -27,12 +27,22 @@ using namespace std;
 
 #include "DpsHash.h"
 
+/**
+ * Default constructor.
+ * Just add an initial random number.
+ */
 DpsHash::DpsHash() 
 		: DpsObject	() {
 	mType = DPS_HASH;
 	mData.push_back(itoa(rand()));
 }
 
+
+/**
+ * Constructor.
+ * Creates a new hash with a random number and given string.
+ * @param	pStr		String to add to hash.
+ */
 DpsHash::DpsHash(const string& pStr) 
 		: DpsObject () {
 	mType = DPS_HASH;
@@ -40,6 +50,12 @@ DpsHash::DpsHash(const string& pStr)
 	mData.push_back(pStr);
 }
 
+
+/**
+ * Constructor.
+ * Creates a new hash with a random number and a given integer.
+ * @param	pInt		Integer to add to hash.
+ */
 DpsHash::DpsHash(const unsigned int& pInt)
 		: DpsObject () {
 	mType = DPS_HASH;
@@ -47,16 +63,32 @@ DpsHash::DpsHash(const unsigned int& pInt)
 	mData.push_back(itoa(pInt));
 }
 
+
+/**
+ * Copy constructor.
+ * Copies an existing hash, but adds a random number to make it unique.
+ * @param	pSrc		Existing hash to copy.
+ */
 DpsHash::DpsHash(const DpsHash& pSrc) 
 		: DpsObject (),
 		  mData		(pSrc.mData) {
 	mType = DPS_HASH;
 }
 
+
+/**
+ * Destructor.
+ */
 DpsHash::~DpsHash() {
 	
 }
 
+
+/**
+ * Determines if two hashes are identical.
+ * @param	pSrc		Hash to compare with.
+ * @returns				True if hashes are equal.
+ */
 bool DpsHash::operator==(const DpsHash& pSrc) const {
 	if (mData == pSrc.mData) {
 		return true;
@@ -64,20 +96,46 @@ bool DpsHash::operator==(const DpsHash& pSrc) const {
 	return false;
 }
 
+
+/**
+ * Determines if two hashes differ.
+ * @param	pSrc		Hash to compare with.
+ * @returns				True if hashes differ.
+ */
 bool DpsHash::operator!=(const DpsHash& pSrc) const {
 	return !operator==(pSrc);
 }
 
+
+/**
+ * Assignment. Assigns another hash to this one.
+ * @param	pSrc		The Hash to assign.
+ * @returns				A reference to the current hash.
+ */
 DpsHash& DpsHash::operator=(const DpsHash& pSrc) {
 	mData = pSrc.mData;
 	return *this;
 }
 
+
+/**
+ * Add a string to the hash. (non-member function)
+ * @param	pDest		The hash to augment.
+ * @param	pStr		The string to add to the hash.
+ * @returns				A reference to the hash.
+ */
 DpsHash& operator<<(DpsHash& pDest, string pStr) {
 	pDest.mData.push_back(pStr);
 	return pDest;
 }
 
+
+/**
+ * Add an integer to the hash. (non-member function)
+ * @param	pDest		The hash to augment.
+ * @param	pInt		The integer to add to the hash.
+ * @returns				A reference to the hash.
+ */
 DpsHash& operator<<(DpsHash& pDest, unsigned int pInt) {
 	pDest.mData.push_back(DpsObject::itoa(pInt));
 	return pDest;

@@ -27,6 +27,7 @@
 #include <vector>
 #include <map>
 
+#include "Exception.h"
 #include "dps.h"
 
 #define DB_NOT_CONNECTED 1
@@ -48,6 +49,8 @@ typedef unsigned int TDpsId;
  */
 class DpsObject {
     public:
+    	NEW_EXCEPTION(Error);
+    	
         DpsObject();
         virtual ~DpsObject();
         

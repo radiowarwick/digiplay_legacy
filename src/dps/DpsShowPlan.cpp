@@ -140,7 +140,11 @@ DpsShowItem& DpsShowPlan::getNextItem(const DpsShowItem& pSrc) {
 	if (x == mItems.end()) {
 		throw -1;
 	}
-	return *(++x); 
+	x++;
+	if (x == mItems.end()) {
+		throw -1;
+	}
+	return *x; 
 }
 
 DpsShowItem& DpsShowPlan::getFirstItem() {
@@ -158,8 +162,11 @@ DpsShowItem& DpsShowPlan::getLastItem() {
 }
 
 void DpsShowPlan::append(const DpsShowItem& pSrc) {
+	cout << "DpsShowPlan::append" << endl;
 	mItems.push_back(pSrc);
+	cout << "update" << endl;
 	showplanUpdated();
+	cout << "done." << endl;
 }
 
 void DpsShowPlan::insert(const DpsShowItem& pSrc, unsigned int pPos) {
@@ -188,11 +195,8 @@ void DpsShowPlan::erase(const DpsShowItem& pSrc) {
 }
 
 void DpsShowPlan::moveUp(const DpsShowItem& pSrc) {
-	cout << "DpsShowPlan::moveUp" << endl;
-	cout << "Item: " << pSrc.getName() << endl;
 	TItemIt vEnd = find(mItems.begin(), mItems.end(), pSrc);
 	if (vEnd == mItems.begin() || vEnd == mItems.end()) {
-		cout << "Not found" << endl;
 		return;
 	}
 	TItemIt vStart = vEnd - 1;
@@ -240,31 +244,33 @@ void DpsShowPlan::load(unsigned int pId) {
 		// Check showplan exists in Database
 		SQL = "SELECT * FROM showplans WHERE id=" + itoa(pId);
 		R = mDB->exec("DpsShowPlanLoad",SQL);
-		if (R.size() == 0) {
-			throw -1;
-		}
-		mId = pId;
-		mName = R[0]["name"].c_str();
-		mOwner = DpsUser(atoi(R[0]["userid"].c_str()));
-		mCreationDate = DpsDate(atoi(R[0]["creationdate"].c_str()));
-		mShowDate = DpsDate(atoi(R[0]["showdate"].c_str()));
-		mCompleted = (string(R[0]["completed"].c_str()) == "t");
-		mStored = true;
-		// Load items
-		SQL = "SELECT id FROM showitems WHERE showplanid=" + itoa(pId);
-		R = mDB->exec("DpsShowPlanLoad",SQL);
-	    mDB->abort("DpsShowPlanLoad");
-	    for (unsigned int i = 0; i < R.size(); i++) {
-	    	cout << "Create item " << i << endl;
-	    	mItems.push_back(DpsShowItem(atoi(R[i]["id"].c_str())));
-	    }
-	    cout << "Done created items" << endl;
 	}
 	catch (...) {
-		cout << "Error occured loading showplan." << endl;
-		throw -1;
+		throw SQLError(MKEX(itoa(pId)));
 	}
-	cout << "Done load" << endl;
+	if (R.size() == 0) {
+		throw DataError(MKEX(itoa(pId)));
+	}
+	mId = pId;
+	mName = R[0]["name"].c_str();
+	mOwner = DpsUser(atoi(R[0]["userid"].c_str()));
+	mCreationDate = DpsDate(atoi(R[0]["creationdate"].c_str()));
+	mShowDate = DpsDate(atoi(R[0]["showdate"].c_str()));
+	mCompleted = (string(R[0]["completed"].c_str()) == "t");
+	mStored = true;
+	// Load items
+	try {
+		SQL = "SELECT id FROM showitems WHERE showplanid=" + itoa(pId);
+		R = mDB->exec("DpsShowPlanLoad",SQL);
+    	mDB->abort("DpsShowPlanLoad");
+	}
+	catch (...) {
+		throw SQLError(
+				MKEX("Failed to load items from showplan ID " + itoa(pId)));
+	}
+    for (unsigned int i = 0; i < R.size(); i++) {
+    	mItems.push_back(DpsShowItem(atoi(R[i]["id"].c_str())));
+    }
 	showplanUpdated();
 }
 

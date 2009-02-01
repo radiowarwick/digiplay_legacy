@@ -32,6 +32,8 @@
  */
 class DpsUser : public DpsObject {
 	public:
+		SUB_EXCEPTION(		Error,		DpsObject::Error);
+		
 		DpsUser(unsigned int pId = 0);
 		DpsUser(const DpsUser& pSrc);
 		virtual ~DpsUser();

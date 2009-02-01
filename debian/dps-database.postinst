@@ -1,0 +1,16 @@
+#!/bin/bash
+
+PSQL=`which psql`
+if [ ! -x $PSQL ]; then
+    echo "PSQL commandline client not available!";
+fi
+
+LATEST=1
+VER=`$PSQL -U digiplay_user -qtc "SELECT version FROM patches WHERE branch='dps'" digiplay`
+PATCH_PATH="/usr/share/dps/db"
+
+for i in $(seq 1 $LATEST); do
+    if (( $i > $VER )); then
+        $PSQL -U digiplay_user -qtf $PATCH_PATH/patch$i.sql digiplay
+    fi
+done

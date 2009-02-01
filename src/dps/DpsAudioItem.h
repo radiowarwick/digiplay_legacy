@@ -20,20 +20,31 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#ifndef DPSAUDIOITEM_H_
-#define DPSAUDIOITEM_H_
+#ifndef CLASS_DPSAUDIOITEM
+#define CLASS_DPSAUDIOITEM
 
 #include <string>
 #include <map>
 
+#include "Exception.h"
 #include "DpsObject.h"
 #include "DpsTime.h"
 
+
+
 /**
- * Represents an audio item on the Digital Playout System.
+ * Represents an audio item on the Digital Playout System. This class manages
+ * the storage, retrieval and manipulation of data associated to a particular
+ * audio item on the system (track, jingle, advert, prerec, etc).
  */
 class DpsAudioItem : public DpsObject {
 	public:
+		SUB_EXCEPTION(		Error,		DpsObject::Error);
+		SUB_EXCEPTION_MSG(	SQLError, 	Error,
+						"Failed to retrieve item: ");
+		SUB_EXCEPTION_MSG(	DataError,	Error,
+						"Multiple items returned for: ");
+
 		DpsAudioItem();
 		DpsAudioItem(unsigned int pId);
 		DpsAudioItem(std::string pMd5);
@@ -45,7 +56,6 @@ class DpsAudioItem : public DpsObject {
 		DpsAudioItem& operator=(const DpsAudioItem& pSrc);
 		std::string operator[](std::string pKey) const;
 		
-		// Getters
 		unsigned int getId() const;
 		DpsTime getLength() const;
 		
@@ -57,4 +67,4 @@ class DpsAudioItem : public DpsObject {
 };
 
 
-#endif /*DPSAUDIOITEM_H_*/
+#endif

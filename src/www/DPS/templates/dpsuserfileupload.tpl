@@ -29,7 +29,7 @@
 				Type: <select name="type">
 					<option value="jingle">Jingle</option>
 					<option value="advert">Advert</option>
-					<option value="pre-rec">Pre-rec</option>
+					<!--<option value="pre-rec">Pre-rec</option>-->
 				</select><br />
 				File: <input type="file" name="ufile" /><br />
 				<input type="submit" value="Save" />

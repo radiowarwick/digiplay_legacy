@@ -61,6 +61,7 @@ TabPanelSearch::TabPanelSearch(QTabWidget *parent, string text)
 
     // Create library search engine.
     library_engine = new DpsMusicSearch();
+    searching = false;
 }
 
 
@@ -153,15 +154,10 @@ void TabPanelSearch::Library_Search() {
 
 void TabPanelSearch::threadExecute() {	
 	// Perform search
-    try
-    {
+    try {
 	    SearchResults = library_engine->query(txtLibrarySearchText->text());
-	    cout << "Done retreiving results" << endl;
-    	// Display results
-
     }
-    catch ( DpsMusicSearchError &e )
-    {
+    catch ( DpsMusicSearch::Error &e ) {
         qApp->lock();
         dlgWarn *warning = new dlgWarn(getPanel(), "");
         warning->setTitle("Oops!");
@@ -177,11 +173,10 @@ void TabPanelSearch::threadExecute() {
 		searching = false;
         qApp->unlock();
     }
-	    processResults();
+	processResults();
 }    
 
 void TabPanelSearch::processResults() {
-	cout << "Begin processing results" << endl;
 	// Lock GUI while updating
 	qApp->lock();
 
@@ -211,7 +206,6 @@ void TabPanelSearch::processResults() {
 	QListViewItem *x;
 	cout << SearchResults.size() << endl;
 	for (unsigned int i = 0; i < SearchResults.size(); i++) {
-		cout << "New result" << endl;
 		x = new QListViewItem(  lstSearchResults, lstSearchResults->lastItem(),
 			SearchResults[i]["title"],
 			SearchResults[i]["artist"],

@@ -33,11 +33,14 @@
 #include "Config.h"
 #include "Exception.h"
 
-NEW_EXCEPTION(DpsMusicSearchError);
-
 class DpsMusicSearch {
-
     public:
+        NEW_EXCEPTION(Error);
+        SUB_EXCEPTION_MSG(  SQLError,       Error,
+                        "Failed to execute search query: ");
+        SUB_EXCEPTION_MSG(  VagueError,     Error,
+                        "Your search is too vague, please be more specific.");
+        
 		DpsMusicSearch();
 		~DpsMusicSearch();
 		std::vector<DpsAudioItem> query(std::string search_string);

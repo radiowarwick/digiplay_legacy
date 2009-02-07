@@ -3,7 +3,8 @@
  * DpsMusicSearch.cpp
  * Provides music search functionality for applications
  *
- * Copyright (c) 2005-2007 Chris Cantwell
+ * Copyright (c) 2005-2009 Chris Cantwell
+ * Copyright (c) 2008-2009 Simon Pain
  * Copyright (c) 2005-2006 Ian Liverton
  *
  * This program is free software; you can redistribute it and/or modify
@@ -51,7 +52,7 @@ DpsMusicSearch::~DpsMusicSearch() {
 std::vector<DpsAudioItem> DpsMusicSearch::query(std::string search_string) {
 	const char* routine = "DpsMusicSearch::query";
 	strQueryString = search_string;
-
+	
     std::string SQL;
 	vector<string> searchTerms;
     string buf; // Buffer string for splitting up search terms
@@ -79,142 +80,83 @@ std::vector<DpsAudioItem> DpsMusicSearch::query(std::string search_string) {
     catch (...) {
         DB->abort("MusicQueryCheck");
         L_ERROR(LOG_DB,"Failed to check query for lexemes.");
-        throw;
+        throw SQLError(MKEX(SQL));
     }
 
-    if (string(R2[0]["numnode"].c_str()) == "0")
-    {
-        throw DpsMusicSearchError(MKEX("Your Search Is Too Vague.\nPlease Be More Specific."));
-    } 
-    else
-{
-
-
-	SQL = "SELECT id, md5, artist, title, album, censor, querytree(plainto_tsquery('" + strQueryString + "')::tsquery) FROM v_audio_music "
- 		    "WHERE dir = 2";
-
-    int censor_start = atoi(conf->getParam("censor_start").c_str());
-    int censor_end   = atoi(conf->getParam("censor_end").c_str());
-    time_t tim=time(NULL);
-    tm *now=localtime(&tim);
-
-    if (censor_start < censor_end) {
-	    //showing PM & hiding AM
-	    if (now->tm_hour < censor_end && now->tm_hour > censor_start) {
-	    	SQL += " AND censor = 'f'";
-	    }
+    if (string(R2[0]["numnode"].c_str()) == "0") {
+        throw VagueError(MKEX(""));
     } 
     else {
-	    if (now->tm_hour < censor_end || now->tm_hour > censor_start) {
-		    SQL += " AND censor = 'f'";
+    	SQL =   "SELECT id, md5, artist, title, album, censor, "
+                "querytree(plainto_tsquery('" + strQueryString 
+                + "')::tsquery) FROM v_audio_music WHERE dir = 2";
+
+        int censor_start = atoi(conf->getParam("censor_start").c_str());
+        int censor_end   = atoi(conf->getParam("censor_end").c_str());
+        time_t tim=time(NULL);
+        tm *now=localtime(&tim);
+	
+	    if (censor_start < censor_end) {
+		    //showing PM & hiding AM
+		    if (now->tm_hour < censor_end && now->tm_hour > censor_start) {
+		    	SQL += " AND censor = 'f'";
+		    }
+	    } 
+	    else {
+		    if (now->tm_hour < censor_end || now->tm_hour > censor_start) {
+			    SQL += " AND censor = 'f'";
+		    }
 	    }
-    }
+	
+	    if (searchArtist_flag || searchTitle_flag || searchAlbum_flag) {
+	        bool needsDelimitor = false;
+	        SQL += " AND to_tsvector(";
+	        if (searchTitle_flag == true) {
+	            SQL += "title";
+	            needsDelimitor = true;
+	        }
+	        if (searchArtist_flag == true) {
+	            if (needsDelimitor) {
+	                SQL += " || ' ' || ";
+	                needsDelimitor = false;
+	            }
+	            SQL += "artist";
+	            needsDelimitor = true;
+	        }
+	        if (searchAlbum_flag == true) {
+	            if (needsDelimitor) {
+	                SQL += " || ' ' || ";
+	                needsDelimitor = false;
+	            }
+	            SQL += "album";
+	        }
+	        SQL += ")::tsvector @@ plainto_tsquery('" + strQueryString 
+                    + "')::tsquery ORDER BY title";
+	    }
 
-    if (searchArtist_flag == false &&
-            searchTitle_flag == false && 
-            searchAlbum_flag == false) {
-        /* Do nothing */
-    }
-    else
-    {
-        bool needsDelimitor = false;
-        SQL += " AND to_tsvector(";
-        if (searchTitle_flag == true)
-        {
-            SQL += "title";
-            needsDelimitor = true;
-        }
-        if (searchArtist_flag == true)
-        {
-            if (needsDelimitor)
-            {
-                SQL += " || ' ' || ";
-                needsDelimitor = false;
-            }
-            SQL += "artist";
-            needsDelimitor = true;
-        }
-        if (searchAlbum_flag == true)
-        {
-            if (needsDelimitor)
-            {
-                SQL += " || ' ' || ";
-                needsDelimitor = false;
-            }
-            SQL += "album";
-        }
-        SQL += ")::tsvector @@ plainto_tsquery('" + strQueryString + "')::tsquery ORDER BY title";
-    }
-
-        /*if (searchTitle_flag == true) {
-        SQL += " AND (title ILIKE '%";
-			for (i=0; i < noTerms - 1; i++) {
-				SQL += searchTerms.at(i) + "%' OR title ILIKE '%";
-			}
-			SQL += searchTerms.at(i) + "%'";
-        if (searchArtist_flag == true) {
-            SQL += " OR artist ILIKE '%";
-			for (i=0; i < noTerms - 1; i++) {
-				SQL += searchTerms.at(i) + "%' OR artist ILIKE '%";
-			}
-			SQL += searchTerms.at(i) + "%'";
-        }
-   
-        if (searchAlbum_flag == true) {
-            SQL += " OR album ILIKE '%";
-			for (i=0; i < noTerms - 1; i++) {
-				SQL += searchTerms.at(i) + "%' OR album ILIKE '%";
-			}
-			SQL += searchTerms.at(i) + "%'";
-        }
-   
-        SQL += ") ORDER BY title";
-    }
-    else if (searchArtist_flag == true) {
-        SQL += " AND (artist ILIKE '%";
-		for (i=0; i < noTerms - 1; i++) {
-			SQL += searchTerms.at(i) + "%' OR artist ILIKE '%";
-		}
-		SQL += searchTerms.at(i) + "%'";
-        if (searchAlbum_flag == true) {
-            SQL += " OR album ILIKE '%";
-			for (i=0; i < noTerms - 1; i++) {
-				SQL += searchTerms.at(i) + "%' OR album ILIKE '%";
-			}
-			SQL += searchTerms.at(i) + "%'";
-        }
-        SQL += ") ORDER BY title";      
-    }
-    else { 
-        SQL += " AND (album ILIKE '%";
-		for (i=0; i < noTerms - 1; i++) {
-			SQL += searchTerms.at(i) + "%' OR album ILIKE '%";
-		}
-		SQL += searchTerms.at(i) + "%') ORDER BY title";
-    }*/
-
-    if (searchLimit_value > 0) {
-        SQL += " LIMIT " + dps_itoa(searchLimit_value);
-    }
-
-    PqxxResult R;
-    try {
-        R = DB->exec("MusicSearch",SQL);
-        DB->abort("MusicSearch");
-    }
-    catch (...) {
-        DB->abort("MusicSearch");
-        L_ERROR(LOG_DB,"Failed to search for music.");
-        throw;
-    }
-
-	Q.clear();
-
-    for (unsigned int i = 0; i < R.size(); i++) {
-	    Q.push_back(DpsAudioItem(atoi(R[i]["id"].c_str())));
-    }
-	return Q;
-}
+	    if (searchLimit_value > 0) {
+	        SQL += " LIMIT " + dps_itoa(searchLimit_value);
+	    }
+	
+	    PqxxResult R;
+	    try {
+	        R = DB->exec("MusicSearch",SQL);
+	        DB->abort("MusicSearch");
+	    }
+	    catch (...) {
+	        DB->abort("MusicSearch");
+	        L_ERROR(LOG_DB,"Failed to search for music.");
+	        throw SQLError(MKEX(SQL));
+	    }
+	
+		Q.clear();
+	
+	    for (unsigned int i = 0; i < R.size(); i++) {
+		    Q.push_back(DpsAudioItem(atoi(R[i]["id"].c_str())));
+	    }
+	    
+		return Q;
+	}
 }
 
 bool DpsMusicSearch::searchTitle() {

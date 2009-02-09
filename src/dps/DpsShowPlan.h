@@ -49,7 +49,15 @@ class DpsShowPlan : public DpsObject {
 						"Failed to retrieve item: ");
 		SUB_EXCEPTION_MSG(	DataError,	Error,
 						"Multiple items returned for: ");
-	
+	    SUB_EXCEPTION_MSG(  EmptyPlan,  Error,
+                        "The showplan is empty.");
+        SUB_EXCEPTION_MSG(  NotFound,   Error,
+                        "The item cannot be found in the showplan: ");
+        SUB_EXCEPTION_MSG(  LastItem,   Error,
+                        "This is the last item: ");
+        SUB_EXCEPTION_MSG(  OutOfRange, Error,
+                        "Requested item is out of range.");
+                        
 		// Constructors/Destructor
 		DpsShowPlan();
 		DpsShowPlan(const unsigned int pId);

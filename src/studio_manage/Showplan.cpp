@@ -77,12 +77,17 @@ void Showplan::onMessage() {
                         && getSize() > 0
                         && getLastItem().getHash() != mActive) {
         L_INFO(LOG_DB,"Processing track load event");
-        if (!mIsItemSelected) {
+        if (!mIsItemActive) {
             mActive = getFirstItem().getHash();
         }
         else {
         	getItemByHash(mActive).setState(DpsShowItem::Finished);
-        	mActive = getNextItem(getItemByHash(mActive)).getHash();
+            try {
+        	   mActive = getNextItem(getItemByHash(mActive)).getHash();
+            }
+            catch (int e) {
+                cout << "Caught exception - no next item." << endl;
+            }
 			// while we have a script selected...
 //            while (activePoint->getType() == 1
 //                    && activePoint != lstShowPlan->lastItem()) {
@@ -90,6 +95,7 @@ void Showplan::onMessage() {
 //            }
         }
         getItemByHash(mActive).setState(DpsShowItem::Loaded);
+        mIsItemActive = true;
         //??
         lstShowPlan->ensureItemVisible(lstShowPlan->selectedItem());
         //if (lstShowPlan->selectedItem()) {
@@ -190,6 +196,8 @@ void Showplan::moveItemBottom() {
 }
 
 void Showplan::clearItems() {
+    mIsItemActive = false;
+    mIsItemSelected = false;
 	clear();
 }
 
@@ -291,24 +299,28 @@ void Showplan::updateNextTrack() {
         x = getFirstItem();
     }
     else {
-        x = getNextItem(getItemByHash(mActive));
+        try {
+            x = getNextItem(getItemByHash(mActive));
+        }
+        catch (DpsShowPlan::Error&) {
+            mLock.unlock();
+            return;
+        }
     }
 
 	try {
         while (1) {
-        	if (x == getLastItem()) {
-        		mLock.unlock();
-        		return;
-        	}
         	if ( x.hasAudio() ) {
             	conf->setParam("next_on_showplan", x.getAudioItem()["md5"]);
-				mLock.unlock();
-            	return;
+                break;
         	}
+            if (x == getLastItem()) {
+                break;
+            }
+            x = getNextItem(x);
         }
-    	x = getNextItem(x);
 	}
-	catch (...) {
+	catch (DpsShowPlan::Error&) {
 		
 	}
 

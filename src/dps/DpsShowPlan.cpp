@@ -85,7 +85,7 @@ DpsShowPlan& DpsShowPlan::operator=(const DpsShowPlan& pSrc) {
 
 DpsShowItem& DpsShowPlan::operator[](unsigned int pIdx) {
 	if (pIdx >= mItems.size()) {
-		throw -1;
+		throw OutOfRange(MKEX(""));
 	}
     return mItems[pIdx];
 }
@@ -132,41 +132,38 @@ DpsShowItem& DpsShowPlan::getItemByHash(const DpsHash& pHash) {
 			return mItems[i];
 		}
 	}
-	throw -1;
+	throw NotFound(MKEX(""));
 }
 
 DpsShowItem& DpsShowPlan::getNextItem(const DpsShowItem& pSrc) {
-	TItemIt x = find(mItems.begin(), mItems.end(), pSrc);
+    TItemIt x = find(mItems.begin(), mItems.end(), pSrc);
 	if (x == mItems.end()) {
-		throw -1;
+		throw NotFound(MKEX(pSrc.getName()));
 	}
 	x++;
 	if (x == mItems.end()) {
-		throw -1;
+		throw LastItem(MKEX(pSrc.getName()));
 	}
 	return *x; 
 }
 
 DpsShowItem& DpsShowPlan::getFirstItem() {
 	if (mItems.size() == 0) {
-		throw -1;
+		throw EmptyPlan(MKEX(""));
 	}
 	return mItems[0];
 }
 
 DpsShowItem& DpsShowPlan::getLastItem() {
 	if (mItems.size() == 0) {
-		throw -1;
+		throw EmptyPlan(MKEX(""));
 	}
 	return mItems[mItems.size() - 1];
 }
 
 void DpsShowPlan::append(const DpsShowItem& pSrc) {
-	cout << "DpsShowPlan::append" << endl;
 	mItems.push_back(pSrc);
-	cout << "update" << endl;
 	showplanUpdated();
-	cout << "done." << endl;
 }
 
 void DpsShowPlan::insert(const DpsShowItem& pSrc, unsigned int pPos) {
@@ -216,10 +213,15 @@ void DpsShowPlan::moveDown(const DpsShowItem& pSrc) {
 
 void DpsShowPlan::moveTop(const DpsShowItem& pSrc) {
 	TItemIt vPos = find(mItems.begin(), mItems.end(), pSrc);
+    TItemIt vStart = mItems.begin();
 	if (vPos == mItems.begin() || vPos == mItems.end()) { 
 		return;
 	}
-	rotate(mItems.begin(), vPos, vPos);
+    while (vStart != mItems.end() 
+            && vStart->getState() == DpsShowItem::Finished) {
+        vStart++;
+    }
+	rotate(vStart, vPos, vPos + 1);
 	showplanUpdated();
 }
 

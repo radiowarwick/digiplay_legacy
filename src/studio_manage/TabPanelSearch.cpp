@@ -204,7 +204,7 @@ void TabPanelSearch::processResults() {
 	
     lstSearchResults->setEnabled(true);
 	QListViewItem *x;
-	cout << SearchResults.size() << endl;
+
 	for (unsigned int i = 0; i < SearchResults.size(); i++) {
 		x = new QListViewItem(  lstSearchResults, lstSearchResults->lastItem(),
 			SearchResults[i]["title"],

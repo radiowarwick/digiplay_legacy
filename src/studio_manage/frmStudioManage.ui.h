@@ -114,8 +114,8 @@ void frmStudioManage::init() {
 	cout << "success." << endl;
 
 	//Load Now/Next widget
-	nownext = new Nownext( this, "Nownext");
-	nownext->setGeometry( QRect( 0, 0, 1030, 30 ) );
+//	nownext = new Nownext( this, "Nownext");
+//	nownext->setGeometry( QRect( 0, 0, 1030, 30 ) );
 //	nownext->configure(authModule);
 	
 	// Load tab panels after removing the template tab.	

@@ -37,7 +37,7 @@ ShowPlanItem::ShowPlanItem( QListView * parent, QListViewItem * after,
 		  DpsShowItem		(pSrc),
 		  mIsRootElement	(true),
 		  mIsExpanded		(false) {
-	init();							
+	init();
 }
 
 ShowPlanItem::ShowPlanItem ( QListView * parent, const DpsShowItem& pSrc) 
@@ -94,7 +94,7 @@ void ShowPlanItem::init() {
     pixFinished = new QPixmap(path + "/images/musicGrey32.png");
 	pixAudio = new QPixmap(path + "/images/musicLoaded32.png");
 	pixScript = new QPixmap(path + "/images/scriptLoaded32.png");
-	
+
     active = false;
     selected = false;
 

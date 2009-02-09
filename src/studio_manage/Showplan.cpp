@@ -196,6 +196,14 @@ void Showplan::moveItemBottom() {
 }
 
 void Showplan::clearItems() {
+    dlgWarn *dlg = new dlgWarn(this, "");
+    dlg->setTitle("Clear All");
+    dlg->setWarning("Are you sure you wish to clear the show plan?");
+    if ( dlg->exec() != QDialog::Accepted ){
+        delete dlg;
+        return;
+    }
+    delete dlg;
     mIsItemActive = false;
     mIsItemSelected = false;
 	clear();

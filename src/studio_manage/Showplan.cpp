@@ -149,6 +149,11 @@ void Showplan::showplanUpdated() {
 		vSelectedHash = (dynamic_cast<DpsShowItem*>(lstShowPlan->selectedItem()))->getHash();
 	}
 	
+    if (getSize() == 0) {
+        mIsItemActive = false;
+        mIsItemSelected = false;
+    }
+    
 	lstShowPlan->clear();
 	for (unsigned int i = 0; i < getSize(); ++i) {
 		vNew = new ShowPlanItem(lstShowPlan, vNew, getItem(i));
@@ -204,8 +209,6 @@ void Showplan::clearItems() {
         return;
     }
     delete dlg;
-    mIsItemActive = false;
-    mIsItemSelected = false;
 	clear();
 }
 

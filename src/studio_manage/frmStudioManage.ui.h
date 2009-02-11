@@ -70,7 +70,12 @@ void frmStudioManage::init() {
 	cout << "Processing configuration..." << flush;
 	conf = new Config("digiplay");
 	cout << "complete!" << endl;
-
+    
+    cout << "Resetting playout engine..." << flush;
+    conf->setParam("user_aw_set","0");
+    conf->setParam("userid","0");
+    cout << "done." << endl;
+    
 	// Initialise modules
 	cout << "Initialising Core Modules..." << endl;
 	
@@ -298,6 +303,7 @@ void frmStudioManage::btnLoginClicked()
 		if ( dlg->exec() == QDialog::Accepted ){
 		    authModule->closeSession();
             conf->setParam("user_aw_set","0");
+            conf->setParam("userid","0");
             sp->clear();
             tabManage->setCurrentPage(0);
 		    btnLogin->setText("Log In");

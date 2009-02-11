@@ -46,7 +46,7 @@ EXE_ALL				=	$(EXE_STUDIO_MANAGE) $(EXE_STUDIO_PLAY) $(EXE_DPSADMIN)\
 						$(EXE_PLAYIN) $(EXE_SUEPLAY) $(EXE_SUESCHED)
 LIB_ALL				=	$(LIB_DPSAUDIO)
 
-.PHONY: default all clean install doc tar
+.PHONY: default all clean install doc tar studio sue backend database
 
 ### Build rules ###
 

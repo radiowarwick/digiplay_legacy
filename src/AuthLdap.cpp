@@ -23,6 +23,7 @@
 #include <string>
 using namespace std;
 
+#include <sys/time.h>
 #include <dlfcn.h>
 
 #include "Logger.h"
@@ -87,10 +88,19 @@ void AuthLdap::authSession(string username, string password) {
 	L_INFO(LOG_AUTH," -> bind DN is '" + dn + "'");
     L_INFO(LOG_AUTH," -> user filter is '" + filter + "'");
 
-    // Bind to LDAP as user
+
 	int ret = 0;
-	int version = LDAP_VERSION3;
+    
+    // Set LDAP version
+    int version = LDAP_VERSION3;
 	ldap_set_option(_myLdap, LDAP_OPT_PROTOCOL_VERSION, &version);
+    
+    // Set LDAP server timeouts
+    struct timeval t; t.tv_sec = 5; t.tv_usec = 0;
+    ldap_set_option(_myLdap, LDAP_OPT_TIMEOUT, &t);
+    ldap_set_option(_myLdap, LDAP_OPT_NETWORK_TIMEOUT, &t);
+
+    // Bind to LDAP as user    
 	ret = ldap_simple_bind_s(_myLdap, dn.c_str(), password.c_str());
     
     switch (ret) {

@@ -94,8 +94,8 @@ void TabPanelPlaylist::configure(Auth *authModule) {
  */
 void TabPanelPlaylist::playlistAdd(QListViewItem *current) {
 	if (current->text(3)) {
-		DpsAudioItem vNew(current->text(3));
-        emit audioSelected( vNew );
+		DpsAudioItem vAudio(atoi(current->text(3).ascii()));
+        emit audioSelected( vAudio );
 	}
 }
 

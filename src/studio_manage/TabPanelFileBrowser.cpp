@@ -111,16 +111,16 @@ void TabPanelFileBrowser::clear() {
 void TabPanelFileBrowser::handleLoad(QListViewItem* x) {
     if (x) {
         if (x->text(1) == "Audio File") {
-        	DpsAudioItem vNew(x->text(2));
-            emit audioSelected( vNew );
+        	DpsAudioItem vAudio(atoi(x->text(2).ascii()));
+            emit audioSelected( vAudio );
         }
         if (x->text(1) == "Audio Ident") {
-        	DpsAudioItem vNew(x->text(2));
-            emit audioSelected( vNew );
+        	DpsAudioItem vAudio(atoi(x->text(2).ascii()));
+            emit audioSelected( vAudio );
         }
         if (x->text(1) == "Audio Advert") {
-        	DpsAudioItem vNew(x->text(2));
-            emit audioSelected( vNew );
+        	DpsAudioItem vAudio(atoi(x->text(2).ascii()));
+            emit audioSelected( vAudio );
         }
         if (x->text(1) == "Script") {
             DpsScriptItem S(atoi(x->text(2).ascii()));

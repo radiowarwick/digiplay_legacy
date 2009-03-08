@@ -262,7 +262,8 @@ void DpsShowPlan::load(unsigned int pId) {
 	mStored = true;
 	// Load items
 	try {
-		SQL = "SELECT id FROM showitems WHERE showplanid=" + itoa(pId);
+		SQL = "SELECT id FROM showitems WHERE showplanid=" + itoa(pId) 
+                + " ORDER BY position";
 		R = mDB->exec("DpsShowPlanLoad",SQL);
     	mDB->abort("DpsShowPlanLoad");
 	}

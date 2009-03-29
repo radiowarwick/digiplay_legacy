@@ -1,0 +1,98 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use DBI;
+use FindBin;
+use Getopt::Long;
+use lib "$FindBin::Bin/../lib";
+use DPS::Migrate::MigrateAudio;
+use DPS::Migrate::MigrateSustainer;
+use DPS::Utils;
+
+
+
+my ($HELP, $AUDIO, $SUST, $ALL);
+
+GetOptions( "help|h"     => \$HELP,
+            "audio|a:s"    => \$AUDIO,
+            "sustainer|s:s"    => \$SUST,
+            "all"            =>\$ALL,
+          );
+
+help() if($HELP);
+
+my %sourceDB = (dbname => 'dps',
+                host => 'localhost',
+                port => '5432',
+                username => 'dps',
+                password => 'dps');
+my %destDB  =  (dbname => 'digiplaynew',
+                host => 'localhost',
+                port => '5432',
+                username => 'dps',
+                password => 'dps');
+
+my $sourceConn;
+my $destConn;
+my $exitVal = 0;
+my $skip = 0;
+eval {
+	$sourceConn = DPS::Utils::getConnection(\%sourceDB) || die ("Unable to get source db connection");
+	$destConn = DPS::Utils::getConnection(\%destDB) || die ("Unable to get destination db connection");
+
+	if(!$skip && ($AUDIO || $ALL) && !$exitVal) {
+		if($AUDIO eq '?') {
+			DPS::Migrate::MigrateAudio::printOptions();
+			$skip = 1;
+		} else {
+			$exitVal |= !DPS::Migrate::MigrateAudio::migrateAll($sourceConn, $destConn, $AUDIO);
+		}
+	}
+	if(!$skip && ($SUST || $ALL) && !$exitVal) {
+		if($SUST eq '?') {
+			DPS::Migrate::MigrateSustainer::printOptions();
+			$skip = 1;
+		} else {
+			$exitVal |= !DPS::Migrate::MigrateSustainer::migrateAll($sourceConn, $destConn, $SUST);
+		}
+	}
+};
+
+if($@) {
+	$exitVal = 1;
+	print "$@";
+}
+
+if(defined $sourceConn) {
+	eval {
+		$sourceConn->disconnect();
+		$sourceConn = undef;
+	};
+}
+if(defined $destConn) {
+	eval {
+		$destConn->disconnect();
+		$destConn = undef;
+	};
+}
+
+exit($exitVal);
+
+sub help {
+	my $msg = <<END;
+	$0 - Migrate database from the old format to the new format.
+
+	For each migration argument you can pass in options (, separated) to specify what sub
+	items to migrate. If you pass in ? it will tell you what the options are.
+
+	-a <opt>,<opt> Migrate the audio content
+	-s <opt>,<opt> Migrate the sustainer
+	
+	-h             Show this messsage
+
+END
+	print $msg;
+	exit 1;
+}

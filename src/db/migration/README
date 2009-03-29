@@ -1,0 +1,33 @@
+These scripts will migrate the Digiplay db from V1.x to V2.0.
+
+--Dependencies--
+DBI-1.607
+DBD-Pg-2.11.8
+TimeDate-1.16
+
+--Running--
+The migration will take approximately 1 hour dependant on number of audio tracks.
+To run the full migration use the following command:
+
+bin/migrate -all
+
+Some information will not migrate cleanly, this includes:
+
+1. Audio Permissions : 
+	All Audio Tracks will be granted the following permissions:
+	Owner: System(rwx), Group: AudioAdmins(rwx), All(r--)
+	
+	All Adverts will be granted the following permissions:
+	Owner: System(rwx), Group: AudioAdmins(rwx), All(r--)
+	
+	Global Jingles|Pre-recs will be granted the following permissions:
+	Owner: System(rwx), Group: AudioAdmins(rwx), All(r--)
+	
+	User Jingles|Pre-recs will be granted the following permissions:
+	Owner: <User>(rwx), Group: null(---), All(---)
+	
+--Testing etc--
+If you only want to migrate part of the DB you can pass in indivdual sections:
+
+bin/migrate -a all
+bin/migrate -a at,kw

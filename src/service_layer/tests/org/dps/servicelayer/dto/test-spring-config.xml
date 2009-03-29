@@ -1,0 +1,70 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+http://cxf.apache.org/jaxws
+http://cxf.apache.org/schemas/jaxws.xsd">
+
+
+	<bean id="myDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="org.postgresql.Driver" />
+		<property name="url" value="jdbc:postgresql://localhost/digiplaynew" />
+		<property name="username" value="dps" />
+		<property name="password" value="dps" />
+	</bean>
+
+	<!--
+		<bean id="mySessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="myDataSource" /> <property
+		name="hibernateProperties"> <props> <prop
+		key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+		</props> </property> </bean>
+	-->
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="dataSource" ref="myDataSource" />
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect
+				</prop>
+			</props>
+		</property>
+		<property name="configurationClass">
+			<value>org.hibernate.cfg.AnnotationConfiguration
+			</value>
+		</property>
+		<property name="useTransactionAwareDataSource" value="true" />
+		<property name="annotatedClasses">
+			<list>
+				<value>org.dps.servicelayer.dto.Audio</value>
+			</list>
+		</property>
+	</bean>
+
+
+	<bean id="audio" class="org.dps.servicelayer.dto.Audio" >
+		<property name="md5" value="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
+		<property name="sampleStart" value="0" />
+		<property name="sampleEnd" value="0" />
+		<property name="sampleExtro" value="0" />
+		<property name="sampleIntro" value="0" />
+		<property name="sampleLength" value="0" />
+		<property name="fileType" value="raw" />
+		<property name="importDate" value="1234567890" />
+		<property name="title" value="All the small things" />
+	</bean>
+
+	<bean id="audioTest" class="org.dps.servicelayer.dto.AudioTest">
+		<property name="audio" ref="audio" />
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
+	
+	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+
+
+</beans>

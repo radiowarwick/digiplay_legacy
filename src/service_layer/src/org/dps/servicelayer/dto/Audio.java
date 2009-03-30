@@ -1,9 +1,18 @@
 package org.dps.servicelayer.dto;
 
-import javax.annotation.Generated;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -12,7 +21,7 @@ public class Audio extends Audit {
 	
 	@Column(name="audio_id")
 	@Id
-	@Generated(value="sequence")
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long audioID;
 	
 	//FileID - New Object
@@ -56,6 +65,18 @@ public class Audio extends Audit {
 	@Column(name="filetype")
 	private String fileType;
 	
+	@ManyToMany(targetEntity=Album.class, cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@JoinTable(name="audioalbum", 
+			joinColumns=@JoinColumn(name="audio_id"), 
+			inverseJoinColumns=@JoinColumn(name="album_id"))
+	private Set<Album> albums = new HashSet<Album>();
+	
+	@ManyToMany(targetEntity=Artist.class, cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@JoinTable(name="audioartist", 
+			joinColumns=@JoinColumn(name="audio_id"), 
+			inverseJoinColumns=@JoinColumn(name="artist_id"))
+	private Set<Artist> artists = new HashSet<Artist>();
+
 	public String toString() {
 		return audioID + ":" + title;
 	}
@@ -215,6 +236,28 @@ public class Audio extends Audit {
 	 */
 	public void setFileType(String fileType) {
 		this.fileType = fileType;
+	}
+
+	public void setAlbums(Set<Album> albums) {
+		this.albums = albums;
+	}
+
+	public Set<Album> getAlbums() {
+		return albums;
+	}
+	
+	/**
+	 * @return the artists
+	 */
+	public Set<Artist> getArtists() {
+		return artists;
+	}
+
+	/**
+	 * @param artists the artists to set
+	 */
+	public void setArtists(Set<Artist> artists) {
+		this.artists = artists;
 	}
 
 }

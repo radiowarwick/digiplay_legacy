@@ -40,10 +40,32 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 		<property name="annotatedClasses">
 			<list>
 				<value>org.dps.servicelayer.dto.Audio</value>
+				<value>org.dps.servicelayer.dto.Album</value>
+				<value>org.dps.servicelayer.dto.Artist</value>
 			</list>
 		</property>
 	</bean>
+	
+	<bean id="audioTest" class="org.dps.servicelayer.dto.AudioTest">
+		<property name="audio" ref="audio" />
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
+	
+	<bean id="albumTest" class="org.dps.servicelayer.dto.AlbumTest"> 
+		<property name="album" ref="album" />
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
+	
+	<bean id="artistTest" class="org.dps.servicelayer.dto.ArtistTest">
+		<property name="artist" ref="artist" />
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
+	
+	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
 
+	<!-- DTOs Used for Testing -->
 
 	<bean id="audio" class="org.dps.servicelayer.dto.Audio" >
 		<property name="md5" value="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
@@ -57,14 +79,8 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 		<property name="title" value="All the small things" />
 	</bean>
 
-	<bean id="audioTest" class="org.dps.servicelayer.dto.AudioTest">
-		<property name="audio" ref="audio" />
-		<property name="hibernateTemplate" ref="hibernateTemplate" />
-	</bean>
-	
-	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
-		<property name="sessionFactory" ref="sessionFactory"/>
-	</bean>
+	<bean id="album" class="org.dps.servicelayer.dto.Album" />
 
+	<bean id="artist" class="org.dps.servicelayer.dto.Artist" />
 
 </beans>

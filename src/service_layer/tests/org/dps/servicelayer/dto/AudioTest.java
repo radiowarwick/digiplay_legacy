@@ -34,6 +34,7 @@ public class AudioTest extends AbstractDependencyInjectionSpringContextTests
 	}
 
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testSimpleRetrieve() {
 		
@@ -45,6 +46,7 @@ public class AudioTest extends AbstractDependencyInjectionSpringContextTests
 		assertEquals("More than one result returned",1, aList.size());
 	}
 	
+	/*
 	@Test
 	public void testSimpleInsert() {
 		Session session = SessionFactoryUtils.doGetSession(hibernateTemplate.getSessionFactory(), true);
@@ -57,7 +59,7 @@ public class AudioTest extends AbstractDependencyInjectionSpringContextTests
 		
 		LOGGER.debug("AudioID : " + audio.getAudioID());
 		assertNotNull("Check audio id has been assigned", audio.getAudioID());
-		assertEquals("Is it a phil?", "All the small things",audio.getTitle());
+		assertEquals("Check the set audio title", "All the small things",audio.getTitle());
 		
 		t.commit();
 		} finally {
@@ -65,10 +67,8 @@ public class AudioTest extends AbstractDependencyInjectionSpringContextTests
 				t.rollback();
 			}
 		}
-		
-	
 
-		
 	}
+	*/
 
 }

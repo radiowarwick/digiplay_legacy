@@ -8,11 +8,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
-public class ArtistTest extends AbstractDependencyInjectionSpringContextTests {
-
-	private final static Logger LOGGER = LoggerFactory.getLogger(ArtistTest.class);
+public class UserTest extends AbstractDependencyInjectionSpringContextTests {
 	
-	private Artist artist;
+	private final static Logger LOGGER = LoggerFactory.getLogger(UserTest.class);
+	
+	private User user;
 	protected String[] getConfigLocations() {
 		return new String[] { "org/dps/servicelayer/dto/test-spring-config.xml" };
 	}
@@ -22,17 +22,16 @@ public class ArtistTest extends AbstractDependencyInjectionSpringContextTests {
 		this.hibernateTemplate = hibernateTemplate;
 	}
 
-	public void setArtist(Artist artistDao) {
-		this.artist = artistDao;
+	public void setUser(User userDao) {
+		this.user = userDao;
 	}
 	
 	@Test
-	public void testSimpleAudioRetrievalTest() {
-		List<Artist> aList = (List<Artist>) hibernateTemplate.find("from Artist where artistID=1");
+	public void testSimpleRetrieval() {
+		List<User> aList = (List<User>) hibernateTemplate.find("from User where userID=1");
 		
-		LOGGER.debug("Artist name retrieved: " + aList.get(0).toString());
+		LOGGER.debug("User name retrieved: " + aList.get(0).toString());
 		
 		assertNotNull("Not null check", aList);
-		
 	}
 }

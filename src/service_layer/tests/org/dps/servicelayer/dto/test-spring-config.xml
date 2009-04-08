@@ -43,6 +43,8 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 				<value>org.dps.servicelayer.dto.Album</value>
 				<value>org.dps.servicelayer.dto.Artist</value>
 				<value>org.dps.servicelayer.dto.File</value>
+				<value>org.dps.servicelayer.dto.Group</value>
+				<value>org.dps.servicelayer.dto.User</value>
 			</list>
 		</property>
 	</bean>
@@ -64,6 +66,16 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 	
 	<bean id="fileTest" class="org.dps.servicelayer.dto.FileTest">
 		<property name="file" ref="file" />
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
+	
+	<bean id="groupTest" class="org.dps.servicelayer.dto.GroupTest">
+		<property name="group" ref="group" />
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
+	
+	<bean id="userTest" class="org.dps.servicelayer.dto.UserTest">
+		<property name="user" ref="user" />
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>
 	
@@ -90,5 +102,9 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 	<bean id="artist" class="org.dps.servicelayer.dto.Artist" />
 	
 	<bean id="file" class ="org.dps.servicelayer.dto.File" />
+	
+	<bean id="user" class="org.dps.servicelayer.dto.User" />
+	
+	<bean id="group" class="org.dps.servicelayer.dto.Group" />
 
 </beans>

@@ -10,7 +10,7 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
 public class FileTest extends AbstractDependencyInjectionSpringContextTests {
 
-	final static Logger LOGGER = LoggerFactory.getLogger(FileTest.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(FileTest.class);
 	
 	protected String[] getConfigLocations() {
 		return new String[] { "org/dps/servicelayer/dto/test-spring-config.xml" };
@@ -31,11 +31,11 @@ public class FileTest extends AbstractDependencyInjectionSpringContextTests {
 	@Test
 	public void testSimpleRetrieve() {
 		
-		List<File> aList = (List<File>) hibernateTemplate.find("from File where fileID=2");
+		List<File> aList = (List<File>) hibernateTemplate.find("from File where fileID=1");
 		
 		LOGGER.debug("Child: " + aList.get(0).toString());
 		
-		LOGGER.debug("Parent: " + aList.get(0).getParent().getName().toString());
+		//LOGGER.debug("Parent: " + aList.get(0).getParent().getName().toString());
 		
 		assertNotNull(aList);
 		assertEquals("More than one result returned",1, aList.size());

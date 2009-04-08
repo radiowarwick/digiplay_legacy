@@ -2,22 +2,17 @@ package org.dps.servicelayer.dto;
 
 import java.util.List;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
-import org.springframework.test.AbstractTransactionalDataSourceSpringContextTests;
 
 public class AudioTest extends AbstractDependencyInjectionSpringContextTests
  {
 	
-	final static Logger LOGGER = LoggerFactory.getLogger(AudioTest.class);
-	
+	private final static Logger LOGGER = LoggerFactory.getLogger(AudioTest.class);	
 
 	private Audio audio;
 	protected String[] getConfigLocations() {

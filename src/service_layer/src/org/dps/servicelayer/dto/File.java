@@ -22,8 +22,6 @@ import org.slf4j.LoggerFactory;
 @Entity
 @Table(name="file")
 public class File extends Audit {
-
-	final static Logger LOGGER = LoggerFactory.getLogger(File.class);
 	
 	@Column(name="file_id")
 	@Id

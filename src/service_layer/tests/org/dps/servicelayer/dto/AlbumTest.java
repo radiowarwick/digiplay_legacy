@@ -12,7 +12,7 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
 public class AlbumTest extends AbstractDependencyInjectionSpringContextTests {
 
-	final static Logger LOGGER = LoggerFactory.getLogger(AlbumTest.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(AlbumTest.class);
 	
 	private Album album;
 	protected String[] getConfigLocations() {

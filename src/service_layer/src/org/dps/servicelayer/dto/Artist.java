@@ -18,8 +18,6 @@ import org.slf4j.LoggerFactory;
 @Entity
 @Table(name="artist")
 public class Artist extends Audit  {
-
-	final static Logger LOGGER = LoggerFactory.getLogger(Artist.class);
 	
 	@Column(name="artist_id")
 	@Id

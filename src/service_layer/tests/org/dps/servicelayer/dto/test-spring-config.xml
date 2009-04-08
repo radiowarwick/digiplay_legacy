@@ -42,6 +42,7 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 				<value>org.dps.servicelayer.dto.Audio</value>
 				<value>org.dps.servicelayer.dto.Album</value>
 				<value>org.dps.servicelayer.dto.Artist</value>
+				<value>org.dps.servicelayer.dto.File</value>
 			</list>
 		</property>
 	</bean>
@@ -58,6 +59,11 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 	
 	<bean id="artistTest" class="org.dps.servicelayer.dto.ArtistTest">
 		<property name="artist" ref="artist" />
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
+	
+	<bean id="fileTest" class="org.dps.servicelayer.dto.FileTest">
+		<property name="file" ref="file" />
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>
 	
@@ -82,5 +88,7 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 	<bean id="album" class="org.dps.servicelayer.dto.Album" />
 
 	<bean id="artist" class="org.dps.servicelayer.dto.Artist" />
+	
+	<bean id="file" class ="org.dps.servicelayer.dto.File" />
 
 </beans>

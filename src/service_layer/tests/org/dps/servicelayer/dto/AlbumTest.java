@@ -30,7 +30,7 @@ public class AlbumTest extends AbstractDependencyInjectionSpringContextTests {
 	
 	@Test
 	public void testSimpleAudioRetrievalTest() {
-		List<Album> aList = (List<Album>) hibernateTemplate.find("from Album where albumID=2");
+		List<Album> aList = (List<Album>) hibernateTemplate.find("from Album where albumID=1");
 		
 		LOGGER.debug("Album name retrieved: " + aList.get(0).toString());
 		

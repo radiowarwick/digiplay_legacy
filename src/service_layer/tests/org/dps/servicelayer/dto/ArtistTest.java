@@ -28,7 +28,7 @@ public class ArtistTest extends AbstractDependencyInjectionSpringContextTests {
 	
 	@Test
 	public void testSimpleAudioRetrievalTest() {
-		List<Artist> aList = (List<Artist>) hibernateTemplate.find("from Artist where artistID=3");
+		List<Artist> aList = (List<Artist>) hibernateTemplate.find("from Artist where artistID=1");
 		
 		LOGGER.debug("Artist name retrieved: " + aList.get(0).toString());
 		

@@ -3,11 +3,17 @@ package org.dps.servicelayer.dto;
 import java.util.List;
 
 
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate3.HibernateTransactionManager;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 public class AudioTest extends AbstractDependencyInjectionSpringContextTests
  {
@@ -18,10 +24,10 @@ public class AudioTest extends AbstractDependencyInjectionSpringContextTests
 	protected String[] getConfigLocations() {
 		return new String[] { "org/dps/servicelayer/dto/test-spring-config.xml" };
 	}
-	private HibernateTemplate hibernateTemplate;
-	
-	public void setHibernateTemplate(HibernateTemplate hibernateTemplate) {
-		this.hibernateTemplate = hibernateTemplate;
+	private HibernateTransactionManager txManager;
+
+	public void setTxManager(HibernateTransactionManager txManager_) {
+		txManager = txManager_;
 	}
 
 	public void setAudio(Audio audioDao) {
@@ -32,38 +38,36 @@ public class AudioTest extends AbstractDependencyInjectionSpringContextTests
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testSimpleRetrieve() {
+		TransactionDefinition txd = new DefaultTransactionDefinition();
+		TransactionStatus ts = txManager.getTransaction(txd);
 		
-		List<Audio> aList = (List<Audio>) hibernateTemplate.find("from Audio where audioID=1");
+		Session session = txManager.getSessionFactory().getCurrentSession();
+		Query query = session.createQuery("from Audio where fileID=1");
+		Audio audio = (Audio) query.uniqueResult();
 		
-		LOGGER.debug(aList.get(0).toString());
 		
-		assertNotNull(aList);
-		assertEquals("More than one result returned",1, aList.size());
+		assertNotNull(audio);
+		assertEquals("Hello", audio.getTitle());
+		txManager.commit(ts);
 	}
 	
-	/*
+	
 	@Test
 	public void testSimpleInsert() {
-		Session session = SessionFactoryUtils.doGetSession(hibernateTemplate.getSessionFactory(), true);
+		TransactionDefinition txd = new DefaultTransactionDefinition();
+		TransactionStatus ts = txManager.getTransaction(txd);
 		
-		Transaction t =  session.beginTransaction();
-		try {
-		audio.setTitle("All the small things");
-		
-		hibernateTemplate.saveOrUpdate(audio);
-		
-		LOGGER.debug("AudioID : " + audio.getAudioID());
-		assertNotNull("Check audio id has been assigned", audio.getAudioID());
+		Session session = txManager.getSessionFactory().getCurrentSession();
+		audio.setParent(getRootDir(session));
+		session.save(audio);
 		assertEquals("Check the set audio title", "All the small things",audio.getTitle());
+		assertNotNull("Check audio id has been assigned", audio.getFileID());
 		
-		t.commit();
-		} finally {
-			if (t.isActive()) {
-				t.rollback();
-			}
-		}
-
+		txManager.commit(ts);
 	}
-	*/
-
+	
+	private static File getRootDir(Session session) {
+		Query query = session.createQuery("from File where fileID=0");
+		return (File) query.uniqueResult();
+	}
 }

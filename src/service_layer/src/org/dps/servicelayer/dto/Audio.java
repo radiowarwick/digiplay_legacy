@@ -1,30 +1,23 @@
 package org.dps.servicelayer.dto;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="audio")
-public class Audio extends Audit {
-	
-	@Column(name="audio_id")
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private Long audioID;
-	
-	//FileID - New Object
+@PrimaryKeyJoinColumn(name="file_id")
+public class Audio extends File {
 	
 	@Column(name="md5")
 	private String md5;
@@ -78,21 +71,9 @@ public class Audio extends Audit {
 	private Set<Artist> artists = new HashSet<Artist>();
 
 	public String toString() {
-		return audioID + ":" + title;
+		return getFileID() + ":" + title;
 	}
-	
-	/**
-	 * @return the audioID
-	 */
-	public Long getAudioID() {
-		return audioID;
-	}
-	/**
-	 * @param audioID the audioID to set
-	 */
-	public void setAudioID(Long audioID) {
-		this.audioID = audioID;
-	}
+
 	/**
 	 * @return the md5
 	 */
@@ -259,5 +240,6 @@ public class Audio extends Audit {
 	public void setArtists(Set<Artist> artists) {
 		this.artists = artists;
 	}
+	
 
 }

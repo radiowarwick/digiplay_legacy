@@ -57,7 +57,7 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 	
 	<bean id="audioTest" class="org.dps.servicelayer.dto.AudioTest">
 		<property name="audio" ref="audio" />
-		<property name="hibernateTemplate" ref="hibernateTemplate" />
+		<property name="txManager" ref="transactionManager" />
 	</bean>
 	
 	<bean id="albumTest" class="org.dps.servicelayer.dto.AlbumTest"> 
@@ -102,6 +102,19 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 		<property name="fileType" value="raw" />
 		<property name="importDate" value="1234567890" />
 		<property name="title" value="All the small things" />
+		<property name="filename" value="All_the_small_things" />
+		<property name="allExecute" value="false" />
+		<property name="allRead" value="false" />
+		<property name="allWrite" value="true" />
+		<property name="groupRead" value="true" />
+		<property name="groupWrite" value="false" />
+		<property name="groupExecute" value="true" />
+		<property name="userExecute" value="true" />
+		<property name="userRead" value="true" />
+		<property name="userWrite" value="true" />
+		<property name="ownerID" value="1" /> <!-- TODO replace with object -->
+		<property name="groupID" value="1" /> <!-- TODO replace with object -->
+		<property name="entityType" value="1" /> <!-- TODO replace with object -->
 	</bean>
 
 	<bean id="album" class="org.dps.servicelayer.dto.Album" />

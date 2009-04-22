@@ -1,5 +1,6 @@
 package org.dps.servicelayer.dto;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,18 +10,24 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Entity
 @Table(name="file")
+@Inheritance(strategy=InheritanceType.JOINED)
 public class File extends Audit {
 	
 	@Column(name="file_id")
@@ -36,17 +43,14 @@ public class File extends Audit {
 	@JoinColumn(name="parent")
 	private Set<File> children = new HashSet<File>();
 	
-	@Column(name="name")
-	private String name;
+	@Column(name="filename")
+	private String filename;
 	
 	@Column(name="owner_id")
 	private Integer ownerID;
 	
 	@Column(name="group_id")
 	private Integer groupID;
-	
-	@Column(name="entity_id")
-	private Integer entityID;
 	
 	@Column(name="entity_type")
 	private Integer entityType;
@@ -78,11 +82,11 @@ public class File extends Audit {
 	@Column(name="all_x")
 	private Boolean allExecute;
 	
-	@Column(name="created")
-	private Integer created;
+	@Column(name="created",updatable = false, insertable = true)
+	private Long created = new Date().getTime();
 	
 	public String toString() {
-		return fileID + ":" + name;
+		return fileID + ":" + filename;
 	}
 
 	/**
@@ -130,15 +134,15 @@ public class File extends Audit {
 	/**
 	 * @return the name
 	 */
-	public String getName() {
-		return name;
+	public String getFileame() {
+		return filename;
 	}
 
 	/**
 	 * @param name the name to set
 	 */
-	public void setName(String name) {
-		this.name = name;
+	public void setFilename(String filename) {
+		this.filename = filename;
 	}
 
 	/**
@@ -167,20 +171,6 @@ public class File extends Audit {
 	 */
 	public void setGroupID(Integer groupID) {
 		this.groupID = groupID;
-	}
-
-	/**
-	 * @return the entityID
-	 */
-	public Integer getEntityID() {
-		return entityID;
-	}
-
-	/**
-	 * @param entityID the entityID to set
-	 */
-	public void setEntityID(Integer entityID) {
-		this.entityID = entityID;
 	}
 
 	/**
@@ -326,16 +316,15 @@ public class File extends Audit {
 	/**
 	 * @return the created
 	 */
-	public Integer getCreated() {
+	public Long getCreated() {
 		return created;
 	}
 
 	/**
 	 * @param created the created to set
 	 */
-	public void setCreated(Integer created) {
+	public void setCreated(Long created) {
 		this.created = created;
 	}
-	
 	
 }

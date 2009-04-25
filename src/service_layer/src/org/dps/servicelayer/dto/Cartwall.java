@@ -35,7 +35,7 @@ public class Cartwall extends Audit  {
 	private Cartset cartset;
 
 	@OneToMany
-	@JoinColumn(name="cartset_id")
+	@JoinColumn(name="cartwall_id")
 	private Set<CartAudio> carts;
 	
 	public Long getCartwallID() {

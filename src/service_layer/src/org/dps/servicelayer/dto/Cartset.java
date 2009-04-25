@@ -8,8 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Sort;
@@ -17,12 +17,8 @@ import org.hibernate.annotations.SortType;
 
 @Entity
 @Table(name="cartset")
-public class Cartset extends Audit  {
-	
-	@Column(name="cartset_id")
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private Long cartsetID;
+@PrimaryKeyJoinColumn(name="file_id")
+public class Cartset extends File  {
 	
 	@Column(name="name")
 	private String name;
@@ -30,22 +26,10 @@ public class Cartset extends Audit  {
 	@Column(name="description")
 	private String description;
 	
-	@ManyToOne
-	@JoinColumn(name="file_id")
-	private File file;
-	
 	@OneToMany
 	@JoinColumn(name="cartset_id")
 	@Sort(type = SortType.COMPARATOR, comparator = CartwallPageComparator.class)
 	private List<Cartwall> cartwalls;
-	
-	public Long getCartsetID() {
-		return cartsetID;
-	}
-
-	public void setCartsetID(Long cartsetID_) {
-		cartsetID = cartsetID_;
-	}
 
 	public String getName() {
 		return name;
@@ -61,14 +45,6 @@ public class Cartset extends Audit  {
 
 	public void setDescription(String description_) {
 		description = description_;
-	}
-
-	public File getFile() {
-		return file;
-	}
-
-	public void setFile(File file_) {
-		file = file_;
 	}
 
 	public List<Cartwall> getCartwalls() {

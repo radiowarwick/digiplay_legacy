@@ -86,8 +86,7 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 	</bean>
 	
 	<bean id="cartsetTest" class="org.dps.servicelayer.dto.CartsetTest">
-		<property name="hibernateTemplate" ref="hibernateTemplate"/>
-		<property name="txManager" ref="transactionManager"></property>
+		<property name="txManager" ref="transactionManager" />
 	</bean>
 
 	<!-- DTOs Used for Testing -->

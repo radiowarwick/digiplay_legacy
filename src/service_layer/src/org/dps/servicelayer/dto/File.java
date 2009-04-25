@@ -1,10 +1,11 @@
 package org.dps.servicelayer.dto;
 
-import java.util.Date;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TimeZone;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,17 +14,15 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Entity
 @Table(name="file")
@@ -83,7 +82,8 @@ public class File extends Audit {
 	private Boolean allExecute;
 	
 	@Column(name="created",updatable = false, insertable = true)
-	private Long created = new Date().getTime();
+	@Generated(GenerationTime.NEVER)
+	private Calendar created = new GregorianCalendar();
 	
 	public String toString() {
 		return fileID + ":" + filename;
@@ -134,7 +134,7 @@ public class File extends Audit {
 	/**
 	 * @return the name
 	 */
-	public String getFileame() {
+	public String getFilename() {
 		return filename;
 	}
 
@@ -316,14 +316,14 @@ public class File extends Audit {
 	/**
 	 * @return the created
 	 */
-	public Long getCreated() {
+	public Calendar getCreated() {
 		return created;
 	}
 
 	/**
 	 * @param created the created to set
 	 */
-	public void setCreated(Long created) {
+	public void setCreated(Calendar created) {
 		this.created = created;
 	}
 	

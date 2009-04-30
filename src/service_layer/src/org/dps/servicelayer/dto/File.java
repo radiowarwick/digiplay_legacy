@@ -4,7 +4,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TimeZone;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,9 +16,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Version;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
@@ -35,7 +31,7 @@ public class File extends Audit {
 	private Long fileID;
 	
 	@ManyToOne
-	@JoinColumn(name="parent")
+	@JoinColumn(name="parent", nullable=false)
 	private File parent;
 	
 	@OneToMany
@@ -44,12 +40,14 @@ public class File extends Audit {
 	
 	@Column(name="filename")
 	private String filename;
+
+	@ManyToOne
+	@JoinColumn(name="group_id")
+	private Group ownerGroup = new Group();
 	
-	@Column(name="owner_id")
-	private Long ownerID;
-	
-	@Column(name="group_id")
-	private Long groupID;
+	@ManyToOne
+	@JoinColumn(name="owner_id")
+	private User owner = new User();
 	
 	@Column(name="entity_type")
 	private Integer entityType;
@@ -84,6 +82,17 @@ public class File extends Audit {
 	@Column(name="created",updatable = false, insertable = true)
 	@Generated(GenerationTime.NEVER)
 	private Calendar created = new GregorianCalendar();
+	
+	public void addChild(File file) {
+		file.setParent(this);
+		children.add(file);
+	}
+	
+	public File deleteChild(File file) {
+		file.setParent(null);
+		children.remove(file);
+		return file;
+	}
 	
 	public String toString() {
 		return fileID + ":" + filename;
@@ -143,34 +152,6 @@ public class File extends Audit {
 	 */
 	public void setFilename(String filename) {
 		this.filename = filename;
-	}
-
-	/**
-	 * @return the ownerID
-	 */
-	public Long getOwnerID() {
-		return ownerID;
-	}
-
-	/**
-	 * @param ownerID the ownerID to set
-	 */
-	public void setOwnerID(Long ownerID) {
-		this.ownerID = ownerID;
-	}
-
-	/**
-	 * @return the groupID
-	 */
-	public Long getGroupID() {
-		return groupID;
-	}
-
-	/**
-	 * @param groupID the groupID to set
-	 */
-	public void setGroupID(Long groupID) {
-		this.groupID = groupID;
 	}
 
 	/**
@@ -326,5 +307,35 @@ public class File extends Audit {
 	public void setCreated(Calendar created) {
 		this.created = created;
 	}
+
+	/**
+	 * @return the ownerGroup
+	 */
+	public Group getOwnerGroup() {
+		return ownerGroup;
+	}
+
+	/**
+	 * @param ownerGroup the ownerGroup to set
+	 */
+	public void setOwnerGroup(Group ownerGroup) {
+		this.ownerGroup = ownerGroup;
+	}
+
+	/**
+	 * @return the owner
+	 */
+	public User getOwner() {
+		return owner;
+	}
+
+	/**
+	 * @param owner the owner to set
+	 */
+	public void setOwner(User owner) {
+		this.owner = owner;
+	}
+
+
 	
 }

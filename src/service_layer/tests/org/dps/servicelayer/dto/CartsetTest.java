@@ -125,8 +125,8 @@ public class CartsetTest extends AbstractDPSTest
 			User owner = this.getTestUser(session);
 			Group group = this.getTestGroup(session);
 			
-			testCartset.setGroupID(group.getGroupID()); //TODO replace with group
-			testCartset.setOwnerID(owner.getUserID()); //TODO: replace with user
+			testCartset.setOwnerGroup(group);
+			testCartset.setOwner(owner);
 			testCartset.setParent(root);
 			session.save(testCartset);
 			
@@ -296,7 +296,7 @@ public class CartsetTest extends AbstractDPSTest
 	}
 	
 	@Test
-	public void testDeleteCartwall() throws Exception {
+	public void testSubDelete() throws Exception {
 		TransactionDefinition txd = new DefaultTransactionDefinition();
 		TransactionStatus ts = txManager.getTransaction(txd);
 		Calendar updated = null;

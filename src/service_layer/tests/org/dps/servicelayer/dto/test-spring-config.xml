@@ -69,11 +69,6 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>
 	
-	<bean id="fileTest" class="org.dps.servicelayer.dto.FileTest">
-		<property name="file" ref="file" />
-		<property name="hibernateTemplate" ref="hibernateTemplate" />
-	</bean>
-	
 	<bean id="groupTest" class="org.dps.servicelayer.dto.GroupTest">
 		<property name="group" ref="group" />
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
@@ -112,8 +107,6 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 		<property name="userExecute" value="true" />
 		<property name="userRead" value="true" />
 		<property name="userWrite" value="true" />
-		<property name="ownerID" value="1" /> <!-- TODO replace with object -->
-		<property name="groupID" value="1" /> <!-- TODO replace with object -->
 		<property name="entityType" value="1" /> <!-- TODO replace with object -->
 	</bean>
 
@@ -139,9 +132,7 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 		<property name="groupExecute" value="true" />
 		<property name="userExecute" value="true" />
 		<property name="userRead" value="true" />
-		<property name="userWrite" value="true" />
-		<property name="ownerID" value="1" /> <!-- TODO replace with object -->
-		<property name="groupID" value="1" /> <!-- TODO replace with object -->
+		<property name="userWrite" value="true" /> 
 		<property name="entityType" value="3" /> <!-- TODO replace with object -->
 	</bean>
 </beans>

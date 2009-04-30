@@ -14,6 +14,8 @@ public abstract class AbstractDPSTest extends AbstractDependencyInjectionSpringC
 	private Long testUserID = Long.valueOf(1);
 	private Long testGroupID = Long.valueOf(1);
 	protected HibernateTransactionManager txManager;
+	private Long testAudioID = Long.valueOf(1);
+	private Long testCartStyleID = Long.valueOf(1);
 	
 	protected String[] getConfigLocations() {
 		return new String[] { "org/dps/servicelayer/dto/test-spring-config.xml" };
@@ -42,7 +44,19 @@ public abstract class AbstractDPSTest extends AbstractDependencyInjectionSpringC
 		query.setLong(0, testGroupID.longValue());
 		return (Group) query.uniqueResult();
 	}
-
+	
+	protected Audio getTestAudio(Session session) {
+		Query query = session.createQuery("from Audio where fileID=?");
+		query.setLong(0, testAudioID .longValue());
+		return (Audio) query.uniqueResult();
+	}
+	
+	protected CartStyle getTestCartStyle(Session session) {
+		Query query = session.createQuery("from CartStyle where cartStyleID=?");
+		query.setLong(0, testCartStyleID  .longValue());
+		return (CartStyle) query.uniqueResult();
+	}
+	
 	public void setRootFileID(Long rootFileID_) {
 		rootFileID = rootFileID_;
 	}

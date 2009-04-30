@@ -35,7 +35,7 @@ public class Cartwall extends Audit  {
 	private Cartset cartset;
 
 	@OneToMany
-	@JoinColumn(name="cartwall_id")
+	@JoinColumn(name="cartwall_id", nullable=false)
 	private Set<CartAudio> carts;
 	
 	public Long getCartwallID() {
@@ -80,6 +80,27 @@ public class Cartwall extends Audit  {
 
 	public Set<CartAudio> getCarts() {
 		return carts;
+	}
+	
+	public void addCart(CartAudio cart) {
+		cart.setCartwall(this);
+		carts.add(cart);
+	}
+	
+	public CartAudio deleteCart(Integer cartID) {
+		CartAudio cart = null;
+		for(CartAudio temp : carts) {
+			if(cartID.equals(temp.getCartID())) {
+				cart = temp;
+				continue;
+			}
+		}
+		if(cart == null) {
+			return cart;
+		}
+		cart.setCartwall(null);
+		carts.remove(cart);
+		return cart;
 	}
 	
 	public String toString() {

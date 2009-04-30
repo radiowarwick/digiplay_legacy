@@ -1,8 +1,9 @@
 package org.dps.servicelayer.dto;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,10 +29,10 @@ public class CartStyle extends Audit  {
 	@Column(name="description")
 	private String description;
 	
-	@OneToMany
-	@JoinColumn(name="cart_style_id")
+	@OneToMany(cascade={CascadeType.ALL})
+	@JoinColumn(name="cart_style_id", nullable=false)
     @MapKey(name="key")
-	private Map<String, CartStyleProperty> properties;
+	private Map<String, CartStyleProperty> properties = new HashMap<String, CartStyleProperty>();
 	
 
 	public Long getCartStyleID() {
@@ -47,6 +48,14 @@ public class CartStyle extends Audit  {
 	}
 	
 	protected void addProperty(CartStyleProperty property) {
+		properties.put(property.getKey(), property);
+	}
+	
+	protected void addProperty(String key, String val) {
+		CartStyleProperty property = new CartStyleProperty();
+		property.setKey(key);
+		property.setValue(val);
+		property.setStyle(this);
 		properties.put(property.getKey(), property);
 	}
 

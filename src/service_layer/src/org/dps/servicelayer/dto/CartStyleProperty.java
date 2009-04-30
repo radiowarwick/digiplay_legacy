@@ -25,7 +25,7 @@ public class CartStyleProperty extends Audit  {
 	private String value;
 	
 	@ManyToOne
-	@JoinColumn(name="cart_style_id")
+	@JoinColumn(name="cart_style_id", nullable=false, insertable=false, updatable=false)
 	private CartStyle style;
 	
 	public Long getCartStylePropID() {

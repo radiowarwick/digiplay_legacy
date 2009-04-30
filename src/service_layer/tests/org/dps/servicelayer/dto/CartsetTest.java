@@ -2,6 +2,7 @@ package org.dps.servicelayer.dto;
 
 import static org.dps.servicelayer.dto.Constants.FILE_TYPE_CARTSET;
 
+import java.applet.AudioClip;
 import java.util.Calendar;
 import java.util.List;
 
@@ -224,7 +225,7 @@ public class CartsetTest extends AbstractDPSTest
 	}
 	
 	@Test
-	public void testSubUpdate() throws Exception {
+	public void testAddCartwalls() throws Exception {
 		TransactionDefinition txd = new DefaultTransactionDefinition();
 		TransactionStatus ts = txManager.getTransaction(txd);
 		Calendar updated = null;
@@ -295,7 +296,7 @@ public class CartsetTest extends AbstractDPSTest
 	}
 	
 	@Test
-	public void testSubDelete() throws Exception {
+	public void testDeleteCartwall() throws Exception {
 		TransactionDefinition txd = new DefaultTransactionDefinition();
 		TransactionStatus ts = txManager.getTransaction(txd);
 		Calendar updated = null;
@@ -363,7 +364,7 @@ public class CartsetTest extends AbstractDPSTest
 	}
 	
 	@Test
-	public void testSubDeleteonPageNum() throws Exception {
+	public void testDeleteCartwallByPageNum() throws Exception {
 		TransactionDefinition txd = new DefaultTransactionDefinition();
 		TransactionStatus ts = txManager.getTransaction(txd);
 		Calendar updated = null;
@@ -422,6 +423,156 @@ public class CartsetTest extends AbstractDPSTest
 		}
 	}
 
+	@Test
+	public void testAddCartAudios() throws Exception {
+		TransactionDefinition txd = new DefaultTransactionDefinition();
+		TransactionStatus ts = txManager.getTransaction(txd);
+		Calendar updated = null;
+		int count = -1;
+		try {
+			Session session = txManager.getSessionFactory().getCurrentSession();
+			Query query = session.createQuery("from Cartset where fileID=?");
+			query.setLong(0, testCartsetID);
+			Cartset cartset = (Cartset) query.uniqueResult();
+
+			Cartwall wall = cartset.getCartwalls().get(0);
+			CartAudio ca = new CartAudio();
+			ca.setAudio(this.getTestAudio(session));
+			ca.setCartID(Integer.valueOf(3));
+			ca.setStyle(this.getTestCartStyle(session));
+			ca.setText("Test Button");
+			CartAudio ca2 = new CartAudio();
+			ca2.setAudio(this.getTestAudio(session));
+			ca2.setCartID(Integer.valueOf(7));
+			ca2.setStyle(this.getTestCartStyle(session));
+			ca2.setText("Test Button 2");
+			count = wall.getCarts().size() + 2;
+			wall.addCart(ca);
+			wall.addCart(ca2);
+			
+			updated = wall.getLastUpdated();
+			session.save(ca);
+			session.save(ca2); 
+			//do we want to use explicit saves or cascade??
+			//session.update(cartset);
+		} catch (Exception e) {
+			ts.setRollbackOnly();
+			throw e;
+		} finally {
+			if(ts.isRollbackOnly()) {
+				txManager.rollback(ts);
+			} else {
+				txManager.commit(ts);
+			}
+		}
+		
+		ts = txManager.getTransaction(txd);
+		try {
+			Session session = txManager.getSessionFactory().getCurrentSession();
+			Query query = session.createQuery("from Cartset where fileID=?");
+			query.setLong(0, testCartsetID);
+			Cartset cartset = (Cartset) query.uniqueResult();
+
+			Cartwall wall = cartset.getCartwalls().get(0);
+			LOGGER.debug(wall.toString());
+			assertTrue(wall.getLastUpdated().compareTo(updated) > 0);
+			assertEquals(count, wall.getCarts().size());
+			
+		} catch (Exception e) {
+			ts.setRollbackOnly();
+			throw e;
+		} finally {
+			if(ts.isRollbackOnly()) {
+				txManager.rollback(ts);
+			} else {
+				txManager.commit(ts);				
+			}
+		}
+	}
+	
+	@Test
+	public void testDeleteCartAudio() throws Exception {
+		TransactionDefinition txd = new DefaultTransactionDefinition();
+		TransactionStatus ts = txManager.getTransaction(txd);
+		Calendar updated = null;
+		int count = -1;
+		try {
+			Session session = txManager.getSessionFactory().getCurrentSession();
+			Query query = session.createQuery("from Cartset where fileID=?");
+			query.setLong(0, testCartsetID);
+			Cartset cartset = (Cartset) query.uniqueResult();
+
+			Cartwall wall = cartset.getCartwalls().get(0);
+			count = wall.getCarts().size() - 1;
+			CartAudio ca = wall.deleteCart(Integer.valueOf(3));
+			
+			updated = wall.getLastUpdated();
+			session.delete(ca); 
+			//do we want to use explicit saves or cascade??
+			//session.update(cartset);
+		} catch (Exception e) {
+			ts.setRollbackOnly();
+			throw e;
+		} finally {
+			if(ts.isRollbackOnly()) {
+				txManager.rollback(ts);
+			} else {
+				txManager.commit(ts);
+			}
+		}
+		
+		ts = txManager.getTransaction(txd);
+		try {
+			Session session = txManager.getSessionFactory().getCurrentSession();
+			Query query = session.createQuery("from Cartset where fileID=?");
+			query.setLong(0, testCartsetID);
+			Cartset cartset = (Cartset) query.uniqueResult();
+
+			Cartwall wall = cartset.getCartwalls().get(0);
+			LOGGER.debug(wall.toString());
+			assertTrue(wall.getLastUpdated().compareTo(updated) > 0);
+			assertEquals(count, wall.getCarts().size());
+			
+		} catch (Exception e) {
+			ts.setRollbackOnly();
+			throw e;
+		} finally {
+			if(ts.isRollbackOnly()) {
+				txManager.rollback(ts);
+			} else {
+				txManager.commit(ts);				
+			}
+		}
+	}
+	
+	@Test
+	public void testAddCartStyle() throws Exception {
+		TransactionDefinition txd = new DefaultTransactionDefinition();
+		TransactionStatus ts = txManager.getTransaction(txd);
+		try {
+			Session session = txManager.getSessionFactory().getCurrentSession();
+			CartStyle cs = new CartStyle();
+			cs.setName("New Style 1");
+			cs.setDescription("New Description..");
+			CartStyleProperty prop = new CartStyleProperty();
+			
+			cs.addProperty("Prop1", "Value1");
+			cs.addProperty("Prop2", "Value2");
+			session.save(cs);
+			//do we want to use explicit saves or cascade??
+			//session.update(cartset);
+		} catch (Exception e) {
+			ts.setRollbackOnly();
+			throw e;
+		} finally {
+			if(ts.isRollbackOnly()) {
+				txManager.rollback(ts);
+			} else {
+				txManager.commit(ts);
+			}
+		}
+	}
+	
 	public void setTestCartsetID(long testCartsetID_) {
 		testCartsetID = testCartsetID_;
 	}
@@ -432,3 +583,4 @@ public class CartsetTest extends AbstractDPSTest
 	}
 
 }
+

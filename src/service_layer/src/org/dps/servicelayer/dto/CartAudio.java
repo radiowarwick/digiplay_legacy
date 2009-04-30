@@ -33,7 +33,7 @@ public class CartAudio extends Audit  {
 	private Audio audio;
 	
 	@ManyToOne
-	@JoinColumn(name="cartwall_id")
+	@JoinColumn(name="cartwall_id", nullable=false, insertable=false, updatable=false)
 	private Cartwall cartwall;
 	
 	public Long getCartAudioID() {

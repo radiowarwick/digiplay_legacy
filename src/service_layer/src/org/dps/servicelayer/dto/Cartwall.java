@@ -29,9 +29,9 @@ public class Cartwall extends Audit  {
 		
 	@Column(name="description")
 	private String description;
-	
-	@ManyToOne
-	@JoinColumn(name="cartset_id")
+
+	@ManyToOne()
+	@JoinColumn(name="cartset_id", nullable=false, insertable=false, updatable=false)
 	private Cartset cartset;
 
 	@OneToMany
@@ -74,7 +74,7 @@ public class Cartwall extends Audit  {
 		return cartset;
 	}
 
-	public void setCartset(Cartset cartset_) {
+	protected void setCartset(Cartset cartset_) {
 		cartset = cartset_;
 	}
 

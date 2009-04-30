@@ -4,7 +4,6 @@ import java.util.Comparator;
 
 public class CartwallPageComparator implements Comparator<Cartwall> {
 
-	@Override
 	public int compare(Cartwall a, Cartwall b) {
 		if(a == null && b == null) {
 			return 0;

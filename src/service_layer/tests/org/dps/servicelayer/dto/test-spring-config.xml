@@ -48,7 +48,6 @@ http://cxf.apache.org/schemas/jaxws.xsd">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 	
-	
 	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
 	    <property name="sessionFactory">
 	        <ref bean="sessionFactory" />
@@ -87,6 +86,8 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 	
 	<bean id="cartsetTest" class="org.dps.servicelayer.dto.CartsetTest">
 		<property name="txManager" ref="transactionManager" />
+		<property name="cartset" ref="cartset" />
+		<property name="testCartsetID" value="20" />
 	</bean>
 
 	<!-- DTOs Used for Testing -->
@@ -126,4 +127,21 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 	
 	<bean id="group" class="org.dps.servicelayer.dto.Group" />
 	
+	<bean id="cartset" class="org.dps.servicelayer.dto.Cartset" >
+		<property name="name" value="Test Cartset" />
+		<property name="description" value="A Test Cartset" />
+		<property name="filename" value="test_cartset" />
+		<property name="allExecute" value="false" />
+		<property name="allRead" value="false" />
+		<property name="allWrite" value="true" />
+		<property name="groupRead" value="true" />
+		<property name="groupWrite" value="false" />
+		<property name="groupExecute" value="true" />
+		<property name="userExecute" value="true" />
+		<property name="userRead" value="true" />
+		<property name="userWrite" value="true" />
+		<property name="ownerID" value="1" /> <!-- TODO replace with object -->
+		<property name="groupID" value="1" /> <!-- TODO replace with object -->
+		<property name="entityType" value="3" /> <!-- TODO replace with object -->
+	</bean>
 </beans>

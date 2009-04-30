@@ -46,10 +46,10 @@ public class File extends Audit {
 	private String filename;
 	
 	@Column(name="owner_id")
-	private Integer ownerID;
+	private Long ownerID;
 	
 	@Column(name="group_id")
-	private Integer groupID;
+	private Long groupID;
 	
 	@Column(name="entity_type")
 	private Integer entityType;
@@ -148,28 +148,28 @@ public class File extends Audit {
 	/**
 	 * @return the ownerID
 	 */
-	public Integer getOwnerID() {
+	public Long getOwnerID() {
 		return ownerID;
 	}
 
 	/**
 	 * @param ownerID the ownerID to set
 	 */
-	public void setOwnerID(Integer ownerID) {
+	public void setOwnerID(Long ownerID) {
 		this.ownerID = ownerID;
 	}
 
 	/**
 	 * @return the groupID
 	 */
-	public Integer getGroupID() {
+	public Long getGroupID() {
 		return groupID;
 	}
 
 	/**
 	 * @param groupID the groupID to set
 	 */
-	public void setGroupID(Integer groupID) {
+	public void setGroupID(Long groupID) {
 		this.groupID = groupID;
 	}
 

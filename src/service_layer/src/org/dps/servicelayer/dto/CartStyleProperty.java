@@ -18,13 +18,13 @@ public class CartStyleProperty extends Audit  {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long cartStylePropID;
 	
-	@Column(name="key")
+	@Column(name="key", updatable=false)
 	private String key;
 	
 	@Column(name="value")
 	private String value;
 	
-	@ManyToOne
+	@ManyToOne()
 	@JoinColumn(name="cart_style_id", nullable=false, insertable=false, updatable=false)
 	private CartStyle style;
 	
@@ -32,15 +32,11 @@ public class CartStyleProperty extends Audit  {
 		return cartStylePropID;
 	}
 
-	public void setCartStylePropID(Long cartStylePropID_) {
-		cartStylePropID = cartStylePropID_;
-	}
-
 	public String getKey() {
 		return key;
 	}
 
-	public void setKey(String key_) {
+	protected void setKey(String key_) {
 		key = key_;
 	}
 
@@ -56,11 +52,37 @@ public class CartStyleProperty extends Audit  {
 		return style;
 	}
 
-	public void setStyle(CartStyle style_) {
+	protected void setStyle(CartStyle style_) {
 		style = style_;
 	}
 
 	public String toString() {
 		return key + ":" + value;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((cartStylePropID == null) ? 0 : cartStylePropID.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CartStyleProperty other = (CartStyleProperty) obj;
+		if (cartStylePropID == null) {
+			if (other.cartStylePropID != null)
+				return false;
+		} else if (!cartStylePropID.equals(other.cartStylePropID))
+			return false;
+		return true;
 	}
 }

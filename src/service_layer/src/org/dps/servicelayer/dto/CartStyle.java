@@ -1,5 +1,6 @@
 package org.dps.servicelayer.dto;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,26 +41,32 @@ public class CartStyle extends Audit  {
 	}
 
 	public Map<String, CartStyleProperty> getProperties() {
-		return properties;
+		return Collections.unmodifiableMap(properties);
 	}
 
 	protected void setProperties(Map<String, CartStyleProperty> properties_) {
 		properties = properties_;
 	}
 	
-	protected void addProperty(CartStyleProperty property) {
-		properties.put(property.getKey(), property);
+	public void addProperty(String key, String val) {
+		CartStyleProperty prop = new CartStyleProperty();
+		prop.setKey(key);
+		prop.setValue(val);
+		prop.setStyle(this);
+		properties.put(key, prop);
 	}
 	
-	protected void addProperty(String key, String val) {
-		CartStyleProperty property = new CartStyleProperty();
-		property.setKey(key);
-		property.setValue(val);
-		property.setStyle(this);
-		properties.put(property.getKey(), property);
+	public CartStyleProperty deleteProperty(String key) {
+		CartStyleProperty prop = properties.get(key);
+		properties.remove(key);
+		return prop;
+	}
+	
+	public CartStyleProperty getProperty(String key) {
+		return properties.get(key);
 	}
 
-	public void setCartStyleID(Long cartStyleID_) {
+	protected void setCartStyleID(Long cartStyleID_) {
 		cartStyleID = cartStyleID_;
 	}
 
@@ -82,5 +89,31 @@ public class CartStyle extends Audit  {
 	
 	public String toString() {
 		return name;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((cartStyleID == null) ? 0 : cartStyleID.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CartStyle other = (CartStyle) obj;
+		if (cartStyleID == null) {
+			if (other.cartStyleID != null)
+				return false;
+		} else if (!cartStyleID.equals(other.cartStyleID))
+			return false;
+		return true;
 	}
 }

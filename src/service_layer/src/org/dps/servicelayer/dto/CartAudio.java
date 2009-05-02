@@ -40,15 +40,11 @@ public class CartAudio extends Audit  {
 		return cartAudioID;
 	}
 
-	public void setCartAudioID(Long cartAudioID_) {
-		cartAudioID = cartAudioID_;
-	}
-
 	public Integer getCartID() {
 		return cartID;
 	}
 
-	public void setCartID(Integer cartID_) {
+	protected void setCartID(Integer cartID_) {
 		cartID = cartID_;
 	}
 
@@ -86,5 +82,31 @@ public class CartAudio extends Audit  {
 	
 	public String toString() {
 		return text;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((cartAudioID == null) ? 0 : cartAudioID.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CartAudio other = (CartAudio) obj;
+		if (cartAudioID == null) {
+			if (other.cartAudioID != null)
+				return false;
+		} else if (!cartAudioID.equals(other.cartAudioID))
+			return false;
+		return true;
 	}
 }

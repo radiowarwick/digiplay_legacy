@@ -1,7 +1,10 @@
 package org.dps.servicelayer.dto;
 
-import java.util.Set;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -24,7 +28,7 @@ public class Cartwall extends Audit  {
 	@Column(name="name")
 	private String name;
 	
-	@Column(name="page")
+	@Column(name="page", insertable=false, updatable=false)
 	private Integer page;
 		
 	@Column(name="description")
@@ -34,16 +38,13 @@ public class Cartwall extends Audit  {
 	@JoinColumn(name="cartset_id", nullable=false, insertable=false, updatable=false)
 	private Cartset cartset;
 
-	@OneToMany
+	@OneToMany(cascade={CascadeType.ALL})
 	@JoinColumn(name="cartwall_id", nullable=false)
-	private Set<CartAudio> carts;
+    @MapKey(name="cartID")
+	private Map<Integer, CartAudio> carts = new HashMap<Integer, CartAudio>();
 	
 	public Long getCartwallID() {
 		return cartwallID;
-	}
-
-	public void setCartwallID(Long cartwallID_) {
-		cartwallID = cartwallID_;
 	}
 
 	public String getName() {
@@ -58,7 +59,7 @@ public class Cartwall extends Audit  {
 		return page;
 	}
 
-	public void setPage(Integer page_) {
+	protected void setPage(Integer page_) {
 		page = page_;
 	}
 
@@ -78,32 +79,55 @@ public class Cartwall extends Audit  {
 		cartset = cartset_;
 	}
 
-	public Set<CartAudio> getCarts() {
-		return carts;
+	public Map<Integer, CartAudio> getCarts() {
+		return Collections.unmodifiableMap(carts);
 	}
 	
-	public void addCart(CartAudio cart) {
+	public void addCart(Integer cartID, CartAudio cart) {
 		cart.setCartwall(this);
-		carts.add(cart);
+		cart.setCartID(cartID);
+		carts.put(cartID, cart);
 	}
 	
 	public CartAudio deleteCart(Integer cartID) {
-		CartAudio cart = null;
-		for(CartAudio temp : carts) {
-			if(cartID.equals(temp.getCartID())) {
-				cart = temp;
-				continue;
-			}
-		}
-		if(cart == null) {
-			return cart;
-		}
+		CartAudio cart = carts.get(cartID);
 		cart.setCartwall(null);
-		carts.remove(cart);
+		carts.remove(cartID);
+		return cart;
+	}
+	
+	public CartAudio getCart(Integer cartID) {
+		CartAudio cart = carts.get(cartID);
 		return cart;
 	}
 	
 	public String toString() {
 		return name;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((cartwallID == null) ? 0 : cartwallID.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Cartwall other = (Cartwall) obj;
+		if (cartwallID == null) {
+			if (other.cartwallID != null)
+				return false;
+		} else if (!cartwallID.equals(other.cartwallID))
+			return false;
+		return true;
 	}
 }

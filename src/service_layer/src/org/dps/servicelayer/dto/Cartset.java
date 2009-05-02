@@ -1,22 +1,18 @@
 package org.dps.servicelayer.dto;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
+import org.hibernate.annotations.IndexColumn;
 
 @Entity
 @Table(name="cartset")
@@ -29,10 +25,10 @@ public class Cartset extends File  {
 	@Column(name="description")
 	private String description;
 	
-	@OneToMany //TODO: explicit saves or cascade(cascade=CascadeType.ALL)
+	@OneToMany(cascade={CascadeType.ALL})
 	@JoinColumn(name="cartset_id", nullable=false)
-	@OrderBy("page")
-	private List<Cartwall> cartwalls;
+	@IndexColumn(name="page", nullable=false, base=0)
+	private List<Cartwall> cartwalls = new ArrayList<Cartwall>();
 
 	public String getName() {
 		return name;
@@ -51,17 +47,10 @@ public class Cartset extends File  {
 	}
 
 	public List<Cartwall> getCartwalls() {
-		return cartwalls;
+		return Collections.unmodifiableList(cartwalls);
 	}
 	public Cartwall getCartwall(Integer page) {
-		Cartwall out = null;
-		for(Cartwall wall : cartwalls) {
-			if(page.equals(wall.getPage())) {
-				out = wall;
-				continue;
-			}
-		}
-		return out;
+		return cartwalls.get(page.intValue());
 	}
 	public void addCartwall(Cartwall cartwall) {
 		cartwall.setCartset(this);
@@ -76,19 +65,15 @@ public class Cartset extends File  {
 			}
 		}
 		if(out != null) {
+			out.setCartset(null);
 			cartwalls.remove(out);
 		}
 		return out;
 	}
 	public Cartwall removeCartwall(Integer page) {
-		Cartwall out = null;
-		for(Cartwall wall : cartwalls) {
-			if(page.equals(wall.getPage())) {
-				out = wall;
-				continue;
-			}
-		}
+		Cartwall out = cartwalls.get(page.intValue());
 		if(out != null) {
+			out.setCartset(null);
 			cartwalls.remove(out);
 		}
 		return out;

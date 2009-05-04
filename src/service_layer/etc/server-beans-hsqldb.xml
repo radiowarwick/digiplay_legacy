@@ -1,0 +1,73 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+http://cxf.apache.org/jaxws
+http://cxf.apache.org/schemas/jaxws.xsd">
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+		<property name="url" value="jdbc:hsqldb:testdb/digiplaynew;shutdown=true" />
+		<property name="username" value="SA" />
+		<property name="password" value="" />
+	</bean>
+
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+	    <property name="dataSource">
+	        <ref bean="dataSource"/>
+	    </property>
+	    <property name="configurationClass">
+			<value>org.hibernate.cfg.AnnotationConfiguration</value>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+				<prop key="hibernate.cache.provider_class">org.hibernate.cache.NoCacheProvider</prop>
+			</props>
+		</property>
+		<property name="annotatedClasses">
+			<list>
+				<value>org.dps.servicelayer.dto.Audio</value>
+				<value>org.dps.servicelayer.dto.Album</value>
+				<value>org.dps.servicelayer.dto.Artist</value>
+				<value>org.dps.servicelayer.dto.File</value>
+				<value>org.dps.servicelayer.dto.Group</value>
+				<value>org.dps.servicelayer.dto.User</value>
+				<value>org.dps.servicelayer.dto.CartAudio</value>
+				<value>org.dps.servicelayer.dto.Cartset</value>
+				<value>org.dps.servicelayer.dto.CartStyle</value>
+				<value>org.dps.servicelayer.dto.CartStyleProperty</value>
+				<value>org.dps.servicelayer.dto.Cartwall</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+	
+	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
+	    <property name="sessionFactory">
+	        <ref bean="sessionFactory" />
+	    </property>
+	</bean>
+    
+    <jaxws:endpoint  implementor="#audioServer"
+    	address="http://localhost:9000/dps/audio" />
+
+    <bean id="audioServer"
+    	class="org.dps.servicelayer.audio.AudioServiceImpl">
+    </bean>
+
+    <jaxws:endpoint  implementor="#cartsetServer"
+    	address="http://localhost:9000/dps/cartset" />
+
+    <bean id="cartsetServer"
+    	class="org.dps.servicelayer.cartset.CartsetService">
+    	<property name="txManager" ref="transactionManager" />
+    </bean>
+    
+</beans>
+<!-- END SNIPPET: beans -->

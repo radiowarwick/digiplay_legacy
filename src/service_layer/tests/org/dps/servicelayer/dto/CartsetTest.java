@@ -310,6 +310,7 @@ public class CartsetTest extends AbstractDPSTest
 			updated = cartset.getLastUpdated();
 			created = cartset.getCreated();
 			session.update(cartset);
+			session.delete(cw);
 		} catch (Exception e) {
 			ts.setRollbackOnly();
 			throw e;
@@ -317,7 +318,7 @@ public class CartsetTest extends AbstractDPSTest
 			if(ts.isRollbackOnly()) {
 				txManager.rollback(ts);
 			} else {
-				txManager.commit(ts);				
+				txManager.commit(ts);
 			}
 		}
 		
@@ -365,11 +366,12 @@ public class CartsetTest extends AbstractDPSTest
 			assertEquals("Phils Cartwall", cartset.getFilename());
 			assertEquals("A test cartwall", cartset.getDescription());
 			count = cartset.getCartwalls().size()-1;
-			Cartwall cw = cartset.removeCartwall(2);
-			assertEquals(count, cartset.getCartwalls().size());
+			Cartwall cw = cartset.removeCartwall(Integer.valueOf(2));
+			
 			updated = cartset.getLastUpdated();
 			created = cartset.getCreated();
 			session.update(cartset);
+			session.delete(cw);
 		} catch (Exception e) {
 			ts.setRollbackOnly();
 			throw e;
@@ -377,14 +379,18 @@ public class CartsetTest extends AbstractDPSTest
 			if(ts.isRollbackOnly()) {
 				txManager.rollback(ts);
 			} else {
-				txManager.commit(ts);				
+				txManager.commit(ts);
 			}
 		}
 		
 		ts = txManager.getTransaction(txd);
 		try {
 			Session session = txManager.getSessionFactory().getCurrentSession();
-			Query query = session.createQuery("from Cartset where fileID=?");
+			Query query = session.createQuery("from Cartwall where name=?");
+			query.setString(0, "another test wall2!");
+			Cartwall cartwall = (Cartwall) query.uniqueResult();
+			assertNull(cartwall);
+			query = session.createQuery("from Cartset where fileID=?");
 			query.setLong(0, testCartsetID);
 			Cartset cartsetNew = (Cartset) query.uniqueResult();
 					
@@ -487,6 +493,7 @@ public class CartsetTest extends AbstractDPSTest
 			
 			updated = wall.getLastUpdated();
 			session.update(cartset);
+			session.delete(ca);
 		} catch (Exception e) {
 			ts.setRollbackOnly();
 			throw e;
@@ -613,6 +620,7 @@ public class CartsetTest extends AbstractDPSTest
 			CartStyle cs = (CartStyle)query.uniqueResult();
 			CartStyleProperty csp = cs.deleteProperty("Prop2");
 			session.update(cs);
+			session.delete(csp);
 		} catch (Exception e) {
 			ts.setRollbackOnly();
 			throw e;

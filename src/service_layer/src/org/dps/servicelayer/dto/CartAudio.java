@@ -2,15 +2,21 @@ package org.dps.servicelayer.dto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name="cartaudio")
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class CartAudio extends Audit  {
 	
 	@Column(name="cart_audio_id")
@@ -24,60 +30,75 @@ public class CartAudio extends Audit  {
 	@Column(name="text")
 	private String text;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="cartstyle_id")
 	private CartStyle style;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="audio_id")
 	private Audio audio;
+	
+	@Column(name="audio_id", updatable = false, insertable = false)
+	private Long audioID;
 	
 	@ManyToOne
 	@JoinColumn(name="cartwall_id", nullable=false, insertable=false, updatable=false)
 	private Cartwall cartwall;
-	
+
+	@XmlElement(required = true)
 	public Long getCartAudioID() {
 		return cartAudioID;
 	}
+	protected void setCartAudioID(Long id) {
+		cartAudioID = id;
+	}
 
+	@XmlElement(required = true)
 	public Integer getCartID() {
 		return cartID;
 	}
-
 	protected void setCartID(Integer cartID_) {
 		cartID = cartID_;
 	}
 
+	@XmlElement(required = true)
 	public String getText() {
 		return text;
 	}
-
 	public void setText(String text_) {
 		text = text_;
 	}
 
+	@XmlElement(required = true)
 	public CartStyle getStyle() {
 		return style;
 	}
-
 	public void setStyle(CartStyle style_) {
 		style = style_;
 	}
 
+	@XmlTransient
 	public Audio getAudio() {
 		return audio;
 	}
-
 	public void setAudio(Audio audio_) {
 		audio = audio_;
 	}
 
+	@XmlTransient
 	public Cartwall getCartwall() {
 		return cartwall;
 	}
-
 	public void setCartwall(Cartwall cartwall_) {
 		cartwall = cartwall_;
+	}
+	
+	@XmlElement(required = true)
+	protected Long getAudioID() {
+		return audioID;
+	}
+	protected void setAudioID(Long audioID_) {
+		audioID = audioID_;
 	}
 	
 	public String toString() {

@@ -1,5 +1,6 @@
 package org.dps.servicelayer.dto;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,9 +16,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 
 @Entity
 @Table(name="cartstyle")
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class CartStyle extends Audit  {
 
 	@Column(name="cart_style_id")
@@ -30,24 +37,25 @@ public class CartStyle extends Audit  {
 	@Column(name="description")
 	private String description;
 	
-	@OneToMany(cascade={CascadeType.ALL})
+	@OneToMany(cascade={CascadeType.ALL}, fetch = FetchType.EAGER)
 	@JoinColumn(name="cart_style_id", nullable=false)
     @MapKey(name="key")
 	private Map<String, CartStyleProperty> properties = new HashMap<String, CartStyleProperty>();
 	
-
+	@XmlElement(required = true)
 	public Long getCartStyleID() {
 		return cartStyleID;
+	}
+	protected void setCartStyleID(Long id) {
+		cartStyleID = id;
 	}
 
 	public Map<String, CartStyleProperty> getProperties() {
 		return Collections.unmodifiableMap(properties);
 	}
-
 	protected void setProperties(Map<String, CartStyleProperty> properties_) {
 		properties = properties_;
 	}
-	
 	public void addProperty(String key, String val) {
 		CartStyleProperty prop = new CartStyleProperty();
 		prop.setKey(key);
@@ -55,37 +63,41 @@ public class CartStyle extends Audit  {
 		prop.setStyle(this);
 		properties.put(key, prop);
 	}
-	
 	public CartStyleProperty deleteProperty(String key) {
 		CartStyleProperty prop = properties.get(key);
 		properties.remove(key);
 		return prop;
 	}
-	
 	public CartStyleProperty getProperty(String key) {
 		return properties.get(key);
 	}
-
-	protected void setCartStyleID(Long cartStyleID_) {
-		cartStyleID = cartStyleID_;
+    @XmlElement(name = "cartStyleProperty", required = true)
+    @XmlElementWrapper(name="cartStyleProperties", required = true)
+	protected Collection<CartStyleProperty> getPropertiesCollection() {
+		return properties.values();
+	}
+	protected void setPropertiesCollection(Collection<CartStyleProperty> propertyCol) {
+		properties.clear();
+		for(CartStyleProperty csp : propertyCol) {
+			properties.put(csp.getKey(), csp);
+		}
 	}
 
+	@XmlElement(required = true)
 	public String getName() {
 		return name;
 	}
-
 	public void setName(String name_) {
 		name = name_;
 	}
 
+	@XmlElement(required = true)
 	public String getDescription() {
 		return description;
 	}
-
 	public void setDescription(String description_) {
 		description = description_;
 	}
-
 	
 	public String toString() {
 		return name;

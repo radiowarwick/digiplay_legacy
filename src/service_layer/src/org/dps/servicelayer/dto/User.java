@@ -13,9 +13,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name="user")
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class User extends Audit{
 
 	@Column(name="user_id")
@@ -37,18 +42,14 @@ public class User extends Audit{
 			joinColumns=@JoinColumn(name="user_id"), 
 			inverseJoinColumns=@JoinColumn(name="group_id"))
 	private Set<Group> groups = new HashSet<Group>();
-
-	public String toString() {
-		return userID + ":" + username;
-	}
 	
 	/**
 	 * @return the userID
 	 */
+	@XmlElement(required = true)
 	public Long getUserID() {
 		return userID;
 	}
-
 	/**
 	 * @param userID the userID to set
 	 */
@@ -59,10 +60,10 @@ public class User extends Audit{
 	/**
 	 * @return the username
 	 */
+	@XmlElement(required = true)
 	public String getUsername() {
 		return username;
 	}
-
 	/**
 	 * @param username the username to set
 	 */
@@ -73,10 +74,10 @@ public class User extends Audit{
 	/**
 	 * @return the enabled
 	 */
+	@XmlElement(required = true)
 	public Boolean getEnabled() {
 		return enabled;
 	}
-
 	/**
 	 * @param enabled the enabled to set
 	 */
@@ -87,10 +88,10 @@ public class User extends Audit{
 	/**
 	 * @return the ghost
 	 */
+	@XmlElement(required = true)
 	public Boolean getGhost() {
 		return ghost;
 	}
-
 	/**
 	 * @param ghost the ghost to set
 	 */
@@ -101,10 +102,10 @@ public class User extends Audit{
 	/**
 	 * @return the groups
 	 */
+	@XmlTransient
 	public Set<Group> getGroups() {
 		return groups;
 	}
-
 	/**
 	 * @param groups the groups to set
 	 */
@@ -112,5 +113,31 @@ public class User extends Audit{
 		this.groups = groups;
 	}
 	
+	public String toString() {
+		return userID + ":" + username;
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((userID == null) ? 0 : userID.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+		if (userID == null) {
+			if (other.userID != null)
+				return false;
+		} else if (!userID.equals(other.userID))
+			return false;
+		return true;
+	}
 	
 }

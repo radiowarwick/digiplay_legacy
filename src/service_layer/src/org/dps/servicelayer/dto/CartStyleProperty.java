@@ -8,9 +8,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name="cartstyleprop")
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class CartStyleProperty extends Audit  {
 
 	@Column(name="cart_style_prop_id")
@@ -28,30 +33,34 @@ public class CartStyleProperty extends Audit  {
 	@JoinColumn(name="cart_style_id", nullable=false, insertable=false, updatable=false)
 	private CartStyle style;
 	
+	@XmlElement(required = true)
 	public Long getCartStylePropID() {
 		return cartStylePropID;
 	}
+	protected void getCartStylePropID(Long id) {
+		cartStylePropID = id;
+	}
 
+	@XmlElement(required = true)
 	public String getKey() {
 		return key;
 	}
-
 	protected void setKey(String key_) {
 		key = key_;
 	}
 
+	@XmlElement(required = true)
 	public String getValue() {
 		return value;
 	}
-
 	public void setValue(String value_) {
 		value = value_;
 	}
 
+	@XmlTransient
 	public CartStyle getStyle() {
 		return style;
 	}
-
 	protected void setStyle(CartStyle style_) {
 		style = style_;
 	}

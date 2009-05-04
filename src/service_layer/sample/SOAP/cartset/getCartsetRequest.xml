@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<soap:Envelope
+	xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Head>
+	</soap:Head>
+	<soap:Body>
+		<csw:getCartset xmlns:csw="http://www.dps.org/dps/cartset/wrappers">
+			<csw:cartsetID>20</csw:cartsetID>
+		</csw:getCartset>
+	</soap:Body>
+</soap:Envelope>

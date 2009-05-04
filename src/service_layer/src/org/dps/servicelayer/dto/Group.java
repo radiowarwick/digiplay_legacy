@@ -11,9 +11,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name="t_group")
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class Group extends Audit{
 	
 	@Column(name="group_id")
@@ -32,17 +37,14 @@ public class Group extends Audit{
 			targetEntity= User.class)
 	private Set<User> users = new HashSet<User>();
 
-	public String toString() {
-		return groupID + ":" + name;
-	}
 	
 	/**
 	 * @return the groupID
 	 */
+	@XmlElement(required = true)
 	public Long getGroupID() {
 		return groupID;
 	}
-
 	/**
 	 * @param groupID the groupID to set
 	 */
@@ -53,10 +55,10 @@ public class Group extends Audit{
 	/**
 	 * @return the name
 	 */
+	@XmlElement(required = true)
 	public String getName() {
 		return name;
 	}
-
 	/**
 	 * @param name the name to set
 	 */
@@ -67,10 +69,10 @@ public class Group extends Audit{
 	/**
 	 * @return the description
 	 */
+	@XmlElement(required = true)
 	public String getDescription() {
 		return description;
 	}
-
 	/**
 	 * @param description the description to set
 	 */
@@ -81,14 +83,43 @@ public class Group extends Audit{
 	/**
 	 * @return the users
 	 */
+	@XmlTransient
 	public Set<User> getUsers() {
 		return users;
 	}
-
 	/**
 	 * @param users the users to set
 	 */
 	public void setUsers(Set<User> users) {
 		this.users = users;
 	}
+	
+	public String toString() {
+		return groupID + ":" + name;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((groupID == null) ? 0 : groupID.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Group other = (Group) obj;
+		if (groupID == null) {
+			if (other.groupID != null)
+				return false;
+		} else if (!groupID.equals(other.groupID))
+			return false;
+		return true;
+	}
+	
 }

@@ -1,20 +1,20 @@
 package org.dps.servicelayer.dto;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
 
 @MappedSuperclass
-public abstract class Audit {
+public abstract class Audit implements IMakeSafe {
 	
 	@Column(name="last_modified", insertable = true, updatable = true)
 	@Version()
@@ -25,6 +25,7 @@ public abstract class Audit {
 	/**
 	 * @return the lastUpdated
 	 */
+	@XmlTransient
 	public Calendar getLastUpdated() {
 		return lastUpdated;
 	}
@@ -35,4 +36,7 @@ public abstract class Audit {
 		this.lastUpdated = lastUpdated;
 	}
 
+	public void makeSafe() {
+		
+	}
 }

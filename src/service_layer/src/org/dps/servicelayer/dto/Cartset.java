@@ -11,12 +11,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.hibernate.annotations.IndexColumn;
 
 @Entity
 @Table(name="cartset")
 @PrimaryKeyJoinColumn(name="file_id")
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class Cartset extends File  {
 	
 	@Column(name="name")
@@ -26,26 +31,28 @@ public class Cartset extends File  {
 	private String description;
 	
 	@OneToMany(cascade={CascadeType.ALL})
-	@JoinColumn(name="cartset_id", nullable=false)
+	@JoinColumn(name="cartset_id", nullable=false, updatable=true, insertable=true)
 	@IndexColumn(name="page", nullable=false, base=0)
 	private List<Cartwall> cartwalls = new ArrayList<Cartwall>();
 
+	@XmlElement(required = true)
 	public String getName() {
 		return name;
 	}
-
 	public void setName(String name_) {
 		name = name_;
 	}
 
+	@XmlElement(required = true)
 	public String getDescription() {
 		return description;
 	}
-
 	public void setDescription(String description_) {
 		description = description_;
 	}
 
+	@XmlElement(required = true, name = "cartwall")
+	@XmlElementWrapper(name="cartwalls", required = true)
 	public List<Cartwall> getCartwalls() {
 		return Collections.unmodifiableList(cartwalls);
 	}
@@ -81,5 +88,10 @@ public class Cartset extends File  {
 
 	public String toString() {
 		return name;
+	}
+	
+	public void makeSafe() {
+		//TODO make sure this can't be compiled out...
+		getCartwalls().size();
 	}
 }

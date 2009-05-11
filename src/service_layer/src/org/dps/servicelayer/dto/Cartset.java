@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
@@ -30,7 +31,7 @@ public class Cartset extends File  {
 	@Column(name="description")
 	private String description;
 	
-	@OneToMany(cascade={CascadeType.ALL})
+	@OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.LAZY)
 	@JoinColumn(name="cartset_id", nullable=false, updatable=true, insertable=true)
 	@IndexColumn(name="page", nullable=false, base=0)
 	private List<Cartwall> cartwalls = new ArrayList<Cartwall>();

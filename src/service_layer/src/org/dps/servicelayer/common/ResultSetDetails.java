@@ -8,12 +8,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlType;
+
+import org.dps.servicelayer.Constants;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ResultSetDetails", propOrder = {
-    "sortByColumns", "resultsPerPage", "pageNum", "invertSearch", "numResults", "numPages"
-})
 public class ResultSetDetails {
 	
 	@XmlElement(required = true, name = "sortByColumn")
@@ -21,7 +19,7 @@ public class ResultSetDetails {
 	private List<String> sortByColumns = new ArrayList<String>();
 	
 	@XmlElement(required = true)
-	private Integer resultsPerPage = null;
+	private Integer resultsPerPage = Constants.DEFAULT_RESULTS_PER_PAGE;
 	
 	@XmlElement(required = true)
 	private Integer pageNum = Integer.valueOf(0);
@@ -30,17 +28,26 @@ public class ResultSetDetails {
 	private boolean invertSearch = false;
 	
 	@XmlElement(required = true)
-	private Integer numResults = null;
+	private Integer numResults = Integer.valueOf(0);
 	
 	@XmlElement(required = true)
-	private Integer numPages;
+	private Integer numPages = Integer.valueOf(0);
 	
 	public ResultSetDetails() { }
+	
 	public ResultSetDetails(ResultSetControl control) {
-		this.sortByColumns.addAll(control.getSortByColumns());
-		this.resultsPerPage = control.getResultsPerPage();
-		this.pageNum = control.getPageNum();
-		this.invertSearch = control.isInvertSearch();
+		if(control != null) {
+			if(control.getSortByColumns() != null) {
+				this.sortByColumns.addAll(control.getSortByColumns());
+			}
+			if(control.getResultsPerPage() != null) {
+				this.resultsPerPage = control.getResultsPerPage();
+			}
+			if(control.getPageNum() != null) {
+				this.pageNum = control.getPageNum();
+			}
+			this.invertSearch = control.isInvertSearch();
+		}
 	}
 	public List<String> getSortByColumns() {
 		return Collections.unmodifiableList(sortByColumns);

@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<soap:Envelope
+	xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Head>
+	</soap:Head>
+	<soap:Body>
+		<cs:getCartsets xmlns:cs="http://www.dps.org/dps/cartset"
+		 xmlns:ns1="http://www.dps.org/dps/common">
+			<ns1:resultSetControl>
+				<ns1:resultsPerPage>22</ns1:resultsPerPage>
+				<ns1:pageNum>1</ns1:pageNum>
+				<ns1:invertSearch>true</ns1:invertSearch>
+				<ns1:sortByColumns>
+					<ns1:sortByColumn>column1</ns1:sortByColumn>
+					<ns1:sortByColumn>column2</ns1:sortByColumn>
+				</ns1:sortByColumns>
+			</ns1:resultSetControl>
+		</cs:getCartsets>
+	</soap:Body>
+</soap:Envelope>

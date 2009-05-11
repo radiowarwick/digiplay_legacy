@@ -67,7 +67,8 @@ http://cxf.apache.org/schemas/jaxws.xsd">
     <bean id="cartsetServer"
     	class="org.dps.servicelayer.cartset.CartsetService">
     	<property name="txManager" ref="transactionManager" />
+    	<property name="authoriser" ref="authoriser" />
     </bean>
-    
+
+	<bean id="authoriser" class="org.dps.servicelayer.auth.BasicFileAuth" />
 </beans>
-<!-- END SNIPPET: beans -->

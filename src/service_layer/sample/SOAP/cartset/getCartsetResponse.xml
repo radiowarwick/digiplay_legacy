@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
 	<soap:Body>
-		<ns5:getCartsetResponse xmlns:ns2="http://www.dps.org/dps/common"
-			xmlns:ns3="http://www.dps.org/dps/dto" xmlns:ns4="http://www.dps.org/dps/cartset/wrappers"
-			xmlns:ns5="http://www.dps.org/dps/cartset">
-			<ns4:permissionedCartset>
-				<ns2:execute>false</ns2:execute>
-				<ns2:read>false</ns2:read>
-				<ns2:write>false</ns2:write>
-				<ns4:cartset>
+		<ns2:getCartset xmlns:ns2="http://www.dps.org/dps/cartset"
+			xmlns:ns3="http://www.dps.org/dps/dto" xmlns:ns4="http://www.dps.org/dps/common">
+			<ns2:permissionedCartset>
+				<ns4:execute>true</ns4:execute>
+				<ns4:read>true</ns4:read>
+				<ns4:write>true</ns4:write>
+				<ns3:item>
 					<ns3:allExecute>true</ns3:allExecute>
 					<ns3:allRead>true</ns3:allRead>
 					<ns3:allWrite>true</ns3:allWrite>
@@ -180,8 +179,8 @@
 					</ns3:cartwalls>
 					<ns3:description>A test cartwall</ns3:description>
 					<ns3:name>Phils Cartwall</ns3:name>
-				</ns4:cartset>
-			</ns4:permissionedCartset>
-		</ns5:getCartsetResponse>
+				</ns3:item>
+			</ns2:permissionedCartset>
+		</ns2:getCartset>
 	</soap:Body>
 </soap:Envelope>

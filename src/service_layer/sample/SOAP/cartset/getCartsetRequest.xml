@@ -4,8 +4,8 @@
 	<soap:Head>
 	</soap:Head>
 	<soap:Body>
-		<csw:getCartset xmlns:csw="http://www.dps.org/dps/cartset/wrappers">
-			<csw:cartsetID>20</csw:cartsetID>
-		</csw:getCartset>
+		<cs:getCartset xmlns:cs="http://www.dps.org/dps/cartset">
+			<cs:cartsetID>20</cs:cartsetID>
+		</cs:getCartset>
 	</soap:Body>
 </soap:Envelope>

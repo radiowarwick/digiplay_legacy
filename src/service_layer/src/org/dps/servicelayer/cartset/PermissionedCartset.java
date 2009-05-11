@@ -1,22 +1,23 @@
-package org.dps.servicelayer.cartset.wrappers;
+package org.dps.servicelayer.cartset;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
+import org.dps.servicelayer.Namespaces;
 import org.dps.servicelayer.common.PermissionedItem;
 import org.dps.servicelayer.dto.Cartset;
 
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
-public class PermissionedCartset extends PermissionedItem {
+public class PermissionedCartset extends PermissionedItem<Cartset> {
     private Cartset cartset;
 
-    @XmlElement(required = true)
-	public Cartset getCartset() {
+    @XmlElement(required = true, namespace = Namespaces.DTO)
+	public Cartset getItem() {
 		return cartset;
 	}
-	public void setCartset(Cartset cartset_) {
+	public void setItem(Cartset cartset_) {
 		cartset = cartset_;
 	}
 }

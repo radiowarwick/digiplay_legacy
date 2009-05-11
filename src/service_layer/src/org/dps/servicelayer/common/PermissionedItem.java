@@ -3,10 +3,13 @@ package org.dps.servicelayer.common;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.dps.servicelayer.dto.File;
 
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
-public abstract class PermissionedItem {
+public abstract class PermissionedItem<T extends File> {
 	
     private boolean read;
 	private boolean write;
@@ -35,4 +38,8 @@ public abstract class PermissionedItem {
 	public void setExecute(boolean execute_) {
 		execute = execute_;
 	}
+	
+	@XmlTransient
+	public abstract T getItem();
+	public abstract void setItem(T item_);
 }

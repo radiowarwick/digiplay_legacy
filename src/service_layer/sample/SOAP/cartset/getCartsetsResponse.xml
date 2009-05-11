@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Body>
+		<ns2:getCartsets xmlns:ns2="http://www.dps.org/dps/cartset"
+			xmlns:ns3="http://www.dps.org/dps/dto" xmlns:ns4="http://www.dps.org/dps/common">
+			<ns2:permissionedCartsetSummaries>
+				<ns2:permissionedCartsetSummary>
+					<ns4:execute>true</ns4:execute>
+					<ns4:item xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+						xsi:type="ns3:cartsetSummary">
+						<ns3:allExecute>true</ns3:allExecute>
+						<ns3:allRead>true</ns3:allRead>
+						<ns3:allWrite>true</ns3:allWrite>
+						<ns3:created>1970-01-01T00:00:00+01:00
+						</ns3:created>
+						<ns3:entityType>1</ns3:entityType>
+						<ns3:fileID>20</ns3:fileID>
+						<ns3:filename>Phils Cartwall</ns3:filename>
+						<ns3:groupExecute>true</ns3:groupExecute>
+						<ns3:groupRead>true</ns3:groupRead>
+						<ns3:groupWrite>true</ns3:groupWrite>
+						<ns3:owner>
+							<ns3:enabled>true</ns3:enabled>
+							<ns3:ghost>false</ns3:ghost>
+							<ns3:userID>1</ns3:userID>
+							<ns3:username>Jim</ns3:username>
+						</ns3:owner>
+						<ns3:ownerGroup>
+							<ns3:description>The Best Group</ns3:description>
+							<ns3:groupID>1</ns3:groupID>
+							<ns3:name>Jims Group</ns3:name>
+						</ns3:ownerGroup>
+						<ns3:parentID>0</ns3:parentID>
+						<ns3:userExecute>true</ns3:userExecute>
+						<ns3:userRead>true</ns3:userRead>
+						<ns3:userWrite>true</ns3:userWrite>
+						<ns3:description>A test cartwall</ns3:description>
+						<ns3:name>Phils Cartwall</ns3:name>
+					</ns4:item>
+					<ns4:read>true</ns4:read>
+					<ns4:write>true</ns4:write>
+					<ns3:item>
+						<ns3:allExecute>true</ns3:allExecute>
+						<ns3:allRead>true</ns3:allRead>
+						<ns3:allWrite>true</ns3:allWrite>
+						<ns3:created>1970-01-01T00:00:00+01:00
+						</ns3:created>
+						<ns3:entityType>1</ns3:entityType>
+						<ns3:fileID>20</ns3:fileID>
+						<ns3:filename>Phils Cartwall</ns3:filename>
+						<ns3:groupExecute>true</ns3:groupExecute>
+						<ns3:groupRead>true</ns3:groupRead>
+						<ns3:groupWrite>true</ns3:groupWrite>
+						<ns3:owner>
+							<ns3:enabled>true</ns3:enabled>
+							<ns3:ghost>false</ns3:ghost>
+							<ns3:userID>1</ns3:userID>
+							<ns3:username>Jim</ns3:username>
+						</ns3:owner>
+						<ns3:ownerGroup>
+							<ns3:description>The Best Group</ns3:description>
+							<ns3:groupID>1</ns3:groupID>
+							<ns3:name>Jims Group</ns3:name>
+						</ns3:ownerGroup>
+						<ns3:parentID>0</ns3:parentID>
+						<ns3:userExecute>true</ns3:userExecute>
+						<ns3:userRead>true</ns3:userRead>
+						<ns3:userWrite>true</ns3:userWrite>
+						<ns3:description>A test cartwall</ns3:description>
+						<ns3:name>Phils Cartwall</ns3:name>
+					</ns3:item>
+				</ns2:permissionedCartsetSummary>
+				<ns2:permissionedCartsetSummary>
+					<ns4:execute>true</ns4:execute>
+					<ns4:item xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+						xsi:type="ns3:cartsetSummary">
+						<ns3:allExecute>true</ns3:allExecute>
+						<ns3:allRead>true</ns3:allRead>
+						<ns3:allWrite>true</ns3:allWrite>
+						<ns3:created>1970-01-01T00:00:00+01:00
+						</ns3:created>
+						<ns3:entityType>1</ns3:entityType>
+						<ns3:fileID>21</ns3:fileID>
+						<ns3:filename>Phils 2nd Cartwall</ns3:filename>
+						<ns3:groupExecute>true</ns3:groupExecute>
+						<ns3:groupRead>true</ns3:groupRead>
+						<ns3:groupWrite>true</ns3:groupWrite>
+						<ns3:owner>
+							<ns3:enabled>true</ns3:enabled>
+							<ns3:ghost>false</ns3:ghost>
+							<ns3:userID>1</ns3:userID>
+							<ns3:username>Jim</ns3:username>
+						</ns3:owner>
+						<ns3:ownerGroup>
+							<ns3:description>The Best Group</ns3:description>
+							<ns3:groupID>1</ns3:groupID>
+							<ns3:name>Jims Group</ns3:name>
+						</ns3:ownerGroup>
+						<ns3:parentID>0</ns3:parentID>
+						<ns3:userExecute>true</ns3:userExecute>
+						<ns3:userRead>true</ns3:userRead>
+						<ns3:userWrite>true</ns3:userWrite>
+						<ns3:description>A test cartwall</ns3:description>
+						<ns3:name>Phils 2nd Cartwall</ns3:name>
+					</ns4:item>
+					<ns4:read>true</ns4:read>
+					<ns4:write>true</ns4:write>
+					<ns3:item>
+						<ns3:allExecute>true</ns3:allExecute>
+						<ns3:allRead>true</ns3:allRead>
+						<ns3:allWrite>true</ns3:allWrite>
+						<ns3:created>1970-01-01T00:00:00+01:00
+						</ns3:created>
+						<ns3:entityType>1</ns3:entityType>
+						<ns3:fileID>21</ns3:fileID>
+						<ns3:filename>Phils 2nd Cartwall</ns3:filename>
+						<ns3:groupExecute>true</ns3:groupExecute>
+						<ns3:groupRead>true</ns3:groupRead>
+						<ns3:groupWrite>true</ns3:groupWrite>
+						<ns3:owner>
+							<ns3:enabled>true</ns3:enabled>
+							<ns3:ghost>false</ns3:ghost>
+							<ns3:userID>1</ns3:userID>
+							<ns3:username>Jim</ns3:username>
+						</ns3:owner>
+						<ns3:ownerGroup>
+							<ns3:description>The Best Group</ns3:description>
+							<ns3:groupID>1</ns3:groupID>
+							<ns3:name>Jims Group</ns3:name>
+						</ns3:ownerGroup>
+						<ns3:parentID>0</ns3:parentID>
+						<ns3:userExecute>true</ns3:userExecute>
+						<ns3:userRead>true</ns3:userRead>
+						<ns3:userWrite>true</ns3:userWrite>
+						<ns3:description>A test cartwall</ns3:description>
+						<ns3:name>Phils 2nd Cartwall</ns3:name>
+					</ns3:item>
+				</ns2:permissionedCartsetSummary>
+			</ns2:permissionedCartsetSummaries>
+			<ns4:resultSetDetails>
+				<ns4:sortByColumns>
+					<ns4:sortByColumn>column1</ns4:sortByColumn>
+					<ns4:sortByColumn>column2</ns4:sortByColumn>
+				</ns4:sortByColumns>
+				<ns4:resultsPerPage>22</ns4:resultsPerPage>
+				<ns4:pageNum>0</ns4:pageNum>
+				<ns4:invertSearch>true</ns4:invertSearch>
+				<ns4:numResults>2</ns4:numResults>
+				<ns4:numPages>1</ns4:numPages>
+			</ns4:resultSetDetails>
+		</ns2:getCartsets>
+	</soap:Body>
+</soap:Envelope>

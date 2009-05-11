@@ -5,19 +5,23 @@ import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
-import javax.jws.soap.SOAPBinding.Style;
 
-import org.dps.servicelayer.cartset.wrappers.CartsetRequest;
-import org.dps.servicelayer.cartset.wrappers.CartsetResponse;
+import org.dps.servicelayer.Namespaces;
 
-@WebService(targetNamespace = "http://www.dps.org/dps/cartset", name = "CartsetService")
-@SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE, style = Style.DOCUMENT)
+@WebService(targetNamespace = Namespaces.CARTSET, name = "CartsetService")
+@SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
 public interface ICartsetService {
 	
-	@WebResult(partName = "response")
-    @WebMethod()
-   public CartsetResponse getCartset(
-		   @WebParam(partName = "parameters")
+	@WebResult(name = "getCartset", targetNamespace = Namespaces.CARTSET, partName = "response")
+    @WebMethod
+    public CartsetResponse getCartset(
+    		@WebParam(partName = "parameters", name = "cartsetRequest", targetNamespace = Namespaces.CARTSET)
 		   CartsetRequest params);
+	
+	@WebResult(name = "getCartsets", targetNamespace = Namespaces.CARTSET, partName = "response")
+    @WebMethod
+    public CartsetsResponse getCartsets(
+    		@WebParam(partName = "parameters", name = "cartsetsRequest", targetNamespace = Namespaces.CARTSET)
+		   CartsetsRequest params);
 	
 }

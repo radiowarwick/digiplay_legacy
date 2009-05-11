@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.dps.servicelayer.common.SummaryItem;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
@@ -343,7 +344,7 @@ public class File extends Audit {
 	 * @return the parent ID
 	 */
 	@XmlElement(required = true)
-	protected Long getParentID() {
+	public Long getParentID() {
 		return parentID;
 	}
 	/**
@@ -352,6 +353,10 @@ public class File extends Audit {
 	 */
 	protected void setParentID(Long parentID_) {
 		parentID = parentID_;
+	}
+	
+	public <T extends File> SummaryItem<T> getSummary() {
+		return null;
 	}
 	
 	public String toString() {

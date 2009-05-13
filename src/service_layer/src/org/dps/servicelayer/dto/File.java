@@ -58,8 +58,8 @@ public class File extends Audit {
 	@JoinColumn(name="owner_id")
 	private User owner = new User();
 	
-	@Column(name="entity_type")
-	private Integer entityType;
+	@Column(name="entity_type", updatable = false)
+	private Integer entityType = Constants.FILE_TYPE_DIR;
 	
 	@Column(name="user_r")
 	private Boolean userRead;
@@ -92,6 +92,13 @@ public class File extends Audit {
 	@Generated(GenerationTime.NEVER)
 	private Calendar created = new GregorianCalendar();
 
+	public File() {
+		
+	}
+	
+	public File(Integer entityType) {
+		
+	}
 	/**
 	 * @return the fileID
 	 */
@@ -167,7 +174,7 @@ public class File extends Audit {
 	/**
 	 * @param entityType the entityType to set
 	 */
-	public void setEntityType(Integer entityType) {
+	protected void setEntityType(Integer entityType) {
 		this.entityType = entityType;
 	}
 

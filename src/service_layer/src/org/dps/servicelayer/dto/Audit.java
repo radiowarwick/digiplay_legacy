@@ -32,7 +32,7 @@ public abstract class Audit implements IMakeSafe {
 	/**
 	 * @param lastUpdated the lastUpdated to set
 	 */
-	public void setLastUpdated(Calendar lastUpdated) {
+	protected void setLastUpdated(Calendar lastUpdated) {
 		this.lastUpdated = lastUpdated;
 	}
 

@@ -114,7 +114,7 @@ public class Cartwall extends Audit  {
 	public Collection<CartAudio> getCartAudioCollection() {
 		return carts.values();
 	}
-	public void setCartAudioCollection(Collection<CartAudio> cartsCol) {
+	protected void setCartAudioCollection(Collection<CartAudio> cartsCol) {
 		carts.clear();
 		for(CartAudio ca : cartsCol) {
 			carts.put(ca.getCartID(), ca);

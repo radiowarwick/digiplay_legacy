@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <ns4:addCartwall xmlns:ns2="http://www.dps.org/dps/common" xmlns:ns3="http://www.dps.org/dps/dto" xmlns:ns4="http://www.dps.org/dps/cartset">
+            <ns4:cartsetID>22</ns4:cartsetID>
+            <ns3:cartwall>
+                <ns3:carts/>
+                <ns3:cartwallID>5</ns3:cartwallID>
+                <ns3:description>A Cartwall created by SOAP</ns3:description>
+                <ns3:name>New Cartwall</ns3:name>
+            </ns3:cartwall>
+        </ns4:addCartwall>
+    </soap:Body>
+</soap:Envelope>

@@ -24,4 +24,15 @@ public interface ICartsetService {
     		@WebParam(partName = "parameters", name = "cartsetsRequest", targetNamespace = Namespaces.CARTSET)
 		   CartsetsRequest params);
 	
+	@WebResult(name = "addCartset", targetNamespace = Namespaces.CARTSET, partName = "response")
+    @WebMethod
+    public AddCartsetResponse addCartset(
+    		@WebParam(partName = "parameters", name = "addCartsetRequest", targetNamespace = Namespaces.CARTSET)
+		   AddCartsetRequest params);
+	
+	@WebResult(name = "addCartwall", targetNamespace = Namespaces.CARTSET, partName = "response")
+    @WebMethod
+    public AddCartwallResponse addCartwall(
+    		@WebParam(partName = "parameters", name = "addCartwallRequest", targetNamespace = Namespaces.CARTSET)
+		   AddCartwallRequest params);
 }

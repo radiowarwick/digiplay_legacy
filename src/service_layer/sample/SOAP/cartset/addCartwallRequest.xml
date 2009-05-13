@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<soap:Envelope
+	xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Head>
+	</soap:Head>
+	<soap:Body>
+		<cs:addCartwall xmlns:cs="http://www.dps.org/dps/cartset">
+			<cs:cartsetID>22</cs:cartsetID>
+			<cs:name>New Cartwall</cs:name>
+			<cs:description>A Cartwall created by SOAP</cs:description>
+		</cs:addCartwall>
+	</soap:Body>
+</soap:Envelope>

@@ -36,6 +36,10 @@ public class Cartset extends File  {
 	@IndexColumn(name="page", nullable=false, base=0)
 	private List<Cartwall> cartwalls = new ArrayList<Cartwall>();
 
+	public Cartset() {
+		super(Constants.FILE_TYPE_CARTSET);
+	}
+	
 	@XmlElement(required = true)
 	public String getName() {
 		return name;

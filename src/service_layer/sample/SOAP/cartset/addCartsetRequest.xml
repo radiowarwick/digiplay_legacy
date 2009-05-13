@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<soap:Envelope
+	xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Head>
+	</soap:Head>
+	<soap:Body>
+		<cs:addCartset xmlns:cs="http://www.dps.org/dps/cartset">
+			<cs:name>New Cartset</cs:name>
+			<cs:description>A Cartset created by SOAP</cs:description>
+			<cs:parentID>1</cs:parentID>
+			<cs:filename>new_cartset</cs:filename>
+			<cs:groupID>1</cs:groupID>
+		</cs:addCartset>
+	</soap:Body>
+</soap:Envelope>

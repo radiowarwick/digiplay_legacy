@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <ns4:addCartset xmlns:ns2="http://www.dps.org/dps/common" xmlns:ns3="http://www.dps.org/dps/dto" xmlns:ns4="http://www.dps.org/dps/cartset">
+            <ns4:permissionedCartset>
+                <ns2:execute>true</ns2:execute>
+                <ns2:read>true</ns2:read>
+                <ns2:write>true</ns2:write>
+                <ns3:item>
+                    <ns3:allExecute>false</ns3:allExecute>
+                    <ns3:allRead>false</ns3:allRead>
+                    <ns3:allWrite>false</ns3:allWrite>
+                    <ns3:created>2009-05-13T23:44:15.578+01:00</ns3:created>
+                    <ns3:entityType>1</ns3:entityType>
+                    <ns3:fileID>22</ns3:fileID>
+                    <ns3:filename>new_cartset</ns3:filename>
+                    <ns3:groupExecute>false</ns3:groupExecute>
+                    <ns3:groupRead>false</ns3:groupRead>
+                    <ns3:groupWrite>false</ns3:groupWrite>
+                    <ns3:lastUpdated>2009-05-13T23:44:15.578+01:00</ns3:lastUpdated>
+                    <ns3:owner>
+                        <ns3:enabled>true</ns3:enabled>
+                        <ns3:ghost>false</ns3:ghost>
+                        <ns3:userID>1</ns3:userID>
+                        <ns3:username>Jim</ns3:username>
+                    </ns3:owner>
+                    <ns3:userExecute>true</ns3:userExecute>
+                    <ns3:userRead>true</ns3:userRead>
+                    <ns3:userWrite>true</ns3:userWrite>
+                    <ns3:cartwalls/>
+                    <ns3:description>A Cartset created by SOAP</ns3:description>
+                    <ns3:name>New Cartset</ns3:name>
+                </ns3:item>
+            </ns4:permissionedCartset>
+        </ns4:addCartset>
+    </soap:Body>
+</soap:Envelope>

@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name="cartwall")
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.NONE)
 public class Cartwall extends Audit  {
 
 	@Column(name="cartwall_id")

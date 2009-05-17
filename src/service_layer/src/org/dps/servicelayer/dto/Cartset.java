@@ -22,7 +22,7 @@ import org.hibernate.annotations.IndexColumn;
 @Entity
 @Table(name="cartset")
 @PrimaryKeyJoinColumn(name="file_id")
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.NONE)
 public class Cartset extends File  {
 	
 	@Column(name="name")

@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 
 @Entity
 @Table(name="cartstyle")
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.NONE)
 public class CartStyle extends Audit  {
 
 	@Column(name="cart_style_id")
@@ -49,7 +49,7 @@ public class CartStyle extends Audit  {
 	protected void setCartStyleID(Long id) {
 		cartStyleID = id;
 	}
-
+	
 	public Map<String, CartStyleProperty> getProperties() {
 		return Collections.unmodifiableMap(properties);
 	}
@@ -71,6 +71,7 @@ public class CartStyle extends Audit  {
 	public CartStyleProperty getProperty(String key) {
 		return properties.get(key);
 	}
+	
     @XmlElement(name = "cartStyleProperty", required = true)
     @XmlElementWrapper(name="cartStyleProperties", required = true)
 	protected Collection<CartStyleProperty> getPropertiesCollection() {

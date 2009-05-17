@@ -8,7 +8,7 @@ import org.dps.servicelayer.Namespaces;
 import org.dps.servicelayer.common.ResultSetControl;
 
 
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.NONE)
 public class CartsetsRequest {
     private ResultSetControl resultSetControl;
 

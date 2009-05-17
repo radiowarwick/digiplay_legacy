@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name="t_group")
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.NONE)
 public class Group extends Audit{
 	
 	@Column(name="group_id")

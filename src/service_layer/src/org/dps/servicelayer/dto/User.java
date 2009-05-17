@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name="user")
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.NONE)
 public class User extends Audit{
 
 	@Column(name="user_id")

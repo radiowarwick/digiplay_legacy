@@ -5,19 +5,20 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class AddCartwallRequest {
-
-    private Long cartsetID;
-    private String name;
-    private String description;
-    
-    @XmlElement(required = true)
-	public Long getCartsetID() {
-		return cartsetID;
+public class UpdateCartStyleRequest {
+	
+	private Long cartStyleID;
+	private String name;
+	private String description;
+	
+	@XmlElement(required = true)
+	public Long getCartStyleID() {
+		return cartStyleID;
 	}
-	public void setCartsetID(Long cartsetID_) {
-		cartsetID = cartsetID_;
+	public void setCartStyleID(Long cartStyleID_) {
+		cartStyleID = cartStyleID_;
 	}
+	
 	@XmlElement(required = true)
 	public String getName() {
 		return name;
@@ -25,13 +26,13 @@ public class AddCartwallRequest {
 	public void setName(String name_) {
 		name = name_;
 	}
-	@XmlElement(required = false)
+	
+	@XmlElement(required = true)
 	public String getDescription() {
 		return description;
 	}
 	public void setDescription(String description_) {
 		description = description_;
 	}
-    
-	
+		
 }

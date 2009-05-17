@@ -12,11 +12,10 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name="cartaudio")
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.NONE)
 public class CartAudio extends Audit  {
 	
 	@Column(name="cart_audio_id")
@@ -30,11 +29,14 @@ public class CartAudio extends Audit  {
 	@Column(name="text")
 	private String text;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="cartstyle_id")
 	private CartStyle style;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@Column(name="cartstyle_id", updatable = false, insertable = false)
+	private Long cartStyleID;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="audio_id")
 	private Audio audio;
 	
@@ -69,7 +71,6 @@ public class CartAudio extends Audit  {
 		text = text_;
 	}
 
-	@XmlElement(required = true)
 	public CartStyle getStyle() {
 		return style;
 	}
@@ -77,7 +78,6 @@ public class CartAudio extends Audit  {
 		style = style_;
 	}
 
-	@XmlTransient
 	public Audio getAudio() {
 		return audio;
 	}
@@ -85,7 +85,6 @@ public class CartAudio extends Audit  {
 		audio = audio_;
 	}
 
-	@XmlTransient
 	public Cartwall getCartwall() {
 		return cartwall;
 	}
@@ -99,6 +98,14 @@ public class CartAudio extends Audit  {
 	}
 	protected void setAudioID(Long audioID_) {
 		audioID = audioID_;
+	}
+	
+	@XmlElement(required = true)
+	public Long getCartStyleID() {
+		return cartStyleID;
+	}
+	public void setCartStyleID(Long cartStyleID_) {
+		cartStyleID = cartStyleID_;
 	}
 	
 	public String toString() {
@@ -130,4 +137,5 @@ public class CartAudio extends Audit  {
 			return false;
 		return true;
 	}
+	
 }

@@ -1,186 +1,84 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
 	<soap:Body>
-		<ns2:getCartset xmlns:ns2="http://www.dps.org/dps/cartset"
-			xmlns:ns3="http://www.dps.org/dps/dto" xmlns:ns4="http://www.dps.org/dps/common">
-			<ns2:permissionedCartset>
-				<ns4:execute>true</ns4:execute>
-				<ns4:read>true</ns4:read>
-				<ns4:write>true</ns4:write>
-				<ns3:item>
-					<ns3:allExecute>true</ns3:allExecute>
-					<ns3:allRead>true</ns3:allRead>
-					<ns3:allWrite>true</ns3:allWrite>
-					<ns3:created>1970-01-01T00:00:00+01:00
-					</ns3:created>
-					<ns3:entityType>1</ns3:entityType>
-					<ns3:fileID>20</ns3:fileID>
-					<ns3:filename>Phils Cartwall</ns3:filename>
-					<ns3:groupExecute>true</ns3:groupExecute>
-					<ns3:groupRead>true</ns3:groupRead>
-					<ns3:groupWrite>true</ns3:groupWrite>
-					<ns3:lastUpdated>1970-01-01T00:00:00+01:00
-					</ns3:lastUpdated>
-					<ns3:owner>
-						<ns3:enabled>true</ns3:enabled>
-						<ns3:ghost>false</ns3:ghost>
-						<ns3:userID>1</ns3:userID>
-						<ns3:username>Jim</ns3:username>
-					</ns3:owner>
-					<ns3:ownerGroup>
-						<ns3:description>The Best Group</ns3:description>
-						<ns3:groupID>1</ns3:groupID>
-						<ns3:name>Jims Group</ns3:name>
-					</ns3:ownerGroup>
-					<ns3:parentID>0</ns3:parentID>
-					<ns3:userExecute>true</ns3:userExecute>
-					<ns3:userRead>true</ns3:userRead>
-					<ns3:userWrite>true</ns3:userWrite>
-					<ns3:cartwalls>
-						<ns3:cartwall>
-							<ns3:carts>
-								<ns3:cart>
-									<ns3:audioID>1</ns3:audioID>
-									<ns3:cartAudioID>2</ns3:cartAudioID>
-									<ns3:cartID>2</ns3:cartID>
-									<ns3:style>
-										<ns3:cartStyleID>1</ns3:cartStyleID>
-										<ns3:description>DEFAULT</ns3:description>
-										<ns3:name>PLAIN</ns3:name>
-										<ns3:properties>
-											<entry>
-												<key>BGCOLOUR</key>
-												<value>
-													<ns3:cartStylePropID>2</ns3:cartStylePropID>
-													<ns3:key>BGCOLOUR</ns3:key>
-													<ns3:value>#000000</ns3:value>
-												</value>
-											</entry>
-											<entry>
-												<key>TEXT</key>
-												<value>
-													<ns3:cartStylePropID>1</ns3:cartStylePropID>
-													<ns3:key>TEXT</ns3:key>
-													<ns3:value>#000000</ns3:value>
-												</value>
-											</entry>
-										</ns3:properties>
-										<ns3:cartStyleProperties>
-											<ns3:cartStyleProperty>
-												<ns3:cartStylePropID>2</ns3:cartStylePropID>
-												<ns3:key>BGCOLOUR</ns3:key>
-												<ns3:value>#000000</ns3:value>
-											</ns3:cartStyleProperty>
-											<ns3:cartStyleProperty>
-												<ns3:cartStylePropID>1</ns3:cartStylePropID>
-												<ns3:key>TEXT</ns3:key>
-												<ns3:value>#000000</ns3:value>
-											</ns3:cartStyleProperty>
-										</ns3:cartStyleProperties>
-									</ns3:style>
-									<ns3:text>CART 2</ns3:text>
-								</ns3:cart>
-								<ns3:cart>
-									<ns3:audioID>1</ns3:audioID>
-									<ns3:cartAudioID>1</ns3:cartAudioID>
-									<ns3:cartID>1</ns3:cartID>
-									<ns3:style>
-										<ns3:cartStyleID>1</ns3:cartStyleID>
-										<ns3:description>DEFAULT</ns3:description>
-										<ns3:name>PLAIN</ns3:name>
-										<ns3:properties>
-											<entry>
-												<key>BGCOLOUR</key>
-												<value>
-													<ns3:cartStylePropID>2</ns3:cartStylePropID>
-													<ns3:key>BGCOLOUR</ns3:key>
-													<ns3:value>#000000</ns3:value>
-												</value>
-											</entry>
-											<entry>
-												<key>TEXT</key>
-												<value>
-													<ns3:cartStylePropID>1</ns3:cartStylePropID>
-													<ns3:key>TEXT</ns3:key>
-													<ns3:value>#000000</ns3:value>
-												</value>
-											</entry>
-										</ns3:properties>
-										<ns3:cartStyleProperties>
-											<ns3:cartStyleProperty>
-												<ns3:cartStylePropID>2</ns3:cartStylePropID>
-												<ns3:key>BGCOLOUR</ns3:key>
-												<ns3:value>#000000</ns3:value>
-											</ns3:cartStyleProperty>
-											<ns3:cartStyleProperty>
-												<ns3:cartStylePropID>1</ns3:cartStylePropID>
-												<ns3:key>TEXT</ns3:key>
-												<ns3:value>#000000</ns3:value>
-											</ns3:cartStyleProperty>
-										</ns3:cartStyleProperties>
-									</ns3:style>
-									<ns3:text>CART 1</ns3:text>
-								</ns3:cart>
-							</ns3:carts>
-							<ns3:cartwallID>1</ns3:cartwallID>
-							<ns3:description>FIRST WALL</ns3:description>
-							<ns3:name>WALL 1</ns3:name>
-							<ns3:page>0</ns3:page>
-						</ns3:cartwall>
-						<ns3:cartwall>
-							<ns3:carts>
-								<ns3:cart>
-									<ns3:audioID>1</ns3:audioID>
-									<ns3:cartAudioID>3</ns3:cartAudioID>
-									<ns3:cartID>4</ns3:cartID>
-									<ns3:style>
-										<ns3:cartStyleID>1</ns3:cartStyleID>
-										<ns3:description>DEFAULT</ns3:description>
-										<ns3:name>PLAIN</ns3:name>
-										<ns3:properties>
-											<entry>
-												<key>BGCOLOUR</key>
-												<value>
-													<ns3:cartStylePropID>2</ns3:cartStylePropID>
-													<ns3:key>BGCOLOUR</ns3:key>
-													<ns3:value>#000000</ns3:value>
-												</value>
-											</entry>
-											<entry>
-												<key>TEXT</key>
-												<value>
-													<ns3:cartStylePropID>1</ns3:cartStylePropID>
-													<ns3:key>TEXT</ns3:key>
-													<ns3:value>#000000</ns3:value>
-												</value>
-											</entry>
-										</ns3:properties>
-										<ns3:cartStyleProperties>
-											<ns3:cartStyleProperty>
-												<ns3:cartStylePropID>2</ns3:cartStylePropID>
-												<ns3:key>BGCOLOUR</ns3:key>
-												<ns3:value>#000000</ns3:value>
-											</ns3:cartStyleProperty>
-											<ns3:cartStyleProperty>
-												<ns3:cartStylePropID>1</ns3:cartStylePropID>
-												<ns3:key>TEXT</ns3:key>
-												<ns3:value>#000000</ns3:value>
-											</ns3:cartStyleProperty>
-										</ns3:cartStyleProperties>
-									</ns3:style>
-									<ns3:text>CART 4</ns3:text>
-								</ns3:cart>
-							</ns3:carts>
-							<ns3:cartwallID>2</ns3:cartwallID>
-							<ns3:description>SECOND WALL</ns3:description>
-							<ns3:name>WALL 2</ns3:name>
-							<ns3:page>1</ns3:page>
-						</ns3:cartwall>
-					</ns3:cartwalls>
-					<ns3:description>A test cartwall</ns3:description>
-					<ns3:name>Phils Cartwall</ns3:name>
-				</ns3:item>
-			</ns2:permissionedCartset>
-		</ns2:getCartset>
+		<getCartset xmlns="http://www.dps.org/dps/cartset"
+			xmlns:ns2="http://www.dps.org/dps/dto" xmlns:ns3="http://www.dps.org/dps/common">
+			<permissionedCartset>
+				<ns3:execute>true</ns3:execute>
+				<ns3:read>true</ns3:read>
+				<ns3:write>true</ns3:write>
+				<ns2:item>
+					<ns2:allExecute>true</ns2:allExecute>
+					<ns2:allRead>true</ns2:allRead>
+					<ns2:allWrite>true</ns2:allWrite>
+					<ns2:created>1970-01-01T00:00:00+01:00
+					</ns2:created>
+					<ns2:entityType>1</ns2:entityType>
+					<ns2:fileID>20</ns2:fileID>
+					<ns2:filename>Phils Cartwall</ns2:filename>
+					<ns2:groupExecute>true</ns2:groupExecute>
+					<ns2:groupRead>true</ns2:groupRead>
+					<ns2:groupWrite>true</ns2:groupWrite>
+					<ns2:lastUpdated>1970-01-01T00:00:00+01:00
+					</ns2:lastUpdated>
+					<ns2:owner>
+						<ns2:enabled>true</ns2:enabled>
+						<ns2:ghost>false</ns2:ghost>
+						<ns2:userID>1</ns2:userID>
+						<ns2:username>Jim</ns2:username>
+					</ns2:owner>
+					<ns2:ownerGroup>
+						<ns2:description>The Best Group</ns2:description>
+						<ns2:groupID>1</ns2:groupID>
+						<ns2:name>Jims Group</ns2:name>
+					</ns2:ownerGroup>
+					<ns2:parentID>0</ns2:parentID>
+					<ns2:userExecute>true</ns2:userExecute>
+					<ns2:userRead>true</ns2:userRead>
+					<ns2:userWrite>true</ns2:userWrite>
+					<ns2:cartwalls>
+						<ns2:cartwall>
+							<ns2:carts>
+								<ns2:cart>
+									<ns2:audioID>1</ns2:audioID>
+									<ns2:cartAudioID>2</ns2:cartAudioID>
+									<ns2:cartID>2</ns2:cartID>
+									<ns2:cartStyleID>1</ns2:cartStyleID>
+									<ns2:text>CART 2</ns2:text>
+								</ns2:cart>
+								<ns2:cart>
+									<ns2:audioID>1</ns2:audioID>
+									<ns2:cartAudioID>1</ns2:cartAudioID>
+									<ns2:cartID>1</ns2:cartID>
+									<ns2:cartStyleID>1</ns2:cartStyleID>
+									<ns2:text>CART 1</ns2:text>
+								</ns2:cart>
+							</ns2:carts>
+							<ns2:cartwallID>1</ns2:cartwallID>
+							<ns2:description>FIRST WALL</ns2:description>
+							<ns2:name>WALL 1</ns2:name>
+							<ns2:page>0</ns2:page>
+						</ns2:cartwall>
+						<ns2:cartwall>
+							<ns2:carts>
+								<ns2:cart>
+									<ns2:audioID>1</ns2:audioID>
+									<ns2:cartAudioID>3</ns2:cartAudioID>
+									<ns2:cartID>4</ns2:cartID>
+									<ns2:cartStyleID>1</ns2:cartStyleID>
+									<ns2:text>CART 4</ns2:text>
+								</ns2:cart>
+							</ns2:carts>
+							<ns2:cartwallID>2</ns2:cartwallID>
+							<ns2:description>SECOND WALL</ns2:description>
+							<ns2:name>WALL 2</ns2:name>
+							<ns2:page>1</ns2:page>
+						</ns2:cartwall>
+					</ns2:cartwalls>
+					<ns2:description>A test cartwall</ns2:description>
+					<ns2:name>Phils Cartwall</ns2:name>
+				</ns2:item>
+			</permissionedCartset>
+		</getCartset>
 	</soap:Body>
 </soap:Envelope>

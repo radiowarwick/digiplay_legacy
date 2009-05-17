@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlElement;
 import org.dps.servicelayer.Namespaces;
 import org.dps.servicelayer.dto.Cartwall;
 
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.NONE)
 public class AddCartwallResponse {
 	
 	private Long cartsetID;

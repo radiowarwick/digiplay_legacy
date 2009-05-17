@@ -21,6 +21,13 @@ public abstract class AbstractService {
 		return (File) query.uniqueResult();
 	}
 	
+	@SuppressWarnings("unchecked")
+	protected <T extends File>T getFile(Session session, Long fileID, Class<T> clazz) {
+		Query query = session.createQuery("from File where fileID=?");
+		query.setLong(0, fileID);
+		return (T) query.uniqueResult();
+	}
+	
 	protected User getUser(Session session, Long useriD) {
 		Query query = session.createQuery("from User where userID=?");
 		query.setLong(0, useriD);

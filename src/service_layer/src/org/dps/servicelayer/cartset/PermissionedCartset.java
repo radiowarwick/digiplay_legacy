@@ -9,7 +9,7 @@ import org.dps.servicelayer.common.PermissionedItem;
 import org.dps.servicelayer.dto.Cartset;
 
 
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.NONE)
 public class PermissionedCartset extends PermissionedItem<Cartset> {
     private Cartset cartset;
 

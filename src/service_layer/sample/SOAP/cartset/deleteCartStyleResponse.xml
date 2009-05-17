@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Body>
+		<deleteCartStyle xmlns="http://www.dps.org/dps/cartset"
+			xmlns:ns2="http://www.dps.org/dps/dto" xmlns:ns3="http://www.dps.org/dps/common">
+			<cartStyleID>2</cartStyleID>
+			<name>Funky</name>
+		</deleteCartStyle>
+	</soap:Body>
+</soap:Envelope>

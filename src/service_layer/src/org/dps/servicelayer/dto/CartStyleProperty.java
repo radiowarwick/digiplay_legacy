@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name="cartstyleprop")
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.NONE)
 public class CartStyleProperty extends Audit  {
 
 	@Column(name="cart_style_prop_id")

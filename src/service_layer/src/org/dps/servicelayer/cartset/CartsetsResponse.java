@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import org.dps.servicelayer.Namespaces;
 import org.dps.servicelayer.common.ResultSetDetails;
 
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.NONE)
 public class CartsetsResponse {
 	
     private List<PermissionedCartsetSummary> permissionedCartsetSummaries = new ArrayList<PermissionedCartsetSummary>();

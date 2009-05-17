@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import org.dps.servicelayer.dto.File;
 
 
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.NONE)
 public abstract class SummaryItem<T extends File> extends File {
 	
 	public abstract void build(T item);

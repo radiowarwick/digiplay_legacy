@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Body>
+		<ns3:getCartStyles xmlns:ns2="http://www.dps.org/dps/dto"
+			xmlns:ns3="http://www.dps.org/dps/cartset" xmlns:ns4="http://www.dps.org/dps/common">
+			<ns3:cartStyles>
+				<ns3:cartStyle>
+					<ns3:cartStyleID>1</ns3:cartStyleID>
+					<ns3:name>PLAIN</ns3:name>
+				</ns3:cartStyle>
+			</ns3:cartStyles>
+		</ns3:getCartStyles>
+	</soap:Body>
+</soap:Envelope>

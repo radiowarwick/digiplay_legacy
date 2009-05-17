@@ -28,7 +28,7 @@ import org.hibernate.annotations.GenerationTime;
 @Entity
 @Table(name="file")
 @Inheritance(strategy=InheritanceType.JOINED)
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.NONE)
 public class File extends Audit {
 	
 	@Column(name="file_id")

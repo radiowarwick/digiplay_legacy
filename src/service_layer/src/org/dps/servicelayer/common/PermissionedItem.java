@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.dps.servicelayer.dto.File;
 
 
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.NONE)
 public abstract class PermissionedItem<T extends File> {
 	
     private boolean read;

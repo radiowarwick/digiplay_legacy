@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Body>
+		<ns3:getCartStyle xmlns:ns2="http://www.dps.org/dps/dto"
+			xmlns:ns3="http://www.dps.org/dps/cartset" xmlns:ns4="http://www.dps.org/dps/common">
+			<ns2:cartStyle>
+				<ns2:cartStyleID>1</ns2:cartStyleID>
+				<ns2:description>DEFAULT</ns2:description>
+				<ns2:name>PLAIN</ns2:name>
+				<ns2:properties>
+					<entry>
+						<key>BGCOLOUR</key>
+						<value>
+							<ns2:cartStylePropID>2</ns2:cartStylePropID>
+							<ns2:key>BGCOLOUR</ns2:key>
+							<ns2:value>#000000</ns2:value>
+						</value>
+					</entry>
+					<entry>
+						<key>TEXT</key>
+						<value>
+							<ns2:cartStylePropID>1</ns2:cartStylePropID>
+							<ns2:key>TEXT</ns2:key>
+							<ns2:value>#000000</ns2:value>
+						</value>
+					</entry>
+				</ns2:properties>
+				<ns2:cartStyleProperties>
+					<ns2:cartStyleProperty>
+						<ns2:cartStylePropID>2</ns2:cartStylePropID>
+						<ns2:key>BGCOLOUR</ns2:key>
+						<ns2:value>#000000</ns2:value>
+					</ns2:cartStyleProperty>
+					<ns2:cartStyleProperty>
+						<ns2:cartStylePropID>1</ns2:cartStylePropID>
+						<ns2:key>TEXT</ns2:key>
+						<ns2:value>#000000</ns2:value>
+					</ns2:cartStyleProperty>
+				</ns2:cartStyleProperties>
+			</ns2:cartStyle>
+		</ns3:getCartStyle>
+	</soap:Body>
+</soap:Envelope>

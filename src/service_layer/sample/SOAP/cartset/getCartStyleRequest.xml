@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<soap:Envelope
+	xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Head>
+	</soap:Head>
+	<soap:Body>
+		<cs:getCartStyle xmlns:cs="http://www.dps.org/dps/cartset">
+			<cs:cartStyleID>1</cs:cartStyleID>
+		</cs:getCartStyle>
+	</soap:Body>
+</soap:Envelope>

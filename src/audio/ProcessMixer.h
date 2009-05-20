@@ -55,6 +55,9 @@ class Audio::ProcessMixer : public Audio::Process {
         /// Perform tasks when a component is disconnected
 		virtual void onUnpatch(PORT localPort);
 
+        /// Returns the number of active channels
+        virtual unsigned int activeChannels();
+        
     private:
 		STATE _state;
         short *audioBuffer;

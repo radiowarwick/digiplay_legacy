@@ -100,6 +100,7 @@ void AudioWallManager::load(unsigned int awset) {
 	string md5 = "";
 	string text = "";
 	string title = "";
+    string type = "";
 	unsigned long start = 0;
 	unsigned long end = 0;
 	QColor fgColour;
@@ -125,7 +126,11 @@ void AudioWallManager::load(unsigned int awset) {
 	while (i < R.size()) {
 		file = R[i]["path"].c_str();
 		md5 = R[i]["md5"].c_str();
+        type = R[i]["type"].c_str();
 		file += "/" + md5.substr(0,1) + "/" + md5;
+        if (type == "flac") {
+            file += ".flac";
+        }
 		item = atoi(R[i]["item"].c_str());
 		page = atoi(R[i]["page"].c_str());
 		text = R[i]["text"].c_str();
@@ -138,6 +143,7 @@ void AudioWallManager::load(unsigned int awset) {
         AudioWallItemSpec* I = _pages[page]->items[item];
 		if (I->file != file) changeTable[page][item] = true;
 		I->file = file;
+        I->type = (type == "flac") ? ITEM_FILETYPE_FLAC : ITEM_FILETYPE_RAW;
 		if (I->start != start) changeTable[page][item] = true;
 		I->start = start;
 		if (I->end != end) changeTable[page][item] = true;

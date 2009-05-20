@@ -87,10 +87,8 @@ class AudioWall :   public QWidget,
 
 		void clean();
 
-        OutputDsp *_audioPlayer;
-        ProcessMixer *_audioMixer;
-
         bool _loaded;
+        string _name;
 		unsigned short _rows;
 		unsigned short _cols;
 		unsigned short _pageSize;
@@ -111,11 +109,6 @@ class AudioWall :   public QWidget,
 		QPushButton *btnPagePrev;
 		QLabel *lblPageNum;
 		QLabel *lblCounter;
-
-		bool _running;
-//		QMutex _mutRunning;
-//		QMutex _mutEvent;
-		vector<eventData*> events;
 };
 
 #endif

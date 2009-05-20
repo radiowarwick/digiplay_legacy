@@ -155,3 +155,7 @@ void Audio::ProcessMixer::onUnpatch(PORT localPort) {
 	// unlock channels again
 	pthread_mutex_unlock(&channelLock);
 }
+
+unsigned int Audio::ProcessMixer::activeChannels() {
+    return ch_active.size();
+}

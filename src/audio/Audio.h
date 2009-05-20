@@ -22,6 +22,7 @@ namespace Audio {
 	class Process;
     class ProcessMixer;
     class ProcessFader;
+    class ProcessLink;
 
 	class Counter;
 	class CounterTrigger;

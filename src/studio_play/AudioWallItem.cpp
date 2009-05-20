@@ -4,8 +4,8 @@
 
 AudioWallItem::AudioWallItem(QWidget* parent, const char* name) :
         QPushButton::QPushButton(parent,name) {
+    mInputModule = 0;
     QObject::connect(this,SIGNAL(pressed()),this,SLOT(play()));
-    this->addCounter(this);
     newItemAvailable = false;
 }
 
@@ -20,7 +20,24 @@ void AudioWallItem::set(AudioWallItemSpec& pItem) {
 				bgColour = pItem.bgColour;
 				fgColour = pItem.fgColour;
 				text = pItem.text;
-				load(pItem.file.ascii(), pItem.start, pItem.end);
+                
+                if (mInputModule) {
+                    mInputModule->unpatch(OUT0);
+                    delete mInputModule;        
+                }
+                
+                if (pItem.type == ITEM_FILETYPE_RAW) {
+                    mInputModule = new Audio::InputRaw();
+                }
+                else if (pItem.type == ITEM_FILETYPE_FLAC) {
+                    mInputModule = new Audio::InputFlac();
+                }
+                else {
+                    cout << "Unknown file type: " << pItem.type << endl;
+                }
+                mInputModule->patch(OUT0, this, IN0);
+                mInputModule->addCounter(this);
+				mInputModule->load(pItem.file.ascii(), pItem.start, pItem.end);
 			}
 			else {
 				text = "";
@@ -58,13 +75,20 @@ void AudioWallItem::setText(QString T) {
 }
 
 void AudioWallItem::play() {
+    ProcessMixer* P = dynamic_cast<ProcessMixer*>(
+                                Audio::ProcessLink::connectedDevice(OUT0));
+    if (!P) {
+        cout << "ProcessMixer is not valid!!" << endl;
+    }
     switch (_state) {
         case STATE_STOP:
-            Audio::InputRaw::play();
-            updateButton();
+            if (P && P->activeChannels() < 3) {
+                mInputModule->play();
+                updateButton();
+            }
             break;
         case STATE_PLAY:
-            Audio::InputRaw::stop();
+            mInputModule->stop();
             if (newItemAvailable) {
             	newItemAvailable = false;
             	set(newItem);
@@ -86,7 +110,7 @@ void AudioWallItem::onSetState() {
     if (_state == STATE_STOP && newItemAvailable) {
     	newItemAvailable = false;
     	set(newItem);
-    }    	
+    }
     updateButton();
 }
 

@@ -3,19 +3,30 @@
 
 #include <qpushbutton.h>
 
+#include "audio/ProcessLink.h"
+#include "audio/ProcessMixer.h"
+#include "audio/Input.h"
 #include "audio/InputRaw.h"
+#include "audio/InputFlac.h"
 #include "audio/Counter.h"
 
 #include "dps.h"
 
+enum ItemFileType {
+    ITEM_FILETYPE_RAW,
+    ITEM_FILETYPE_FLAC
+};
+
 struct AudioWallItemSpec {
 	AudioWallItemSpec() {
 		file = "";
+        type = ITEM_FILETYPE_RAW;
 		start = 0;
 		end = 0;
 		text = "";
 	}
     QString file;
+    enum ItemFileType type;
     unsigned long start;
     unsigned long end;
     QString text;
@@ -23,9 +34,8 @@ struct AudioWallItemSpec {
     QColor bgColour;
 };
 
-
 class AudioWallItem :   public QPushButton,
-                        public Audio::InputRaw,
+                        public Audio::ProcessLink,
                         public Audio::Counter {
     Q_OBJECT
     public:
@@ -55,6 +65,7 @@ class AudioWallItem :   public QPushButton,
         
         bool newItemAvailable;
         AudioWallItemSpec newItem;
+        Audio::Input * mInputModule;
 };
 
 #endif

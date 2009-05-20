@@ -714,7 +714,8 @@ ORDER BY itemtype, name;
 -- v_audiowalls
 CREATE OR REPLACE VIEW v_audiowalls
 AS
-    SELECT  audio.md5 AS md5, 
+    SELECT  audio.md5 AS md5,
+    		audio.filetype AS type, 
             archives.localpath AS path, 
             audio.start_smpl AS start, 
             audio.end_smpl AS end, 

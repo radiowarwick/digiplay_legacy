@@ -48,7 +48,8 @@ AudioWall::AudioWall(QWidget *parent, const char* name, unsigned short rows, uns
 	_currentPage = 0;
 	_activePage = 0;
 	_activeIndex = 0;
-
+    _name = name;
+    
 	grpFrame = 0;
 	btnPageNext = 0;
 	btnPagePrev = 0;

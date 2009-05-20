@@ -17,7 +17,7 @@ QT_ENABLED 	=	no
 MODS		=	AudioPacket Component \
 				Input InputRaw InputFlac \
 				Output OutputRaw OutputDsp \
-				Process  ProcessMixer ProcessFader \
+				Process  ProcessMixer ProcessFader ProcessLink \
 				Counter CounterTrigger
 SHARED_MODS	=	Thread Security Logger
 

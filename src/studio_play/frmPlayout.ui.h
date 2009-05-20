@@ -24,8 +24,6 @@
 #include <qapplication.h>
 #include <cstdlib>
 
-#include "Config.h"
-#include "QtTrigger.h"
 #include "AudioPlayer.h"
 #include "AudioWall.h"
 #include "AudioWallDriver.h"
@@ -35,7 +33,6 @@
 #include "Security.h"
 #include "Logger.h"
 
-QtTrigger* triggerConfig;
 RemoteStartThread* remotes;
 AudioPlayer* audioPlayer1;
 AudioPlayer* audioPlayer2;
@@ -45,7 +42,6 @@ AudioWall* usrAudioWall;
 AudioWallDriver* audioWallOutput;
 AudioWallManager* stnAudioWallMan;
 AudioWallManager* usrAudioWallMan;
-Config *conf;
 unsigned int stnAudioWallId;
 unsigned int usrAudioWallId;
 
@@ -103,5 +99,5 @@ void frmPlayout::init() {
 }
 
 void frmPlayout::destroy() {
-    delete conf;
+
 }

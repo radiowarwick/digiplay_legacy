@@ -10,7 +10,16 @@ AudioWallItem::AudioWallItem(QWidget* parent, const char* name) :
 }
 
 AudioWallItem::~AudioWallItem() {
-
+    // Stop audiowall item playing if it's still playing to allow it to be
+    // cleanly destroyed. This isn't ideal as accidental logout could affect
+    // what is going out on air.
+    if (mInputModule) {
+        if (_state != STATE_STOP) {
+            mInputModule->stop();
+        }
+        mInputModule->unpatch(OUT0);
+        delete mInputModule;
+    }
 }
 
 void AudioWallItem::set(AudioWallItemSpec& pItem) {

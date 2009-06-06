@@ -218,7 +218,7 @@ void DpsShowPlan::moveTop(const DpsShowItem& pSrc) {
 		return;
 	}
     while (vStart != mItems.end() 
-            && vStart->getState() == DpsShowItem::Finished) {
+            && vStart->getState() != DpsShowItem::Unloaded) {
         vStart++;
     }
 	rotate(vStart, vPos, vPos + 1);

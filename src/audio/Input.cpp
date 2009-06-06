@@ -310,9 +310,9 @@ void Input::startCaching() {
 void Input::stopCaching() {
     // if we're still caching, instruct to stop caching
     cacheStateLock.lock();
-    if (cacheState == CACHE_STATE_ACTIVE) {
+    //if (cacheState == CACHE_STATE_ACTIVE) {
         threadSend(STOP);
-    }
+    //}
 
     // Wait until we've actually stopped caching
     while (cacheState == CACHE_STATE_ACTIVE) {

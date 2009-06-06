@@ -1,6 +1,6 @@
 # Default command tools
-CC			=	g++ -g
-LD			=	g++ -g
+CC			=	g++ -g3
+LD			=	g++ -g3
 MOC			?=	@/usr/share/qt3/bin/moc
 UIC			?=	@/usr/share/qt3/bin/uic
 

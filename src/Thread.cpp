@@ -9,6 +9,13 @@ Thread::Thread() {
     t_active = false;
     pthread_mutex_init(&t_messages_mutex,NULL);
     pthread_mutex_init(&t_terminate_mutex,NULL);
+    
+    // get default attributes
+    pthread_attr_init(&threadAttr);
+    // create thread detached.
+    // it isn't valid to "join" detached threads. However, the thread will
+    // automatically reclaim it's resources when completed.
+    pthread_attr_setdetachstate(&threadAttr, PTHREAD_CREATE_DETACHED);
 }
 
 Thread::~Thread() {
@@ -29,12 +36,6 @@ int Thread::threadStart() {
     // first kill our thread if it is running
 	if (t_active) threadKill();
 
-    // get default attributes
-	pthread_attr_init(&threadAttr);
-	// create thread detached.
-	// it isn't valid to "join" detached threads. However, the thread will
-	// automatically reclaim it's resources when completed.
-	pthread_attr_setdetachstate(&threadAttr, PTHREAD_CREATE_DETACHED);
     terminate_flag = false;
 	
     // create the new thread with default attributes starting \c threadEntry

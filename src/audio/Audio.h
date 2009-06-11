@@ -6,7 +6,8 @@
  */
 namespace Audio {
     class AudioPacket;
-
+    class CircularCache;
+    
 	class Component;
 	class Input;
 	class InputRaw;

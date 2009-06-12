@@ -20,10 +20,10 @@ class Audio::CircularCache {
         /// Assigns the contents of one circular cache to another.
         CircularCache& operator=(const CircularCache &pSrc);
         
-        /// Pushes data into the cache.
-        unsigned long pushData(unsigned long pSize, const char * pData);
-        /// Pulls the oldest data from the cache
-        unsigned long popData(unsigned long pSize, char * pData);
+        /// Writes data into the cache.
+        unsigned long write(unsigned long pSize, const char * pData);
+        /// Reads the oldest data from the cache
+        unsigned long read(unsigned long pSize, char * pData);
         /// Reports the available space in the cache.
         unsigned long free();
         /// Reports the total size of the cache.

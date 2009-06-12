@@ -3,6 +3,7 @@
 using namespace std;
 
 #include "Input.h"
+#include "CircularCache.h"
 #include "Counter.h"
 using namespace Audio;
 
@@ -18,18 +19,9 @@ Input::Input(unsigned int cache_size) {
 
     // Amount to ensure cache before completing load
     preCacheSize = 441000;
-        
+
     // Configure cache to the appropriate size
-    cacheSize = cache_size;
-    cacheStart = new char[cacheSize];
-    if (cacheStart == 0) {
-        cout << "ERROR: Cannot allocate memory for cache" << endl;
-        throw -1;
-    }
-    cacheEnd = cacheStart + cacheSize;
-    cacheRead = cacheStart;
-    cacheWrite = cacheStart;
-    cacheFree = cacheSize;
+    mCache = new CircularCache(cache_size);
 
     f_pos_byte = 0;
     f_start_byte = 0;
@@ -44,7 +36,7 @@ Input::Input(unsigned int cache_size) {
 Input::~Input() {
     threadKill();
     threadWait();
-    delete[] cacheStart;
+    delete mCache;
 }
 
 
@@ -56,49 +48,16 @@ void Input::getAudio(AudioPacket* audioData) {
     // Fills audioData with the requested number of samples
     char *ptr = (char*)(audioData->getData());
     unsigned long bytes = PACKET_BYTES;
+    unsigned long bytes_out = bytes;
+    
     // pos is in stereo samples
     long pos = static_cast<long>((f_pos_byte - f_start_byte) / 4);
-    short count = 0;
-    
-    // lock the cache while we read a packet from it
-    cacheLock.lock();
 
-    // Check if there is enough audio in cache to fill packet   
-    if (cacheSize - cacheFree < bytes) {
-        // if we've finished caching, just empty the remaining data
-        if (f_end_byte - f_pos_byte < bytes) {
-            //cout << "Flushing remainder of cache into buffer." << endl;
-            bytes = cacheSize - cacheFree;
-        }
-        // if we're still caching, the cache has emptied, oops!
-        else {
-            cout << "WARNING: buffer seems to be empty, yet we haven't reached end of file!" << endl;
-            cout << "Audio length: " << f_length_byte << endl;
-            cout << "Current pos:  " << f_pos_byte - f_start_byte << endl;
-            bytes = cacheSize - cacheFree;
-        }
+    if ((bytes_out = mCache->read(bytes, ptr)) != bytes) {
+        // Failed to read a full packet from cache.
     }
-    
-    // Transfer the required number of samples to the audio packet
-    // Advance cache pointers appropriately.
-    for (unsigned long i = 0; i < PACKET_BYTES; i++) {
-        if (state == STATE_STOP || bytes == 0) {
-            *ptr = 0;
-        }
-        else {
-            *ptr = *cacheRead;
-            ++cacheRead;
-            ++cacheFree;
-            ++f_pos_byte;
-            --bytes;
-            if (cacheRead > cacheEnd) {
-                cacheRead = cacheStart;
-            }
-        }
-        ++ptr;
-        ++count;
-    }
-    // set the absolute position (relative to the start point) of this
+    f_pos_byte += bytes_out;
+
     // block of audio in terms of stereo samples.
     audioData->setStart(pos);
 
@@ -109,22 +68,16 @@ void Input::getAudio(AudioPacket* audioData) {
     }
 
     // if cache is completely empty, stop
-    if (cacheFree >= cacheSize) {
+    if (mCache->free() == mCache->size()) {
         if (f_end_byte - f_pos_byte > 256) {
             cout << "WARNING: Ran out of cached audio before end of file." << endl;
         }
-        // First unlock the cache before we attempt to stop
-        cacheLock.unlock();
         
         // Update counters with the end sample position
         updateCounters(f_length_byte/4);
         
         // Stop the caching and reset
         stop();
-    }
-    else {
-        // Just unlock the cache
-        cacheLock.unlock();
     }
     
     return;
@@ -180,22 +133,22 @@ void Input::pause() {
 
 /**
  * Jump to another place in the file. The cache is emptied and caching restarts
- * from the new location. The cacheLock prevents the cache from being updated
- * while the change takes place. When the cache has been reset, the lock is
- * released and the new position is updated on all attached counters.
+ * from the new location.
  * @param   sample      Stereo sample to jump to in file
  */
 void Input::seek(long sample) {
-    cacheLock.lock();
-
+    // Round sample to nearest 64.
     sample -= (sample % 64);
-    f_seek_byte = sample*4;
-    long pos = static_cast<long>((f_seek_byte - f_start_byte) / 4);
+    
+    // Compute the file offset.
+    f_seek_byte = sample*4 + f_start_byte;
+    
+    // Update counters.
+    long pos = static_cast<long>(sample);
     updateCounters(pos);
     
+    // Seek audio stream.
     threadSend(SEEK);
-
-    cacheLock.unlock();
 }
 
 
@@ -296,8 +249,8 @@ void Input::startCaching() {
 
     // Wait until the cache has preCacheSize audio or all audio,
     // whichever is smaller
-    while ( cacheSize - cacheFree < preCacheSize 
-            && cacheSize - cacheFree < f_length_byte) {
+    while ( mCache->size() - mCache->free() < preCacheSize 
+            && mCache->size() - mCache->free() < f_length_byte) {
         usleep(1000);
     }
 }
@@ -310,9 +263,8 @@ void Input::startCaching() {
 void Input::stopCaching() {
     // if we're still caching, instruct to stop caching
     cacheStateLock.lock();
-    //if (cacheState == CACHE_STATE_ACTIVE) {
-        threadSend(STOP);
-    //}
+
+    threadSend(STOP);
 
     // Wait until we've actually stopped caching
     while (cacheState == CACHE_STATE_ACTIVE) {

@@ -3,6 +3,7 @@ using std::cout;
 using std::endl;
 
 #include "Counter.h"
+#include "CircularCache.h"
 #include "InputRaw.h"
 using Audio::InputRaw;
 
@@ -61,20 +62,13 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
         updateStates(STATE_STOP);
     }
 
-    // Lock cache to be safe
-    cacheLock.lock();
-
 	// Initialise position variables, counters and reset cache
     f_filename = filename;
 	f_start_byte = start_smpl * 4;
 	f_end_byte = end_smpl * 4;
 	f_length_byte = f_end_byte - f_start_byte;
 	f_pos_byte = f_start_byte;
-	cacheRead = cacheStart;
-	cacheWrite = cacheStart;
-	cacheFree = cacheSize;
-
-	cacheLock.unlock();
+    mCache->clear();
     
     updateCounters(0);
 	updateTotals(f_length_byte/4);
@@ -128,6 +122,7 @@ void InputRaw::threadExecute() {
     // lifetime of this object.
     ifstream *f = 0;
     unsigned int read_bytes = READ_PACKET;
+    unsigned int read_bytes_out = read_bytes;
     char *ptr = 0;
     while (!threadTestKill()) {
 
@@ -173,21 +168,16 @@ void InputRaw::threadExecute() {
          **************************************************/
     	while ( !threadTestKill() &&            // Thread not terminated
                 !threadReceive(STOP)) {         // Not told to stop
-            // Lock the cache
-    		cacheLock.lock();
             
             // Handle seek requests first
             if (threadReceive(SEEK)) {
-                cacheRead = cacheStart;
-                cacheWrite = cacheStart;
-                cacheFree = cacheSize;
+                mCache->clear();
                 f_pos_byte = f_seek_byte;
                 f->seekg(f_seek_byte, ios::beg);
             }
             
             // Sleep if cache is full
-    		if (cacheFree < READ_PACKET * 2) {
-    			cacheLock.unlock();
+            if (mCache->free() < READ_PACKET * 2) {
     			usleep(10000);
     			continue;
     		}
@@ -202,7 +192,6 @@ void InputRaw::threadExecute() {
                 // So just keep sleeping until told to stop
                 // This allows the user to seek while it's still playing
     			if (read_bytes == 0) {
-                    cacheLock.unlock();
                     usleep(10000);
                     continue;
                 }
@@ -216,38 +205,25 @@ void InputRaw::threadExecute() {
     
             // If we didn't read any, then sleep (although an error must have occured!)
     		if (read_bytes == 0) {
-                cacheLock.unlock();
                 usleep(10000);
     			continue;
     		}
 
             // Copy the read audio into the cache
     		ptr = audioBuffer;
-    		for (unsigned int i = 0; i < read_bytes; i++) {
-    			*cacheWrite = *ptr;
-    			++cacheWrite;
-    			++ptr;
-    			--cacheFree;
-    			if (cacheWrite > cacheEnd) {
-    				cacheWrite = cacheStart;
-    			}
-    		}
-
-            // Unlock the cache to allow audio to be read out
-            cacheLock.unlock();
+            if ((read_bytes_out = mCache->write(read_bytes, ptr)) != read_bytes) {
+                cout << "Failed to cache audio" << endl;
+            }
     		
     		//Bandwidth limiting on caching of audio to prevent hanging/stuttering
     		//during caching operations - to be decided on after testing...
     		//Assuming it takes 0 time to cache audio, theoretical thoughput of
     		//2048kbytes/sec is possible.  Since only 176kbytes/sec are
     		//required this should be plenty.
-    		if (cacheSize - cacheFree > preCacheSize) {
+    		if (mCache->size() - mCache->free() > preCacheSize) {
                 usleep(100);
             }            
     	}
-
-        // Unlock the cache
-        cacheLock.unlock();
         
         // Close the file and delete
         loaded = false;

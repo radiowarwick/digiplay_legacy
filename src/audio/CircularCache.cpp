@@ -67,12 +67,15 @@ CircularCache& CircularCache::operator=(const CircularCache& pSrc) {
         if (mCacheStart == 0) {
             cout << "ERROR: Cannot allocate memory for mCache: "
                  << mCacheSize << endl;
+            mCacheLock.unlock();
+            return *this;
         }
         mCacheEnd = mCacheStart + mCacheSize;
     }
     memcpy(mCacheStart, pSrc.mCacheStart, mCacheSize);
     mCacheRead = mCacheStart + (pSrc.mCacheRead - pSrc.mCacheStart);
     mCacheWrite = mCacheStart + (pSrc.mCacheWrite - pSrc.mCacheStart);
+    mCacheLock.unlock();
     return *this;
 }
 
@@ -80,7 +83,7 @@ CircularCache& CircularCache::operator=(const CircularCache& pSrc) {
 /**
  * Puts data into the mCache.
  */
-unsigned long CircularCache::pushData(unsigned long pSize, const char * pData) {
+unsigned long CircularCache::write(unsigned long pSize, const char * pData) {
     // lock the mCache
     mCacheLock.lock();
 
@@ -115,7 +118,7 @@ unsigned long CircularCache::pushData(unsigned long pSize, const char * pData) {
 /**
  * Retrieves data from the mCache.
  */
-unsigned long CircularCache::popData(unsigned long pSize, char * pData) {
+unsigned long CircularCache::read(unsigned long pSize, char * pData) {
     // lock the mCache while we read from it
     mCacheLock.lock();
 

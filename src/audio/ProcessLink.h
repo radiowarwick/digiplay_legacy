@@ -32,9 +32,9 @@ class Audio::ProcessLink : public Audio::Process {
         virtual void receiveMessage(PORT inPort, MESSAGE message);
 		
         /// Perform tasks when a component is connected
-		virtual void onPatch(PORT localPort) {}
+		virtual void onPatch(PORT localPort __attribute__((unused))) {}
         /// Perform tasks when a component is disconnected
-		virtual void onUnpatch(PORT localPort) {}
+		virtual void onUnpatch(PORT localPort __attribute__((unused))) {}
 
    private:
 

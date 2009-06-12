@@ -18,7 +18,7 @@ MODS		=	AudioPacket Component \
 				Input InputRaw InputFlac \
 				Output OutputRaw OutputDsp \
 				Process  ProcessMixer ProcessFader ProcessLink \
-				Counter CounterTrigger
+				Counter CounterTrigger CircularCache
 SHARED_MODS	=	Thread Security Logger
 
 # Global header files on which dependance exists

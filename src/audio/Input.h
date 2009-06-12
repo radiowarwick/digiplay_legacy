@@ -63,10 +63,8 @@ class Audio::Input : public virtual Audio::Component {
         virtual void threadExecute() = 0;
 
         // Cache related variables
-        char *cacheStart, *cacheEnd, *cacheWrite, *cacheRead;
-        unsigned long cacheSize, cacheFree;
+        CircularCache *mCache;
         CACHE_STATE cacheState;
-        ThreadMutex cacheLock;
         ThreadMutex cacheStateLock;
 
         // Position variables

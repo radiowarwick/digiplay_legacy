@@ -3,6 +3,7 @@ using std::cout;
 using std::endl;
 
 #include "Counter.h"
+#include "CircularCache.h"
 #include "InputFlac.h"
 using Audio::InputFlac;
 
@@ -36,9 +37,6 @@ void InputFlac::load(string filename, long start_smpl, long end_smpl) {
         send(OUT0,STOP);
         updateStates(STATE_STOP);
     }
-
-    // Lock cache to be safe
-    cacheLock.lock();
 
     if (f.is_open()) {
         f.close();
@@ -82,11 +80,7 @@ void InputFlac::load(string filename, long start_smpl, long end_smpl) {
     f_end_byte = end_smpl * 4;
     f_length_byte = f_end_byte - f_start_byte;
     f_pos_byte = f_start_byte;
-    cacheRead = cacheStart;
-    cacheWrite = cacheStart;
-    cacheFree = cacheSize;
-
-    cacheLock.unlock();
+    mCache->clear();
 
     updateCounters(0);
     updateTotals(f_length_byte / 4);
@@ -154,14 +148,10 @@ void InputFlac::threadExecute() {
          **************************************************/
         while ( !threadTestKill() &&            // Thread not terminated
                 !threadReceive(STOP)) {         // Not told to stop
-            // Lock the cache
-            cacheLock.lock();
             
             // Handle seek requests first
             if (threadReceive(SEEK)) {
-                cacheRead = cacheStart;
-                cacheWrite = cacheStart;
-                cacheFree = cacheSize;
+                mCache->clear();
                 f_pos_byte = f_seek_byte;
                 cachedBytes = f_seek_byte;
                 seek_absolute((FLAC__uint64)(f_seek_byte/4));
@@ -170,32 +160,26 @@ void InputFlac::threadExecute() {
             // get_blocksize() returns number of samples in a frame, so the
             // number of bytes is 4*get_block_size(). We pause caching when
             // free cache drops to below twice this.
-            if (cacheFree < 8*get_blocksize() 
+            if (mCache->free() < 8*get_blocksize() 
                     || get_state() == FLAC__STREAM_DECODER_END_OF_STREAM
                     || cachedBytes >= f_length_byte) {
-                cacheLock.unlock();
                 usleep(100);
                 continue;
             }
             
             // Process a frame of the FLAC content
             if (!process_single()) {
-                cout << "A fatal error occured.  Its now dead." <<endl;
-                cacheLock.unlock();
+                cout << "A fatal error occured: "
+                        << get_state() << endl;
+                flush();
                 continue;
             }
 
-            // Unlock the cache to allow audio to be read out
-            cacheLock.unlock();
-
-            if (cacheSize - cacheFree > preCacheSize) {
+            if (mCache->size() - mCache->free() > preCacheSize) {
                 usleep(100);
             }            
         }
         finish();
-        
-        // Unlock the cache
-        cacheLock.unlock();
         
         // Set cache state to inactive
         cacheStateLock.lock();
@@ -217,7 +201,15 @@ void InputFlac::threadExecute() {
 }
 
 ::FLAC__StreamDecoderSeekStatus InputFlac::seek_callback(FLAC__uint64 absolute_byte_offset) {
+    // If we'd finished caching the file, need to reset.
+    if (f.eof()) {
+        f.clear();
+    }
+    
+    // Seek to the correct position.
     f.seekg(absolute_byte_offset);
+    
+    // Return state of stream.
     if (f.good()) {
         return FLAC__STREAM_DECODER_SEEK_STATUS_OK;
     }
@@ -244,33 +236,21 @@ bool InputFlac::eof_callback () {
 ::FLAC__StreamDecoderWriteStatus InputFlac::write_callback(
             const::FLAC__Frame *frame, const FLAC__int32 *const buffer[]) {
     size_t i;
-                    
+    
+    char * frameBuffer = new char[frame->header.blocksize*4];
+
     /* write decoded PCM samples */
+    char * ptr = frameBuffer;
     for(i = 0; i < frame->header.blocksize; i++) {
-        *(cacheWrite++) = (FLAC__int16)buffer[0][i];
-        cacheFree--;
-        if (cacheWrite > cacheEnd) {
-            cacheWrite = cacheStart;
-        }
-        *(cacheWrite++) = ((FLAC__int16)buffer[0][i]) >> 8;
-        cacheFree--;
-        if (cacheWrite > cacheEnd) {
-            cacheWrite = cacheStart;
-        }
-        *(cacheWrite++) = (FLAC__int16)buffer[1][i];
-        cacheFree--;
-        if (cacheWrite > cacheEnd) {
-            cacheWrite = cacheStart;
-        }
-        *(cacheWrite++) = ((FLAC__int16)buffer[1][i]) >> 8;
-        cacheFree--;
-        if (cacheWrite > cacheEnd) {
-            cacheWrite = cacheStart;
-        }
-        cachedBytes += 4;
-        if (cachedBytes >= f_length_byte) break;
+        *(ptr++) = (FLAC__int16)buffer[0][i];
+        *(ptr++) = ((FLAC__int16)buffer[0][i]) >> 8;
+        *(ptr++) = (FLAC__int16)buffer[1][i];
+        *(ptr++) = ((FLAC__int16)buffer[1][i]) >> 8;
     }
 
+    mCache->write(frame->header.blocksize*4, frameBuffer);
+
+    delete[] frameBuffer;
     return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
 

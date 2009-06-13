@@ -29,7 +29,7 @@ ProcessFader::~ProcessFader() {
  * @param   audioData       The AudioPacket to process.
  */ 
 void ProcessFader::getAudio(AudioPacket* audioData) {
-    connectedDevice(IN0)->getAudio(audioData);
+    dynamic_cast<ComponentAudio*>(connectedDevice(IN0))->getAudio(audioData);
 	SAMPLEVAL* mix = audioData->getData();
 	SAMPLE smpl;
 	map<SAMPLE,double>::iterator i_a, i_b;

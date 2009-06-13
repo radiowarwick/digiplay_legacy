@@ -1,12 +1,12 @@
 #ifndef CLASS_AUDIO_OUTPUT
 #define CLASS_AUDIO_OUTPUT
 
-#include "Component.h"
+#include "ComponentAudio.h"
 
 /** Pure virtual output base class.
  * A base class from which audio output classes are derived.
  */
-class Audio::Output : public virtual Audio::Component {
+class Audio::Output : public virtual Audio::ComponentAudio {
 	public:
 		virtual ~Output();
 		virtual void getAudio(AudioPacket* audioData);

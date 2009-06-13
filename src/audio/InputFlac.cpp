@@ -70,15 +70,16 @@ void InputFlac::load(string filename, long start_smpl, long end_smpl) {
         throw -1;
     }
     // reset file length if given length doesn't match the actual file
-    if (total_samples < f_end_byte || f_end_byte == 0) {
+    if (total_samples*4 < f_end_byte || f_end_byte == 0) {
         f_end_byte = total_samples*4 - f_start_byte;
     }
-
+    cout << "Total samples: " << total_samples << endl;
+    cout << "f_length: " << f_length_byte << endl;
     // Initialise position variables, counters and reset cache
     f_filename = filename;
     f_start_byte = start_smpl * 4;
     f_end_byte = end_smpl * 4;
-    f_length_byte = f_end_byte - f_start_byte;
+    f_length_byte = total_samples*4; //f_end_byte - f_start_byte;
     f_pos_byte = f_start_byte;
     mCache->clear();
 

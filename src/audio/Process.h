@@ -1,13 +1,13 @@
 #ifndef CLASS_AUDIO_PROCESS
 #define CLASS_AUDIO_PROCESS
 
-#include "Component.h"
-using Audio::Component;
+#include "ComponentAudio.h"
+using Audio::ComponentAudio;
 
 /**
  * Pure virtual base class for audio processing components
  */
-class Audio::Process : public virtual Component {
+class Audio::Process : public virtual ComponentAudio {
     public:
         Process();
         virtual ~Process();

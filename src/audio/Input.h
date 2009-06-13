@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "Component.h"
+#include "ComponentAudio.h"
 
 class Counter;
 
@@ -15,7 +15,7 @@ class Counter;
  * audio onto the next component in the chain. It also provides the handling
  * of attached counter components and updating position and state variables. 
  */
-class Audio::Input : public virtual Audio::Component {
+class Audio::Input : public virtual Audio::ComponentAudio {
 	public:
         /// Destructor
 		virtual ~Input();

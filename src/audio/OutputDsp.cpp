@@ -88,7 +88,7 @@ void OutputDsp::threadExecute() {
 
     AudioPacket *buffer = new AudioPacket(PACKET_SAMPLES);
     char* d = (char*)(buffer->getData());
-	Component *C;
+	ComponentAudio *C;
 
 	while (!threadTestKill()) {
         if (audioState == STATE_STOP) {
@@ -101,7 +101,7 @@ void OutputDsp::threadExecute() {
             continue;
         }
         
-        if (!(C = connectedDevice(IN0))) {
+        if (!(C = dynamic_cast<ComponentAudio*>(connectedDevice(IN0)))) {
             usleep(10000);
             continue;
         }

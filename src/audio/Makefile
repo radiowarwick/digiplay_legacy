@@ -14,7 +14,7 @@ OUT_STATIC	=	no
 QT_ENABLED 	=	no
 
 # .cpp modules from which to create output
-MODS		=	AudioPacket Component \
+MODS		=	AudioPacket Component ComponentAudio ComponentMonitor \
 				Input InputRaw InputFlac \
 				Output OutputRaw OutputDsp \
 				Process  ProcessMixer ProcessFader ProcessLink \

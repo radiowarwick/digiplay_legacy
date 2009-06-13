@@ -17,7 +17,7 @@ using namespace Audio;
 struct MixerChannel {
 	enum STATE state;
 	AudioPacket* data;
-	Component* cmpt;
+	ComponentAudio* cmpt;
 	PORT port;
 };
 

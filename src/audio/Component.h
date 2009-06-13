@@ -6,7 +6,7 @@ using std::vector;
 
 #include "Audio.h"
 #include "Thread.h"
-#include "AudioPacket.h"
+//#include "AudioPacket.h"
 
 class Counter;
 
@@ -19,7 +19,7 @@ class Audio::Component : public Thread {
         /// Clean up all component mappings
 		virtual ~Component();
         /// Places \c samples stereo samples of audio into \c audioData.
-		virtual void getAudio(AudioPacket* audioData __attribute__((unused)) ) {}
+//		virtual void getAudio(AudioPacket* audioData __attribute__((unused)) ) {}
 
         /// Connect a local port on this component to another component.
 		bool patch(PORT localPort, Component *c, PORT remotePort);
@@ -65,8 +65,6 @@ class Audio::Component : public Thread {
 
         /// Store the components port map and connected components
 		vector<ConnectionMapping> portMap;
-        /// Holds the current sample (exact specification dependant on context)
-        SAMPLE _currentSample;
         /// Store the counters attached to this component
         vector<Counter*> _counters;
 };

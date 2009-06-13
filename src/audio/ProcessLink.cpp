@@ -25,7 +25,7 @@ ProcessLink::~ProcessLink() {
  * @param   audioData       The AudioPacket to process.
  */ 
 void ProcessLink::getAudio(AudioPacket* audioData) {
-    connectedDevice(IN0)->getAudio(audioData);
+    dynamic_cast<ComponentAudio*>(connectedDevice(IN0))->getAudio(audioData);
 }
 
 

@@ -2,7 +2,7 @@
 #define CLASS_COUNTER
 
 #include "Audio.h"
-#include "Component.h"
+#include "ComponentMonitor.h"
 
 /** 
  * Component counter base class.
@@ -11,7 +11,7 @@
  * component, the \c setSample routine will be called after each audio packet
  * request to update the currentSample.
  */
-class Audio::Counter : public virtual Audio::Component {
+class Audio::Counter : public virtual Audio::ComponentMonitor {
     public:
         virtual ~Counter();
         /// Set the current sample

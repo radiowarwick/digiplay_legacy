@@ -121,7 +121,7 @@ void Audio::ProcessMixer::onPatch(PORT localPort) {
 	
     MixerChannel *C = new MixerChannel;
 	C->state = STATE_STOP;
-	C->cmpt = connectedDevice(localPort);
+	C->cmpt = dynamic_cast<ComponentAudio*>(connectedDevice(localPort));
 	C->data = new AudioPacket(PACKET_SAMPLES);
 	C->port = localPort;
 	channels[localPort] = C;

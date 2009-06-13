@@ -9,6 +9,8 @@ namespace Audio {
     class CircularCache;
     
 	class Component;
+    class ComponentAudio;
+    class ComponentMonitor;
 	class Input;
 	class InputRaw;
     class InputFlac;
@@ -39,6 +41,7 @@ typedef int             PORT;
 #define IN1 2
 #define IN2 3
 #define IN3 4
+#define IN4 5
 #define OUT0 -1
 #define OUT1 -2
 #define OUT2 -3
@@ -53,8 +56,14 @@ typedef int             PORT;
 #define FADER_GRANULARITY PACKET_SAMPLES/FADER_STEPS
 #define PACKET_BYTES PACKET_SAMPLES*2
 
+/*enum PORT {     OTHER = 0,
+                IN0,IN1,IN2,IN3,IN4,IN5,IN6,IN7,
+                OUT0,OUT1,OUT2,OUT3,OUT4,OUT5,OUT6,OUT7,
+                MON0,MON1,MON2,MON3,MON4,MON5,MON6,MON7 };
+*/
 #ifndef ENUM_MESSAGE
 #define ENUM_MESSAGE
+
 enum MESSAGE {  NONE = 0,
                 PLAY = 1,
                 STOP = 2,

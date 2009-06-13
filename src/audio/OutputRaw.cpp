@@ -79,7 +79,7 @@ void OutputRaw::threadExecute() {
 
     AudioPacket *buffer = new AudioPacket(PACKET_SAMPLES);
     const char* d = (char*)(buffer->getData());
-	Component *C = connectedDevice(IN0);
+	ComponentAudio *C = dynamic_cast<ComponentAudio*>(connectedDevice(IN0));
 	
 	// Create and open output file
 	ofstream f_out(filename.c_str());

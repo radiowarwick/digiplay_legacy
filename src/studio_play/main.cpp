@@ -20,6 +20,8 @@
  *
  */
 #include <iostream>
+#include <cstdlib>
+using namespace std;
 
 #include <qapplication.h>
 #include <qstring.h>
@@ -27,6 +29,7 @@
 
 #include "sys/stat.h"
 #include "getopt.h"
+#include "signal.h"
 
 #include "Logger.h"
 #include "Config.h"
@@ -47,10 +50,23 @@ static struct option long_options[] = {
 
 static const char* short_options = "hv";
 
+void errorHandler() {
+    cout << "An unhandled error occured in the program." << endl;
+    cout << "Please report this error to the system administrator!" << endl;
+    exit(-1);
+}
+
+void signalHandler(int signum) {
+    cout << "Received signal: " << signum << endl;
+}
+
 int main( int argc, char * argv[] )
 {
 	const char* routine = "studio_play::main";
 
+    set_terminate(errorHandler);
+    signal(SIGHUP, signalHandler);
+    
     // Configure logging
     Logger::setAppName("studio_play");
     Logger::setLogLevel(INFO);

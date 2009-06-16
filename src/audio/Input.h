@@ -76,6 +76,7 @@ class Audio::Input : public virtual Audio::ComponentAudio {
         bool loaded;
         string f_filename;
         bool autoReload;
+        bool allCached;
         unsigned long preCacheSize;
         
 	private:

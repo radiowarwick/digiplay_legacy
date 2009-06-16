@@ -30,6 +30,8 @@ class Audio::CircularCache {
         unsigned long size();
         /// Clears the cache.
         void clear();
+        /// Seek +/- a given number of bytes in the cache
+        void seek(int pShift);
         /// Lock the cache.
         void lock();
         /// Unlock the cache.

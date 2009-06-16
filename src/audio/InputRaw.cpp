@@ -28,6 +28,7 @@ InputRaw::InputRaw(unsigned int cache_size)
         cout << "ERROR: Error creating thread. Error code: " << retval << endl;
         throw -1;
     }
+    allCached = false;
 }
 
 
@@ -54,7 +55,8 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
 
 	// If we're not stopped, change to a stopped state
     if (state != STATE_STOP) {
-        stopCaching();
+        // If all the audio fits into cache, no need to restart caching
+        if (!allCached) stopCaching();
         
         // Change to stopped state.
         state = STATE_STOP;
@@ -67,18 +69,38 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
 	f_start_byte = start_smpl * 4;
 	f_end_byte = end_smpl * 4;
 	f_length_byte = f_end_byte - f_start_byte;
-	f_pos_byte = f_start_byte;
-    mCache->clear();
-    
+
+    // If we're just resetting after a stop, try to seek to beginning of cache
+    try {
+        if (mCache->size() > f_length_byte 
+                    && mCache->size() != mCache->free()) {
+            mCache->seek(-(f_pos_byte - f_start_byte));
+        }
+        else {
+            throw -1;
+        }
+    }
+    catch (int e) {
+        // Otherwise clear the cache and start again
+        mCache->clear();
+    }
+    f_pos_byte = f_start_byte;
+
     updateCounters(0);
 	updateTotals(f_length_byte/4);
     
     try {
-        startCaching();
+        // If first load or the whole track doesn't fit into cache then
+        // start caching it
+        if (!allCached) startCaching();
     }
     catch (int e) {
         throw -1;
     }
+    
+    // Flag true if the whole track fits into cache
+    // Can then ensure we only cache the audio once.
+    allCached = (f_length_byte <= mCache->size()) ? true : false;
 }
 
 

@@ -84,6 +84,7 @@ CircularCache& CircularCache::operator=(const CircularCache& pSrc) {
  * Puts data into the mCache.
  */
 unsigned long CircularCache::write(unsigned long pSize, const char * pData) {
+    //cout << "Write to cache" << endl;
     // lock the mCache
     mCacheLock.lock();
 
@@ -186,6 +187,24 @@ void CircularCache::clear() {
     mCacheWrite = mCacheStart;
     mCacheFree = mCacheSize;
 }
+
+
+/**
+ * Seek forward/backwards a given number of bytes in the cache.
+ */
+void CircularCache::seek(int pShift) {
+    if (pShift > int(mCacheSize - mCacheFree) || -pShift > int(mCacheFree)) {
+        throw -1;
+    }
+    if (mCacheRead + pShift < mCacheStart) {
+        mCacheRead = mCacheEnd + (mCacheRead - mCacheStart) + pShift;
+    }
+    else {
+        mCacheRead += pShift;
+    }
+    mCacheFree += pShift;
+}
+
 
 /**
  * Locks the cache.

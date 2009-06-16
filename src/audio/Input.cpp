@@ -70,7 +70,8 @@ void Input::getAudio(AudioPacket* audioData) {
     // if cache is completely empty, stop
     if (mCache->free() == mCache->size()) {
         if (f_end_byte - f_pos_byte > 256) {
-            cout << "WARNING: Ran out of cached audio before end of file." << endl;
+            cout << "WARNING: Ran out of cached audio before end of file." 
+                 << endl;
         }
         
         // Update counters with the end sample position
@@ -148,7 +149,15 @@ void Input::seek(long sample) {
     updateCounters(pos);
     
     // Seek audio stream.
-    threadSend(SEEK);
+    try {
+        // Try and seek within the currently cached audio.
+        mCache->seek(f_seek_byte - f_pos_byte);
+        f_pos_byte = f_seek_byte;
+    }
+    catch (int e) {
+        // Otherwise do a hard seek and reread from file.
+        threadSend(SEEK);
+    }
 }
 
 

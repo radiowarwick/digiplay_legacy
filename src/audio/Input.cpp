@@ -2,6 +2,7 @@
 #include <algorithm>
 using namespace std;
 
+#include <cstring>
 #include "Input.h"
 #include "CircularCache.h"
 #include "Counter.h"
@@ -55,6 +56,7 @@ void Input::getAudio(AudioPacket* audioData) {
 
     if ((bytes_out = mCache->read(bytes, ptr)) != bytes) {
         // Failed to read a full packet from cache.
+		memset(ptr + bytes_out, bytes-bytes_out, 0);
     }
     f_pos_byte += bytes_out;
 
@@ -69,9 +71,9 @@ void Input::getAudio(AudioPacket* audioData) {
 
     // if cache is completely empty, stop
     if (mCache->free() == mCache->size()) {
-        if (f_end_byte - f_pos_byte > 256) {
+        if (long(f_end_byte) - long(f_pos_byte) > 256) {
             cout << "WARNING: Ran out of cached audio before end of file." 
-                 << endl;
+                 << long(f_end_byte) - long(f_pos_byte) << endl;
         }
         
         // Update counters with the end sample position

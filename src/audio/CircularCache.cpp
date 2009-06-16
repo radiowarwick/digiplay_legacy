@@ -106,7 +106,7 @@ unsigned long CircularCache::write(unsigned long pSize, const char * pData) {
         else {
             unsigned int vRemain = mCacheEnd - mCacheWrite;
             memcpy(mCacheWrite, pData, vRemain);
-            memcpy(mCacheStart, pData + vRemain + 1, pSize - vRemain);
+            memcpy(mCacheStart, pData + vRemain, pSize - vRemain);
             mCacheWrite = mCacheStart + pSize - vRemain;
             mCacheFree -= pSize;
         }
@@ -150,7 +150,7 @@ unsigned long CircularCache::read(unsigned long pSize, char * pData) {
         else {
             unsigned int vRemain = mCacheEnd - mCacheRead;
             memcpy(pData, mCacheRead, vRemain);
-            memcpy(pData + vRemain + 1, mCacheStart, pSize - vRemain);
+            memcpy(pData + vRemain, mCacheStart, pSize - vRemain);
             mCacheRead = mCacheStart + pSize - vRemain;
             mCacheFree += pSize;
         }

@@ -72,8 +72,7 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
 
     // If we're just resetting after a stop, try to seek to beginning of cache
     try {
-        if (mCache->size() > f_length_byte 
-                    && mCache->size() != mCache->free()) {
+        if (mCache->size() > f_length_byte) { 
             mCache->seek(-(f_pos_byte - f_start_byte));
         }
         else {

@@ -56,7 +56,7 @@ void Input::getAudio(AudioPacket* audioData) {
 
     if ((bytes_out = mCache->read(bytes, ptr)) != bytes) {
         // Failed to read a full packet from cache.
-		memset(ptr + bytes_out, bytes-bytes_out, 0);
+		memset(ptr + bytes_out, 0, bytes-bytes_out);
     }
     f_pos_byte += bytes_out;
 

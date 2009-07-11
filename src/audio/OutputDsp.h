@@ -4,16 +4,12 @@
 #include <string>
 using std::string;
 
-#include "fcntl.h"
-#include <sys/soundcard.h>
-#include <sys/ioctl.h>
-
 #include "Output.h"
 
 /** 
  * Class to output audio to a DSP device.
  * This class reads audio from it's connected component and writes it to the
- * specified dsp device.
+ * specified dsp device. A facade for the dynamically loaded implementations
  */
 class Audio::OutputDsp : public Audio::Output {
 	public:
@@ -21,7 +17,8 @@ class Audio::OutputDsp : public Audio::Output {
 		OutputDsp(string channel);
         /// Destructor
 		~OutputDsp();
-
+		
+	protected:
         /// Process messages received from other components
 		void receiveMessage(PORT inPort, MESSAGE message);
 		
@@ -30,16 +27,11 @@ class Audio::OutputDsp : public Audio::Output {
         /// Perform tasks when a component is disconnected
 		virtual void onUnpatch(PORT localPort);
 
-        /// Write audio to output device in a separate thread
-		void threadExecute();
-
 	private:
-        /// Initialises the output device
-		void initialise(string device);
-
+		  /// Dynamically loaded implementation object + handle
+		Audio::Output *pImpl;
 		string deviceName;
-        enum STATE audioState;
-		int audio;
+		void *dlHandle;
 };
 
 #endif

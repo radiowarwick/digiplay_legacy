@@ -35,6 +35,9 @@ class Audio::Component : public Thread {
         /// Attempts to remove the counter from the list
         void removeCounter(Counter* C);
 
+        /// Access a connected component
+		Audio::Component* connectedDevice(PORT inPort);
+
 	protected:
         /// Only derived classes from component can be created
         Component();
@@ -49,8 +52,6 @@ class Audio::Component : public Thread {
         /// Send a message to a connected component
 		void send(PORT outPort, MESSAGE message);
 
-        /// Access a connected component
-		Audio::Component* connectedDevice(PORT inPort);
         /// Access the list of connected component mappings
         const vector<ConnectionMapping>& connectedDevices() {return portMap;}
         /// Access the list of connected counters

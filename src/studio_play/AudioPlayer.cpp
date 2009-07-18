@@ -38,6 +38,7 @@ using namespace std;
 #include "audio/Input.h"
 #include "audio/InputRaw.h"
 #include "audio/InputFlac.h"
+#include "audio/InputMp3.h"
 #include "audio/OutputDsp.h"
 #include "audio/Counter.h"
 using namespace Audio;
@@ -130,6 +131,10 @@ void AudioPlayer::load() {
     else if (filetype == "flac") {
         audioFilereader = new InputFlac(105840000);
         ext = ".flac";
+    }
+    else if (filetype == "mp3") {
+        audioFilereader = new InputMp3(105840000);
+        ext = ".mp3";
     }
     else {
         cout << "Unknown file type: " << filetype << endl;

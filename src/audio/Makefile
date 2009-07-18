@@ -15,7 +15,7 @@ QT_ENABLED 	=	no
 
 # .cpp modules from which to create output
 MODS		=	AudioPacket Component ComponentAudio ComponentMonitor \
-				Input InputRaw InputFlac \
+				Input InputRaw InputFlac InputMp3 \
 				Output OutputRaw OutputDsp \
 				Process  ProcessMixer ProcessFader ProcessLink \
 				Counter CounterTrigger CircularCache
@@ -25,7 +25,7 @@ SHARED_MODS	=	Thread Security Logger
 HDRS		=	Audio.h
 
 # Compiler and linker options
-LIBS		=	-lm -lFLAC++ -lpthread -ldl
+LIBS		=	-lm -lFLAC++ -lmpg123 -lpthread -ldl
 
 POSTCOMPILE =  ln -sf lib$(OUT_BASE).so.$(VERSION) lib$(OUT_BASE).so
 

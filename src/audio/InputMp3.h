@@ -8,8 +8,8 @@ using namespace std;
 #include <mpg123.h>
 #include "Input.h"
 
-/** Reads and caches audio from a FLAC encoded audio file.
- * This class reads and caches audio from a FLAC encoded audio file, storing 
+/** Reads and caches audio from an MP3 encoded audio file.
+ * This class reads and caches audio from a MP3 encoded audio file, storing 
  * the audio in a cyclic cache. The reading of the file into the cache is 
  * done in a separate thread.
  */
@@ -21,7 +21,7 @@ class Audio::InputMp3: public Audio::Input {
         /// Destructor
 		virtual ~InputMp3();
 
-        /// Load a new FLAC encoded audio file and begin caching
+        /// Load a new MP3 encoded audio file and begin caching
 		void load(string filename, long start_smpl, long end_smpl);
 		/// Processes messages received by this component
         virtual void receiveMessage(PORT inPort, MESSAGE message);

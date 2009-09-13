@@ -12,16 +12,16 @@ import org.dps.servicelayer.Namespaces;
 import org.dps.servicelayer.common.ResultSetDetails;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class CartsetsResponse {
+public class Cartsets {
 	
     private List<PermissionedCartsetSummary> permissionedCartsetSummaries = new ArrayList<PermissionedCartsetSummary>();
     private ResultSetDetails resultSetDetails;
 
-    public CartsetsResponse() {    	
+    public Cartsets() {    	
     }
     
-    public CartsetsResponse(CartsetsRequest request) {
-    	this.resultSetDetails = new ResultSetDetails(request.getResultSetControl());
+    public Cartsets(CartsetsRequest request) {
+    	this.resultSetDetails = new ResultSetDetails(request);
     }
     
     @XmlElement(name = "permissionedCartsetSummary", required = false)

@@ -63,6 +63,48 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 
     <jaxws:endpoint  implementor="#cartsetServer"
     	address="http://localhost:9000/dps/cartset" />
+    	
+    <jaxws:endpoint  implementor="#cartsetServer"
+    	address="http://localhost:8080/json/cartset"
+    	implementorClass="org.dps.servicelayer.cartset.ICartsetService"
+    	bindingUri="http://apache.org/cxf/binding/http"
+    	 >
+    	<jaxws:invoker>
+    		<bean class="org.apache.cxf.service.invoker.BeanInvoker">
+    			<constructor-arg ref="cartsetServer" />
+    		</bean>
+    	</jaxws:invoker>
+    	<jaxws:properties>
+    		<entry key="Content-Type" value="text/plain" />
+    		<entry key="javax.xml.stream.XMLInputFactory" >
+    			<bean class="org.codehaus.jettison.mapped.MappedXMLInputFactory">
+    				<constructor-arg type="java.util.Map">
+    					<map>
+    						<entry key="http://www.dps.org/dps/common" value="cmn" />
+    						<entry key="http://www.dps.org/dps/dto" value="dto" />
+    						<entry key="http://www.dps.org/dps/cartset" value="crt" />
+    						<entry key="http://schemas.xmlsoap.org/soap/envelope/" value="soap_env" />
+    						<entry key="http://cxf.apache.org/bindings/xformat" value="cxf_xfm" />
+    					</map>
+    				</constructor-arg>
+    			</bean>
+    		</entry>
+    		<entry key="javax.xml.stream.XMLOutputFactory" >
+    			<bean class="org.codehaus.jettison.mapped.MappedXMLOutputFactory">
+    				<constructor-arg type="java.util.Map">
+    					<map>
+    						<entry key="http://www.dps.org/dps/common" value="cmn" />
+    						<entry key="http://www.dps.org/dps/dto" value="dto" />
+    						<entry key="http://www.dps.org/dps/cartset" value="crt" />
+    						<entry key="http://schemas.xmlsoap.org/soap/envelope/" value="soap_env" />
+    						<entry key="http://cxf.apache.org/bindings/xformat" value="cxf_xfm" />
+    					</map>
+    				</constructor-arg>
+    			</bean>
+    		</entry>
+    	</jaxws:properties>
+   	</jaxws:endpoint>
+    	
 
     <bean id="cartsetServer"
     	class="org.dps.servicelayer.cartset.CartsetService">

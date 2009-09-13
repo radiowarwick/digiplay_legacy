@@ -54,9 +54,15 @@ public class File extends Audit {
 	@JoinColumn(name="group_id")
 	private Group ownerGroup = new Group();
 	
+	@Column(name="group_id", updatable = false, insertable = false)
+	private Long ownerGroupID;
+	
 	@ManyToOne
 	@JoinColumn(name="owner_id")
 	private User owner = new User();
+	
+	@Column(name="owner_id", updatable = false, insertable = false)
+	private Long ownerID;
 	
 	@Column(name="entity_type", updatable = false)
 	private Integer entityType = Constants.FILE_TYPE_DIR;
@@ -331,6 +337,22 @@ public class File extends Audit {
 	public void setOwnerGroup(Group ownerGroup) {
 		this.ownerGroup = ownerGroup;
 	}
+	
+	/**
+	 * used only for serialisation
+	 * @return the parent ID
+	 */
+	@XmlElement(required = true)
+	public Long getOwnerGroupID() {
+		return ownerGroupID;
+	}
+	/**
+	 * used only for serialisation
+	 * @param parentID_ the parent id to set
+	 */
+	protected void setOwnerGroupID(Long groupID_) {
+		ownerGroupID = groupID_;
+	}
 
 	/**
 	 * @return the owner
@@ -344,6 +366,22 @@ public class File extends Audit {
 	 */
 	public void setOwner(User owner) {
 		this.owner = owner;
+	}
+	
+	/**
+	 * used only for serialisation
+	 * @return the parent ID
+	 */
+	@XmlElement(required = true)
+	public Long getOwnerID() {
+		return ownerID;
+	}
+	/**
+	 * used only for serialisation
+	 * @param parentID_ the parent id to set
+	 */
+	protected void setOwnerID(Long ownerID_) {
+		ownerID = ownerID_;
 	}
 	
 	/**

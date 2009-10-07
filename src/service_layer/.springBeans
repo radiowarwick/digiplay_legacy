@@ -8,7 +8,6 @@
 	<enableImports><![CDATA[false]]></enableImports>
 	<configs>
 		<config>etc/server-beans.xml</config>
-		<config>tests/org/dps/servicelayer/dto/test-spring-config.xml</config>
 	</configs>
 	<configSets>
 	</configSets>

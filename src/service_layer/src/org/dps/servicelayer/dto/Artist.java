@@ -11,12 +11,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 
 @Entity
 @Table(name="artist")
+@XmlAccessorType(XmlAccessType.NONE)
 public class Artist extends Audit  {
 	
 	@Column(name="artist_id")
@@ -39,6 +40,7 @@ public class Artist extends Audit  {
 	/**
 	 * @return the album_id
 	 */
+	@XmlElement(required = true)
 	public Long getArtistID() {
 		return artistID;
 	}
@@ -51,6 +53,7 @@ public class Artist extends Audit  {
 	/**
 	 * @return the name
 	 */
+	@XmlElement(required = true)
 	public String getName() {
 		return name;
 	}

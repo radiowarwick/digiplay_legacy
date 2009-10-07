@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<soap:Envelope
+	xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Head>
+	</soap:Head>
+	<soap:Body>
+		<cs:getAudioRequest xmlns:cs="http://www.dps.org/dps/audio">
+			<cs:audioID>1</cs:audioID>
+		</cs:getAudioRequest>
+	</soap:Body>
+</soap:Envelope>

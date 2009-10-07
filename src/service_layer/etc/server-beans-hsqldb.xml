@@ -53,12 +53,16 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 	        <ref bean="sessionFactory" />
 	    </property>
 	</bean>
+	
+	<bean id="searchEngine" class="org.dps.servicelayer.BasicSearchEngine" />
     
     <jaxws:endpoint  implementor="#audioServer"
     	address="http://localhost:9000/dps/audio" />
 
     <bean id="audioServer"
     	class="org.dps.servicelayer.audio.AudioServiceImpl">
+    	<property name="txManager" ref="transactionManager" />
+    	<property name="searchEngine" ref="searchEngine" />
     </bean>
 
     <jaxws:endpoint  implementor="#cartsetServer"

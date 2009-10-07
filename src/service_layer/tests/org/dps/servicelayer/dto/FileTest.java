@@ -112,7 +112,7 @@ public class FileTest extends AbstractDPSTest {
 			
 			session.delete(fromDb.deleteChild(newFile));
 			
-			assertEquals("I have more children than expected", 1, fromDb.getChildren().size());
+			assertEquals("I have more children than expected", 2, fromDb.getChildren().size());
 			
 		} catch (Exception e) {
 			ts.setRollbackOnly();
@@ -147,11 +147,15 @@ public class FileTest extends AbstractDPSTest {
 			
 			assertEquals("I don't have one child", 2, file0.getChildren().size());
 			assertNotNull("I'm an orphan", child.getParent());
+			assertEquals("I should not have a child", 0, file1.getChildren().size());
 			
 			//Move the file
 			
 			file0.deleteChild(child);
 			file1.addChild(child);
+			
+			assertEquals("I don't have 1 child", 1, file1.getChildren().size());
+			assertEquals("I still have the child that was moved",1, file0.getChildren().size());
 			
 			session.saveOrUpdate(child);
 			session.saveOrUpdate(file0);

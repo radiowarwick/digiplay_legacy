@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <getAudio xmlns="http://www.dps.org/dps/audio" xmlns:ns2="http://www.dps.org/dps/dto">
+            <audio>
+                <ns2:allExecute>true</ns2:allExecute>
+                <ns2:allRead>true</ns2:allRead>
+                <ns2:allWrite>true</ns2:allWrite>
+                <ns2:created>0970-01-01T00:00:00Z</ns2:created>
+                <ns2:entityType>1</ns2:entityType>
+                <ns2:fileID>1</ns2:fileID>
+                <ns2:filename>Everything is a file, Jim Is File</ns2:filename>
+                <ns2:groupExecute>true</ns2:groupExecute>
+                <ns2:groupRead>true</ns2:groupRead>
+                <ns2:groupWrite>true</ns2:groupWrite>
+                <ns2:lastUpdated>0970-01-01T00:00:00Z</ns2:lastUpdated>
+                <ns2:owner>
+                    <ns2:enabled>true</ns2:enabled>
+                    <ns2:ghost>false</ns2:ghost>
+                    <ns2:userID>1</ns2:userID>
+                    <ns2:username>Jim</ns2:username>
+                </ns2:owner>
+                <ns2:ownerGroup>
+                    <ns2:description>The Best Group</ns2:description>
+                    <ns2:groupID>1</ns2:groupID>
+                    <ns2:name>Jims Group</ns2:name>
+                </ns2:ownerGroup>
+                <ns2:parentID>0</ns2:parentID>
+                <ns2:userExecute>true</ns2:userExecute>
+                <ns2:userRead>true</ns2:userRead>
+                <ns2:userWrite>true</ns2:userWrite>
+                <ns2:albums>
+                    <ns2:album>
+                        <ns2:albumID>1</ns2:albumID>
+                        <ns2:name>Test Album</ns2:name>
+                    </ns2:album>
+                </ns2:albums>
+                <ns2:artists>
+                    <ns2:artist>
+                        <ns2:artistID>1</ns2:artistID>
+                        <ns2:name>Mr Gough</ns2:name>
+                    </ns2:artist>
+                    <ns2:artist>
+                        <ns2:artistID>2</ns2:artistID>
+                        <ns2:name>Mr Sharpe</ns2:name>
+                    </ns2:artist>
+                </ns2:artists>
+                <ns2:censor>false</ns2:censor>
+                <ns2:fileType>raw</ns2:fileType>
+                <ns2:importDate>263830046</ns2:importDate>
+                <ns2:md5>0216d7d71693f0e6320e5abb64d1774c</ns2:md5>
+                <ns2:sampleEnd>9775913</ns2:sampleEnd>
+                <ns2:sampleExtro>9775913</ns2:sampleExtro>
+                <ns2:sampleIntro>44946</ns2:sampleIntro>
+                <ns2:sampleLength>10074204</ns2:sampleLength>
+                <ns2:sampleStart>44946</ns2:sampleStart>
+                <ns2:sustainer>false</ns2:sustainer>
+                <ns2:title>Hello</ns2:title>
+            </audio>
+        </getAudio>
+    </soap:Body>
+</soap:Envelope>

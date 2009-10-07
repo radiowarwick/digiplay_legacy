@@ -1,22 +1,26 @@
 package org.dps.servicelayer.dto;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.PrePersist;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 
 @Entity
 @Table(name="audio")
 @PrimaryKeyJoinColumn(name="file_id")
+@XmlAccessorType(XmlAccessType.NONE)
 public class Audio extends File {
 	
 	@Column(name="md5")
@@ -58,13 +62,13 @@ public class Audio extends File {
 	@Column(name="filetype")
 	private String fileType;
 	
-	@ManyToMany(targetEntity=Album.class, cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@ManyToMany(targetEntity=Album.class, cascade={CascadeType.PERSIST, CascadeType.MERGE}, fetch=FetchType.LAZY)
 	@JoinTable(name="audioalbum", 
 			joinColumns=@JoinColumn(name="audio_id"), 
 			inverseJoinColumns=@JoinColumn(name="album_id"))
 	private Set<Album> albums = new HashSet<Album>();
 	
-	@ManyToMany(targetEntity=Artist.class, cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@ManyToMany(targetEntity=Artist.class, cascade={CascadeType.PERSIST, CascadeType.MERGE}, fetch=FetchType.LAZY)
 	@JoinTable(name="audioartist", 
 			joinColumns=@JoinColumn(name="audio_id"), 
 			inverseJoinColumns=@JoinColumn(name="artist_id"))
@@ -77,6 +81,7 @@ public class Audio extends File {
 	/**
 	 * @return the md5
 	 */
+	@XmlElement(required = true)
 	public String getMd5() {
 		return md5;
 	}
@@ -89,6 +94,7 @@ public class Audio extends File {
 	/**
 	 * @return the sampleLength
 	 */
+	@XmlElement(required = true)
 	public Integer getSampleLength() {
 		return sampleLength;
 	}
@@ -101,6 +107,7 @@ public class Audio extends File {
 	/**
 	 * @return the sampleStart
 	 */
+	@XmlElement(required = true)
 	public Integer getSampleStart() {
 		return sampleStart;
 	}
@@ -113,6 +120,7 @@ public class Audio extends File {
 	/**
 	 * @return the sampleEnd
 	 */
+	@XmlElement(required = true)
 	public Integer getSampleEnd() {
 		return sampleEnd;
 	}
@@ -125,6 +133,7 @@ public class Audio extends File {
 	/**
 	 * @return the sampleIntro
 	 */
+	@XmlElement(required = true)
 	public Integer getSampleIntro() {
 		return sampleIntro;
 	}
@@ -137,6 +146,7 @@ public class Audio extends File {
 	/**
 	 * @return the sampleExtro
 	 */
+	@XmlElement(required = true)
 	public Integer getSampleExtro() {
 		return sampleExtro;
 	}
@@ -149,6 +159,7 @@ public class Audio extends File {
 	/**
 	 * @return the importDate
 	 */
+	@XmlElement(required = true)
 	public Integer getImportDate() {
 		return importDate;
 	}
@@ -161,6 +172,7 @@ public class Audio extends File {
 	/**
 	 * @return the title
 	 */
+	@XmlElement(required = true)
 	public String getTitle() {
 		return title;
 	}
@@ -173,6 +185,7 @@ public class Audio extends File {
 	/**
 	 * @return the sustainer
 	 */
+	@XmlElement(required = true)
 	public Boolean getSustainer() {
 		return sustainer;
 	}
@@ -185,6 +198,7 @@ public class Audio extends File {
 	/**
 	 * @return the flagged
 	 */
+	@XmlElement(required = true)
 	public Boolean getFlagged() {
 		return flagged;
 	}
@@ -197,6 +211,7 @@ public class Audio extends File {
 	/**
 	 * @return the censor
 	 */
+	@XmlElement(required = true)
 	public Boolean getCensor() {
 		return censor;
 	}
@@ -209,6 +224,7 @@ public class Audio extends File {
 	/**
 	 * @return the fileType
 	 */
+	@XmlElement(required = true)
 	public String getFileType() {
 		return fileType;
 	}
@@ -219,17 +235,21 @@ public class Audio extends File {
 		this.fileType = fileType;
 	}
 
+	@XmlElement(name="album", required = true)
+	@XmlElementWrapper(name="albums", required = true)
+	public Set<Album> getAlbums() {
+		return albums;
+	}
 	public void setAlbums(Set<Album> albums) {
 		this.albums = albums;
 	}
 
-	public Set<Album> getAlbums() {
-		return albums;
-	}
 	
 	/**
 	 * @return the artists
 	 */
+	@XmlElement(name="artist", required = true)
+	@XmlElementWrapper(name="artists", required = true)
 	public Set<Artist> getArtists() {
 		return artists;
 	}
@@ -239,6 +259,11 @@ public class Audio extends File {
 	 */
 	public void setArtists(Set<Artist> artists) {
 		this.artists = artists;
+	}
+	
+	public void makeSafe() {
+		getAlbums().size();
+		getArtists().size();
 	}
 	
 

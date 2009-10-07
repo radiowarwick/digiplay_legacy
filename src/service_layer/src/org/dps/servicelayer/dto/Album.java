@@ -6,19 +6,21 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Entity
 @Table(name="album")
+@XmlAccessorType(XmlAccessType.NONE)
 public class Album extends Audit {
 
 	final static Logger LOGGER = LoggerFactory.getLogger(Album.class);
@@ -43,6 +45,7 @@ public class Album extends Audit {
 	/**
 	 * @return the name
 	 */
+	@XmlElement(required = true)
 	public String getName() {
 		return name;
 	}
@@ -57,6 +60,7 @@ public class Album extends Audit {
 	/**
 	 * @return the albumID
 	 */
+	@XmlElement(required = true)
 	public Long getAlbumID() {
 		return albumID;
 	}

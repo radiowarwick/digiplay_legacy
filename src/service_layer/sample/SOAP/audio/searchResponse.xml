@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <search xmlns="http://www.dps.org/dps/audio">
+            <audios>
+                <audio>
+                    <albums>
+                        <album>
+                            <albumID>1</albumID>
+                            <name>Test Album</name>
+                        </album>
+                    </albums>
+                    <artists>
+                        <artist>
+                            <artistID>1</artistID>
+                            <name>Mr Gough</name>
+                        </artist>
+                        <artist>
+                            <artistID>2</artistID>
+                            <name>Mr Sharpe</name>
+                        </artist>
+                    </artists>
+                    <censor>false</censor>
+                    <fileID>1</fileID>
+                    <sampleLength>10074204</sampleLength>
+                    <sustainer>false</sustainer>
+                    <title>Hello</title>
+                </audio>
+            </audios>
+        </search>
+    </soap:Body>
+</soap:Envelope>

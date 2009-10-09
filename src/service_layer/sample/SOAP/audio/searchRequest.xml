@@ -5,7 +5,12 @@
 	</soap:Head>
 	<soap:Body>
 		<cs:searchRequest xmlns:cs="http://www.dps.org/dps/audio">
-			<cs:title>Hello</cs:title>
+			<cs:searchKeys>
+				<cs:searchKey>
+					<cs:key>Audio.title</cs:key>
+					<cs:value>Hello</cs:value>
+				</cs:searchKey>
+			</cs:searchKeys>
 		</cs:searchRequest>
 	</soap:Body>
 </soap:Envelope>

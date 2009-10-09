@@ -1,8 +1,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
 http://cxf.apache.org/jaxws
 http://cxf.apache.org/schemas/jaxws.xsd">
 
@@ -14,6 +16,7 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 		<property name="password" value="" />
 	</bean>
 
+	<!-- bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.LocalSessionFactoryBean"-->
 	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
 	    <property name="dataSource">
 	        <ref bean="dataSource"/>
@@ -44,28 +47,36 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 		</property>
 	</bean>
 	
+	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="false" />
+	
 	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 	
-	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
+	<!-- bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
 	    <property name="sessionFactory">
 	        <ref bean="sessionFactory" />
 	    </property>
+	</bean-->
+	
+	<bean id="searchEngine" class="org.dps.servicelayer.BasicSearchEngine" >
+		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
-	<bean id="searchEngine" class="org.dps.servicelayer.BasicSearchEngine" />
+	<bean id="dto" class="org.dps.servicelayer.dto.DTO" >
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
     
     <jaxws:endpoint  implementor="#audioServer"
     	address="http://localhost:9000/dps/audio" />
 
     <bean id="audioServer"
     	class="org.dps.servicelayer.audio.AudioServiceImpl">
-    	<property name="txManager" ref="transactionManager" />
+    	<property name="dto" ref="dto" />
     	<property name="searchEngine" ref="searchEngine" />
     </bean>
 
-    <jaxws:endpoint  implementor="#cartsetServer"
+ <!--    <jaxws:endpoint  implementor="#cartsetServer"
     	address="http://localhost:9000/dps/cartset" />
     	
     <jaxws:endpoint  implementor="#cartsetServer"
@@ -115,7 +126,7 @@ http://cxf.apache.org/schemas/jaxws.xsd">
     	<property name="txManager" ref="transactionManager" />
     	<property name="authoriser" ref="authoriser" />
     	<property name="userContext" ref="userContext" />
-    </bean>
+    </bean>-->
 
 	<bean id="authoriser" class="org.dps.servicelayer.auth.BasicFileAuth" />
 	<bean id="userContext" class="org.dps.servicelayer.auth.BasicUserContext" />

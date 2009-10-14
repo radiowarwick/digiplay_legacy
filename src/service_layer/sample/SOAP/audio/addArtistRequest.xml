@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<soap:Envelope
+	xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Head>
+	</soap:Head>
+	<soap:Body>
+		<cs:addArtistRequest xmlns:cs="http://www.dps.org/dps/audio" xmlns:ns2="http://www.dps.org/dps/dto">
+			<cs:artist>
+            	<ns2:name>Mr Brown</ns2:name>
+			</cs:artist>
+		</cs:addArtistRequest>
+	</soap:Body>
+</soap:Envelope>

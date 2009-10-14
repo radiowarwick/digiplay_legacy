@@ -25,7 +25,8 @@ public class SpringServer {
 
     protected SpringServer(String springConfig_) throws Exception {
         System.out.println("Starting Server");
-        FileSystemXmlApplicationContext context 
+        @SuppressWarnings("unused")
+		FileSystemXmlApplicationContext context 
             = new FileSystemXmlApplicationContext(new String[] {springConfig_});
     }
 

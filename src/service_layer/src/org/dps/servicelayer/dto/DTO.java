@@ -18,9 +18,37 @@ public class DTO implements IDTO {
 		Query query = session.createQuery("from Audio where fileID=?");
 		query.setLong(0, fileID_);
 		
-		LOGGER.info("Searching for: ", fileID_);
+		LOGGER.info("Searching for Audio: {}", fileID_);
 		
 		 return (Audio) query.uniqueResult();
+	}
+	
+	public Artist getArtist(String name_) {
+		Session session = getSession();
+		Query query = session.createQuery("from Artist where name=?");
+		query.setString(0, name_);
+		
+		LOGGER.info("Searching for Artist: {}", name_);
+		
+		 return (Artist) query.uniqueResult();
+	}
+	
+	public Artist getArtist(Long artistID_) {
+		Session session = getSession();
+		Query query = session.createQuery("from Artist where artistID=?");
+		query.setLong(0, artistID_);
+		
+		LOGGER.info("Searching for Artist: {}", artistID_);
+		
+		 return (Artist) query.uniqueResult();
+	}
+	
+	public <T> T saveOrUpdate(T newArtist_) {
+		Session session = getSession();
+		session.saveOrUpdate(newArtist_);
+		//FIXME: why does it need this!!
+		session.flush();
+		return newArtist_;
 	}
 	
 	private Session getSession() {
@@ -30,5 +58,6 @@ public class DTO implements IDTO {
 	public void setSessionFactory(SessionFactory sessionFactory_) {
 		_sessionFactory = sessionFactory_;
 	}
+
 
 }

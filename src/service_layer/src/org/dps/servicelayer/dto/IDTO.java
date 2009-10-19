@@ -8,6 +8,14 @@ public interface IDTO {
 
 	Artist getArtist(Long artistID_);
 	
-	<T extends Object> T saveOrUpdate(T object_);
+	Album getAlbum(String name_);
+	
+	Album getAlbum(Long albumID_);
+	
+	File getFile(Long fileID_);
+	
+	<T extends Object> T saveOrUpdate(T item_);
+	
+	<T extends Object> T delete(T item_);
 
 }

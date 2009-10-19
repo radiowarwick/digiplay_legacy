@@ -43,12 +43,53 @@ public class DTO implements IDTO {
 		 return (Artist) query.uniqueResult();
 	}
 	
-	public <T> T saveOrUpdate(T newArtist_) {
+	@Override
+	public Album getAlbum(String name_) {
 		Session session = getSession();
-		session.saveOrUpdate(newArtist_);
+		Query query = session.createQuery("from Album where name=?");
+		query.setString(0, name_);
+		
+		LOGGER.info("Searching for Artist: {}", name_);
+		
+		 return (Album) query.uniqueResult();
+	}
+
+	@Override
+	public Album getAlbum(Long albumID_) {
+		Session session = getSession();
+		Query query = session.createQuery("from Album where albumID=?");
+		query.setLong(0, albumID_);
+		
+		LOGGER.info("Searching for Artist: {}", albumID_);
+		
+		 return (Album) query.uniqueResult();
+	}
+	
+	@Override
+	public File getFile(Long fileID_) {
+		Session session = getSession();
+		Query query = session.createQuery("from File where fileID=?");
+		query.setLong(0, fileID_);
+		
+		LOGGER.info("Searching for File: {}", fileID_);
+		
+		return (File) query.uniqueResult();
+	}
+	
+	public <T> T saveOrUpdate(T item_) {
+		Session session = getSession();
+		session.saveOrUpdate(item_);
 		//FIXME: why does it need this!!
 		session.flush();
-		return newArtist_;
+		return item_;
+	}
+	
+	public <T> T delete(T item_) {
+		Session session = getSession();
+		session.delete(item_);
+		//TODO: Do we need this?
+		session.flush();
+		return item_;
 	}
 	
 	private Session getSession() {
@@ -58,6 +99,5 @@ public class DTO implements IDTO {
 	public void setSessionFactory(SessionFactory sessionFactory_) {
 		_sessionFactory = sessionFactory_;
 	}
-
 
 }

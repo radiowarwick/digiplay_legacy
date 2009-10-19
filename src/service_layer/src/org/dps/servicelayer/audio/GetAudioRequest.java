@@ -6,13 +6,13 @@ import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class GetAudioRequest {
-	long audioID;
+	private Long audioID;
 
 	@XmlElement(required = true)
-	public long getAudioID() {
+	public Long getAudioID() {
 		return audioID;
 	}
-	public void setAudioID(long audioID) {
+	public void setAudioID(Long audioID) {
 		this.audioID = audioID;
 	}
 	

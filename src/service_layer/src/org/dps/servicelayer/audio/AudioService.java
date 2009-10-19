@@ -24,6 +24,18 @@ public interface AudioService {
 			@WebParam(partName = "parameters", name = "getAudioRequest", targetNamespace = Namespaces.AUDIO) 
 			GetAudioRequest params_);
 	
+	@WebResult(name = "addAudio", targetNamespace = Namespaces.AUDIO, partName = "response")
+	@WebMethod
+	public AddAudioResponse addAudio(
+			@WebParam(partName = "parameters", name = "addAudioRequest", targetNamespace = Namespaces.AUDIO) 
+			AddAudioRequest params_);
+	
+	@WebResult(name = "deleteAudio", targetNamespace = Namespaces.AUDIO, partName = "response")
+	@WebMethod
+	public DeleteAudioResponse deleteAudio(
+			@WebParam(partName = "parameters", name = "deleteAudioRequest", targetNamespace = Namespaces.AUDIO) 
+			DeleteAudioRequest params_);
+	
 	@WebResult(name = "addAudioComment", targetNamespace = Namespaces.AUDIO, partName = "response")
 	@WebMethod
 	public AddAudioCommentResponse addAudioComment(
@@ -41,5 +53,17 @@ public interface AudioService {
 	public AddAudioArtistResponse addAudioArtist(
 			@WebParam(partName="parameters", name="addAudioArtistRequest", targetNamespace = Namespaces.AUDIO)
 			AddAudioArtistRequest params_);
+	
+	@WebResult(name = "addAlbum", targetNamespace = Namespaces.AUDIO, partName = "response")
+	@WebMethod
+	public AddAlbumResponse addAlbum(
+			@WebParam(partName="parameters", name="addAlbumRequest", targetNamespace = Namespaces.AUDIO)
+			AddAlbumRequest params_);
+	
+	@WebResult(name = "addAudioArtist", targetNamespace = Namespaces.AUDIO, partName = "response")
+	@WebMethod
+	public AddAudioAlbumResponse addAudioAlbum(
+			@WebParam(partName="parameters", name="addAudioAlbumRequest", targetNamespace = Namespaces.AUDIO)
+			AddAudioAlbumRequest params_);
 
 }

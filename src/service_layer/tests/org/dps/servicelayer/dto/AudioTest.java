@@ -1,5 +1,6 @@
 package org.dps.servicelayer.dto;
 
+import java.util.GregorianCalendar;
 import java.util.List;
 
 
@@ -56,6 +57,16 @@ public class AudioTest extends AbstractDependencyInjectionSpringContextTests
 	public void testSimpleInsert() {
 		TransactionDefinition txd = new DefaultTransactionDefinition();
 		TransactionStatus ts = txManager.getTransaction(txd);
+		
+		User user = new User();
+		user.setEnabled(true);
+		user.setGhost(false);
+		user.setGroups(null);
+		user.setLastUpdated(GregorianCalendar.getInstance());
+		user.setUserID(new Long(29));
+		user.setUsername("Your mum");
+		
+		audio.setCreator(user);
 		
 		Session session = txManager.getSessionFactory().getCurrentSession();
 		audio.setParent(getRootDir(session));

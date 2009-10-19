@@ -43,6 +43,7 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 				<value>org.dps.servicelayer.dto.CartStyle</value>
 				<value>org.dps.servicelayer.dto.CartStyleProperty</value>
 				<value>org.dps.servicelayer.dto.Cartwall</value>
+				<value>org.dps.servicelayer.dto.AudioType</value>
 			</list>
 		</property>
 	</bean>

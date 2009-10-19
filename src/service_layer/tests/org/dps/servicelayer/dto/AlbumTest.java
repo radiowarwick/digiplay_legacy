@@ -15,9 +15,9 @@ public class AlbumTest extends AbstractDependencyInjectionSpringContextTests {
 	private final static Logger LOGGER = LoggerFactory.getLogger(AlbumTest.class);
 	
 	private Album album;
-	protected String[] getConfigLocations() {
-		return new String[] { "org/dps/servicelayer/dto/test-spring-config.xml" };
-	}
+		protected String[] getConfigLocations() {
+			return new String[] { "org/dps/servicelayer/dto/test-spring-config.xml" };
+		}
 	private HibernateTemplate hibernateTemplate;
 	
 	public void setHibernateTemplate(HibernateTemplate hibernateTemplate) {
@@ -33,6 +33,8 @@ public class AlbumTest extends AbstractDependencyInjectionSpringContextTests {
 		List<Album> aList = (List<Album>) hibernateTemplate.find("from Album where albumID=1");
 		
 		LOGGER.debug("Album name retrieved: " + aList.get(0).toString());
+		
+		LOGGER.debug("Album name: " + ((Album) aList.get(0)).getName());
 		
 		assertNotNull("Not null check", aList);
 		

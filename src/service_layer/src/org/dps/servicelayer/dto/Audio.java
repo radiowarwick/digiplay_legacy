@@ -10,6 +10,9 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -41,8 +44,13 @@ public class Audio extends File {
 	@Column(name="extro_smpl")
 	private Integer sampleExtro;
 	
-	//AudioTypeID object
-	//Createor object
+	@ManyToOne(optional=false)
+	@JoinColumn(name="audio_type_id", nullable=false, insertable=false, updatable=false)
+	private AudioType audioType;
+	
+	@ManyToOne
+	@JoinColumn(name="creator_id")
+	private User creator;
 	
 	@Column(name="import_date")
 	private Integer importDate;
@@ -261,6 +269,22 @@ public class Audio extends File {
 		this.artists = artists;
 	}
 	
+	public void setAudioType(AudioType audioType) {
+		this.audioType = audioType;
+	}
+
+	public AudioType getAudioType() {
+		return audioType;
+	}
+
+	public void setCreator(User creator) {
+		this.creator = creator;
+	}
+
+	public User getCreator() {
+		return creator;
+	}
+
 	public void makeSafe() {
 		getAlbums().size();
 		getArtists().size();

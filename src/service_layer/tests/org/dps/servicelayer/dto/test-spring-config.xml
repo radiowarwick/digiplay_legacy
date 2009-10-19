@@ -40,6 +40,8 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 				<value>org.dps.servicelayer.dto.CartStyle</value>
 				<value>org.dps.servicelayer.dto.CartStyleProperty</value>
 				<value>org.dps.servicelayer.dto.Cartwall</value>
+				<value>org.dps.servicelayer.dto.AudioType</value>
+				
 			</list>
 		</property>
 	</bean>
@@ -107,7 +109,6 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 		<property name="userExecute" value="true" />
 		<property name="userRead" value="true" />
 		<property name="userWrite" value="true" />
-		<!--   <property name="entityType" value="1" /> -->
 	</bean>
 
 	<bean id="album" class="org.dps.servicelayer.dto.Album" />
@@ -133,6 +134,5 @@ http://cxf.apache.org/schemas/jaxws.xsd">
 		<property name="userExecute" value="true" />
 		<property name="userRead" value="true" />
 		<property name="userWrite" value="true" /> 
-		<!-- <property name="entityType" value="3" /> -->
 	</bean>
 </beans>

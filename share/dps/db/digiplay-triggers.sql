@@ -135,7 +135,7 @@ CREATE OR REPLACE FUNCTION f_aw_styles_delete()
 	DECLARE
 		styles RECORD;
 	BEGIN
-		DELETE FROM aw_style_props WHERE style_id = OLD.id;
+		DELETE FROM aw_styles_props WHERE style_id = OLD.id;
 		SELECT INTO styles id FROM aw_styles WHERE id != OLD.id LIMIT 1;
 		IF NOT FOUND THEN
 			RAISE EXCEPTION 'Cannot delete last style %!', OLD.name;

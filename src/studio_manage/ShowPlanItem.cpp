@@ -49,28 +49,28 @@ ShowPlanItem::ShowPlanItem ( QListView * parent, const DpsShowItem& pSrc)
 }
 
 ShowPlanItem::~ShowPlanItem() {
-	delete lblTitle;
-	delete lblComment;
-	delete lblLength;
-	delete lblTime;
-	delete lblAudioTitle;
-	delete lblAudioArtist;
-	delete lblAudioLength;
-	delete lblScriptTitle;
-	delete lblScriptLength;
-	delete backBrushUnloaded;
-	delete backBrushLoaded;
-	delete backBrushFinished;
-	delete backBrushUnloadedSel;
-	delete backBrushLoadedSel;
-	delete backBrushFinishedSel;
-	delete pixUnloaded;
-	delete pixLoaded;
-	delete pixFinished;
-	delete pixAudio;
-	delete pixScript;
-	delete selectPen;
-	delete unselectPen;
+	if (lblTitle) delete lblTitle;
+	if (lblComment) delete lblComment;
+	if (lblLength) delete lblLength;
+	if (lblTime) delete lblTime;
+	if (lblAudioTitle) delete lblAudioTitle;
+	if (lblAudioArtist) delete lblAudioArtist;
+	if (lblAudioLength) delete lblAudioLength;
+	if (lblScriptTitle) delete lblScriptTitle;
+	if (lblScriptLength) delete lblScriptLength;
+	if (backBrushUnloadaed) delete backBrushUnloaded;
+	if (backBrushLoaded) delete backBrushLoaded;
+	if (backBrushFinished) delete backBrushFinished;
+	if (backBrushUnloadedSel) delete backBrushUnloadedSel;
+	if (backBrushLoadedSel) delete backBrushLoadedSel;
+	if (backBrushFinishedSel) delete backBrushFinishedSel;
+	if (pixUnloaded) delete pixUnloaded;
+	if (pixLoaded) delete pixLoaded;
+	if (pixFinished) delete pixFinished;
+	if (pixAudio) delete pixAudio;
+	if (pixScript) delete pixScript;
+	if (selectPen) delete selectPen;
+	if (unselectPen) delete unselectPen;
 }
 
 void ShowPlanItem::expand() {

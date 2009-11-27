@@ -58,7 +58,7 @@ ShowPlanItem::~ShowPlanItem() {
 	if (lblAudioLength) delete lblAudioLength;
 	if (lblScriptTitle) delete lblScriptTitle;
 	if (lblScriptLength) delete lblScriptLength;
-	if (backBrushUnloadaed) delete backBrushUnloaded;
+	if (backBrushUnloaded) delete backBrushUnloaded;
 	if (backBrushLoaded) delete backBrushLoaded;
 	if (backBrushFinished) delete backBrushFinished;
 	if (backBrushUnloadedSel) delete backBrushUnloadedSel;

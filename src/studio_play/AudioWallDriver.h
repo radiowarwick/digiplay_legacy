@@ -28,9 +28,9 @@ using namespace std;
 
 #include <qwidget.h>
 
-#include "audio/Audio.h"
-#include "audio/ProcessMixer.h"
-#include "audio/OutputDsp.h"
+#include "audiolib/Audio.h"
+#include "audiolib/ProcessMixer.h"
+#include "audiolib/OutputDsp.h"
 
 #include "dps.h"
 

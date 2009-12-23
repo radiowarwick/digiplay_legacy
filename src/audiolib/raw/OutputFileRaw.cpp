@@ -4,22 +4,33 @@ using std::ofstream;
 using std::cout;
 using std::endl;
 
-#include "OutputRaw.h"
-using Audio::OutputRaw;
+#include "OutputFileRaw.h"
+using Audio::Output;
+using Audio::OutputFileRaw;
+
+/**
+ * Dynamic loader
+ */
+extern "C" {
+    Output * OUTPUT_SO_ENTRY(string filename, Output *facade) {
+        return new OutputFileRaw(filename, facade);
+    }
+}
 
 /**
  * Create a new output module to write to file.
  * @param   filename    File to write to
  */
-OutputRaw::OutputRaw(string filename) {
+OutputFileRaw::OutputFileRaw(string filename, Output *facade) {
 	this->filename = filename;
+    this->facade = facade;
 }
 
 
 /**
  * Destructor
  */
-OutputRaw::~OutputRaw() {
+OutputFileRaw::~OutputFileRaw() {
 
 }
 
@@ -29,9 +40,9 @@ OutputRaw::~OutputRaw() {
  * @param   inPort      Port on which message is received
  * @param   message     Message received
  */
-void OutputRaw::receiveMessage(PORT inPort, MESSAGE message) {
+void OutputFileRaw::receiveMessage(PORT inPort, MESSAGE message) {
     if (inPort != IN0) {
-        cout << "OutputRaw::receive: only use IN0 on a FILE" << endl;
+        cout << "OutputFileRaw::receive: only use IN0 on a FILE" << endl;
         return;
     }
     switch (message) {
@@ -56,7 +67,7 @@ void OutputRaw::receiveMessage(PORT inPort, MESSAGE message) {
  * Perform tasks when a component is connected
  * @param   localPort   Port on which component is connected
  */	
-void OutputRaw::onPatch(PORT localPort) {
+void OutputFileRaw::onPatch(PORT localPort) {
 	
 }
 
@@ -65,7 +76,7 @@ void OutputRaw::onPatch(PORT localPort) {
  * Perform tasks when a component is disconnected
  * @param   localPort   Port on which component is disconnected
  */
-void OutputRaw::onUnpatch(PORT localPort) {
+void OutputFileRaw::onUnpatch(PORT localPort) {
 	
 }
 
@@ -73,7 +84,7 @@ void OutputRaw::onUnpatch(PORT localPort) {
 /**
  * Request audio from upstream and write it to file
  */
-void OutputRaw::threadExecute() {
+void OutputFileRaw::threadExecute() {
     if (!connectedDevice(IN0)) 
 		cout << "CONNECTED DEVICE IS NULL" << endl;
 

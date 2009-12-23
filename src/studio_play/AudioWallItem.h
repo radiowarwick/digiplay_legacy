@@ -3,12 +3,11 @@
 
 #include <qpushbutton.h>
 
-#include "audio/ProcessLink.h"
-#include "audio/ProcessMixer.h"
-#include "audio/Input.h"
-#include "audio/InputRaw.h"
-#include "audio/InputFlac.h"
-#include "audio/Counter.h"
+#include "audiolib/ProcessLink.h"
+#include "audiolib/ProcessMixer.h"
+#include "audiolib/Input.h"
+#include "audiolib/InputFile.h"
+#include "audiolib/Counter.h"
 
 #include "dps.h"
 

@@ -1,12 +1,12 @@
 #include <iostream>
 using namespace std;
 
-#include "audio/Audio.h"
-#include "audio/InputFlac.h"
-#include "audio/OutputDsp.h"
-#include "audio/ProcessMixer.h"
-#include "audio/ProcessFader.h"
-#include "audio/CounterTrigger.h"
+#include "audiolib/Audio.h"
+#include "audiolib/InputFile.h"
+#include "audiolib/OutputDsp.h"
+#include "audiolib/ProcessMixer.h"
+#include "audiolib/ProcessFader.h"
+#include "audiolib/CounterTrigger.h"
 using namespace Audio;
 
 int main(int argc, char* argv[]) {
@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
         cout << "Error: no file specified" << endl;
     }
     // Create input sources and load
-    InputFlac* filereader1 = new InputFlac();
+    InputFile* filereader1 = new InputFile();
     ProcessMixer* mixer = new ProcessMixer();
     // Create a DSP output
     OutputDsp* player = new OutputDsp("/dev/dsp");

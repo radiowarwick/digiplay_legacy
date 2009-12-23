@@ -24,6 +24,6 @@ SHARED_MODS	=	SystemManager ArchiveManager UserManager GroupManager \
 HDRS		=
 
 # Compiler and linker options
-LIBS		=	-lpq -lpqxx -lm -lpthread
+LIBS		=	-lpqxx -lm -lpthread
 
 include $(ROOT)/src/Makefile.in

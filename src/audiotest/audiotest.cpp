@@ -1,18 +1,18 @@
 #include <iostream>
 using namespace std;
 
-#include "audio/Audio.h"
-#include "audio/InputRaw.h"
-#include "audio/OutputDsp.h"
-#include "audio/ProcessMixer.h"
-#include "audio/ProcessFader.h"
-#include "audio/CounterTrigger.h"
+#include "audiolib/Audio.h"
+#include "audiolib/InputFile.h"
+#include "audiolib/OutputDsp.h"
+#include "audiolib/ProcessMixer.h"
+#include "audiolib/ProcessFader.h"
+#include "audiolib/CounterTrigger.h"
 using namespace Audio;
 
 int main() {
 	// Create input sources and load
-	InputRaw* filereader1 = new InputRaw();
-    InputRaw* filereader2 = new InputRaw();
+	InputFile* filereader1 = new InputFile();
+    InputFile* filereader2 = new InputFile();
 	    
 	// Create faders
 	ProcessFader* fader1 = new ProcessFader();

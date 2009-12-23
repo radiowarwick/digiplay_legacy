@@ -7,13 +7,56 @@ Standards-Version: 3.7.2
 
 Package: libdpsaudio
 Architecture: i386
-Depends: libc6, libstdc++6, libgcc1, libflac++6, libflac8
+Depends: libc6, libstdc++6, libgcc1, libdpsaudio-raw
 Description: Digital playout system audio component library.
- This library provides the audio routines for the digital playout system.
+ The libdpsaudio library provides the audio routines for the digital playout
+ system.
+
+Package: libdpsaudio-oss
+Architecture: i386
+Depends: libc6, libstdc++6, libgcc1, libdpsaudio
+Description: Digital playout system audio component library.
+ The libdpsaudio library provides the audio routines for the digital playout
+ system. This package provides OSS support.
+
+Package: libdpsaudio-alsa
+Architecture: i386
+Depends: libc6, libstdc++6, libgcc1, libasound2, libdpsaudio
+Description: Digital playout system audio component library.
+ The libdpsaudio library provides the audio routines for the digital playout
+ system. This package provides ALSA support.
+
+Package: libdpsaudio-jack
+Architecture: i386
+Depends: libc6, libstdc++6, libgcc1, libjack0, libdpsaudio
+Description: Digital playout system audio component library.
+ The libdpsaudio library provides the audio routines for the digital playout
+ system. This package provides JACK support.
+
+Package: libdpsaudio-raw
+Architecture: i386
+Depends: libc6, libstdc++6, libgcc1, libdpsaudio
+Description: Digital playout system audio component library.
+ The libdpsaudio library provides the audio routines for the digital playout
+ system. This package provides raw PCM audio file support.
+
+Package: libdpsaudio-flac
+Architecture: i386
+Depends: libc6, libstdc++6, libgcc1, libflac++6, libflac8, libdpsaudio
+Description: Digital playout system audio component library.
+ The libdpsaudio library provides the audio routines for the digital playout
+ system. This package provides FLAC file support.
+
+Package: libdpsaudio-mp3
+Architecture: i386
+Depends: libc6, libstdc++6, libgcc1, libmpg123-0, libdpsaudio
+Description: Digital playout system audio component library.
+ The libdpsaudio library provides the audio routines for the digital playout
+ system. This package provides MP3 file support.
 
 Package: libdpsaudio-dev
 Architecture: all
-Depends: libflac++-dev, libflac-dev
+Depends: libflac++-dev, libflac-dev, libmpg123-dev, libasound2-dev, libjack-dev
 Description: Digital playout system audio component library header files.
 
 Package: dps-common
@@ -28,7 +71,7 @@ Description: Digital playout system common files.
 
 Package: dps-studio-manage
 Architecture: i386
-Depends: libc6, libpq5, libqt3-mt, libstdc++6, libgcc1, libssl0.9.8, dps-common
+Depends: libc6, libpqxx2.6.9, libqt3-mt, libstdc++6, libgcc1, libssl0.9.8, dps-common
 Recommends: dps-mgmt, dps-doc, qt3-qtconfig
 Suggests: dps-studio-playout
 Description: Digital playout system management software
@@ -47,7 +90,7 @@ Description: Digital playout system management software
 
 Package: dps-studio-play
 Architecture: i386
-Depends: libc6, libpq5, libqt3-mt, libstdc++6, libgcc1, libdpsaudio, dps-common
+Depends: libc6, libpqxx2.6.9, libqt3-mt, libstdc++6, libgcc1, libdpsaudio, dps-common
 Recommends: dps-mgmt, dps-doc, qt3-qtconfig
 Suggests: dps-studio-manage
 Description: Digital playout system broadcast software.
@@ -64,7 +107,7 @@ Description: Digital playout system broadcast software.
 
 Package: dps-sustainer
 Architecture: i386
-Depends: libc6, libpq5, libstdc++6, libgcc1, libdpsaudio, dps-common
+Depends: libc6, libpqxx2.6.9, libstdc++6, libgcc1, libdpsaudio, dps-common
 Recommends: dps-doc
 Description: Digital playout system sustainer service.
  Digiplay is a multi-studio digital playout system. It strives to provide
@@ -75,7 +118,7 @@ Description: Digital playout system sustainer service.
 
 Package: dps-playin
 Architecture: i386
-Depends: libncurses5, libc6, libstdc++6, libgcc1, libpqxx-2.6.9ldbl, cdparanoia, dps-common
+Depends: libncurses5, libc6, libstdc++6, libgcc1, libpqxx-2.6.9, cdparanoia, dps-common
 Recommends: dps-doc
 Description: Digital playout system management tool.
  Digiplay is a multi-studio digital playout system. It strives to provide

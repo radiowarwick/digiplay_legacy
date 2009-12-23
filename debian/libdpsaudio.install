@@ -1,1 +1,1 @@
-src/audio/libdpsaudio.so* usr/lib
+src/audiolib/libdpsaudio.so* usr/lib

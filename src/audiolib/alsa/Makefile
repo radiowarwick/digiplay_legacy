@@ -1,10 +1,10 @@
 #===============================================================
 # RaW Digital Playout Makefile
 # Relative Path to Root of tree
-ROOT		=	../..
+ROOT		=	../../..
 
 # Base name for output (executable name, library basename) and version
-OUT_BASE	=	dpsaudio
+OUT_BASE	=	dpsaudio-alsa
 
 # Create a library and whether it should be a static library
 OUT_LIB		=	yes
@@ -14,18 +14,14 @@ OUT_STATIC	=	no
 QT_ENABLED 	=	no
 
 # .cpp modules from which to create output
-MODS		=	AudioPacket Component ComponentAudio ComponentMonitor \
-				Input InputRaw InputFlac \
-				Output OutputRaw OutputDsp \
-				Process  ProcessMixer ProcessFader ProcessLink \
-				Counter CounterTrigger CircularCache
-SHARED_MODS	=	Thread Security Logger
+MODS		=	OutputDspAlsa
+SHARED_MODS	=	
 
 # Global header files on which dependance exists
-HDRS		=	Audio.h
+HDRS		=	
 
 # Compiler and linker options
-LIBS		=	-lm -lpthread -lFLAC++
+LIBS		=	-lm -lasound -lpthread -ldpsaudio
 
 POSTCOMPILE =  ln -sf lib$(OUT_BASE).so.$(VERSION) lib$(OUT_BASE).so
 

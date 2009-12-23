@@ -4,24 +4,29 @@
 ROOT		=	../..
 
 # Base name for output (executable name, library basename) and version
-OUT_BASE	=	audioplay
+OUT_BASE	=	dpsaudio
 
 # Create a library and whether it should be a static library
-OUT_LIB		=	no
+OUT_LIB		=	yes
 OUT_STATIC	=	no
 
 # Enable QT support?
 QT_ENABLED 	=	no
 
 # .cpp modules from which to create output
-MODS		=	audioplay
-QT_MODS		=	
-SHARED_MODS	=	
+MODS		=	AudioPacket Component ComponentAudio ComponentMonitor \
+				Input InputFile \
+				Output OutputFile OutputDsp \
+				Process  ProcessMixer ProcessFader ProcessLink \
+				Counter CounterTrigger CircularCache
+SHARED_MODS	=	Thread Security Logger
 
 # Global header files on which dependance exists
-HDRS		=
+HDRS		=	Audio.h
 
 # Compiler and linker options
-LIBS		=	-lpq -lpqxx -lreadline -lm -lpthread -ldpsaudio
+LIBS		=	-lm -lpthread -ldl
+
+POSTCOMPILE =  ln -sf lib$(OUT_BASE).so.$(VERSION) lib$(OUT_BASE).so
 
 include $(ROOT)/src/Makefile.in

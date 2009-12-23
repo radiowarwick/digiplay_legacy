@@ -2,7 +2,7 @@
  * Sustainer Playout application
  * sueplay.cpp
  * This provides the playback engine for the sustainer service
- * It reads the schedule from the database, and controls the 
+ * It reads the schedule from the database, and controls the
  * playback object accordingly.
  *
  * Copyright (c) 2004-2005 Chris Cantwell
@@ -34,14 +34,12 @@
 #include <time.h>
 using namespace std;
 
-#include "audio/Audio.h"
-#include "audio/InputRaw.h"
-#include "audio/InputFlac.h"
-#include "audio/OutputDsp.h"
-#include "audio/OutputRaw.h"
-#include "audio/ProcessMixer.h"
-#include "audio/ProcessFader.h"
-#include "audio/CounterTrigger.h"
+#include "audiolib/Audio.h"
+#include "audiolib/InputFile.h"
+#include "audiolib/OutputDsp.h"
+#include "audiolib/ProcessMixer.h"
+#include "audiolib/ProcessFader.h"
+#include "audiolib/CounterTrigger.h"
 using namespace Audio;
 
 #include "Config.h"
@@ -58,13 +56,13 @@ static int detach = 0;
 static int print_info = 0;
 
 static struct option long_options[] = {
-    {"debug",   	no_argument,    &logDebug, 1},
-    {"verbose", 	no_argument,    &logVerbose, 1},
-    {"quiet",   	no_argument,    &logQuiet, 1},
-    {"help",    	no_argument,    0, 'h'},
-    {"version", 	no_argument,    0, 'v'},
-	{"daemon",		no_argument,	&detach, 1},
-	{"now-playing",  no_argument,	&print_info, 1},
+    {"debug",       no_argument,    &logDebug, 1},
+    {"verbose",     no_argument,    &logVerbose, 1},
+    {"quiet",       no_argument,    &logQuiet, 1},
+    {"help",        no_argument,    0, 'h'},
+    {"version",     no_argument,    0, 'v'},
+    {"daemon",      no_argument,    &detach, 1},
+    {"now-playing",  no_argument,   &print_info, 1},
     {0,0,0,0}
 };
 
@@ -72,7 +70,7 @@ static const char* short_options = "hv";
 
 void processOptions(int argc, char *argv []) {
     const char* routine = "sueplay::getOptions";
-    
+
     // Process options
     while (1) {
         int v;
@@ -107,7 +105,7 @@ void processOptions(int argc, char *argv []) {
     }
     if (logDebug) Logger::setDisplayLevel(INFO);
     if (logVerbose) Logger::setDisplayLevel(WARNING);
-    if (logQuiet) Logger::setDisplayLevel(CRITICAL);    
+    if (logQuiet) Logger::setDisplayLevel(CRITICAL);
 }
 
 void signalHandler(int sig) {
@@ -135,12 +133,12 @@ void signalHandler(int sig) {
 
 void detachProcess() {
     const char* routine = "sueplay::detachProcess";
-    
+
     // Check if we're already a daemon
     if (getppid() == 1) return;
-    
+
     pid_t pid = fork();
-    
+
     // Check we fork()-ed correctly
     if (pid < 0) {
         L_CRITICAL(LOG_SUEPLAY, "Unable to fork() daemon.");
@@ -166,7 +164,7 @@ void detachProcess() {
     int lfp=open("sueplay.pid",O_RDWR|O_CREAT,0640);
     if (lfp<0) exit(1); /* can not open */
     if (lockf(lfp,F_TLOCK,0)<0) {
-        L_CRITICAL(LOG_SUEPLAY,"Daemon already running!"); 
+        L_CRITICAL(LOG_SUEPLAY,"Daemon already running!");
         exit(0); /* can not lock */
     }
     char str[10];
@@ -201,200 +199,197 @@ int main(int argc, char *argv []) {
         detachProcess();
     }
 
-	string SQL_Item,SQL_Detail,SQL_Remove;
-	PqxxResult R;
-	
-	L_INFO(LOG_SUEPLAY, " -> Reading configuration file");
-	Config *Conf = new Config("digiplay");
-	
+    string SQL_Item,SQL_Detail,SQL_Remove;
+    PqxxResult R;
+
+    L_INFO(LOG_SUEPLAY, " -> Reading configuration file");
+    Config *Conf = new Config("digiplay");
+
     L_INFO(LOG_SUEPLAY, " -> Connecting to Database...");
     DataAccess* DB = new DataAccess();
-	
-	SQL_Item = "SELECT audioid FROM sustschedule ORDER BY id LIMIT 1"; 
+
+    SQL_Item = "SELECT audioid FROM sustschedule ORDER BY id LIMIT 1";
     SQL_Detail = "SELECT filetype, archives.localpath AS path, v_audio.md5 AS md5, v_audio.title AS title, v_audio.length_smpl AS length_smpl, sustschedule.id AS id, sustschedule.trim_start_smpl AS start, sustschedule.trim_end_smpl AS end, sustschedule.fade_in AS fade_in, sustschedule.fade_out AS fade_out, v_audio.artist FROM sustschedule, archives, v_audio WHERE sustschedule.audioid = v_audio.id AND archives.id = v_audio.archiveid";
-	L_INFO(LOG_SUEPLAY, "done.");
+    L_INFO(LOG_SUEPLAY, "done.");
 
-	// Create components
-	Input* ch[] = {0,0};
-	ProcessFader* fader[] = {new ProcessFader(), new ProcessFader()};
-	CounterTrigger* trig[] = {new CounterTrigger(), new CounterTrigger()};
-	ProcessMixer* mixer = new ProcessMixer();
-	OutputDsp* player = new OutputDsp(Conf->getParam("channel_1").c_str());
+    // Create components
+    Input* ch[] = {new InputFile(), new InputFile()};
+    ProcessFader* fader[] = {new ProcessFader(), new ProcessFader()};
+    CounterTrigger* trig[] = {new CounterTrigger(), new CounterTrigger()};
+    ProcessMixer* mixer = new ProcessMixer();
+    OutputDsp* player = new OutputDsp(Conf->getParam("channel_1").c_str());
 
-	fader[0]->patch(OUT0,mixer,IN0);
-	fader[1]->patch(OUT0,mixer,IN1);
-	mixer->patch(OUT0,player,IN0);
-	
-	string md5, id, path, title, artist, ext, nicetime;
-	long start = 0, end = 0, fade_in = 0, fade_out = 0;
-	long length_smpl = 0;
-	unsigned short active = 0, inactive = 1;
-	bool warn_flag = true;
-	time_t curtime;
-	
-	// Process schedule table until empty
-	while (true) {
-		L_INFO(LOG_SUEPLAY, "Beginning loading next track");
+    ch[0]->setAutoReload(false);
+    ch[1]->setAutoReload(false);
+    ch[0]->patch(OUT0, fader[0], IN0);
+    ch[1]->patch(OUT0, fader[1], IN0);
+    fader[0]->patch(OUT0,mixer,IN0);
+    fader[1]->patch(OUT0,mixer,IN1);
+    mixer->patch(OUT0,player,IN0);
+    
+    string md5, id, path, title, artist, ext, nicetime;
+    long start = 0, end = 0, fade_in = 0, fade_out = 0;
+    long length_smpl = 0;
+    unsigned short active = 0, inactive = 1;
+    bool warn_flag = true;
+    time_t curtime;
 
-		// Keep trying until successfully loaded a file that exists!
-		do {
-			// Query database for next track to play
+    // Process schedule table until empty
+    while (true) {
+        L_INFO(LOG_SUEPLAY, "Beginning loading next track");
+
+        // Keep trying until successfully loaded a file that exists!
+        do {
+            // Query database for next track to play
             L_INFO(LOG_SUEPLAY, "Retrieving next track from database.");
-			R = DB->exec("SuePlay",SQL_Item);
-             
-			// If no results, then schedule must have been depleated! Doh!
-			if (R.size() == 0) {
+            R = DB->exec("SuePlay",SQL_Item);
+
+            // If no results, then schedule must have been depleated! Doh!
+            if (R.size() == 0) {
                 // Only warn once, then disable the warning
-				if (warn_flag) {
-					warn_flag = false;
-					L_WARNING(LOG_SUEPLAY, "Schedule is depleated!");
-				}
+                if (warn_flag) {
+                    warn_flag = false;
+                    L_WARNING(LOG_SUEPLAY, "Schedule is depleated!");
+                }
 
                 // Let's not batter the psql server while we poll for new tracks to play
                 sleep(1);
-				continue;
-			}
+                continue;
+            }
             // Reset warn flag so we are warned again when the schedule is
             // next depleted.
-			warn_flag = true;
-			
-			id = R[0]["audioid"].c_str();
-		    R = DB->exec("SuePlay",SQL_Detail + " AND v_audio.id=" + id);
-			
-			// Load the required data from database
-			id = R[0]["id"].c_str();
-			path = R[0]["path"].c_str();
-			md5 = R[0]["md5"].c_str();
-			title = R[0]["title"].c_str();
-			artist = R[0]["artist"].c_str();
-			start = atoi(R[0]["start"].c_str());
-			end = atoi(R[0]["end"].c_str());
-			fade_in = atoi(R[0]["fade_in"].c_str());
-			fade_out = atoi(R[0]["fade_out"].c_str());
-			length_smpl = atoi(R[0]["length_smpl"].c_str());
-			
-			path += "/" + md5.substr(0,1) + "/";
-			L_INFO(LOG_SUEPLAY, "Attempting to load channel " +
+            warn_flag = true;
+
+            id = R[0]["audioid"].c_str();
+            R = DB->exec("SuePlay",SQL_Detail + " AND v_audio.id=" + id);
+
+            // Load the required data from database
+            id = R[0]["id"].c_str();
+            path = R[0]["path"].c_str();
+            md5 = R[0]["md5"].c_str();
+            title = R[0]["title"].c_str();
+            artist = R[0]["artist"].c_str();
+            start = atoi(R[0]["start"].c_str());
+            end = atoi(R[0]["end"].c_str());
+            fade_in = atoi(R[0]["fade_in"].c_str());
+            fade_out = atoi(R[0]["fade_out"].c_str());
+            length_smpl = atoi(R[0]["length_smpl"].c_str());
+
+            path += "/" + md5.substr(0,1) + "/";
+            L_INFO(LOG_SUEPLAY, "Attempting to load channel " +
                     dps_itoa(active) + ": " + artist + " - " + title);
-			L_INFO(LOG_SUEPLAY, " -> Start: " + dps_itoa(start));
-			L_INFO(LOG_SUEPLAY, " -> End: " + dps_itoa(end));
-			// Try and load the track
-			try { 
-                if (ch[active]) {
-                    ch[active]->unpatch(OUT0);
-                    delete ch[active];
-                }
+            L_INFO(LOG_SUEPLAY, " -> Start: " + dps_itoa(start));
+            L_INFO(LOG_SUEPLAY, " -> End: " + dps_itoa(end));
+            // Try and load the track
+            try {
                 if (string(R[0]["filetype"].c_str()) == "raw") {
-                    ch[active] = new InputRaw();
                     ext = "";
                 }
                 else if (string(R[0]["filetype"].c_str()) == "flac") {
-                    ch[active] = new InputFlac();
                     ext = ".flac";
                 }
-                ch[active]->setAutoReload(false);
-                ch[active]->patch(OUT0, fader[active], IN0);
                 trig[inactive]->setTriggerTarget(ch[active]);
                 ch[active]->addCounter(trig[active]);
-                
-				ch[active]->load( path + md5 + ext, start, end );
+
+                ch[active]->load( path + md5 + ext, start, end );
+
                 L_INFO(LOG_SUEPLAY, "Successfully loaded track.");
-				break;
-			}
-			catch (...) {
-				L_ERROR(LOG_SUEPLAY, "Error loading track");
-			}
-		} while (1);
-		
+                break;
+            }
+            catch (...) {
+                L_ERROR(LOG_SUEPLAY, "Error loading track");
+            }
+        } while (1);
+
         DB->abort("SuePlay");
-		if (R.size() == 0) break;
+        if (R.size() == 0) break;
 
-		// positions are specified in terms of STEREO samples
-		// database positions are in terms of STEREO samples
-		fader[active]->clearNodes();
-		unsigned long offset = start;
+        // positions are specified in terms of STEREO samples
+        // database positions are in terms of STEREO samples
+        fader[active]->clearNodes();
+        unsigned long offset = start;
 
-		if (fade_in > start)
-			fade_in = fade_in - offset;
-		else
-			fade_in = 256;
-		L_INFO(LOG_SUEPLAY, " -> Fadein: " + dps_itoa(fade_in));
-		fader[active]->addNode(0,0.0);
-		fader[active]->addNode(fade_in,1.0);
-	
-		L_INFO(LOG_SUEPLAY, " -> Fadeout: " + dps_itoa(fade_out));
-		if (fade_out < end)
-			fade_out = fade_out - offset;
-		else
-			fade_out = end - 256 - offset;
-		end = end - offset;
-		L_INFO(LOG_SUEPLAY, " -> Fade out length: " + dps_itoa(end - fade_out));
+        if (fade_in > start)
+            fade_in = fade_in - offset;
+        else
+            fade_in = 256;
+        L_INFO(LOG_SUEPLAY, " -> Fadein: " + dps_itoa(fade_in));
+        fader[active]->addNode(0,0.0);
+        fader[active]->addNode(fade_in,1.0);
 
-		fader[active]->addNode(fade_out,1.0);
-		fader[active]->addNode(end,0.0);
-		trig[active]->setTriggerSample(min(fade_out,end));
-        
+        L_INFO(LOG_SUEPLAY, " -> Fadeout: " + dps_itoa(fade_out));
+        if (fade_out < end)
+            fade_out = fade_out - offset;
+        else
+            fade_out = end - 256 - offset;
+        end = end - offset;
+        L_INFO(LOG_SUEPLAY, " -> Fade out length: " + dps_itoa(end - fade_out));
+
+        fader[active]->addNode(fade_out,1.0);
+        fader[active]->addNode(end,0.0);
+        trig[active]->setTriggerSample(min(fade_out,end));
+
         // Wait until last track has been played before we load the next
-		if (ch[inactive] && ch[inactive]->isLoaded()) {
-			L_INFO(LOG_SUEPLAY, "Waiting for channel " + dps_itoa(inactive));
-			trig[inactive]->waitStop();
-			if (print_info) {
-				curtime = time(NULL);
-				nicetime = ctime(&curtime);
-				nicetime = nicetime.substr(4,12);
-				cout << nicetime << " | Now playing: " << artist << " - " << title << endl;
-			}
-			L_INFO(LOG_SUEPLAY, "Finished waiting");
-		}
-		else {
-			L_INFO(LOG_SUEPLAY, "Playing channel " + dps_itoa(active));
-			ch[active]->play();
-			if (print_info) {
-				curtime = time(NULL);
-				nicetime = ctime(&curtime);
-				nicetime = nicetime.substr(4,12);
-				cout << nicetime << " | Now playing: " << artist << " - " << title << endl;
-			}
-		}
+        if (ch[inactive] && ch[inactive]->isLoaded()) {
+            L_INFO(LOG_SUEPLAY, "Waiting for channel " + dps_itoa(inactive));
+            trig[inactive]->waitStop();
+            if (print_info) {
+                curtime = time(NULL);
+                nicetime = ctime(&curtime);
+                nicetime = nicetime.substr(4,12);
+                cout << nicetime << " | Now playing: " << artist << " - " << title << endl;
+            }
+            L_INFO(LOG_SUEPLAY, "Finished waiting");
+        }
+        else {
+            L_INFO(LOG_SUEPLAY, "Playing channel " + dps_itoa(active));
+            ch[active]->play();
+            if (print_info) {
+                curtime = time(NULL);
+                nicetime = ctime(&curtime);
+                nicetime = nicetime.substr(4,12);
+                cout << nicetime << " | Now playing: " << artist << " - " << title << endl;
+            }
+        }
 
-		int now = (int)time(NULL);
-		artist = DB->esc(artist);
-		title = DB->esc(title);
-		string SQL_Insert = "INSERT INTO log "
-			"(userid, datetime, track_title, track_artist, location) "
-			"VALUES (" + dps_itoa(1) + ", " + dps_itoa(now) + ", '"
-			+ title + "', '" + artist + "', " + dps_itoa(0) + ");";
-		try {
+        int now = (int)time(NULL);
+        artist = DB->esc(artist);
+        title = DB->esc(title);
+        string SQL_Insert = "INSERT INTO log "
+            "(userid, datetime, track_title, track_artist, location) "
+            "VALUES (" + dps_itoa(1) + ", " + dps_itoa(now) + ", '"
+            + title + "', '" + artist + "', " + dps_itoa(0) + ");";
+        try {
             L_INFO(LOG_SUEPLAY,"Writing log entry for " + artist
                     + " - " + title + ".");
-			DB->exec("SuePlayLog",SQL_Insert);
-			DB->commit("SuePlayLog");
-		}
-		catch (...) {
+            DB->exec("SuePlayLog",SQL_Insert);
+            DB->commit("SuePlayLog");
+        }
+        catch (...) {
             DB->abort("SuePlayLog");
-			L_ERROR(LOG_TABLOGGING,"Failed to log record " + artist 
+            L_ERROR(LOG_TABLOGGING,"Failed to log record " + artist
                     + " - " + title + ".");
-		}
-			
+        }
+
             // Remove the entry from schedule once we've tried to load it
             L_INFO(LOG_SUEPLAY, "Removing track from sustainer playlist.");
-			SQL_Remove = "DELETE FROM sustschedule WHERE id=" + id;
-		try{
-	        	DB->exec("SuePlay",SQL_Remove);
-			DB->commit("SuePlay");
-		} catch (...) {
-            		L_INFO(LOG_SUEPLAY, "Failed to remove track from sustainer playlist.");
-		}
+            SQL_Remove = "DELETE FROM sustschedule WHERE id=" + id;
+        try{
+                DB->exec("SuePlay",SQL_Remove);
+            DB->commit("SuePlay");
+        } catch (...) {
+                    L_INFO(LOG_SUEPLAY, "Failed to remove track from sustainer playlist.");
+        }
 
-		active = abs(active - 1);
-		inactive = abs(inactive - 1);
-	}
-	delete ch[0];
-	delete ch[1];
-	delete fader[0];
-	delete fader[1];
-	delete mixer;
-	delete player;
-	delete Conf;
-	delete DB;
+        active = abs(active - 1);
+        inactive = abs(inactive - 1);
+    }
+    delete ch[0];
+    delete ch[1];
+    delete fader[0];
+    delete fader[1];
+    delete mixer;
+    delete player;
+    delete Conf;
+    delete DB;
 }

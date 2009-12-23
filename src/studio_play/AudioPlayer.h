@@ -32,7 +32,7 @@
 #include "DataAccess.h"
 #include "MessagingInterface.h"
 
-#include "audio/Counter.h"
+#include "audiolib/Counter.h"
 
 // Forward declarations
 class QGroupBox;

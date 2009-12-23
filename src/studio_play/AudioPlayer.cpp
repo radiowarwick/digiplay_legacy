@@ -34,12 +34,11 @@ using namespace std;
 #include "Logger.h"
 #include "dps.h"
 
-#include "audio/Audio.h"
-#include "audio/Input.h"
-#include "audio/InputRaw.h"
-#include "audio/InputFlac.h"
-#include "audio/OutputDsp.h"
-#include "audio/Counter.h"
+#include "audiolib/Audio.h"
+#include "audiolib/Input.h"
+#include "audiolib/InputFile.h"
+#include "audiolib/OutputDsp.h"
+#include "audiolib/Counter.h"
 using namespace Audio;
 
 #include "AudioPlayer.h"
@@ -119,24 +118,22 @@ void AudioPlayer::load() {
     string ext = "";
     string filetype(R[0]["filetype"].c_str());
 
-    if (audioFilereader) {
-        audioFilereader->unpatch(OUT0);
-        delete audioFilereader;        
-    }
-
     if (filetype == "raw") {
-        audioFilereader = new InputRaw(105840000);
     }
     else if (filetype == "flac") {
-        audioFilereader = new InputFlac(105840000);
         ext = ".flac";
+    }
+    else if (filetype == "mp3") {
+        ext = ".mp3";
     }
     else {
         cout << "Unknown file type: " << filetype << endl;
     }
-
-    audioFilereader->patch(OUT0,audioPlayer,IN0);
-    audioFilereader->addCounter(this);
+    if (!audioFilereader) {
+        audioFilereader = new InputFile(105840000);
+        audioFilereader->patch(OUT0,audioPlayer,IN0);
+        audioFilereader->addCounter(this);
+    }
     string f = R[0]["path"].c_str() + string("/") 
                 + (string(R[0]["md5"].c_str())).substr(0,1)
                 + string("/") + R[0]["md5"].c_str() + ext;

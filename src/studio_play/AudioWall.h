@@ -30,8 +30,8 @@ using namespace std;
 
 #include "dps.h"
 
-#include "audio/Audio.h"
-#include "audio/ProcessMixer.h"
+#include "audiolib/Audio.h"
+#include "audiolib/ProcessMixer.h"
 
 #include "AudioWallItem.h"
 

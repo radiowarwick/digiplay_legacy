@@ -31,10 +31,11 @@ QT_HDRS		=
 
 # Define compiler and linker flags depending on whether we're
 # compiling a standard executable or a shared library
-CCINC		:=	-I$(ROOT)/src -DDEBUG=4
+CCINC		:=	-I. -I$(ROOT)/src -I$(ROOT)/src/audiolib -DDEBUG=4
 CCFLAGS		:=	$(DPSFLAGS) -Wall -O3 -D_THREAD_SAFE \
-				-D'VERSION="$(VERSION)"' -D'DPSDIR="$(DPSDIR)"'
-LDFLAGS		:=	-L$(ROOT)/src/audio -o $(DEST)/$(OUTPUT) 
+				-D'VERSION="$(VERSION)"' -D'DPSDIR="$(DPSDIR)"' \
+				-D_FILE_OFFSET_BITS=64
+LDFLAGS		:=	-L$(ROOT)/src/audiolib -o $(DEST)/$(OUTPUT) 
 
 # if QT is enabled, we need to include the necessary compiler and 
 # linker options. We also need to make a few more objects and generate

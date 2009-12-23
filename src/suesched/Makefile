@@ -22,6 +22,6 @@ SHARED_MODS	=	DataAccess Config Logger Security dps DbTrigger Thread
 HDRS		=
 
 # Compiler and linker options
-LIBS		=	-lpq -lpqxx -lm -lpthread
+LIBS		=	-lpqxx -lm -lpthread
 
 include $(ROOT)/src/Makefile.in

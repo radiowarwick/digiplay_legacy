@@ -25,7 +25,10 @@ SHARED_QT_MODS	= QtTrigger
 HDRS		=
 
 # Compiler and linker options
-LIBS		=	-lpq -lpqxx -lm -lpthread -ldpsaudio
+#LIBS		=	-lpq -lpqxx -lm -lpthread -ldpsaudio
+LIBS		=	-lpqxx -lm -lpthread ../audiolib/libdpsaudio.so.0.99
+#LIBS		=	-lpq -lpqxx -lm -lpthread\
+/home/cc/tmp/dps-test/src/audio/libdpsaudio.so.0.99
 
 #POSTCOMPILE	=	if [ ! -e $(ROOT)/bin/images ]; \
 #					then mkdir $(ROOT)/bin/images; fi; \

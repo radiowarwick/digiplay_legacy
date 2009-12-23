@@ -30,22 +30,11 @@ void AudioWallItem::set(AudioWallItemSpec& pItem) {
 				fgColour = pItem.fgColour;
 				text = pItem.text;
                 
-                if (mInputModule) {
-                    mInputModule->unpatch(OUT0);
-                    delete mInputModule;        
+                if (!mInputModule) {
+                    mInputModule = new Audio::InputFile();
+                    mInputModule->patch(OUT0, this, IN0);
+                    mInputModule->addCounter(this);
                 }
-                
-                if (pItem.type == ITEM_FILETYPE_RAW) {
-                    mInputModule = new Audio::InputRaw();
-                }
-                else if (pItem.type == ITEM_FILETYPE_FLAC) {
-                    mInputModule = new Audio::InputFlac();
-                }
-                else {
-                    cout << "Unknown file type: " << pItem.type << endl;
-                }
-                mInputModule->patch(OUT0, this, IN0);
-                mInputModule->addCounter(this);
 				mInputModule->load(pItem.file.ascii(), pItem.start, pItem.end);
 			}
 			else {

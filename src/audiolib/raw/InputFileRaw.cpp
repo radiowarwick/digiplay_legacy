@@ -4,21 +4,32 @@ using std::endl;
 
 #include "Counter.h"
 #include "CircularCache.h"
-#include "InputRaw.h"
-using Audio::InputRaw;
+#include "InputFileRaw.h"
+using Audio::Input;
+using Audio::InputFileRaw;
 
 #define READ_PACKET 8192
+
+extern "C" {
+    /**
+     * Entry point for InputFileRaw class.
+     */
+    Input * INPUT_SO_ENTRY(unsigned int cache_size, Input * facade) {
+        return new InputFileRaw(cache_size, facade);
+    }
+}
+
 
 /**
  * Creates a new raw PCM input filereader. The size of the Cache to use may be
  * specified. If not specified, it defaults to 10 seconds.
  * @param   cache_size  Size of cache to use when caching file into memory.
  */
-InputRaw::InputRaw(unsigned int cache_size) 
+InputFileRaw::InputFileRaw(unsigned int cache_size, Input * facade)
         : Input(cache_size) {
-            
-	audioBuffer = new char[READ_PACKET];
 
+    audioBuffer = new char[READ_PACKET];
+    this->facade = facade;
     // Start caching thread - this must be done from the derived class as
     // this can't be called from the base class - since this derived class
     // won't have been properly constructed yet. Calling threadExecute from
@@ -35,7 +46,7 @@ InputRaw::InputRaw(unsigned int cache_size)
 /**
  * Terminates the caching thread and cleans up memory used.
  */
-InputRaw::~InputRaw() {
+InputFileRaw::~InputFileRaw() {
     delete[] audioBuffer;
 }
 
@@ -50,29 +61,29 @@ InputRaw::~InputRaw() {
  * @param   start_smpl  First sample to start loading
  * @param   end_smpl    Last sample to load
  */
-void InputRaw::load(string filename, long start_smpl, long end_smpl) {
+void InputFileRaw::load(string filename, long start_smpl, long end_smpl) {
     if (filename == "") throw -1;
 
-	// If we're not stopped, change to a stopped state
+    // If we're not stopped, change to a stopped state
     if (state != STATE_STOP) {
         // If all the audio fits into cache, no need to restart caching
         if (!allCached) stopCaching();
-        
+
         // Change to stopped state.
         state = STATE_STOP;
         send(OUT0,STOP);
         updateStates(STATE_STOP);
     }
 
-	// Initialise position variables, counters and reset cache
+    // Initialise position variables, counters and reset cache
     f_filename = filename;
-	f_start_byte = start_smpl * 4;
-	f_end_byte = end_smpl * 4;
-	f_length_byte = f_end_byte - f_start_byte;
+    f_start_byte = start_smpl * 4;
+    f_end_byte = end_smpl * 4;
+    f_length_byte = f_end_byte - f_start_byte;
 
     // If we're just resetting after a stop, try to seek to beginning of cache
     try {
-        if (mCache->size() > f_length_byte) { 
+        if (mCache->size() > f_length_byte) {
             mCache->seek(-(f_pos_byte - f_start_byte));
         }
         else {
@@ -86,8 +97,7 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
     f_pos_byte = f_start_byte;
 
     updateCounters(0);
-	updateTotals(f_length_byte/4);
-    
+    updateTotals(f_length_byte/4);
     try {
         // If first load or the whole track doesn't fit into cache then
         // start caching it
@@ -96,7 +106,7 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
     catch (int e) {
         throw -1;
     }
-    
+
     // Flag true if the whole track fits into cache
     // Can then ensure we only cache the audio once.
     allCached = (f_length_byte <= mCache->size()) ? true : false;
@@ -108,7 +118,7 @@ void InputRaw::load(string filename, long start_smpl, long end_smpl) {
  * @param   inPort      Port on which message is received
  * @param   message     The message received
  */
-void InputRaw::receiveMessage(PORT inPort, MESSAGE message) {
+void InputFileRaw::receiveMessage(PORT inPort, MESSAGE message) {
 
 }
 
@@ -117,7 +127,7 @@ void InputRaw::receiveMessage(PORT inPort, MESSAGE message) {
  * Perform tasks when a component connects to this component
  * @param   localPort   Port to which another component connects.
  */
-void InputRaw::onPatch(PORT localPort) {
+void InputFileRaw::onPatch(PORT localPort) {
 
 }
 
@@ -126,7 +136,7 @@ void InputRaw::onPatch(PORT localPort) {
  * Perform tasks when a component disconnects from this component
  * @param   localPort   Port on which another component has disconnected
  */
-void InputRaw::onUnpatch(PORT localPort) {
+void InputFileRaw::onUnpatch(PORT localPort) {
 
 }
 
@@ -138,7 +148,7 @@ void InputRaw::onUnpatch(PORT localPort) {
  * reset and the thread returns to an idle state until requested to start
  * again.
  */
-void InputRaw::threadExecute() {
+void InputFileRaw::threadExecute() {
     // Start of the caching thread. Only one thread is run during the
     // lifetime of this object.
     ifstream *f = 0;
@@ -167,14 +177,14 @@ void InputRaw::threadExecute() {
             cout << "Failed to open file '" << f_filename << "'" << endl;
             continue;
         }
-        
+
         // Set caching state as active
         cacheStateLock.lock();
         cacheState = CACHE_STATE_ACTIVE;
         cacheStateLock.unlock();
 
         loaded = true;
-        
+
         // Get file length and reset
         f->seekg(0, ios::end);
         if (f->tellg() < f_end_byte || f_end_byte == 0) {
@@ -182,70 +192,73 @@ void InputRaw::threadExecute() {
         }
 
         f->clear();
-    	f->seekg(f_start_byte, ios::beg);
-                
+        f->seekg(f_start_byte, ios::beg);
+
         /**************************************************
          * CACHE AUDIO FILE
          **************************************************/
-    	while ( !threadTestKill() &&            // Thread not terminated
+        while ( !threadTestKill() &&            // Thread not terminated
                 !threadReceive(STOP)) {         // Not told to stop
-            
+
             // Handle seek requests first
             if (threadReceive(SEEK)) {
                 mCache->clear();
                 f_pos_byte = f_seek_byte;
                 f->seekg(f_seek_byte, ios::beg);
             }
-            
+
             // Sleep if cache is full
             if (mCache->free() < READ_PACKET * 2) {
-    			usleep(10000);
-    			continue;
-    		}
-    		
+                usleep(10000);
+                continue;
+            }
+
             // Default number of bytes to read
             read_bytes = READ_PACKET;
-            
+
             // If we have less than this, work out how many bytes left to read
-    		if (f_end_byte - f->tellg() < READ_PACKET) {
-    			read_bytes = f_end_byte - f->tellg();
+            if (f_end_byte - f->tellg() < READ_PACKET) {
+                read_bytes = f_end_byte - f->tellg();
                 // If there are in fact no bytes, then we're at the end
                 // So just keep sleeping until told to stop
                 // This allows the user to seek while it's still playing
-    			if (read_bytes == 0) {
+                if (read_bytes == 0) {
                     usleep(10000);
                     continue;
                 }
-    		}
+            }
 
             // Read the audio from the file into a temp buffer
-    		f->read(audioBuffer, read_bytes);
-            
+            f->read(audioBuffer, read_bytes);
+
             // See how many bytes we actually read
-    		read_bytes = f->gcount();
-    
-            // If we didn't read any, then sleep (although an error must have occured!)
-    		if (read_bytes == 0) {
+            read_bytes = f->gcount();
+
+            // If we didn't read any, then sleep (although an error must have
+            // occured!)
+            if (read_bytes == 0) {
                 usleep(10000);
-    			continue;
-    		}
+                continue;
+            }
 
             // Copy the read audio into the cache
-    		ptr = audioBuffer;
-            if ((read_bytes_out = mCache->write(read_bytes, ptr)) != read_bytes) {
+            ptr = audioBuffer;
+            if ((read_bytes_out = mCache->write(read_bytes, ptr))
+                                                            != read_bytes) {
                 cout << "Failed to cache audio" << endl;
             }
-    		
-    		//Bandwidth limiting on caching of audio to prevent hanging/stuttering
-    		//during caching operations - to be decided on after testing...
-    		//Assuming it takes 0 time to cache audio, theoretical thoughput of
-    		//2048kbytes/sec is possible.  Since only 176kbytes/sec are
-    		//required this should be plenty.
-    		if (mCache->size() - mCache->free() > preCacheSize) {
+
+            // Bandwidth limiting on caching of audio to prevent hanging/
+            // stuttering during caching operations - to be decided on after
+            // testing...
+            // Assuming it takes 0 time to cache audio, theoretical thoughput of
+            // 2048kbytes/sec is possible.  Since only 176kbytes/sec are
+            // required this should be plenty.
+            if (mCache->size() - mCache->free() > preCacheSize) {
                 usleep(100);
-            }            
-    	}
-        
+            }
+        }
+
         // Close the file and delete
         loaded = false;
         f->close();

@@ -31,24 +31,24 @@ class Audio::Input : public virtual Audio::ComponentAudio {
 		virtual void pause();
         /// Seeks to a position in an input source
 		virtual void seek(long sample);
-        /// Process when a component is connected
-		virtual void onPatch(PORT localPort) = 0;
-        /// Process when a component is disconnected
-		virtual void onUnpatch(PORT localPort) = 0;
         /// Add a counter client to be updated by this object
-        void addCounter(Audio::Counter *counter);
+        virtual void addCounter(Audio::Counter *counter);
         /// Remove a counter client from being updated by this client
-        void removeCounter(Audio::Counter *counter);
+        virtual void removeCounter(Audio::Counter *counter);
         /// Set that the track should be reloaded when stopped
-        void setAutoReload(bool flag) {autoReload = flag;}
+        virtual void setAutoReload(bool flag) {autoReload = flag;}
         /// Check if a file is currently loaded
-        bool isLoaded();
+        virtual bool isLoaded();
 
 	protected:
         /// Only allow derived classes to be created
         Input(unsigned int cache_size);
         /// Process messages received from other components
 		virtual void receiveMessage(PORT inPort, MESSAGE message);
+        /// Process when a component is connected
+		virtual void onPatch(PORT localPort) = 0;
+        /// Process when a component is disconnected
+		virtual void onUnpatch(PORT localPort) = 0;
         /// Update the position on all attached counter clients
         virtual void updateCounters(unsigned long sample);
         /// Update the total samples on all attached counter clients
@@ -82,9 +82,15 @@ class Audio::Input : public virtual Audio::ComponentAudio {
 	private:
         // Counters
         vector<Audio::Counter*> countersList;
-        
-        
+
+    // Allow InputFile object access to private members for pImpl.
+    friend class InputFile;
 
 };
+
+/// Dynamic module entry point function type and name
+typedef Audio::Input* (* InputFileSO_Entry)(unsigned int, Audio::Input *);
+#define INPUT_SO_ENTRY	_InputEntry
+#define INPUT_SO_SYM "_InputEntry"
 
 #endif

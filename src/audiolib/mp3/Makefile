@@ -1,27 +1,28 @@
 #===============================================================
 # RaW Digital Playout Makefile
 # Relative Path to Root of tree
-ROOT		=	../..
+ROOT		=	../../..
 
 # Base name for output (executable name, library basename) and version
-OUT_BASE	=	audioplay
+OUT_BASE	=	dpsaudio-mp3
 
 # Create a library and whether it should be a static library
-OUT_LIB		=	no
+OUT_LIB		=	yes
 OUT_STATIC	=	no
 
 # Enable QT support?
 QT_ENABLED 	=	no
 
 # .cpp modules from which to create output
-MODS		=	audioplay
-QT_MODS		=	
-SHARED_MODS	=	
+MODS		=	InputMp3
+SHARED_MODS	=
 
 # Global header files on which dependance exists
-HDRS		=
+HDRS		=	
 
 # Compiler and linker options
-LIBS		=	-lpq -lpqxx -lreadline -lm -lpthread -ldpsaudio
+LIBS		=	-lm -ldpsaudio -lmpg123
+
+POSTCOMPILE =  ln -sf lib$(OUT_BASE).so.$(VERSION) lib$(OUT_BASE).so
 
 include $(ROOT)/src/Makefile.in

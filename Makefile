@@ -24,7 +24,8 @@ IMGDIR=$(SHAREDDIR)/dps/images
 endif
 
 # Application groups
-AUDIO		=	audio
+AUDIO		=	audiolib audiolib/oss audiolib/jack audiolib/alsa \
+				audiolib/raw audiolib/flac audiolib/mp3
 STUDIO		=	studio_play studio_manage
 SUE			=	sueplay suesched
 ADMIN		=	dpsadmin
@@ -40,8 +41,8 @@ EXE_DPSADMIN		=	src/dpsadmin/dpsadmin
 EXE_PLAYIN			=	src/playin/playin
 EXE_SUEPLAY			=	src/sueplay/sueplay
 EXE_SUESCHED		=	src/suesched/suesched
-LIB_DPSAUDIO		=	src/audio/libdpsaudio.so \
-						src/audio/libdpsaudio.so.$(VERSION)
+LIB_DPSAUDIO		=	src/audiolib/libdpsaudio.so \
+						src/audiolib/libdpsaudio.so.$(VERSION)
 EXE_ALL				=	$(EXE_STUDIO_MANAGE) $(EXE_STUDIO_PLAY) $(EXE_DPSADMIN)\
 						$(EXE_PLAYIN) $(EXE_SUEPLAY) $(EXE_SUESCHED)
 LIB_ALL				=	$(LIB_DPSAUDIO)
@@ -52,6 +53,7 @@ LIB_ALL				=	$(LIB_DPSAUDIO)
 
 default:	all
 
+audio:		$(AUDIO)
 studio: 	$(AUDIO) $(STUDIO)
 sue:		$(AUDIO) $(SUE)
 backend:	$(ADMIN)
@@ -82,6 +84,7 @@ install:
 				$(IMGDIR);
 	@-$(foreach EXE,$(EXE_ALL), if [ -f $(EXE) ]; then cp -aP $(EXE) $(BINDIR); fi;)
 	@-$(foreach LIB,$(LIB_ALL), if [ -f $(LIB) ]; then cp -aP $(LIB) $(LIBDIR); fi;)
+	@cp src/audiolib/*/*.so* $(LIBDIR)
 	@cp -aP share/doc/examples/digiplay.conf $(ETCDIR)
 	@-$(foreach EXE,$(EXE_ALL), if [ -f $(EXE) ]; then cp -aP share/man/man1/`echo $(EXE) | sed 's/.*\///'`.1.gz $(MANDIR); fi;)
 	@cp -arP share/dps $(SHAREDDIR)

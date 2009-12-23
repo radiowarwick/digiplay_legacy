@@ -33,7 +33,7 @@ SHARED_QT_MODS = QtTrigger
 HDRS		=
 
 # Compiler and linker options
-LIBS		=	-lpq -lpqxx -lm -lpthread
+LIBS		=	-lpqxx -lm -lpthread
 
 #POSTCOMPILE	=	if [ ! -e $(ROOT)/bin/images ]; \
 #					then mkdir $(ROOT)/bin/images; fi; \

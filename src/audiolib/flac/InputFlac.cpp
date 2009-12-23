@@ -5,9 +5,19 @@ using std::endl;
 #include "Counter.h"
 #include "CircularCache.h"
 #include "InputFlac.h"
+using Audio::Input;
 using Audio::InputFlac;
 
-InputFlac::InputFlac(unsigned int cache_size) 
+/**
+ * Dynamic loader
+ */
+extern "C" {
+    Input * INPUT_SO_ENTRY(unsigned int cache_size, Input *facade) {
+        return new InputFlac(cache_size, facade);
+    }
+}
+
+InputFlac::InputFlac(unsigned int cache_size, Input *facade) 
         : Input(cache_size) {
     // Start caching thread - this must be done from the derived class as
     // this can't be called from the base class - since this derived class
@@ -19,6 +29,7 @@ InputFlac::InputFlac(unsigned int cache_size)
         throw -1;
     }
     allCached = false;
+    this->facade = facade;
 }
 
 InputFlac::~InputFlac() {

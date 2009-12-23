@@ -19,7 +19,7 @@ class Audio::InputFlac :    public FLAC::Decoder::Stream,
                             public Audio::Input {
 	public:
         /// Constructor
-		InputFlac(unsigned int cache_size = 1760000);
+		InputFlac(unsigned int cache_size = 1760000, Input * facade = 0);
         /// Destructor
 		virtual ~InputFlac();
 
@@ -58,6 +58,8 @@ class Audio::InputFlac :    public FLAC::Decoder::Stream,
         unsigned long cachedBytes;
         
         ifstream f;
+
+        Audio::Input * facade;
 };
 
 #endif

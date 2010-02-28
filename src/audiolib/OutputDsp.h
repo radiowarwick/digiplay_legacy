@@ -17,18 +17,19 @@ class Audio::OutputDsp : public Audio::Output {
         OutputDsp(string channel);
         /// Destructor
         ~OutputDsp();
+        /// Gets audio from the connected input component.
+        virtual void getAudio(AudioPacket* audioData);
 
     protected:
         /// Process messages received from other components
-        void receiveMessage(PORT inPort, MESSAGE message);
-
+        virtual void receiveMessage(PORT inPort, MESSAGE message);
         /// Perform tasks when a component is connected
         virtual void onPatch(PORT localPort);
         /// Perform tasks when a component is disconnected
         virtual void onUnpatch(PORT localPort);
 
     private:
-          /// Dynamically loaded implementation object + handle
+        /// Dynamically loaded implementation object + handle
         Audio::Output *pImpl;
         string deviceName;
         void *dlHandle;

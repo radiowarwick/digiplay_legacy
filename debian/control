@@ -130,7 +130,7 @@ Description: Digital playout system management tool.
 
 Package: dps-mgmt
 Architecture: i386
-Depends: libc6, libpq5, libstdc++6, libgcc1, libssl0.9.8, dps-common
+Depends: libc6, libpqxx2.6.9, libstdc++6, libgcc1, libssl0.9.8, dps-common
 Recommends: dps-doc
 Description: Digital playout system management tool.
  Digiplay is a multi-studio digital playout system. It strives to provide

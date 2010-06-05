@@ -14,8 +14,10 @@
  *
  */
 $cfg['Auth']['dsn']     = null;
-$cfq['Auth']['LDAPDS']="ldapserver";
-$cfq['Auth']['LDAPsr']="ou=people,dc=radio,dc=warwick,dc=ac,dc=uk";
+
+$cfg['Auth']['LDAPDS']="ldapserver";
+$cfg['Auth']['LDAPsr']="ou=People,dc=example,dc=com";
+
 //The path to the Auth module
 $cfg['Auth']['dir']['root'] = $cfg['general']['toolkitRoot'] . '/Auth';
 
@@ -25,7 +27,7 @@ $cfg['Auth']['lifetime'] = 600;
 //The name of the template to be used for displaying permission errors. This is either a file name
 //or a template id. This must not contain sensitive information as it is 
 //not always secured
-$cfg['Auth']['permissionErrorTemplate'] = 'permissionError.tpl';
+$cfg['Auth']['permissionErrorTemplate'] = 'dpspermissionError.tpl';
 
 //The module in which the "permissionErrorTemplate" resides
 $cfg['Auth']['permissionErrorTemplateModule'] = 'tkfecommon';
@@ -42,7 +44,12 @@ $cfg['Auth']['rendererPermissionErrorTemplate'] = 'rPermissionError.tpl';
 
 //The anonymous user for the site. This user account is what non-loggedin users
 //browse as.
-$cfg['Auth']['anonuser'] = 'guest';
+$cfg['Auth']['anonuser'] = 'Guest';
+$cfg['Auth']['anonuserID'] = 2;
+//redirect user to login if they fail auth and are logged in as the guest account (y/n)
+$cfg['Auth']['anonuserredirect'] = 'y';
+//template to redirect users from above too
+$cfg['Auth']['anonuserRedirectTemplateID'] = 11;
 
 //Editable fields in the users table
 $cfg['Auth']['userfields'] = array('firstname' => 'First Name',
@@ -57,6 +64,9 @@ $cfg['Auth']['groupfields'] = array('groupname' => 'Group Name',
 $cfg['Auth']['realmfields'] = array('name' => 'Realm Name',
                                     'description' => 'Description');   
 
-$cfg['Auth']['authClassModule'] = 'Auth';
+$cfg['Auth']['authClassModule'] = 'AuthLDAP';
+$cfg['Auth']['authUtilClassModule'] = 'AuthUtil';
+$cfg['Auth']['defaultNewUserGroup'] = 1;
+$cfg['Auth']['AdminGroup'] = 2;
 
 ?>

@@ -70,11 +70,11 @@ class AuthBase {
 		Session::getInstance();
 		//See if the user is logged on through their session
 		$sesLoggedIn = $this->isSessionLoggedIn();
-		if($sesLoggedIn !== false){
+		if($sesLoggedIn != false){
 			$this->loggedIn = true;
 			$this->setUser($sesLoggedIn);
 		} else {
-		  //BasicLogger::logMessage("No valid session found, user '$sesLoggedIn' now logged in", self::module, 'debug');
+			BasicLogger::logMessage("No valid session found, user '$sesLoggedIn' now logged in", self::module, 'debug');
 		}
 	}
 	

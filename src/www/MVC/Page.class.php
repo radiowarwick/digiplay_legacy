@@ -71,14 +71,16 @@ class Page implements IController {
 			##############
 			## Include the Auth and AuthUtil classes
 
-			$modulePath  = $cfg['general']['toolkitRoot'] . '/' . $cfg['Auth']['authClassModule'];
-			
+#			$modulePath  = $cfg['general']['toolkitRoot'] . '/' . $cfg['Auth']['authClassModule'];
+		    $modulePath  = $cfg['Auth']['dir']['root'];
+            $moduleName  = $cfg['Auth']['authClassModule'];
+
 			// try to include Auth
-			if(!include_once("$modulePath/Auth.class.php")){
-				throw new Exception("It was not possible to include Auth.class.php. I tried to find it here: $modulePath/Auth.class.php");
+			if(!include_once("$modulePath/$moduleName.class.php")){
+				throw new Exception("It was not possible to include Auth.class.php. I tried to find it here: $modulePath/$moduleName.class.php");
 			}
 			if(!class_exists("Auth")){
-				throw new Exception("The Auth.class.php ($modulePath/Auth.class.php) file was included but the Auth class could not be found");
+				throw new Exception("The $moduleName.class.php ($modulePath/$moduleName.class.php) file was included but the Auth class could not be found");
 			}
 			
 			// try to include AuthUtil

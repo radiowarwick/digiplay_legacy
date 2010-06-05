@@ -122,8 +122,16 @@ $cfg['Session']['lifetime'] = 3600;
 // for each install that your perform.
 $cfg['Session']['randomdata'] = 'g9YU9Cnbt3xvL0jrZKr3v5xoW2pLhCpzDc';
 
-// LDAP Authentication
+// Authentication module to use (AuthDB, AuthLDAP)
+$cfg['Auth']['authClassModule'] = 'AuthLDAP';
+
+// Timout of authentication (how long before user logged out)
+$cfg['Auth']['lifetime'] = 600;
+
+// For LDAP only: LDAP server hostname (e.g. ldap.example.com)
 $cfg['Auth']['LDAPDS']="ldapserver";
+
+// For LDAP only: LDAP DN where users reside
 $cfg['Auth']['LDAPsr']="ou=People,dc=example,dc=com";
 
 // The path to the FCKeditor directory
@@ -147,3 +155,4 @@ $cfg['DPS']['dir']['scriptsDir'] = "/usr/local/bin";
 ## DO NOT PLACE ANYTHING BELOW HERE ##
 ######################################
 ?>
+

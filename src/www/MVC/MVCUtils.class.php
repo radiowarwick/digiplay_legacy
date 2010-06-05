@@ -303,7 +303,7 @@ class MVCUtils {
 		$fullPath = false;
 		
 		//Check for windows and unix-type full path
-		if(eregi('[A-Z]:', $template) !== false){
+		if(stristr('[A-Z]:', $template) !== false){
 			$fullPath = true;
 		}else if(substr($template, 0, 1) == '/'){
 			$fullPath = true;

@@ -160,7 +160,7 @@ CREATE OR REPLACE FUNCTION f_users_delete()
 		DELETE FROM usersconfigs WHERE userid = OLD.id;
 		DELETE FROM dirusers WHERE userid = OLD.id;
 		DELETE FROM scriptsusers WHERE userid = OLD.id;
-		DELETE FROM showplanusers WHERE userid = OLD.id;
+		DELETE FROM showplansusers WHERE userid = OLD.id;
 		DELETE FROM usersgroups WHERE userid = OLD.id;
 		DELETE FROM aw_sets_users WHERE user_id = OLD.id;
 		DELETE FROM audiousers WHERE userid = OLD.id;

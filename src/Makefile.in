@@ -55,13 +55,14 @@ ifeq ($(OUT_LIB),yes)
 	#if we're making a static library, use the archiver, otherwise make shared
     ifeq ($(OUT_STATIC),yes)
 		OUTPUT      =   lib$(OUT_BASE).a
-		LDFLAGS     :=   -cq $(DEST)/$(OUTPUT)
+		LDFLAGS     :=   -cq $(DEST)/$(OUTPUT) -L$(ROOT)/src/audiolib
 		LIBS		=	
 		STENLD			=	ar
     else
 		OUTPUT      =   lib$(OUT_BASE).so
 		LDFLAGS     :=   -shared -Wl,-soname,$(OUTPUT).$(VERSION) \
-						-o $(DEST)/$(OUTPUT).$(VERSION)
+						-o $(DEST)/$(OUTPUT).$(VERSION) \
+						-L$(ROOT)/src/audiolib
     endif
 endif
 

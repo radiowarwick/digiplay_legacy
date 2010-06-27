@@ -1,3 +1,0 @@
-#!/bin/sh
-deluser dps
-rm -rf /var/log/dps

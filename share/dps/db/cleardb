@@ -1,6 +1,0 @@
-#!/bin/bash
-#psql -c 'delete from audioartists; delete from artists; delete from sustschedule; delete from audiojinglepkgs; delete from jinglepkgs; delete from audio; delete from albums;alter sequence audioartists_id_seq restart 1; alter sequence artists_id_seq restart 1; alter sequence sustschedule_id_seq restart 1; alter sequence audio_id_seq restart 1; alter sequence albums_id_seq restart 1;' digiplay
-psql -c 'drop database digiplay' template1
-psql -c '\i digiplay.sql' template1
-psql -c '\i data.sql' digiplay
-./permissions

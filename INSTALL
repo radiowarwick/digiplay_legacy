@@ -1,0 +1,89 @@
+RaW Digital Playout Component Suite
+-----------------------------------
+
+This document provides a guide as to the installation of components in this
+package. Detailed installation instructions are now provided in dpsmanual.pdf.
+
+Configuration
+-------------
+Configuration for this software is stored in /etc/digiplay.conf. A sample config
+file is included called digiplay.conf. This should be copied to /etc and adjusted appropriately.
+
+Database Configuration
+----------------------
+1. Install postgresql database server and configure pg_hba.conf.
+2. Install tedia2sql
+3. Ensure /etc/tedia2sqlrc is edited so dropStatements = false
+4. From the digiplay root directory do:
+	make database
+	cd share/dps/db
+	./dpsinstall (as root or su postgres)
+
+Previous Database Configuration (bit crap and no longer applicable!)
+-------------------------------
+1. Install postgresql database server and configure pg_hba.conf.
+	you need to allow access (using psql for instance) from wherever you
+	will run the digiplay software.
+2. From digiplay root directory do as root:
+		psql template1
+3. Then enter: \i db/digiplay.sql
+	this will generate the admin and digiuser database accounts, and create
+	the digiplay database, tables, sequences and constraints.
+4. Then enter: \i db/data.sql
+	this will enter necessary data in the database which is needed.
+5. Exit psql, and run: db/permissions
+	this sets up the default permission on the database for digiplay_user.
+
+Note: You may need to configure /etc/postgresql/pg_hba.conf if you try to
+connect to the database from another machine.
+
+Compilation of Code
+-------------------
+This software requires the following software to be installed. Under debian
+this can be achieved by running apt-get install <package-list> where
+<package-list> is:
+	libpqxx-dev
+	libreadline5-dev
+	libncurses5-dev
+	libqt3-mt-dev
+	libldap2-dev
+	libcdparanoia0 (for playin application)
+	libflac++-dev (for new flac audio encoding)
+This will implicitly install the actual libraries as well. Other distributions
+and/or package management systems may require manual installation of these
+libraries.
+
+For development of the Digiplay Studio GUI the following packages are required:
+	qt3-designer
+	qt3-dev-tools
+
+To generate code documentation:
+	doxygen
+	
+Then do
+	make sue			(Sustainer service)
+	make backend		(System management application and tools)
+	make tools			(Management tools only)
+	make studio			(Studio applications)
+	make playin			(Audio playin application)
+
+	make all			(Make the lot!)
+
+This stuff isn't tested with the new Make system:
+	make install		(Installs the binaries in the INSTALLDIR directory)
+	make uninstall		(Removes the binaries from their INSTALLDIR directory)
+						INSTALLDIR is specified in the Makefile or on 
+						commandline
+	make suebackup		(Backup sustainer playlist to SUE_FILE)
+	make suerestore		(Restore sustainer playlist from SUE_FILE)
+						SUE_FILE is specified in the Makefile or on commandline
+
+Website Installation (In Progress)
+----------------------------------
+
+For the Web Import you will need the following packages
+Under debian this can be achieved by running apt-get install <package-list> where
+<package-list> is:
+    perl
+	libdbi-perl
+    libdbd-pg-perl

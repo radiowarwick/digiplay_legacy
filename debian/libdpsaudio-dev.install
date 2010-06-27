@@ -1,0 +1,2 @@
+src/audiolib/*.h usr/include/dpsaudio
+src/audiolib/*/*.h usr/include/dpsaudio

@@ -1,0 +1,118 @@
+# Default command tools
+CC			=	g++ -g3
+LD			=	g++ -g3
+MOC			?=	@/usr/share/qt3/bin/moc
+UIC			?=	@/usr/share/qt3/bin/uic
+
+# Set default output location, name and version
+DEST		=	.
+OUTPUT      =   $(OUT_BASE)
+VERSION		=	$(shell cat $(ROOT)/VERSION)
+DPSDIR		:=	/usr/local/share/dps
+# Generate object list from the modules provided
+# Note: addsuffix might not be portable
+# shared objects are those located directly in the src tree
+APP_OBJ		=	$(addsuffix .o,$(MODS))
+APP_QTOBJS	=	$(addsuffix .o,$(QT_MODS))
+SHARED_OBJS	=	$(addsuffix .o,$(SHARED_MODS))
+SHARED_QTOBJS = $(addsuffix .o,$(SHARED_QT_MODS))
+DPS_OBJ		=	$(addsuffix .o,$(DPS_MODS))
+
+OBJS        =   $(APP_OBJ) $(APP_QTOBJS) \
+				$(addprefix $(ROOT)/src/,$(SHARED_OBJS)) \
+				$(addprefix $(ROOT)/src/,$(SHARED_QTOBJS)) \
+				$(addprefix $(ROOT)/src/dps/,$(DPS_OBJ))
+HDRS		:=	$(addsuffix .h,$(MODS)) \
+				$(addsuffix .h,$(QT_MODS)) \
+				$(addprefix $(ROOT)/src/,$(addsuffix .h,$(SHARED_MODS)))\
+				$(addprefix $(ROOT)/src/dps,$(addsuffix .h,$(DPS_MODS)))
+QT_OBJS		=
+QT_HDRS		=
+
+# Define compiler and linker flags depending on whether we're
+# compiling a standard executable or a shared library
+CCINC		:=	-I. -I$(ROOT)/src -I$(ROOT)/src/audiolib -DDEBUG=4
+CCFLAGS		:=	$(DPSFLAGS) -Wall -O3 -D_THREAD_SAFE \
+				-D'VERSION="$(VERSION)"' -D'DPSDIR="$(DPSDIR)"' \
+				-D_FILE_OFFSET_BITS=64
+LDFLAGS		:=	-L$(ROOT)/src/audiolib -o $(DEST)/$(OUTPUT) 
+
+# if QT is enabled, we need to include the necessary compiler and 
+# linker options. We also need to make a few more objects and generate
+# the necessary header files
+ifeq ($(QT_ENABLED),yes)
+	CCINC	+=	-I/usr/share/qt3/mkspecs/default -I/usr/include/qt3
+	CCFLAGS	+=	-pipe -W -D_REENTRANT -DQT_NO_DEBUG -DQT_THREAD_SUPPORT \
+				-DQT_SHARED
+	LIBS	+=	-L/usr/share/qt3/lib -L/usr/X11R6/lib -lqt-mt #-lXext -lX11
+	QT_OBJS	=	$(addprefix moc_,$(APP_QTOBJS)) \
+				$(addprefix $(ROOT)/src/moc_,$(SHARED_QTOBJS))
+endif
+
+# if we're making a library, need to add the fPIC compiler option
+ifeq ($(OUT_LIB),yes)
+	CCFLAGS     :=   -fPIC $(CCFLAGS)
+	#if we're making a static library, use the archiver, otherwise make shared
+    ifeq ($(OUT_STATIC),yes)
+		OUTPUT      =   lib$(OUT_BASE).a
+		LDFLAGS     :=   -cq $(DEST)/$(OUTPUT) -L$(ROOT)/src/audiolib
+		LIBS		=	
+		STENLD			=	ar
+    else
+		OUTPUT      =   lib$(OUT_BASE).so
+		LDFLAGS     :=   -shared -Wl,-soname,$(OUTPUT).$(VERSION) \
+						-o $(DEST)/$(OUTPUT).$(VERSION) \
+						-L$(ROOT)/src/audiolib
+    endif
+endif
+
+# ....for when I get round to making it all work nicely :)
+MAKEDEPEND	=	$(CC) -M $(CCFLAGS) $(CCINC) -o $*.d $<
+
+.SUFFIXES: .c
+
+# uncomment to keep intermediate QT generated files
+.PRECIOUS: moc_%.cpp %.cpp %.h
+
+# make sure we don't try and compile moduels for the following commands
+.PHONY: clean
+
+# Generate the header file from the QT .ui file
+%.h: %.ui
+	@echo "Creating UI header file $@"
+	$(UIC) $< -o $@
+
+# Create the source code file from the QT files and the header file
+%.cpp: %.h %.ui %.ui.h
+	@echo "Creating Main source file for $*: $@"
+	$(UIC) $*.ui -i $< -o $@
+
+# Create the moc source code file from the header file
+moc_%.cpp: %.h
+	@echo "Creating moc source file for $*: $@"
+	$(MOC) $< -o $@
+
+# Command to compile a standard C++ class
+# TODO: Add dependance on header files without make using default rule!
+%.o: %.cpp
+	@echo "Creating Object file for $*: $@"
+	$(CC) $(CCFLAGS) -c $(CCINC) $< -o $@
+
+# Create the required output file from the given objects and place in the
+# destination specified
+$(OUTPUT): $(QT_OBJS) $(OBJS)
+	@if [ ! -d $(DEST) ]; then mkdir $(DEST); fi;
+	$(LD) $(LDFLAGS) $(OBJS) $(QT_OBJS) $(LIBS)
+	$(POSTCOMPILE)
+
+# standard
+all: $(OUTPUT)
+default: $(OUTPUT)
+
+# clean all object files, and remove the .h and .cpp files for QT forms only
+# i.e. we only remove *.h and *.cpp if there exists a *.ui
+clean:
+	@rm -f *.o $(OUTPUT) $(OUTPUT).$(VERSION)
+	@-$(foreach MOD,$(QT_MODS), rm -f moc_$(MOD).cpp)
+	@-$(foreach MOD,$(SHARED_QT_MODS), rm -f ../moc_$(MOD).cpp)
+	@-$(foreach MOD,$(QT_MODS), if [ -e $(MOD).ui ]; then rm -f $(MOD).cpp $(MOD).h; fi;)

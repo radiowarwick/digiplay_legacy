@@ -1,0 +1,10 @@
+src/www/Auth usr/share/dps/www
+src/www/CMS usr/share/dps/www
+src/www/config.php.template usr/share/dps/www
+src/www/DBAL usr/share/dps/www
+src/www/DPS usr/share/dps/www
+src/www/Logger usr/share/dps/www
+src/www/logs usr/share/dps/www
+src/www/MVC usr/share/dps/www
+src/www/Session usr/share/dps/www
+src/www/tkfecommon usr/share/dps/www

@@ -1,0 +1,43 @@
+#ifndef DBDEFINE
+#define DBDEFINE
+
+#define USER_SYSTEM "1"
+#define USER_GUEST "2"
+
+#define GROUP_EVERYONE "1"
+#define GROUP_ADMINISTRATORS "2"
+
+#define DIR_DIGIPLAY "1"
+#define DIR_MUSIC "2"
+#define DIR_BIN "3"
+#define DIR_ADVERTS "4"
+#define DIR_DEPARTMENTS "5"
+#define DIR_JINGLES "6"
+#define DIR_USERS "7"
+
+#define ALBUM_NONE "1"
+
+#define CONFIG_DEFAULTAWSET "1"
+
+enum AUDIO_TYPE {
+    AUDIO_TYPE_MUSIC = 1,
+    AUDIO_TYPE_JINGLE = 2,
+    AUDIO_TYPE_ADVERT = 3,
+    AUDIO_TYPE_PREREC = 4
+};
+
+enum AUDIO_FILETYPE {
+    AUDIO_FILETYPE_RAW = 1,
+    AUDIO_FILETYPE_FLAC = 2,
+    AUDIO_FILETYPE_WAV = 3
+};
+
+enum JINGLE_TYPE {
+    JINGLE_TYPE_GENERIC = 1,
+    JINGLE_TYPE_IDENT = 2,
+    JINGLE_TYPE_CONTACT = 3,
+    JINGLE_TYPE_NEWS = 4,
+    JINGLE_TYPE_SHOW = 5
+};
+
+#endif

@@ -1,0 +1,214 @@
+#!/bin/bash
+printf "\n"
+printf "Radio Warwick Digital Playout System\n"
+printf "Database Installation script\n"
+printf "Copyright (c) 2006 Radio Warwick\n\n"
+
+# check we can access the pwd. This problem will usually because the user
+# has su'ed from root to a user without access to the pwd which then causes
+# errors further on.
+DIR=`pwd`
+cd $DIR > /dev/null 2>&1
+if [[ $? > 0 ]]; then
+	printf "Cannot cd to `pwd`, does this user have permission?\n"
+	printf "Installation Aborted.\n"
+	exit -1
+fi
+
+# check for some basic linux commands are available. fail if we're missing
+# these very basic commands!
+if [[ ! (`which sed` && `which grep` && `which cut`) ]]; then
+	printf "Missing basic unix tools. Cannot continue.\n"
+	exit -1;
+fi
+
+# check we have PostgreSQL client somewhere in the path.
+if [[ ! `which psql` ]]; then
+	printf "Cannot find PostgreSQL client (psql) in path.\n"
+	exit -1;
+fi
+
+# define psql command
+PSQL=`which psql`
+
+# check version of psql client and warn if less than major=8
+PSQL_MAJOR=`psql --version | grep psql | cut -f 3 -d ' ' | cut -f 1 -d '.'`
+if [[ $PSQL_MAJOR < 8 ]]; then
+	printf "WARNING: PostgreSQL client is less than 8.0.\n"
+	printf "It is recommended to use PostgreSQL v8.0 or later.\n"
+fi
+
+# check if the default configuration file exists, and if not warn user
+if [ ! -f /etc/digiplay.conf ]; then
+    printf "No digiplay configuration file found, please create one.\n"
+    printf "Will assume database name of \'digiplay\'.\n"
+    printf "Do you wish to abort installation? (Y/n) "
+    read cont;
+    if [ "${cont:-Y}" == "Y" ] || [ "$cont" == "y" ]; then
+        printf "Database installation aborted.\n"
+        exit 0;
+    fi
+	# default values
+    DBNAME=digiplay
+	DBHOST="127.0.0.1"
+	DBPORT="5432"
+    DBUSER=digiplay_user
+    DBPASS=abcdef
+else
+	printf "Parsed /etc/digiplay.conf\n"
+	# parse the following values from the configuration file
+    DBNAME=`cat /etc/digiplay.conf | grep DB_NAME | cut -d "=" -f 2`
+	DBHOST=`cat /etc/digiplay.conf | grep DB_HOST | cut -d "=" -f 2`
+	DBPORT=`cat /etc/digiplay.conf | grep DB_PORT | cut -d "=" -f 2`
+    DBUSER=`cat /etc/digiplay.conf | grep DB_USER | cut -d "=" -f 2`
+    DBPASS=`cat /etc/digiplay.conf | grep DB_PASS | cut -d "=" -f 2`
+fi
+WWWUSER=www
+
+# display the values which will be used
+printf "Database: $DBNAME\n"
+printf "Host:     $DBHOST\n"
+printf "Port:     $DBPORT\n"
+printf "Username: $DBUSER \n"
+printf "Password: (hidden) \n\n"
+
+# compile the psql command with host and port specification if necessary
+if [[ $DBHOST != "127.0.0.1" ]]; then 
+	PSQL="$PSQL -h $DBHOST"
+fi
+if [[ $DBPORT != "5432" ]]; then 
+	PSQL="$PSQL -p $DBPORT"
+fi
+
+# check the current user has access to access the database server
+$PSQL -ls > /dev/null 2>&1
+if [[ $? > 0 ]]; then
+	printf "User '$USER' does not have database access.\n"
+	printf " -> su to the 'postgres' user, or create a role for this user\n";
+	printf "Installation Aborted.\n"
+	exit -1;
+fi
+
+# try to create database
+printf "Checking for existing database...";
+if [ `$PSQL -ls | grep " $DBNAME " | wc -l` == "1" ]; then
+	printf "\n"
+	printf " -> Found existing database '$DBNAME'\n";
+	printf "\nDo you want to backup existing database? [Y/n]: ";
+	read backup;
+	if [ "${backup:-Y}" == "Y" ] || [ "$backup" == "y" ]; then
+		printf " -> Backing up current sustainer playlist..."
+		$PSQL -tc "SELECT md5 FROM audio WHERE sustainer='t'" $DBNAME \
+				| cut -d ' ' -f 2 > sustainer.bak
+		printf "done\n"
+		printf " -> Current sustainer playlist saved to 'sustainer.bak'\n"
+		printf " -> Backing up existing database..."
+		if [ `$PSQL -ls | grep ${DBNAME}_bak | wc -l` == "1" ]; then
+			$PSQL -qc "DROP DATABASE ${DBNAME}_bak;" template1
+		fi
+		$PSQL -qc "ALTER DATABASE ${DBNAME} RENAME TO ${DBNAME}_bak;" template1
+		printf "done.\n"
+		printf " -> Existing database saved as ${DBNAME}_bak\n"
+	else
+		printf " -> Removing existing database..."
+		$PSQL -qc "DROP DATABASE ${DBNAME};" template1
+		printf "done.\n"
+	fi
+else
+	printf "none found.\n"
+fi
+
+# create the database and check if we were successful
+printf "Creating ${DBNAME} database..."
+createdb ${DBNAME} 1>/dev/null
+#$PSQL -qc "CREATE DATABASE ${DBNAME};" template1
+if [[ $? > 0 ]]; then
+	printf "Unable to create database ${DBNAME}.\n"
+	printf " -> Does this user have permission to create databases?\n"
+	printf "Installation Aborted.\n"
+	exit -1;
+fi
+createlang plpgsql ${DBNAME} 1>/dev/null 2>&1
+printf "done.\n"
+
+# create user for digiplay software as specified in config file, if it doesn't
+# already exist
+printf "Creating digiplay database users..."
+if [ ! `$PSQL -tqc "select usename from pg_user where usename='$DBUSER';" template1` ]; then
+	$PSQL -qc "CREATE USER $DBUSER ENCRYPTED PASSWORD '$DBPASS';" template1
+fi
+if [ ! `$PSQL -tqc "select usename from pg_user where usename='$WWWUSER';" template1` ]; then
+	$PSQL -qc "CREATE USER $WWWUSER;" template1
+fi
+printf "done.\n"
+
+# create all the relations, views, etc
+printf "Now generating database objects...\n"
+if [[ ! -f digiplay.sql ]]; then
+	printf " -> No database schema available!\n"
+	printf "Installation Aborted.\n"
+	exit -1
+fi
+if [[ ! -f digiplay-views.sql ]]; then
+	printf " -> Missing database view specifications!\n"
+	printf "Installation Aborted.\n"
+	exit -1
+fi
+if [[ ! -f digiplay-triggers.sql ]]; then
+	printf " -> Missing database trigger specifications!\n"
+	printf "Installation Aborted.\n"
+	exit -1
+fi
+if [[ ! -f digiplay-data.sql ]]; then
+	printf " -> Missing database default data!\n"
+	printf "Installation Aborted.\n"
+	exit -1
+fi
+
+printf " -> Creating objects..."
+$PSQL -qf digiplay.sql $DBNAME 2>/dev/null
+if [[ $? > 0 ]]; then
+	printf " -> Failed to generate database objects\n"
+	printf "Installation Aborted. Empty database remains.\n"
+	exit -1
+fi
+printf "done.\n"
+printf " -> Creating views..."
+$PSQL -qf digiplay-views.sql $DBNAME 2>/dev/null
+if [[ $? > 0 ]]; then
+	printf " -> Failed to generate database views\n"
+	printf "Installation Aborted. Mess remains.\n"
+	exit -1
+fi
+printf "done.\n"
+printf " -> Creating triggers..."
+$PSQL -qf digiplay-triggers.sql $DBNAME 2>/dev/null
+if [[ $? > 0 ]]; then
+	printf " -> Failed to generate database triggers\n"
+	printf "Installation Aborted. Mess remains.\n"
+	exit -1
+fi
+printf "done.\n"
+printf " -> Inserting default data..."
+$PSQL -qf digiplay-data.sql $DBNAME 2>/dev/null
+if [[ $? > 0 ]]; then
+	printf " -> Failed to insert default data\n"
+	printf "Installation Aborted. Mess remains.\n"
+	exit -1
+fi
+printf "done.\n"
+
+# grant permissions to the digiplay_user on everything (for now)
+printf "Granting database permissions..."
+SQL="(SELECT relname AS name FROM pg_class WHERE (relkind = 'r' OR 
+relkind = 'S') AND relname !~ '^pg_' AND relname !~ '^sql_') UNION (SELECT
+viewname AS name FROM pg_views WHERE schemaname = 'public') ORDER BY name"
+OBJ=`$PSQL -t -c "${SQL}" $DBNAME`
+OBJ=`echo ${OBJ} | sed 's/ /, /g'`
+SQL="GRANT ALL ON ${OBJ} TO $DBUSER"
+$PSQL -qc "${SQL}" $DBNAME
+SQL="GRANT ALL ON ${OBJ} TO $WWWUSER"
+$PSQL -qc "${SQL}" $DBNAME
+printf "done.\n"
+
+printf "Installation Complete.\n\n";

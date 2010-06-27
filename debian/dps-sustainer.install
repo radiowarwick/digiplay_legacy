@@ -1,0 +1,4 @@
+src/sueplay/sueplay usr/bin
+src/suesched/suesched usr/bin
+share/man/man1/sueplay.1.gz usr/share/man/man1
+share/man/man1/suesched.1.gz usr/share/man/man1

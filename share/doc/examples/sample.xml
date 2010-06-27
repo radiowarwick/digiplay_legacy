@@ -1,0 +1,19 @@
+<!-- Sample XML layout for a ripped CD track -->
+<?xml version="1.0"?>
+<!DOCTYPE audio_v1 SYSTEM "dps.dtd">
+<audio md5="06b4bfbfe7f57d98d9f0f1fe5c8cde4f" 
+		type="music"
+		creation_date="2003-09-26">
+	<album name="Silent Sigh"
+			origin="Reclib"
+			reclibid="C02-0113" />
+	<segment>
+		<title>Silent Sigh</title>
+	    <artist name="Badly Drawn Boy"></artist>
+		<smpl length="10526376"
+				trim_start="22539"
+				trim_end="10300684"
+				fade_in="0"
+				fade_out="10526376" />
+	</segment>
+</audio>

@@ -1,0 +1,1549 @@
+/* RaW 1251AM DPS website stylesheet
+   version: 0.1.0
+   revision date: 16/06/2006 */
+
+/* body formatting definitions */
+
+body {
+	background-color: #ffffff;
+	color: #000000;
+	border-style: none;
+	padding: 0px 0px 0px 0px;
+	font-family: Arial;
+	text-align: center;
+}
+
+/* end body formatting definitions */
+
+a {
+    text-decoration: none;
+    color: blue;
+}
+
+a:hover {
+    color: #329932;
+}
+
+div.left {
+	text-align: left;
+}
+
+/* login page */
+
+div.login_container {
+	margin-left: auto;
+	margin-right: auto;
+	text-align: left;
+	width: 294px;
+	height: 196px;
+	border-style: solid;
+	border-width: 1px;
+	padding: 3px;
+}
+
+div.login_container_footer {
+	margin-left: auto;
+	margin-right: auto;
+	text-align:left;
+	width: 300px;
+	height: 30px;
+	border-style: none;
+	padding: 0px;
+}
+div.login_container_footer_left {
+	text-align: left;
+	/*width: 150px;
+	height: 30px;*/
+	border: 0px none #000000;
+	padding: 0px;
+	color: #039dbd;
+	font-size: 10px;
+	position: relative;
+	float: left;
+}
+
+div.login_container_footer_right {
+	/*width: 150px;
+	height: 30px;*/
+	padding: 0px;
+	float:	right;
+	border: 0px none #000000;
+}
+
+div.login_container_footer_right img {
+	border: 0px none #000000;
+	padding:	0px;
+}
+div.login_header {
+	width: 294px;
+	height: 30px;
+	padding: 0px;
+	border-style: none;
+}
+
+div.login_title {
+	width: 294px;
+	height: 80px;
+	padding: 0px;
+	border-style: none;
+	font-size: 60px;
+	font-weight: bold;
+}
+
+div.login_form {
+	width: 294px;
+	height: 94px;
+	padding: 0px;
+	border-style: none;
+	font-size: 20px;
+}
+
+div.login_passwordError {
+	color: #ff0000;
+	font-size: 11px;
+}
+/* end login page */
+
+/* home page */
+div.centreContainer {
+  position: relative;
+  margin: 0 auto;
+  text-align: left;
+  width:  800px;
+}
+
+div.home_titleBar {
+  height: 30px;
+}
+
+div.home_titleL {
+  float:  left;
+  width:  620px;
+  border: 1px;
+  height: 30px;
+  background-image: url(images/hometitlebgL.png);
+  background-repeat: repeat-x;
+  position: relative;
+}
+
+img.home_titleOverlap {
+  position:  absolute; right: 0px; 
+}
+
+img.home_title {
+  float:  left;
+  border: 0px;
+}
+
+div.home_titleR {
+  float:  right;
+  width:  180px;
+  height: 30px;
+  border: 1px;
+  background-image: url(images/hometitlebgR.png);
+  background-repeat: repeat-x;
+}
+
+div.home_titleR img {
+  margin-top:	2px;
+  margin-right:	2px;
+  border: 0px;
+  float:	right;
+}
+
+div.home_navigateBar {
+  clear:  left;
+  padding-top:	2px;
+  width:  800px;
+}
+
+div.home_navigateBar img {
+  padding-left:	10px;
+  padding-top:	20px;
+  border: 0px;
+}
+
+div.home_musicNav {
+  border:  1px solid #ffffff;
+  width:  198px;
+  float:  left;
+  background-color: #015769;
+}
+
+div.home_musicNavTitle {
+  height: 114px;
+}
+
+div.home_musicNavTitle a {
+  display:block; width:198px; height:114px;
+}
+
+div.home_musicNavDesc {
+  height: 20px;
+  color:  #ffffff;
+  text-align: center;
+  font-size:  12px;
+  font-weight: bold;
+  border-top-color: #ffffff;
+  padding-top:	3px;
+  border-top-width: 1px;
+  border-top-style: solid;
+}
+
+div.home_musicNavDesc a {
+  color:  #ffffff;
+  display:block; width:198px; height:20px;
+}
+
+div.home_showNav {
+  border: 1px solid #ffffff;
+  width:  198px;
+  float:  left;
+  background-color: #017289;
+}
+div.home_showNavDesc a {
+  color:  #ffffff;
+  display:block; width:198px; height:20px;
+}
+
+div.home_showNavTitle {
+  height: 114px;
+}
+
+div.home_showNavTitle a {
+  display:block; width:198px; height:114px;
+}
+
+div.home_showNavDesc {
+  height: 20px;
+  color:  #ffffff;
+  text-align: center;
+  font-size:  12px;
+  font-weight: bold;
+  border-top-color: #ffffff;
+  padding-top:	3px;
+  border-top-width: 1px;
+  border-top-style: solid;
+}
+div.home_sueNav {
+  border: 1px solid #ffffff;
+  width:  198px;
+  float:  left;
+  background-color: #0186A3;
+}
+div.home_sueNavDesc a {
+  color:  #ffffff;
+  display:block; width:198px; height:20px;
+}
+
+
+div.homesueNavDesc a {
+  color:  #ffffff;
+  display:block; width:198px; height:20px;
+}
+
+div.home_sueNavTitle {
+  height: 114px;
+}
+
+div.home_sueNavTitle a {
+  display:block; width:198px; height:114px;
+}
+
+div.home_sueNavDesc {
+  height: 20px;
+  color:  #ffffff;
+  text-align: center;
+  font-size:  12px;
+  font-weight: bold;
+  border-top-color: #ffffff;
+  padding-top:	3px;
+  border-top-width: 1px;
+  border-top-style: solid;
+}
+div.home_studioNav {
+  border: 1px solid #ffffff;
+  width:  198px;
+  float:  left;
+  background-color: #01A6C9;
+}
+div.home_studioNavDesc a {
+  color:  #ffffff;
+  display:block; width:198px; height:20px;
+}
+
+div.home_studioNavTitle {
+  height: 114px;
+}
+
+div.home_studioNavTitle a {
+  display:block; width:198px; height:114px;
+}
+
+div.home_studioNavDesc {
+  height: 20px;
+  color:  #ffffff;
+  text-align: center;
+  font-size:  12px;
+  font-weight: bold;
+  border-top-color: #ffffff;
+  padding-top:	3px;
+  border-top-width: 1px;
+  border-top-style: solid;
+}
+
+div.home_content {
+  padding-top:	5px;
+  clear:  left;
+}
+
+div.home_contentL {
+  float:  left;
+}
+
+div.home_contentMid {
+  float:  left;
+}
+
+div.home_featuresBox {
+  padding:  1px;
+  float:  left;
+  width:  195;
+  background-color: #B7F2FF;
+  border-style:	solid;
+  border-color:	#000000;
+  border-top-width: 1px;
+  border-left-width:  0px;
+  border-bottom-width:	1px;
+  border-right-width: 1px;
+  min-height: 201px;
+  line-height:	1.5;
+}
+
+div.home_featuresBox b {
+  color:  #015769;
+  font-weight:	bold;
+  font-size:  16pt;
+}
+
+div.home_featuresBox a {
+  color:  #000000;
+  font-weight:	bold;
+  font-size:  12pt;
+}
+
+div.home_userBox {
+  padding: 1px;
+  border-style: solid;
+  border-color:	#000000;
+  border-top-width: 1px;
+  border-left-width:  1px;
+  border-bottom-width:	0px;
+  border-right-width: 0px;
+  width:  250px;
+  font-size:  10pt;
+  line-height:	1.5;
+  min-height: 62px;
+}
+div.home_userBox a{
+  color:  #000000;
+}
+div.home_userBox b{
+  font-weight:	bold;
+}
+
+div.home_sueBox {
+  padding:  1px;
+  border-style: solid;
+  border-color:	#000000;
+  border-top-width: 1px;
+  border-left-width:  1px;
+  border-bottom-width:	0px;
+  border-right-width: 1px;
+  width:  344px;
+  min-height: 80px;
+  color:  #017289;
+}
+
+div.home_sueBox a {
+  color:  #017289;
+  padding-left:	3px;
+  font-weight:	bold;
+  font-size:  11pt
+}
+table.home_playlist {
+  font-size:  11pt;
+}
+
+table.home_playlist th {
+  text-align: left;
+  font-weight:	normal;
+  color:  #015769;
+}
+
+table.home_playlist td {
+  font-weight:	bold;
+  color:  #015769;
+}
+
+table.home_stats {
+  font-size:  11pt;
+}
+
+table.home_stats th {
+  text-align: left;
+  font-weight:	normal;
+  color:  #015769;
+}
+
+table.home_stats td {
+  font-weight:	bold;
+  color:  #015769;
+}
+div.home_statsBox {
+  padding:  1px;
+  border-style: solid;
+  border-color:	#000000;
+  border-top-width: 1px;
+  border-left-width:  1px;
+  border-bottom-width:	1px;
+  border-right-width: 0px;
+  clear: left;
+  width:  250px;
+  min-height: 92px;
+}
+div.home_scheduleBox {
+  padding:  1px;
+  border-style: solid;
+  border-color:	#000000;
+  border-top-width: 1px;
+  border-left-width:  1px;
+  border-bottom-width:	1px;
+  border-right-width: 1px;
+  width:  344px;
+  min-height: 80px;
+  color:  #0186A3;
+}
+
+div.home_scheduleBox a{
+  color:  #0186A3;
+  font-weight:	bold;
+  padding-left:	3px;
+}
+table.home_schedule {
+  font-size:  11pt;
+}
+
+table.home_schedule th {
+  text-align: left;
+  font-weight:	normal;
+  color:  #015769;
+}
+
+table.home_schedule td {
+  font-weight:	bold;
+  color:  #015769;
+}
+div.copyright {
+  float:  none;
+  clear:  both;
+  padding-top:	3px;
+  color:  #039dbd;
+  font-size:  10pt;
+}
+
+div.frame_fullTitleBar {
+  position: absolute; left: 0px; top: 0px;
+  width:  800px;
+}
+div.frame_fullTitleL {
+  float:  left;
+  width:  640px;
+  border: 1px;
+  height: 30px;
+  background-image: url(images/hometitlebgL.png);
+  background-repeat: repeat-x;
+  position: relative;
+}
+div.frame_halfTitleBar {
+  position: absolute; left: 0px; top: 0px;
+  width:  500px;
+}
+div.frame_halfTitleL {
+  float:  left;
+  width:  350px;
+  border: 1px;
+  height: 30px;
+  background-image: url(images/hometitlebgL.png);
+  background-repeat: repeat-x;
+  position: relative;
+}
+
+div.frame_titleR {
+  float:  left;
+  width:  150px;
+  height: 30px;
+  border: 1px;
+  background-image: url(images/hometitlebgR.png);
+  background-repeat: repeat-x;
+}
+
+div.frame_titleR img {
+  float:  right;
+  padding:	2px;
+  border: 0px;
+}
+
+div.frame_musicsidebar {
+  margin-top:	30px;
+  padding:	1px 0px;
+  float:  left;
+  width:  180px;
+  background-color: #015769;
+  min-height: 600px;
+  height: 600px;
+}
+
+div.frame_musicsidebar img {
+  padding-top:	15px;
+}
+div.frame_suesidebar img {
+  padding-top:	15px;
+}
+div.frame_suesidebar {
+  margin-top:	30px;
+  padding:	1px 0px;
+  float:  left;
+  width:  180px;
+  background-color: #0186A3;
+  min-height: 600px;
+  height: 600px;
+}
+div.frame_showsidebar {
+  margin-top:	30px;
+  padding:	1px 0px;
+  float:  left;
+  width:  180px;
+  background-color: #017289;
+  min-height: 600px;
+  height: 600px;
+}
+div.frame_showsidebar img {
+  padding-top:	15px;
+}
+div.frame_studiosidebar {
+  margin-top:	30px;
+  padding:	1px 0px;
+  float:  left;
+  width:  180px;
+  background-color: #01A6C9;
+  min-height: 600px;
+  height: 600px;
+}
+div.frame_studiosidebar img {
+  padding-top:	15px;
+}
+div.frame_rightside {
+  float:  left;
+  width:  608px;
+  
+}
+
+div.frame_musicsearchbox {
+  float:  left;
+  height: 148px;
+  width:  320px;
+  padding:  1px;
+  padding-top:	38px;
+  border-style: solid;
+  border-color:	black;
+  border-left-width:  0px;
+  border-top-width: 0px;
+  border-right-width: 1px;
+  border-bottom-width:	1px;
+  color:  #015769;
+  font-size:  14pt;
+}
+div[class = frame_musicsearchbox] {
+	height:	74px;
+  width:  318px;
+}
+div.frame_suesearchbox {
+  float:  left;
+  height: 148px;
+  width:  320px;
+  padding:  1px;
+  padding-top:	38px;
+  border-style: solid;
+  border-color:	black;
+  border-left-width:  0px;
+  border-top-width: 0px;
+  border-right-width: 1px;
+  border-bottom-width:	1px;
+  color:  #015769;
+  font-size:  14pt;
+}
+div[class = frame_suesearchbox] {
+	height:	74px;
+  width:  318px;
+}
+img.frame_sidebarlogo {
+  margin-bottom:  5px;
+}
+
+div.frame_musicrequestbox {
+  height: 148px;
+  float:  left;
+  width:  284px;
+  padding:  1px;
+  border-style: solid;
+  border-color:	black;
+  border-left-width:  0px;
+  border-top-width: 1px;
+  border-right-width: 1px;
+  border-bottom-width:	1px;
+  color:  #015769;
+  font-size:  12pt;
+}
+div[class = "frame_musicrequestbox"] {
+  height: 110px;
+  width:  284px;
+}
+div.error{
+  font-size:  8pt;
+  color:  #ff0000;
+}
+div.frame_musicboxerror{
+  font-size:  8pt;
+  color:  #ff0000;
+}
+input.frame_musicrequestcmd {
+  float:  right;
+  position: relative; right: 10px;
+}
+div.frame_musicrequestbox a{
+  clear:  both;
+  font-size:  9pt;
+  color:  #015769;
+}
+
+div.frame_content {
+  clear:  both;
+  width:  600px;
+  padding:  10px;
+	padding-top:	40px;
+  padding-bottom: 10px;
+/*  border-style:	solid;
+  border-color:	#000000;*/
+  border-top-width: 0px;
+  border-bottom-width:	1px;
+  border-left-width:  1px;
+  border-right-width: 1px;
+}
+div.frame_bottom {
+  clear:  both;
+}
+
+div.frame_sidebarshow {
+  color:  #ffffff;
+  font-weight:	bold;
+  font-size:  14pt;
+  width:  179px;
+  border-style:	solid;
+  border-color:	#000000;
+  border-top-width: 1px;
+  border-bottom-width:	1px;
+  border-left-width:  0px;
+  border-right-width: 0px;
+  background-color: #017289;
+  margin-bottom:  5px;
+  padding: 1px 0px 1px 0px;
+  text-align:center;
+}
+div.frame_sidebarshow a:hover {
+  color: white;
+}
+div.frame_sidebarsue {
+  color:  #ffffff;
+  font-weight:	bold;
+  font-size:  14pt;
+  width:  179px;
+  border-style:	solid;
+  border-color:	#000000;
+  border-top-width: 1px;
+  border-bottom-width:	1px;
+  border-left-width:  0px;
+  border-right-width: 0px;
+  background-color: #0186A3;
+  margin-bottom:  5px;
+  padding: 1px 0px 1px 0px;
+  text-align:center;
+}
+div.frame_sidebarsue a:hover {
+  color: white;
+}
+div.frame_sidebarmusic {
+  color:  #ffffff;
+  font-weight:	bold;
+  font-size:  14pt;
+  width:  179px;
+  border-style:	solid;
+  border-top-width: 1px;
+  border-bottom-width:	1px;
+  border-left-width:  0px;
+  border-right-width: 0px;
+  border-color:	#000000;
+  background-color: #015769;
+  margin-bottom:  5px;
+  padding-left: 5px;
+  padding: 1px 0px 1px 0px;
+  text-align:center;
+}
+div.frame_sidebarmusic a:hover {
+  color: white;
+}
+div.frame_sidebarstudio {
+  color:  #ffffff;
+  font-weight:	bold;
+  font-size:  14pt;
+  width:  179px;
+  border-style:	solid;
+  border-color:	#000000;
+  border-top-width: 1px;
+  border-bottom-width:	1px;
+  border-left-width:  0px;
+  border-right-width: 0px;
+  background-color: #01A6C9;
+  margin-bottom:  5px;
+  text-align:center;
+  padding: 1px 0px 1px 0px;
+}
+div.frame_sidebarstudio a:hover {
+  color: white;
+}
+div.frame_sidebarshow a {
+  color:  #ffffff;
+}
+div.frame_sidebarsue a {
+  color:  #ffffff;
+}
+div.frame_sidebarstudio a {
+  color:  #ffffff;
+}
+div.frame_sidebarmusic a {
+  color:  #ffffff;
+}
+
+div.frame_showsidebarlinks {
+  margin-bottom:  10px;
+  padding:  1px;
+}
+
+div.frame_showsidebarlinks a {
+  color:  #B1F0FE
+}
+div.frame_studiosidebarlinks {
+  margin-bottom:  10px;
+  padding:  1px;
+}
+
+div.frame_studiosidebarlinks a {
+  color:  #B1F0FE
+}
+div.frame_suesidebarlinks {
+  margin-bottom:  10px;
+  padding:  1px;
+}
+
+div.frame_suesidebarlinks a {
+  color:  #B1F0FE
+}
+div.frame_musicsidebarlinks {
+  margin-bottom:  10px;
+  padding:  1px;
+}
+
+div.frame_musicsidebarlinks a {
+  color:  #B1F0FE
+}
+
+div.frame_submenuitem {
+  font-weight: bold;
+  margin: 0px 5px;
+  padding: 6px 0px 0px 0px;
+}
+div.frame_submenuitem a:hover {
+  color: #B1F0FE;
+}
+
+/* 
+ * Titles and subtitles here
+ */
+br.ClearL {
+	clear:	left;
+}
+br.ClearR {
+	clear:	right;
+}
+br.ClearLR {
+	clear:	both;
+}
+div.FloatL {
+	float:	left;
+}
+div.bigTitle {
+  font-size:  18pt;
+  color:  #015769;
+  font-weight:	bold;
+}
+div.subTitle {
+  color:  #015769;
+  font-size:  12pt;
+}
+div.rightLinks {
+  float:  right;
+  font-size:	9pt;
+  margin: 0px;
+}
+/*
+ * Music styles here
+ */
+div.music_mini {
+	font-size:	9pt;
+}
+div.musicResultInfo {
+  float:  left;
+  color:  #015769;
+  font-size:  11pt;
+}
+
+div.musicResultSorts {
+  float:  right;
+  color:  #015769;
+  font-size:  11pt;
+  vertical-align: bottom;
+}
+
+table.musicSearchTable {
+  clear:  both;
+  border: 2px solid #000000;
+  border-collapse: collapse;
+  width:  604px;
+  border-spacing: 0px;
+  empty-cells:	show;
+  font-size:  11pt;
+}
+table.musicSearchTable a {
+  font-weight:	bold;
+  border: 0px solid #000000;
+}
+table.musicSearchTable td {
+  border: 2px ridge #000000;
+}
+table.musicSearchTable th {
+  vertical-align: middle;
+  text-align: center;
+  border: 2px ridge #000000;
+}
+
+img.musicSearchTableTh {
+  border: 0px solid #000000;
+}
+
+
+div.musicCensoredLable {
+  font-weight:	bold;
+  color:  #ff0000;
+}
+div.musicPossibleSwearLable {
+  font-weight:	bold;
+  color:  #aaaa00;
+}
+div.musicSearchPages {
+  float:  left;
+  color:  #015769;
+  font-size:  11pt;
+}
+div.musicSearchFormSubmit {
+  float:  right;
+}
+
+div.musicTrackDetailsLinks a {
+  padding-left:	50px;
+  float:  left;
+  font-size:  10pt;
+  color:  #015769;
+}
+
+div.musicTrackHolder {
+  clear:  both;
+  width:  100%;
+}
+
+div.musicTrackDetailsL {
+  float:  left;
+  width:  300px;
+}
+
+table.musicShowTrackInfo {
+  width:  100%;
+  font-size:  11pt;
+  color:  #015769;
+}
+
+div.musicTrackCommentTools {
+  font-size:  10pt;
+  line-height:	1.5;
+  font-weight:	bold;
+}
+
+div.musicTrackCommentTools a{
+  color:  #015769;
+}
+table.musicShowTrackInfo th {
+  vertical-align: top;
+  text-align: right;
+}
+div.musicTrackDetailsR {
+  float:  left;
+  width:  300px;
+}
+div.musicTrackDetailsR a {
+  font-size:  10pt;
+  color:  #015769;
+}
+
+div.musicTrackDetailsR b {
+  font-size:  12pt;
+  color:  #015769;
+}
+
+div.musicCensorInfo1 {
+  float:  left;
+  padding-left:	50px;
+  width:  200px;
+  font-weight:	bold;
+  color:  #015769;
+  font-size:  10pt;
+}
+
+div.musicCensorInstructions1 {
+  float:  right;
+  padding-right:  55px;
+  color:  #000000;
+  font-size:  10pt;
+  font-weight:	bold;
+}
+
+div.musicCensorRecommend {
+  clear:  left;
+  overflow: auto;
+  width:  520px;
+  position: relative; left:50px;
+  max-height: 200px;
+}
+table.musicCensorRecommend {
+  width:  500px;
+  border-spacing: 0px;
+  empty-cells:	show;
+  border-collapse: collapse;
+}
+
+table.musicCensorRecommend td {
+  border: 1px solid #000000;
+}
+
+div.musicCensorInstructions2 {
+  float:  left;
+  padding-left:    50px;
+  color:  #015769;
+  font-size:  10pt;
+  width:  250px;
+}
+
+div.musicCensorCMB1 {
+  float:  left;
+  padding-left:	125px;
+  padding-bottom: 10px;
+}
+
+div.musicCensored {
+  clear:  both;
+  overflow: auto;
+  width:  520px;
+  max-height: 200px;
+  position: relative; left:	50px;
+}
+
+table.musicCensored {
+  clear:  both;
+  width:  500px;
+  border-spacing: 0px;
+  empty-cells:	show;
+  border-collapse: collapse;
+}
+
+table.musicCensored td {
+  border: 1px solid #000000;
+}
+
+div.musicCensorCMB2 {
+  float:  left;
+  padding-left:	425px;
+  padding-bottom: 10px;
+}
+
+table.musicEditTracks {
+  clear:  left;
+  width:  600px;
+  font-size:  10pt;
+}
+
+div.musicEditTracksCMD {
+  float: right;
+}
+
+div.musicEditTracksInfo {
+  float: right;
+  padding-top:	10px;
+  color:  #000000;
+  font-size:  10pt;
+  font-weight:	bold;
+}
+
+div.frame_suenextbox {
+  height: 148px;
+  float:  left;
+  width:  284px;
+  padding:  1px;
+  border-style: solid;
+  border-color:	black;
+  border-left-width:  0px;
+  border-top-width: 1px;
+  border-right-width: 1px;
+  border-bottom-width:	1px;
+  color:  #015769;
+  font-size:  12pt;
+}
+div[class = "frame_suenextbox"] {
+  height: 110px;
+  width:  284px;
+}
+div.frame_suenextbox b {
+  font-size:  14pt;
+}
+div.sueplaylistletters {
+  padding:  1px;
+  line-height:	2;
+  clear:  both;
+  color:  #015769;
+  font-size:  10pt;
+}
+
+div.sueplaylistInfo1 {
+  padding:  1px;
+  padding-bottom: 5px;
+  float:  left;
+  color:  #015769;
+  font-size:  10pt;
+}
+div.sueplaylistInfo2 {
+  padding:  1px;
+  padding-bottom: 5px;
+  padding-right:  5px;
+  float:  right;
+  color:  #000000;
+  font-size:  10pt;
+  font-weight:	bold;
+}
+div.sueplaylistletters a {
+  color:  #015769;
+}
+
+table.sueviewplaylist {
+  clear:  both;
+  width:  600px;
+  border-spacing: 0px;
+  empty-cells:	show;
+  border-collapse: collapse;
+}
+
+table.sueviewplaylist td {
+  border: 1px solid #000000;
+}
+table.sueviewplaylist th {
+  border: 1px solid #000000;
+}
+div.sueplaylistpage {
+  float:  left;
+  width:  500px;
+  padding:  1px;
+  line-height:	2;
+  clear:  both;
+  color:  #015769;
+  font-size:  10pt;
+}
+
+div.sueplaylistpage a {
+  color:  #015769;
+}
+
+div.sueplaylistupdate {
+  float:  right;
+  padding:  1px;
+}
+
+div.sueTrackDetailsLinks {
+  float:  left;
+  padding-left:	67px;
+  padding-top:	5px;
+  font-size:  10pt;
+  color:  #015769;
+}
+div.sueTrackDetailsLinks a{
+  color:  #015769;
+}
+
+table.suestats {
+  clear:  both;
+  width:  500px;
+  border-spacing: 0px;
+  empty-cells:	show;
+  border-collapse: collapse;
+  position: relative; left: 50px;
+}
+table.suestats td {
+  border: 1px solid #000000;
+}
+table.suestats th {
+  border: 1px solid #000000;
+}
+
+/* Start of Show plan */
+div.showPlanList {
+  float:  left;
+  font-size:  10pt;
+}
+div.showPlanItem {
+  margin-left: 20px;
+}
+div.showPlanButtons {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+/*
+div.showPlanList a {
+	color:	#000000;
+}
+*/
+div.showPlanHelp {
+  float:  right;
+  width:  140px;
+  padding: 1px;
+  border: 1px solid #000000;
+  font-size:  10pt;
+  font-weight:	bold;
+}
+div.showPlanHelp a {
+  border: 0px solid #000000;
+  color:  #000000;
+}
+div.showPlanNew {
+  text-align: center;
+  float:  right;
+  clear:  right;
+  width:  140px;
+  border: 1px solid #000000;
+  background-color: #000000;
+  padding:  1px;
+	margin-top:	10px;
+  color:  #ffffff;
+}
+div.showPlanNew a {
+  color:  #ffffff;
+}
+table.showEdititem {
+	font-size:	10pt;
+	empty-cells:  show;
+	border-spacing:	5px;
+}
+table.showEdititem th {
+	text-align:	left;
+}
+table.showEdititem td {
+	width:	200px;
+	border:	1px solid #000000;
+	margin:	4px;
+}
+table.showItems td.upDown {
+    text-align: center;
+}
+div.showLinks {
+	float: left;
+	margin:	2px;
+	border:	1px solid #015769;
+	font-size:  9pt;
+	color:	#015769;
+	font-weight:	bold;
+	padding-right:	2px;
+	height:	18px;
+	vertical-align:	middle;	
+}
+div.showLinks img {
+	vertical-align: middle;
+	border:	0px solid #ffffff;
+}
+div.showWarning {
+	float: left;
+	background-color:	#015769;
+	color:	#ffffff;
+	margin:	2px;
+	font-size:	9pt;
+	height:	18px;
+	border: 1px solid #015769;
+}
+
+table.showItems th{
+	color:	#ffffff;
+	background-color:	#000000;
+	font-weight:	bold;
+	font-size:	10pt;
+	text-align:	left;
+	padding:	2px;
+	border:	1px solid #ffffff;
+}
+div.showSmall {
+	font-size:	8pt;
+}
+table.showItems td{
+	border:	1px solid black;
+	font-size:	10pt;
+}
+table.showItems {
+  border:  1px solid black;
+  border-collapse: collapse;
+	empty-cells:  show;
+	margin-top:	7px;
+}
+div.showPlanInteract {
+  font-weight:	bold;
+  font-size:  9pt;
+  padding-left:	22px;
+}
+
+/* Audiowall stuff */
+div.awwallinfoR {
+  float:  right;
+  font-size:	9pt;
+  margin: 0px;
+}
+div.awwallinfo {
+  width:  454px;
+  position: relative;
+}
+
+div.awwallinfoL  {
+  float: left;
+  padding-top:	4px;
+  font-size:  10pt;
+  margin: 1px;
+  width:  300px;
+}
+div.awwallinfoL b {
+  border: 1px solid #000000;
+  font-weight: bold;
+  padding:  1px;
+}
+
+div.awwallPage {
+  background: rgb(0,0,0);
+  float: left;
+  position:  relative; left:7px;
+  width:  152px;
+  color: #ffffff;
+  font-weight:	600;
+  padding: 0px;
+  margin: 0px;
+}
+div[class = awwallPage] {
+  width:  150px;
+}
+div.awwallpagenum {
+  padding-top:	3px;
+  padding-right:  0px;
+  float:	left;
+  max-width:  110px;
+  width:  110px;
+  overflow: hidden;
+}
+img.awwallPageL {
+  float:  left;
+  border: 0px;
+  padding-left:	0px;
+  position: relative; right: 3px;
+}
+div[class = awwallPageL] {
+  position: relative; right: 0px;
+}
+img.awwallPageR {
+  float:  right;
+  border: 0px;
+  padding:  0px;
+  position: relative; left: 3px;
+}
+div[class = awwallPageL] {
+  position: relative; left: 0px;
+}
+
+div.awwallPage b {
+  padding-top:	2px;
+  padding-left: 1px;
+  padding-right:  1px;
+  padding-bottom:  2px;
+  
+  background: rgb(189,3,3);
+  color:  #ffffff;
+}
+div.awwallPage a {
+  color: #ffffff;
+}
+table.awwall {
+  border:  1px solid black;
+  border-collapse: collapse;
+}
+table.awwall td{
+  text-align:  center;
+  border:  1px solid black;
+  width:  150px;
+  height: 103px;
+  position: relative;
+}
+div.EawitemText {
+text-align: left;
+  height: 40px;
+  font-size:  10pt;
+  font-weight:	bold;
+}
+div.EawitemTime {
+  height: 20px;
+  float:  left;
+  font-size:  10pt;
+  color:  #666666;
+}
+div.EawitemChange {
+  height: 20px;
+  font-size:  10pt;
+  float:  right;
+}
+div.EawitemBlank {
+  color:  #999999;
+  font-weight:	bold;
+  padding-bottom:  7px;
+}
+div.EawitemAdd a{
+  color:  rgb(189,3,3);
+  font-weight:	bold;
+}
+div.EawwallPerms {
+  float:  left;
+  width:  300px;
+  font-size:      10pt;
+  font-weight: bold;
+}
+div.EawwallPerms b {
+  color:  #01A6C9;
+  font-size:	  12pt;
+  font-weight: bold;
+  padding-left:	3px;
+}
+div.EawwallSubmit {
+  float:  left;
+  position: relative; left:50px;
+}
+div.EditAwItemDetails {
+  width:  250px;
+  float:  left;
+}
+div.EditAwItemFile {
+  width:  350px;
+  float:  left;
+}
+div.EditAwItemDetail {
+  font-weight:	bold;
+}
+div.EditAwItemDetailSub {
+  position: relative; top: 25px; left:  35px;
+}
+
+div.warning {
+  color:  #ff0000;
+  font-size:	10pt;
+}
+
+div.statioinfo1 {
+  clear:  left;
+  font-weight: bold;
+  color:  #015769;
+  font-size:  12pt;
+}
+
+table.stationtable {
+  border: 1px solid #000000;
+  border-spacing: 0px;
+  max-width: 550px;
+  empty-cells:	show;
+  font-size:  12pt;
+}
+th.stationTableName {
+  padding:  2px;
+  max-width:  150px;
+  border-top: 0px solid #000000;
+  border-left: 0px solid #000000;
+  border-right: 0px solid #000000;
+  border-bottom: 3px double #000000;
+  text-align: left;
+}
+td.stationTableOption {
+  padding:  2px;
+  border-top: 0px solid #000000;
+  border-left: 0px solid #000000;
+  border-right: 0px solid #000000;
+  border-bottom: 3px double #000000;
+  width:  40px;
+}
+td.stationTableDetail {
+  padding:  2px;
+  border-top: 0px solid #000000;
+  border-left: 1px solid #000000;
+  border-right: 0px solid #000000;
+  border-bottom: 3px double #000000;
+}
+th.userTableName {
+  padding:  2px;
+  max-width:  150px;
+  border-top: 0px solid #000000;
+  border-left: 0px solid #000000;
+  border-right: 0px solid #000000;
+  border-bottom: 1px solid #000000;
+  text-align: left;
+}
+td.userTableAuthor {
+  font-size:x-small;
+  padding:  2px;
+  border-top: 0px solid #000000;
+  border-left: 0px solid #000000;
+  border-right: 0px solid #000000;
+  border-bottom: 1px solid #000000;
+}
+td.userTableOption {
+  padding:  2px;
+  border-top: 0px solid #000000;
+  border-left: 0px solid #000000;
+  border-right: 0px solid #000000;
+  border-bottom: 1px solid #000000;
+  width:  40px;
+}
+td.userTableDetail {
+  padding:  2px;
+  border-top: 0px solid #000000;
+  border-left: 1px solid #000000;
+  border-right: 0px solid #000000;
+  border-bottom: 1px solid #000000;
+}
+/* Display of active audiowall set */
+div.userdefaultawset {
+  color:  #00cc00;
+  font-weight: bold;
+}
+div.alignleft {
+  text-align:	left;
+}
+div.studioPlaylists {
+  float:		right;
+  color:  #015769;
+  font-size:  11pt;
+  vertical-align: bottom;
+}
+
+/* Start of Filebrowser stuff */
+div.fileLink {
+	display: block;
+	float: left;
+	margin:	2px;
+	border:	1px solid #015769;
+	font-size:  9pt;
+	color:	#015769;
+	font-weight:	bold;
+	padding-top:	2px;
+	padding-bottom:	2px;
+	padding-left:	0px;
+	padding-right:	1px;
+	height:	30px;
+	overflow: hidden;
+}
+div[class = "fileLink"] {
+	height:	20;
+}
+
+div.fileLink input {
+	font-size:	9pt;
+}
+div.fileLink img {
+	position:		relative;	bottom:2px;
+	border:	0px solid #ffffff;
+	vertical-align:	middle;
+}
+
+div.fileError {
+	margin:	2px;
+	border:	1px solid #ff0000;
+	font-size:  9pt;
+	color:	#ff0000;
+	font-weight:	bold;
+	padding-top:	4px;
+	padding-bottom:	0px;
+	padding-left:	0px;
+	padding-right:	2px;
+	height:	18px;
+}
+
+div.folderBar {
+	display:	none;
+	height:	32px;
+	font-size:	0px;
+	overflow:	hidden;
+}
+
+div.jingleBar {
+	display:	none;
+	height:	32px;
+	overflow:	hidden;
+}
+div.awsetBar {
+	display:	block;
+	height:	32px;
+	overflow:	hidden;
+}
+div.filebrowser {
+	margin-top:	6px;
+	width:	600px;
+	border:	1px solid #000000;
+	min-height:	450px;
+	height:	auto;
+	height:	450px;
+}
+div[class = "filebrowser"] {
+	min-height:	0px;
+	height: auto;
+}
+
+
+div.fileselect {
+	height:	400px;
+	max-height:	400px;
+	border:	1px solid #000000;
+}
+
+a img {
+    border: 0px;
+}

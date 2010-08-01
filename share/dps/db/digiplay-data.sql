@@ -512,4 +512,9 @@ INSERT INTO templates VALUES (65, 'dpsempty.tpl', 'DPSUserSubFileViewer', 18, 'D
 INSERT INTO templates VALUES (66, 'dpsusershowmove.tpl', 'DPSUserShowMoveViewer', 19, 'DPS');
 INSERT INTO templates VALUES (67, 'blank.tpl', 'AuthSubRealmViewer', 1, 'Auth');
 INSERT INTO templates VALUES (68, 'dpsuserfileedit.tpl', 'DPSUserDirEditViewer', 19, 'DPS');
-ALTER SEQUENCE templates_templateid_seq RESTART 69;
+INSERT INTO templates VALUES (69, 'dpsstjinglepkgs.tpl','DPSStationJinglePackagesViewer' 35, 'DPS');
+INSERT INTO templates VALUES (70, 'dpsstjinglepkgedit.tpl', 'DPSStationEditJinglePkgViewer', 35, 'DPS');
+INSERT INTO templates VALUES (72, 'dpsstjinglepkgview.tpl', 'DPSStationViewJinglePkgViewer', 35, 'DPS');
+INSERT INTO templates VALUES (73, 'dpsstjinglepkgmove.tpl',
+'DPSStationMoveJingleViewer', 35, 'DPS');
+ALTER SEQUENCE templates_templateid_seq RESTART 74;

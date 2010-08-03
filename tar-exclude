@@ -8,4 +8,5 @@ src/FLAC*
 src/tools/FLAC*
 src/tools/Makefile.FLAC*
 debian
+gentoo
 *-stamp

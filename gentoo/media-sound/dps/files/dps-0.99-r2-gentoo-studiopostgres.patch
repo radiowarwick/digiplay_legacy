@@ -1,0 +1,12 @@
+--- dps-0.99-r2/src/Makefile.in	2010-08-02 21:47:08.000000000 +0100
++++ dps-0.99-r2/src/Makefile.in.gentoo	2010-08-03 21:31:15.000000000 +0100
+@@ -35,7 +35,8 @@
+ CCFLAGS		:=	$(DPSFLAGS) -Wall -O3 -D_THREAD_SAFE \
+ 				-D'VERSION="$(VERSION)"' -D'DPSDIR="$(DPSDIR)"' \
+ 				-D_FILE_OFFSET_BITS=64
+-LDFLAGS		:=	-L$(ROOT)/src/audiolib -o $(DEST)/$(OUTPUT) 
++LDFLAGS		:=	-L$(ROOT)/src/audiolib -o $(DEST)/$(OUTPUT) \
++			-L/usr/lib/postgresql-%{PSQLVER}/lib
+ 
+ # if QT is enabled, we need to include the necessary compiler and 
+ # linker options. We also need to make a few more objects and generate

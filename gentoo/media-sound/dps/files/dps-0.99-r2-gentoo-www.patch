@@ -1,0 +1,75 @@
+--- dps/src/www/Auth/config.php		2010-06-06 12:24:25.000000000 +0100
++++ dps/src/www/Auth/config.php_gentoo	2010-06-10 12:02:36.000000000 +0100
+@@ -66,7 +66,7 @@
+ $cfg['Auth']['userfields']  = array('username' => 'Username');
+ 
+ // Editable fields in the groups table
+-$cfg['Auth']['groupfields'] = array('groupname' => 'Group Name',
++$cfg['Auth']['groupfields'] = array('name' => 'Group Name',
+                                     'description' => 'Description');
+ 
+ // Editable fields in the realms table
+
+--- dps/src/www/DPS/viewers/DPSSueAddPlaylistViewer.class.php		2010-06-06 12:24:26.000000000 +0100
++++ dps/src/www/DPS/viewers/DPSSueAddPlaylistViewer.class.php_gentoo	2010-06-10 12:30:01.000000000 +0100
+@@ -19,7 +19,9 @@
+ 		if($offset == "") {
+ 			$offset = 0;
+ 		} else {
+-			$offset--;
++			if($offset > 0) {
++				$offset--;
++			}
+ 		}
+ 
+ 		$searchValue = $this->fieldData['dpsSearchVal'];
+
+--- dps/src/www/DPS/viewers/DPSSuePlaylistViewer.class.php		2010-06-06 12:24:26.000000000 +0100
++++ dps/src/www/DPS/viewers/DPSSuePlaylistViewer.class.php_gentoo	2010-06-10 12:28:11.000000000 +0100
+@@ -19,7 +19,9 @@
+ 		if($offset == "") {
+ 			$offset = 0;
+ 		} else {
+-			$offset--;
++			if ($offset > 0) {
++				$offset--;
++			}
+ 		}
+ 
+ 		$searchValue = $this->fieldData['dpsSearchVal'];
+
+--- dps/src/www/MVC/viewers/ExceptionViewer.class.php		2010-06-06 12:24:26.000000000 +0100
++++ dps/src/MVC/viewers/ExceptionViewer.class.php_gentoo	2010-06-10 18:05:00.000000000 +0100
+@@ -4,7 +4,7 @@
+  * @package MVC
+  */
+  
+-include_once($cfg['smarty']['dir']['root'] . "/libs/Smarty.class.php");
++include_once($cfg['smarty']['dir']['root'] . "/Smarty.class.php");
+ include_once($cfg['MVC']['dir']['root'] . '/viewers/IViewer.class.php');
+ 
+ /**
+
+--- dps/src/www/MVC/viewers/RenderedExceptionViewer.class.php		2010-06-06 12:24:26.000000000 +0100
++++ dps/src/www/MVC/viewers/RenderedExceptionViewer.class.php_gentoo	2010-06-10 18:05:20.000000000 +0100
+@@ -4,7 +4,7 @@
+  * @package MVC
+  */
+  
+-include_once($cfg['smarty']['dir']['root'] . "/libs/Smarty.class.php");
++include_once($cfg['smarty']['dir']['root'] . "/Smarty.class.php");
+ include_once($cfg['MVC']['dir']['root'] . '/viewers/IViewer.class.php');
+ 
+ /**
+
+--- dps/src/www/tkfecommon/viewers/Viewer.class.php		2010-06-06 12:24:26.000000000 +0100
++++ dps/src/www/tkfecommon/viewers/Viewer.class.php_gentoo	2010-06-10 18:05:38.000000000 +0100
+@@ -4,7 +4,7 @@
+  * @package MVC
+  */
+  
+-include_once($cfg['smarty']['dir']['root'] . "/libs/Smarty.class.php");
++include_once($cfg['smarty']['dir']['root'] . "/Smarty.class.php");
+ //MVCUtils::includeViewer('IViewer'); cannot be used as IViewer does not contain a class
+ include_once($cfg['MVC']['dir']['root'] . '/viewers/IViewer.class.php');
+ include_once($cfg['MVC']['dir']['root'] . '/SmartyResources.class.php');

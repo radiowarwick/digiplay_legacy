@@ -1,0 +1,71 @@
+--- dps-0.99-r2/Makefile	2010-08-02 21:47:08.000000000 +0100
++++ dps-0.99-r2/Makefile.gentoo	2010-08-03 21:20:35.000000000 +0100
+@@ -26,20 +26,23 @@
+ # Application groups
+ AUDIO		=	audiolib audiolib/oss audiolib/jack audiolib/alsa \
+ 				audiolib/raw audiolib/flac audiolib/mp3
+-STUDIO		=	studio_play studio_manage
+-SUE			=	sueplay suesched
++STUDIOP		=	studio_play
++STUDIOM		=	studio_manage
++SUEPLAY		=	sueplay
++SUESCHED	=	suesched
+ ADMIN		=	dpsadmin
+ PLAYIN		=	playin
+ DATABASE	=	db
+-ALL			=	$(AUDIO) $(STUDIO) $(SUE) $(ADMIN) $(PLAYIN) $(DATABASE) \
+-				audioplay audiotest audioflac
++ALL		=	$(AUDIO) $(STUDIOP) $(STUDIOM) $(SUEPLAY) $(SUESCHED) \
++			$(ADMIN) $(PLAYIN) $(DATABASE) 	audioplay audiotest \
++			audioflac
+ 
+ # Built Executables
+ EXE_STUDIO_MANAGE	=	src/studio_manage/studio_manage
+ EXE_STUDIO_PLAY		=	src/studio_play/studio_play
+ EXE_DPSADMIN		=	src/dpsadmin/dpsadmin
+-EXE_PLAYIN			=	src/playin/playin
+-EXE_SUEPLAY			=	src/sueplay/sueplay
++EXE_PLAYIN		=	src/playin/playin
++EXE_SUEPLAY		=	src/sueplay/sueplay
+ EXE_SUESCHED		=	src/suesched/suesched
+ LIB_DPSAUDIO		=	src/audiolib/libdpsaudio.so \
+ 						src/audiolib/libdpsaudio.so.$(VERSION)
+@@ -54,8 +57,10 @@
+ default:	all
+ 
+ audio:		$(AUDIO)
+-studio: 	$(AUDIO) $(STUDIO)
+-sue:		$(AUDIO) $(SUE)
++studio_play: 	$(AUDIO) $(STUDIOP)
++studio_manage:	$(STUDIOM)
++sueplay:	$(AUDIO) $(SUEPLAY)
++suesched:	$(SUESCHED)
+ backend:	$(ADMIN)
+ database:	$(DATABASE)
+ 
+--- dps-0.99-r2/src/Makefile.in	2010-08-02 21:47:08.000000000 +0100
++++ dps-0.99-r2/src/Makefile.in.gentoo	2010-08-03 21:23:10.000000000 +0100
+@@ -1,8 +1,8 @@
+ # Default command tools
+ CC			=	g++ -g3
+ LD			=	g++ -g3
+-MOC			?=	@/usr/share/qt3/bin/moc
+-UIC			?=	@/usr/share/qt3/bin/uic
++MOC			?=	@/usr/qt/3/bin/moc
++UIC			?=	@/usr/qt/3/bin/uic
+ 
+ # Set default output location, name and version
+ DEST		=	.
+@@ -41,10 +41,10 @@
+ # linker options. We also need to make a few more objects and generate
+ # the necessary header files
+ ifeq ($(QT_ENABLED),yes)
+-	CCINC	+=	-I/usr/share/qt3/mkspecs/default -I/usr/include/qt3
++	CCINC	+=	-I/usr/qt/3/mkspecs/default -I/usr/qt/3/include
+ 	CCFLAGS	+=	-pipe -W -D_REENTRANT -DQT_NO_DEBUG -DQT_THREAD_SUPPORT \
+ 				-DQT_SHARED
+-	LIBS	+=	-L/usr/share/qt3/lib -L/usr/X11R6/lib -lqt-mt #-lXext -lX11
++	LIBS	+=	-L/usr/qt/3/lib -L/usr/X11R6/lib -lqt-mt #-lXext -lX11
+ 	QT_OBJS	=	$(addprefix moc_,$(APP_QTOBJS)) \
+ 				$(addprefix $(ROOT)/src/moc_,$(SHARED_QTOBJS))
+ endif

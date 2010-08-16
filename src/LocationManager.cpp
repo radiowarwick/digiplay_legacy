@@ -20,6 +20,7 @@ LocationManager::LocationManager() {
     defaults["player1_md5"] = "";
     defaults["player2_md5"] = "";
     defaults["player3_md5"] = "";
+    defaults["enable_shift_esc"] = "1";
     getLocations();
 
 }

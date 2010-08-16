@@ -50,11 +50,16 @@
 <variables>
 </variables>
 <slots>
+    <slot>keyPressEvent( QKeyEvent * event )</slot>
+    <slot>keyReleaseEvent( QKeyEvent * event )</slot>
 </slots>
 <functions>
     <function access="private" specifier="non virtual">init()</function>
     <function specifier="non virtual">destroy()</function>
 </functions>
+<variables>
+    <variable access="private">bool isShiftDown</variable>
+</variables>
 <pixmapinproject/>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

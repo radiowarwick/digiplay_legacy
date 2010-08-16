@@ -284,3 +284,10 @@ std::string Config::getParam(std::string name) {
 void Config::setParam(std::string name, std::string value) {
 	CM->setParam(name,value);
 }
+
+/**
+ * Checks if a parameter is defined in the database
+ */
+bool Config::isParamDefined(std::string name) {
+    return CM->isDefined(name);
+}

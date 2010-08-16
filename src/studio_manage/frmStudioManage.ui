@@ -683,11 +683,16 @@
     <slot>customEvent( QCustomEvent * event )</slot>
     <slot>updateAwSet( QString index )</slot>
     <slot>btnLoginClicked()</slot>
+    <slot>keyPressEvent( QKeyEvent * event )</slot>
+    <slot>keyReleaseEvent( QKeyEvent * event )</slot>
 </slots>
 <functions>
     <function access="private" specifier="non virtual">init()</function>
     <function access="private" specifier="non virtual">destroy()</function>
     <function access="private" specifier="non virtual" returnType="QString">getTime( long smpl )</function>
 </functions>
+<variables>
+    <variable access="private">bool isShiftDown</variable>
+</variables>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>

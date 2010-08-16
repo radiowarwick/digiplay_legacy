@@ -32,6 +32,7 @@
 #include "RemoteStartThread.h"
 #include "Security.h"
 #include "Logger.h"
+#include "Config.h"
 
 RemoteStartThread* remotes;
 AudioPlayer* audioPlayer1;
@@ -45,9 +46,14 @@ AudioWallManager* usrAudioWallMan;
 unsigned int stnAudioWallId;
 unsigned int usrAudioWallId;
 
+Config *conf;
+
 void frmPlayout::init() {
     const char* routine = "frmPlayout::init";
-    
+
+    isShiftDown = false;
+    conf = new Config("digiplay");
+
     // Create audio players
     audioPlayer1 = new AudioPlayer(this,"audioPlayer1",1);
     audioPlayer1->setGeometry(10,10,540,240);
@@ -99,5 +105,40 @@ void frmPlayout::init() {
 }
 
 void frmPlayout::destroy() {
+    delete conf;
+}
 
+
+void frmPlayout::keyPressEvent(QKeyEvent* e) {
+    switch (e->key()) {
+        case Key_Escape: {
+            if (conf->isParamDefined("enable_shift_esc")) {
+                string confValue = conf->getParam("enable_shift_esc");
+                char c = toupper(confValue[0]);
+                if (isShiftDown && (c == 'Y' || c == '1')) {
+                    exit(0);
+                }
+            }
+            break;
+        }
+        case Key_Shift:
+            isShiftDown = true;
+            break;
+        default:
+            break;
+    }
+    e->ignore();
+}
+
+void frmPlayout::keyReleaseEvent(QKeyEvent* e) {
+    switch (e->key()) {
+        case Key_Escape:
+            break;
+        case Key_Shift:
+            isShiftDown = false;
+            break;
+        default:
+            break;
+    }
+    e->ignore();
 }

@@ -52,11 +52,11 @@ class ConfigManager : public Trigger {
 
 		std::string getParam(std::string name);
 		void setParam(std::string name, std::string value);		
+		bool isDefined(std::string name);
 		
 	private:
 		void processConfigFile(std::string application);
 		void requery();
-		bool isDefined(std::string name);
 
         std::vector<std::string> *names;
         std::vector<std::string> *values;
@@ -90,6 +90,7 @@ class Config {
 		
         std::string getParam(std::string name);
 		void setParam(std::string name, std::string value);
+        bool isParamDefined(std::string name);
 		
 	private:
 		MessagingInterface * M;

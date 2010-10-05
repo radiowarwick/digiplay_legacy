@@ -116,34 +116,32 @@ namespace Audio {
      * @param   device      The DSP device to initialise.
      */
     void OutputDspAlsa::initialise(string device) {
-        snd_pcm_hw_params_t *hw_params;
+		int err;
 
         // Open audio device
-        if (snd_pcm_open(&audio, device.c_str(), SND_PCM_STREAM_PLAYBACK, 0) < 0) {
+        if ((err = snd_pcm_open(	&audio, 
+									device.c_str(), 
+									SND_PCM_STREAM_PLAYBACK, 0)) < 0) {
             cout << "FAILED: unable to open " << device << endl;
+			cout << "Error: " << snd_strerror(err) << endl;
             throw 0;
         }
 
-        // Configure device
-        if (snd_pcm_hw_params_malloc(&hw_params) < 0) {
-            cout << "FAILED: unable to allocate hw_params structure" << endl;
-            throw 0;
-        }
-        unsigned int rate = 44100;
-        if (snd_pcm_hw_params_any(audio, hw_params) < 0 ||
-             snd_pcm_hw_params_set_access(audio, hw_params, SND_PCM_ACCESS_RW_INTERLEAVED) < 0 ||
-             snd_pcm_hw_params_set_format(audio, hw_params, SND_PCM_FORMAT_S16_LE) < 0 ||
-             snd_pcm_hw_params_set_rate_near(audio, hw_params, &rate, 0) < 0 ||
-             rate != 44100 ||
-             snd_pcm_hw_params_set_channels(audio, hw_params, 2) < 0 ||
-             snd_pcm_hw_params(audio, hw_params) < 0) {
-             cout << "FAILED: unable to set hw_params to 44100/S16LE/Interleaved" << endl;
-             throw 0;
-        }
-        snd_pcm_hw_params_free(hw_params);
-
-        if (snd_pcm_prepare(audio) < 0) {
+		if ((err = snd_pcm_set_params(audio,
+									SND_PCM_FORMAT_S16_LE,
+									SND_PCM_ACCESS_RW_INTERLEAVED,
+									2,
+									44100,
+									1,
+									100000)) < 0) {
+			cout << "FAILED: unable to set ALSA parameters." << endl;
+			cout << "Error: " << snd_strerror(err) << endl;
+			throw 0;
+		}
+        
+		if ((err = snd_pcm_prepare(audio)) < 0) {
             cout << "FAILED: unable to prepare device: " << device << endl;
+			cout << "Error: " << snd_strerror(err) << endl;
             throw 0;
         }
     }

@@ -23,8 +23,8 @@
 #ifndef CLASS_REMOTE_START_THREAD
 #define CLASS_REMOTE_START_THREAD
 
-#include <qapplication.h>
-#include <qobject.h>
+#include <QtGui/QApplication>
+#include <QtCore/QObject>
 
 #include "Thread.h"
 

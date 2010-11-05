@@ -35,12 +35,12 @@ using namespace std;
 AudioWallManager::AudioWallManager( AudioWall *A, QString name ) {
 	_A = A;
 	_name = name;
-	conf = new Config("digiplay", this);	
+	conf = new Config("digiplay", this);
     DB = new DataAccess();
     onMessage();
     triggerAw = new QtTrigger("triggerAw","t_audiowall");
     connect(triggerAw, SIGNAL(trigger()),
-                                this, SLOT(refreshWall()));    
+                                this, SLOT(refreshWall()));
 }
 
 AudioWallManager::~AudioWallManager() {
@@ -48,7 +48,7 @@ AudioWallManager::~AudioWallManager() {
 }
 
 void AudioWallManager::onMessage() {
-	unsigned int awset = atoi(conf->getParam(_name.ascii()).c_str());
+	unsigned int awset = atoi(conf->getParam(_name.toStdString()).c_str());
 	load(awset);
 }
 
@@ -73,7 +73,7 @@ void AudioWallManager::load(unsigned int awset) {
 	short pagecount = atoi(DB->exec("AudioWallManagerLoad",
                             "SELECT max(aw_walls.page) "
                             "FROM aw_walls,aw_sets "
-                            "WHERE aw_walls.set_id = " 
+                            "WHERE aw_walls.set_id = "
 							 	+ dps_itoa(awset))[0][0].c_str()) + 1;
     for (int i = _pages.size() - 1; i > pagecount - 1; i--) {
         for (int j = 0; j < _A->getSize(); j++) {
@@ -90,17 +90,17 @@ void AudioWallManager::load(unsigned int awset) {
 			_pages[i]->items.push_back(new AudioWallItemSpec);
 		}
 	}
-	
+
     PqxxResult R = DB->exec("AudioWallManagerLoad",
                         "SELECT * FROM v_audiowalls WHERE set_id = "
                         + dps_itoa(awset) + " ORDER BY page, prop_name");
 	DB->abort("AudioWallManagerLoad");
-	
-	string file = "";
-	string md5 = "";
-	string text = "";
-	string title = "";
-    string type = "";
+
+	QString file = "";
+	QString md5 = "";
+	QString text = "";
+	QString title = "";
+    QString type = "";
 	unsigned long start = 0;
 	unsigned long end = 0;
 	QColor fgColour;
@@ -108,7 +108,7 @@ void AudioWallManager::load(unsigned int awset) {
 	short item = 0;
 	short page = 0;
 	string p;
-	
+
 	// Configure changetable - assume we need to change nothing, and nothing
 	// exists
 	vector< vector<bool> > changeTable(_pages.size());
@@ -127,7 +127,7 @@ void AudioWallManager::load(unsigned int awset) {
 		file = R[i]["path"].c_str();
 		md5 = R[i]["md5"].c_str();
         type = R[i]["type"].c_str();
-		file += "/" + md5.substr(0,1) + "/" + md5;
+		file += "/" + md5.left(1) + "/" + md5;
         if (type == "flac") {
             file += ".flac";
         }
@@ -141,15 +141,15 @@ void AudioWallManager::load(unsigned int awset) {
 		existsTable[page][item] = true;
 
         AudioWallItemSpec* I = _pages[page]->items[item];
-		if (I->file != file) changeTable[page][item] = true;
-		I->file = file;
-        I->type = (type == "flac") ? ITEM_FILETYPE_FLAC : ITEM_FILETYPE_RAW;
-		if (I->start != start) changeTable[page][item] = true;
-		I->start = start;
-		if (I->end != end) changeTable[page][item] = true;
-		I->end = end;
-		if (I->text != text) changeTable[page][item] = true;
-		I->text = text;
+		if (I->mFile != file) changeTable[page][item] = true;
+		I->mFile = file;
+        I->mType = (type == "flac") ? ITEM_FILETYPE_FLAC : ITEM_FILETYPE_RAW;
+		if (I->mStart != start) changeTable[page][item] = true;
+		I->mStart = start;
+		if (I->mEnd != end) changeTable[page][item] = true;
+		I->mEnd = end;
+		if (I->mText != text) changeTable[page][item] = true;
+		I->mText = text;
 
 		if (_pages[page]->title != title) {
 			_pages[page]->title = title;
@@ -161,16 +161,16 @@ void AudioWallManager::load(unsigned int awset) {
 			p = R[i]["prop_name"].c_str();
             if (p == "ForeColourRGB") {
 				fgColour = QRgb(atoi(R[i]["prop_value"].c_str()));
-				if (I->fgColour != fgColour) 
-					changeTable[page][item] = true;
-				I->fgColour = fgColour;
             }
             else if (p == "BackColourRGB") {
 				bgColour = QRgb(atoi(R[i]["prop_value"].c_str()));
-				if (I->bgColour != bgColour)
-					changeTable[page][item] = true;
-				I->bgColour = bgColour;
 			}
+            QString vStyle = QString::fromStdString("color: rgb(" + dps_itoa(fgColour.red()) + "," + dps_itoa(fgColour.green()) + "," + dps_itoa(fgColour.blue()) + "); "
+                             "background-color: rgb(" + dps_itoa(bgColour.red()) + "," + dps_itoa(bgColour.green()) + "," + dps_itoa(bgColour.blue()) + ");");
+            if (I->mStyle != vStyle) {
+                changeTable[page][item] = true;
+            }
+            I->mStyle = vStyle;
 			i++;
 		}
 	}
@@ -180,15 +180,15 @@ void AudioWallManager::load(unsigned int awset) {
 		for (unsigned int item = 0; item < existsTable[page].size(); ++item) {
 			if (!existsTable[page][item]) {
 				AudioWallItemSpec* I = _pages[page]->items[item];
-				if (I->file != "" || I->text != "") {
+				if (I->mFile != "" || I->mText != "") {
 					changeTable[page][item] = true;
-					I->file = "";
-					I->text = "";
+					I->mFile = "";
+					I->mText = "";
 				}
 			}
 		}
 	}
-	
+
 	// Apply changes
 	for (unsigned int page = 0; page < changeTable.size(); ++page) {
 		for (unsigned int item = 0; item < changeTable[page].size(); ++item) {

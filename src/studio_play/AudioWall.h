@@ -26,7 +26,7 @@
 #include <vector>
 using namespace std;
 
-#include <qwidget.h>
+#include <QtGui/QWidget>
 
 #include "dps.h"
 
@@ -44,10 +44,10 @@ class QLabel;
 class ProcessMixer;
 
 struct AudioWallPage {
-	QString title;
-	QString description;
-	vector<AudioWallItem*> items;
-	unsigned short index;
+	QString mTitle;
+	QString mDescription;
+	vector<AudioWallItem*> mItems;
+	unsigned short mIndex;
 };
 
 class AudioWall :   public QWidget,
@@ -55,28 +55,28 @@ class AudioWall :   public QWidget,
 	Q_OBJECT
 
 	public:
-		AudioWall(QWidget *parent, const char* name, unsigned short rows, 
+		AudioWall(QWidget *parent, const char* name, unsigned short rows,
 						unsigned short cols);
 		~AudioWall();
 		void resizeEvent (QResizeEvent *e);
-		void setButton(unsigned short page, unsigned short index, 
-						AudioWallItemSpec item);
-		void setCaption(unsigned short page, QString text);
+		void setButton(unsigned short pPage, unsigned short pIndex,
+						AudioWallItemSpec pItem);
+		void setCaption(unsigned short pPage, QString pText);
 		void setMultipage(bool mp);
 		bool isMultipage();
-		unsigned short getSize() {return _rows*_cols;}
-		bool isPlaying(unsigned short index);
-        
+		unsigned short getSize() {return mRows*mCols;}
+		bool isPlaying(unsigned short pIndex);
+
         void addPage();
-        void deletePage(unsigned int index);
-        void displayPage(unsigned int index);
+        void deletePage(unsigned int pIndex);
+        void displayPage(unsigned int pIndex);
 
 		void updateWall();
-		
+
 	private slots:
 		void nextPage();
 		void prevPage();
-	
+
 	private:
         void resizePage(unsigned int index);
 		void configurePageList();
@@ -87,28 +87,28 @@ class AudioWall :   public QWidget,
 
 		void clean();
 
-        bool _loaded;
-        string _name;
-		unsigned short _rows;
-		unsigned short _cols;
-		unsigned short _pageSize;
-		unsigned short _currentPage;
-		unsigned short _activePage;
-		unsigned short _activeIndex;
-		vector<AudioWallPage*> _pages;
-		
-        // Geometry parameters
-        int border;
-        int wFrame;
-        int hFrame;
-        int wCell;
-        int hCell;
+        bool mLoaded;
+        string mName;
+		unsigned short mRows;
+		unsigned short mCols;
+		unsigned short mPageSize;
+		unsigned short mCurrentPage;
+		unsigned short mActivePage;
+		unsigned short mActiveIndex;
+		vector<AudioWallPage*> mPages;
 
-		QGroupBox *grpFrame;
-		QPushButton *btnPageNext;
-		QPushButton *btnPagePrev;
-		QLabel *lblPageNum;
-		QLabel *lblCounter;
+        // Geometry parameters
+        int mBorder;
+        int mFrameWidth;
+        int mFrameHeight;
+        int mCellWidth;
+        int mCellHeight;
+
+		QGroupBox* mGrpFrame;
+		QPushButton* mBtnPageNext;
+		QPushButton* mBtnPagePrev;
+		QLabel* mLblPageNum;
+		QLabel* mLblCounter;
 };
 
 #endif

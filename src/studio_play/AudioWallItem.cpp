@@ -1,12 +1,12 @@
-#include <qapplication.h>
+#include <QtGui/QApplication>
 
 #include "AudioWallItem.h"
 
-AudioWallItem::AudioWallItem(QWidget* parent, const char* name) :
-        QPushButton::QPushButton(parent,name) {
+AudioWallItem::AudioWallItem(QWidget* parent) :
+        QPushButton::QPushButton(parent) {
     mInputModule = 0;
     QObject::connect(this,SIGNAL(pressed()),this,SLOT(play()));
-    newItemAvailable = false;
+    mNewItemAvailable = false;
 }
 
 AudioWallItem::~AudioWallItem() {
@@ -23,52 +23,36 @@ AudioWallItem::~AudioWallItem() {
 }
 
 void AudioWallItem::set(AudioWallItemSpec& pItem) {
-	switch (_state) {
-		case STATE_STOP: {
-			if (pItem.file != "") {
-				bgColour = pItem.bgColour;
-				fgColour = pItem.fgColour;
-				text = pItem.text;
-                
+    switch (_state) {
+        case STATE_STOP: {
+            if (pItem.mFile != "") {
+                mStylesheet = pItem.mStyle;
+                mButtonText = pItem.mText;
                 if (!mInputModule) {
                     mInputModule = new Audio::InputFile();
                     mInputModule->patch(OUT0, this, IN0);
                     mInputModule->addCounter(this);
                 }
-				mInputModule->load(pItem.file.ascii(), pItem.start, pItem.end);
-			}
-			else {
-				text = "";
-			}
-			updateButton(true);
-			break;
-		}
-		case STATE_PLAY: 
-		case STATE_PAUSE: {
-			newItemAvailable = true;
-			newItem = pItem;
-			break;
-		}
-	}
-}
-
-void AudioWallItem::setFont(QFont &F) {
-    font = F;
-    updateButton();
-}
-
-void AudioWallItem::setBackgroundColour(QColor &C) {
-    bgColour = C;
-    updateButton();
-}
-
-void AudioWallItem::setForegroundColour(QColor &C) {
-    fgColour = C;
-    updateButton();
+                mInputModule->load(pItem.mFile.toStdString(),
+                                   pItem.mStart, pItem.mEnd);
+            }
+            else {
+                mButtonText = "";
+            }
+            updateButton(true);
+            break;
+        }
+        case STATE_PLAY:
+        case STATE_PAUSE: {
+            mNewItemAvailable = true;
+            mNewItem = pItem;
+            break;
+        }
+    }
 }
 
 void AudioWallItem::setText(QString T) {
-    text = T;
+    mButtonText = T;
     updateButton();
 }
 
@@ -87,12 +71,12 @@ void AudioWallItem::play() {
             break;
         case STATE_PLAY:
             mInputModule->stop();
-            if (newItemAvailable) {
-            	newItemAvailable = false;
-            	set(newItem);
+            if (mNewItemAvailable) {
+                mNewItemAvailable = false;
+                set(mNewItem);
             }
             else {
-            	updateButton();
+                updateButton();
             }
             break;
         case STATE_PAUSE:
@@ -105,9 +89,9 @@ void AudioWallItem::onSetSample() {
 }
 
 void AudioWallItem::onSetState() {
-    if (_state == STATE_STOP && newItemAvailable) {
-    	newItemAvailable = false;
-    	set(newItem);
+    if (_state == STATE_STOP && mNewItemAvailable) {
+        mNewItemAvailable = false;
+        set(mNewItem);
     }
     updateButton();
 }
@@ -118,39 +102,37 @@ void AudioWallItem::onSetTotalSamples() {
 
 void AudioWallItem::updateButton(bool force) {
     unsigned long smpl = Audio::Counter::_currentSample;
-    // Force an update
-    if (force) {
-    	qApp->tryLock();
-    }
-    else {
-    	// Just try and update
-    	if (! qApp->tryLock()) return;
-    }
-    
-    if (text == "") {
+
+    if (mButtonText == "") {
         QPushButton::setText("");
-        QPushButton::setPaletteForegroundColor(QColor(QRgb(0)));
-        QPushButton::setPaletteBackgroundColor(QColor(QRgb(12632256)));
+        QString style = "QPushButton { background-color : rgb(0,0,0); "
+                        "              color : rgb(192,192,192); }";
+        QPushButton::setStyleSheet(style);
         QPushButton::setEnabled(false);
-        qApp->unlock();
         return;
     }
+
+    QString text;
+    QString style;
     switch (_state) {
-        case STATE_STOP:
-            QPushButton::setText(text + "\n" + dps_prettyTime(_totalSamples));
-            QPushButton::setPaletteForegroundColor(fgColour);
-            QPushButton::setPaletteBackgroundColor(bgColour);
-            QPushButton::setEnabled(true);
+        case STATE_STOP: {
+            text = text + "\n" + dps_prettyTime(_totalSamples).c_str();
+            style = mStylesheet;
             break;
-        case STATE_PLAY:
-            QPushButton::setText("PLAYING\n" 
-                    + dps_prettyTime(_totalSamples - smpl));
-            QPushButton::setPaletteForegroundColor(QColor(QRgb(16776960)));
-            QPushButton::setPaletteBackgroundColor(QColor(QRgb(16711680)));
-            QPushButton::setEnabled(true);
+        }
+        case STATE_PLAY: {
+            text = QString("PLAYING\n")
+                            + dps_prettyTime(_totalSamples - smpl).c_str();
+            style = "QPushButton { background-color : rgb(255,255,0); "
+                            "              color : rgb(255,0,0); }";
             break;
-        case STATE_PAUSE:
+        }
+        case STATE_PAUSE: {
             break;
+        }
+
     }
-    qApp->unlock();
+    QPushButton::setText(text);
+    QPushButton::setStyleSheet(style);
+    QPushButton::setEnabled(true);
 }

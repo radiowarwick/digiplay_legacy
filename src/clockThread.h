@@ -1,7 +1,7 @@
 /*
  * Clock module
  * clockThread.h
- * Provides date/time in a separate QThread 
+ * Provides date/time in a separate QThread
  *
  * Copyright (c) 2004-2005 Chris Cantwell
  *
@@ -20,22 +20,42 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#include <qmutex.h>
-#include <qstring.h>
-#include <qthread.h>
-#include <qapplication.h>
+#ifndef CLOCK_THREAD_H
+#define CLOCK_THREAD_H
+
+#include <QtCore/QMutex>
+#include <QtCore/QString>
+#include <QtCore/QThread>
+#include <QtCore/QEvent>
+#include <QtGui/QApplication>
 #include <ctime>
 
-class clockThread : public QThread 
+class clockThread : public QThread
 {
 public:
-	clockThread(QWidget *o) : receiver(o), stopped(FALSE) {;}
+	clockThread(QObject *o) : receiver(o), stopped(FALSE) {;}
 	void run();
 	void stop();
-	
+
 private:
-	QWidget *receiver;
+	QObject *receiver;
 	QMutex mutex;
 	QString getPrettyDate(tm *local);
 	bool stopped;
 };
+
+class ClockUpdateEvent : public QEvent {
+public:
+    ClockUpdateEvent(Type type) : QEvent(type) {}
+    ClockUpdateEvent(const ClockUpdateEvent& pSrc)
+        : QEvent(pSrc), mData(pSrc.mData) {}
+    virtual ~ClockUpdateEvent() {}
+
+    QString data() const {return mData;}
+    void setData(QString pData) { mData = pData; }
+
+protected:
+    QString mData;
+};
+
+#endif

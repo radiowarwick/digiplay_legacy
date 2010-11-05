@@ -5,7 +5,8 @@ CONFIG	+= qt warn_on release
 
 SOURCES	+= main.cpp
 
-FORMS	= frmPlayout.ui
+#The following line was changed from FORMS to FORMS3 by qt3to4
+FORMS3	= frmPlayout.ui
 
 IMAGES	= images/fastbackward.png \
 	images/fastforward.png \
@@ -22,3 +23,10 @@ unix {
 
 
 
+#The following line was inserted by qt3to4
+QT +=  qt3support 
+#The following line was inserted by qt3to4
+CONFIG += uic3
+
+#The following line was inserted by qt3to4
+QT +=  

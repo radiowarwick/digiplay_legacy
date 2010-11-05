@@ -1,7 +1,7 @@
 #ifndef CLASS_AUDIOWALLITEM
 #define CLASS_AUDIOWALLITEM
 
-#include <qpushbutton.h>
+#include <QtGui/QPushButton>
 
 #include "audiolib/ProcessLink.h"
 #include "audiolib/ProcessMixer.h"
@@ -18,19 +18,18 @@ enum ItemFileType {
 
 struct AudioWallItemSpec {
 	AudioWallItemSpec() {
-		file = "";
-        type = ITEM_FILETYPE_RAW;
-		start = 0;
-		end = 0;
-		text = "";
+		mFile = "";
+        mType = ITEM_FILETYPE_RAW;
+		mStart = 0;
+		mEnd = 0;
+		mText = "";
 	}
-    QString file;
-    enum ItemFileType type;
-    unsigned long start;
-    unsigned long end;
-    QString text;
-    QColor fgColour;
-    QColor bgColour;
+    QString mFile;
+    enum ItemFileType mType;
+    unsigned long mStart;
+    unsigned long mEnd;
+    QString mText;
+    QString mStyle;
 };
 
 class AudioWallItem :   public QPushButton,
@@ -38,12 +37,9 @@ class AudioWallItem :   public QPushButton,
                         public Audio::Counter {
     Q_OBJECT
     public:
-        AudioWallItem(QWidget* parent, const char* name);
+        AudioWallItem(QWidget* parent);
         ~AudioWallItem();
         void set(AudioWallItemSpec& pItem);
-        void setFont(QFont &F);
-        void setBackgroundColour(QColor &C);
-        void setForegroundColour(QColor &C);
         void setText(QString T);
         void update() {updateButton();}
 
@@ -57,13 +53,11 @@ class AudioWallItem :   public QPushButton,
 
         void updateButton(bool force = false);
 
-        QString text;
-        QColor bgColour;
-        QColor fgColour;
-        QFont font;
-        
-        bool newItemAvailable;
-        AudioWallItemSpec newItem;
+        QString mButtonText;
+        QString mStylesheet;
+
+        bool mNewItemAvailable;
+        AudioWallItemSpec mNewItem;
         Audio::Input * mInputModule;
 };
 

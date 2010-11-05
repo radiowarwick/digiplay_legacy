@@ -26,10 +26,10 @@
 #include <vector>
 using namespace std;
 
-#include <qobject.h>
-#include <qstring.h>
-#include <qfont.h>
-#include <qcolor.h>
+#include <QtCore/QObject>
+#include <QtCore/QString>
+#include <QtGui/QFont>
+#include <QtGui/QColor>
 
 #include "MessagingInterface.h"
 
@@ -47,27 +47,27 @@ struct Page {
 };
 
 class AudioWallManager : public QObject,
-						 public MessagingInterface {
-	Q_OBJECT
-	public:
-		AudioWallManager( AudioWall *A, QString name );
-		~AudioWallManager();
-		int getAwSet() {return _awset;}
-		void load(unsigned int awset);
-		void onMessage();
-		
-	public slots:
-		void refreshWall();
-	
-	private:
-		Config *conf;
-		QtTrigger *triggerAw;
-		AudioWall *_A;
+                         public MessagingInterface {
+    Q_OBJECT
+    public:
+        AudioWallManager( AudioWall *A, QString name );
+        ~AudioWallManager();
+        int getAwSet() {return _awset;}
+        void load(unsigned int awset);
+        void onMessage();
+        
+    public slots:
+        void refreshWall();
+    
+    private:
+        Config *conf;
+        QtTrigger *triggerAw;
+        AudioWall *_A;
         DataAccess *DB;
-		QString _username;
-		QString _name;
-		vector<Page*> _pages;
-		int _awset;
+        QString _username;
+        QString _name;
+        vector<Page*> _pages;
+        int _awset;
 };
 
 #endif

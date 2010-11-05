@@ -1,0 +1,10 @@
+<!DOCTYPE RCC><RCC version="1.0">
+ <qresource prefix="/icons">
+    <file alias="stop.png">../share/dps/images/stop.png</file>
+    <file alias="play.png">../share/dps/images/play.png</file>
+    <file alias="pause.png">../share/dps/images/pause.png</file>
+    <file alias="reset.png">../share/dps/images/reset.png</file>
+    <file alias="fastbackward.png">../share/dps/images/fastbackward.png</file>
+    <file alias="fastforward.png">../share/dps/images/fastforward.png</file>
+ </qresource>
+</RCC>

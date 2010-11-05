@@ -26,7 +26,7 @@
 #include <vector>
 using namespace std;
 
-#include <qwidget.h>
+#include <QtGui/QWidget>
 
 #include "audiolib/Audio.h"
 #include "audiolib/ProcessMixer.h"

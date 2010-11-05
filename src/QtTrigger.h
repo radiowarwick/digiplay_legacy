@@ -3,8 +3,8 @@
 
 #include <string>
 
-#include <qobject.h>
-#include <qapplication.h>
+#include <QtCore/QObject>
+#include <QtGui/QApplication>
 
 #include "DbTrigger.h"
 

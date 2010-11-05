@@ -1,6 +1,6 @@
 /*
  * Studio Playout application
- * frmPlayout.ui.h
+ * frmPlayout.cpp
  * A studio playout application
  *
  * Copyright (c) 2004-2006 Chris Cantwell
@@ -21,8 +21,17 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#include <qapplication.h>
+
 #include <cstdlib>
+
+#include <QtGui/QApplication>
+#include <QtGui/QKeyEvent>
+//#include <qvariant.h>
+//#include <qlayout.h>
+//#include <qtooltip.h>
+//#include <qwhatsthis.h>
+//#include <qimage.h>
+//#include <qpixmap.h>
 
 #include "AudioPlayer.h"
 #include "AudioWall.h"
@@ -33,6 +42,8 @@
 #include "Security.h"
 #include "Logger.h"
 #include "Config.h"
+
+#include "frmPlayout.h"
 
 RemoteStartThread* remotes;
 AudioPlayer* audioPlayer1;
@@ -48,6 +59,47 @@ unsigned int usrAudioWallId;
 
 Config *conf;
 
+
+/*
+ *  Constructs a frmPlayout as a child of 'parent', with the
+ *  name 'name' and widget flags set to 'f'.
+ *
+ *  The dialog will by default be modeless, unless you set 'modal' to
+ *  TRUE to construct a modal dialog.
+ */
+frmPlayout::frmPlayout( QWidget* parent, Qt::WindowFlags fl )
+    : QDialog( parent, fl )
+{
+    setSizePolicy( QSizePolicy( QSizePolicy::Fixed, QSizePolicy::Fixed ) );
+    setMinimumSize( QSize( 21, 22 ) );
+    setMaximumSize( QSize( 1025, 769 ) );
+    setBaseSize( QSize( 1024, 768 ) );
+    languageChange();
+    resize( QSize(1025, 769).expandedTo(minimumSizeHint()) );
+    ensurePolished();
+
+    // signals and slots connections
+    init();
+}
+
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+frmPlayout::~frmPlayout()
+{
+    destroy();
+    // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void frmPlayout::languageChange()
+{
+    setWindowTitle( tr( "RaW Digital Playout System" ) );
+}
+
 void frmPlayout::init() {
     const char* routine = "frmPlayout::init";
 
@@ -55,18 +107,18 @@ void frmPlayout::init() {
     conf = new Config("digiplay");
 
     // Create audio players
-    audioPlayer1 = new AudioPlayer(this,"audioPlayer1",1);
+    audioPlayer1 = new AudioPlayer(this,1);
     audioPlayer1->setGeometry(10,10,540,240);
-    audioPlayer2 = new AudioPlayer(this,"audioPlayer2",2);
+    audioPlayer2 = new AudioPlayer(this,2);
     audioPlayer2->setGeometry(10,260,540,240);
-    audioPlayer3 = new AudioPlayer(this,"audioPlayer3",3);
+    audioPlayer3 = new AudioPlayer(this,3);
     audioPlayer3->setGeometry(10,510,540,240);
 
 	// Create the station audio wall
     stnAudioWall = new AudioWall(this,"stnAudioWall",4,3);
 	stnAudioWall->setGeometry(560,0,460,373);
 	stnAudioWallMan = new AudioWallManager(stnAudioWall, "station_aw_set");
-	
+
     // Create the user audio wall
 	usrAudioWall = new AudioWall(this,"usrAudioWall",4,3);
 	usrAudioWall->setGeometry(560,373,460,373);
@@ -100,7 +152,7 @@ void frmPlayout::init() {
 	catch (int e) {
 		L_ERROR(LOG_AUDIOHW, "Initialisation of remote starts failed.");
 	}
-	
+
 	losePrivilage();
 }
 
@@ -111,7 +163,7 @@ void frmPlayout::destroy() {
 
 void frmPlayout::keyPressEvent(QKeyEvent* e) {
     switch (e->key()) {
-        case Key_Escape: {
+        case Qt::Key_Escape: {
             if (conf->isParamDefined("enable_shift_esc")) {
                 string confValue = conf->getParam("enable_shift_esc");
                 char c = toupper(confValue[0]);
@@ -121,7 +173,7 @@ void frmPlayout::keyPressEvent(QKeyEvent* e) {
             }
             break;
         }
-        case Key_Shift:
+        case Qt::Key_Shift:
             isShiftDown = true;
             break;
         default:
@@ -132,9 +184,9 @@ void frmPlayout::keyPressEvent(QKeyEvent* e) {
 
 void frmPlayout::keyReleaseEvent(QKeyEvent* e) {
     switch (e->key()) {
-        case Key_Escape:
+        case Qt::Key_Escape:
             break;
-        case Key_Shift:
+        case Qt::Key_Shift:
             isShiftDown = false;
             break;
         default:

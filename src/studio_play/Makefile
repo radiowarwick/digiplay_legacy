@@ -18,7 +18,7 @@ MODS		=	main
 QT_MODS		=	frmPlayout AudioWall AudioWallItem AudioWallManager \
 				AudioPlayer AudioWallDriver RemoteStartThread
 SHARED_MODS	=	Config Logger dps DataAccess Security clockThread Thread \
-				DbTrigger MessagingInterface
+				DbTrigger MessagingInterface DpsResources
 SHARED_QT_MODS	= QtTrigger
 
 # Global header files on which dependance exists

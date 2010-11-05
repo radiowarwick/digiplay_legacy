@@ -24,12 +24,13 @@
 #include <cstdlib>
 using namespace std;
 
-#include <qapplication.h>
-#include <qwidget.h>
-#include <qgroupbox.h>
-#include <qpushbutton.h>
-#include <qlabel.h>
-#include <qslider.h>
+#include <QtGui/QApplication>
+#include <QtGui/QWidget>
+#include <QtGui/QGroupBox>
+#include <QtGui/QPushButton>
+#include <QtGui/QLabel>
+#include <QtGui/QSlider>
+#include <QtCore/QEvent>
 
 #include "Logger.h"
 #include "dps.h"
@@ -43,16 +44,16 @@ using namespace Audio;
 
 #include "AudioPlayer.h"
 
-AudioPlayer::AudioPlayer(QWidget *parent, const char* name, unsigned short playerId) 
-        : QWidget(parent,name) {
+AudioPlayer::AudioPlayer(QWidget *parent, unsigned short playerId)
+        : QWidget(parent) {
 
     drawCreate();
-    id = dps_itoa(playerId);
+    id = QString::number(playerId);
     DB = new DataAccess();
     conf = new Config("digiplay",this);
-    std::string device = conf->getParam("channel_" + id);
+    std::string device = conf->getParam("channel_" + id.toStdString());
 	location = atoi( conf->getParam("LOCATION").c_str() );
-    conf->setParam("player" + id + "_md5","");
+    conf->setParam("player" + id.toStdString() + "_md5","");
     grpFrame = 0;
 
     // Setup track end counter
@@ -68,24 +69,31 @@ AudioPlayer::AudioPlayer(QWidget *parent, const char* name, unsigned short playe
     length_hours = 0;
     length_mins = 0;
     length_secs = 0;
-
+    mRedCounter = false;
 }
 
 AudioPlayer::~AudioPlayer() {
     clean();
 }
 
-void AudioPlayer::customEvent(QCustomEvent *event) {
+void AudioPlayer::customEvent(QEvent *event) {
     const char *routine = "AudioPlayer::customEvent";
     switch (event->type()) {
     case 20000: {       // Clock update
-            strTime = (QString *) event->data();
-            updateEndTime();
+            updateEndTime(dynamic_cast<ClockUpdateEvent*>(event)->data());
             break;
         }
     case 20001: {       // Date update - unused
             break;
         }
+    case 20002: {
+        lblCounter->setStyleSheet("color: rgb(255,0,0);");
+        break;
+    }
+    case 20003: {
+        lblCounter->setStyleSheet("color: rgb(0,0,0);");
+        break;
+    }
     default: {
             qWarning("Unknown event type: %d", event->type());
             L_WARNING(LOG_DB,"Unknown event type: " + dps_itoa(event->type()));
@@ -97,19 +105,17 @@ void AudioPlayer::customEvent(QCustomEvent *event) {
 
 void AudioPlayer::load() {
     const char *routine = "AudioPlayer::load";
-    qApp->lock();
     btnLoad->setEnabled(false);
-    qApp->unlock();
-    
+
     if (conf->getParam("next_on_showplan") == "") {
         return;
     }
-    
+
     string SQL = "SELECT * FROM v_audio WHERE md5='"
                     + conf->getParam("next_on_showplan") + "'";
     PqxxResult R = DB->exec("AudioPlayerLoad",SQL);
     DB->abort("AudioPlayerLoad");
-    
+
     if (R.size() == 0) {
         L_ERROR(LOG_PLAYOUT, "No such track!");
         return;
@@ -134,38 +140,36 @@ void AudioPlayer::load() {
         audioFilereader->patch(OUT0,audioPlayer,IN0);
         audioFilereader->addCounter(this);
     }
-    string f = R[0]["path"].c_str() + string("/") 
+    string f = R[0]["path"].c_str() + string("/")
                 + (string(R[0]["md5"].c_str())).substr(0,1)
                 + string("/") + R[0]["md5"].c_str() + ext;
 
     audioFilereader->load(f, atoi(R[0]["start_smpl"].c_str()),
                                     atoi(R[0]["end_smpl"].c_str()));
-                                    
-    conf->setParam("next_on_showplan","");
-    conf->setParam("player" + id + "_md5", string(R[0]["md5"].c_str()));
 
-	qApp->lock();
+    conf->setParam("next_on_showplan","");
+    conf->setParam("player" + id.toStdString() + "_md5", string(R[0]["md5"].c_str()));
+
     lblTitle->setText(R[0]["title"].c_str());
     lblArtist->setText(R[0]["artist"].c_str());
     btnPlay->setEnabled(true);
     btnStop->setEnabled(true);
     btnLog->setEnabled(true);
     sldSeek->setEnabled(true);
-	qApp->unlock();
 
     // Set last sample to be the end sample and update counter
     _lastSample = _totalSamples;
     onSetSample();
 }
 
-void AudioPlayer::updateEndTime(){
+void AudioPlayer::updateEndTime(QString pTime){
     int current_position = (_totalSamples-_currentSample) / 44100;
     if ((_totalSamples-_currentSample) % 44100 > 22050) {
         current_position++;
     }
-    int time_hours = atoi( strTime->section(':', 0, 0) );
-    int time_mins = atoi( strTime->section(':', 1, 1) );
-    int time_secs = atoi( strTime->section(':', 2, 2) );
+    int time_hours = pTime.section(':', 0, 0).toInt();
+    int time_mins = pTime.section(':', 1, 1).toInt();
+    int time_secs = pTime.section(':', 2, 2).toInt();
     length_hours = current_position / 3600;
     length_mins = (current_position % 3600) / 60;
     length_secs = ((current_position % 3600) % 60);
@@ -187,30 +191,26 @@ void AudioPlayer::updateEndTime(){
     if (time_hours >= 24) {
         time_hours -= 24;
     }
-    QString hours = dps_itoa(time_hours);
-    QString mins = dps_itoa(time_mins);
-    QString secs = dps_itoa(time_secs);
+    QString hours = QString::number(time_hours);
+    QString mins = QString::number(time_mins);
+    QString secs = QString::number(time_secs);
     if (secs.length() == 1) secs = "0" + secs;
     if (mins.length() == 1) mins = "0" + mins;
     if (hours.length() == 1) hours = "0" + hours;
 
-    qApp->lock();
     lblEnd->setText(hours + ":" + mins + ":" + secs);
-    qApp->unlock();
 }
 
 void AudioPlayer::log() {
-	qApp->lock();
 	btnLog->setEnabled(false);
-	qApp->unlock();
-	
+
 	// Get current time
     int now = (int)time(NULL);
 
     // Escape the artist and title
-    string artist = DB->esc(lblArtist->text().ascii());
-    string title = DB->esc(lblTitle->text().ascii());
-				
+    string artist = DB->esc(lblArtist->text().toStdString());
+    string title = DB->esc(lblTitle->text().toStdString());
+
     // Try and insert into database
     string SQL = "INSERT INTO log "
                 "(userid, datetime, track_title, track_artist, location) "
@@ -250,112 +250,99 @@ void AudioPlayer::seek(unsigned long sample) {
 }
 
 void AudioPlayer::setTimeDisplay() {
-    qApp->lock();
     if (lblTime->text() == "ELAPSED") {
         lblTime->setText( tr( "REMAIN" ) );
     }
     else {
         lblTime->setText( tr( "ELAPSED" ) );
     }
-    qApp->unlock();
     onSetSample();
 }
 
 void AudioPlayer::onMessage() {
     const char *routine = "AudioPlayer::onMessage";
 
-    qApp->lock();
     if (conf->getParam("next_on_showplan") == "") {
         L_INFO(LOG_PLAYOUT, "Config updated: DISABLED LOAD");
         btnLoad->setEnabled(false);
     }
-    else if (_state == STATE_STOP) { 
+    else if (_state == STATE_STOP) {
         L_INFO(LOG_PLAYOUT, "Config updated: ENABLED LOAD");
         btnLoad->setEnabled(true);
     }
-    qApp->unlock();
 	userid = atoi(conf->getParam("userid").c_str());
 }
 
 void AudioPlayer::onSetSample() {
     if (_state == STATE_PLAY && _currentSample - _lastSample < 1764) return;
 
-    if (! qApp->tryLock()) return;
-        
+    if ((_totalSamples - _currentSample)/44100 < 20 && !mRedCounter) {
+        mRedCounter = true;
+        QApplication::postEvent(this, new QEvent((QEvent::Type)20002));
+    }
+    else if ((_totalSamples - _currentSample)/44100 > 20 && mRedCounter) {
+        mRedCounter = false;
+        QApplication::postEvent(this, new QEvent((QEvent::Type)20003));
+    }
+
     _lastSample = _currentSample;
     sldSeek->setValue(_currentSample);
-    
-    if ((_totalSamples - _currentSample)/44100 < 20) {
-       	lblCounter->setPaletteForegroundColor(QColor(QRgb(16711680)));
-    }
-    else {
-	    lblCounter->setPaletteForegroundColor(QColor(QRgb(0)));
-	}
-    
+
     if (lblTime->text() == "REMAIN") {
 	    lblCounter->setText(getTime(_totalSamples - _currentSample));
 	}
 	else {
       	lblCounter->setText(getTime(_currentSample));
-	} 
-    qApp->unlock();
+	}
 }
 
 void AudioPlayer::onSetState() {
     switch (_state) {
         case STATE_PLAY:
             {
-            	qApp->lock();
                 btnLoad->setEnabled(false);
                 sldSeek->setEnabled(false);
-                btnPlay->setPixmap(*pixPause);
-                qApp->unlock();
+                btnPlay->setIcon(icnPause);
             }
             break;
         case STATE_STOP:
             {
             	bool loaded = audioFilereader->isLoaded();
-            	qApp->lock();
                 if (loaded) {
                     btnPlay->setEnabled(true);
                 }
-                
+
                 if (conf->getParam("next_on_showplan") != "") {
                     btnLoad->setEnabled(true);
                 }
-                btnPlay->setPixmap(*pixPlay);
-                sldSeek->setMaxValue(_totalSamples);
+                btnPlay->setIcon(icnPlay);
+                sldSeek->setMaximum(_totalSamples);
                 sldSeek->setEnabled(true);
-                qApp->unlock();
                 onSetSample();
             }
             break;
         case STATE_PAUSE:
             {
-            	qApp->lock();
-                btnPlay->setPixmap(*pixPlay);
+                btnPlay->setIcon(icnPlay);
                 sldSeek->setEnabled(true);
-                qApp->unlock();
             }
             break;
     }
 }
 
 void AudioPlayer::onSetTotalSamples() {
-    qApp->lock();
-    sldSeek->setMaxValue(_totalSamples);
-    qApp->unlock();
+    sldSeek->setMaximum(_totalSamples);
 }
 
 QString AudioPlayer::getTime( long smpl ) {
     QString S;
     int mil, sec, min;
 
-    mil = smpl/441; 
+    mil = smpl/441;
     sec = (int)(mil / 100);
     mil = mil%100;
     min = (int)(sec / 60);
-    sec = sec%60; 
+    sec = sec%60;
     if (min < 10) S += "0";
     S += QString::number(min) + ":";
     if (sec < 10) S += "0";
@@ -366,148 +353,148 @@ QString AudioPlayer::getTime( long smpl ) {
 }
 
 void AudioPlayer::drawCreate() {
-    string path = DPSDIR;
-    
-    qApp->lock();
-	
-    pixPlay = new QPixmap(path + "/images/play.png");
-    pixPause = new QPixmap(path + "/images/pause.png");
+    QString path = DPSDIR;
 
-    grpFrame = new QGroupBox( this, "grpFrame" );
+    icnPlay = QIcon(":/icons/play.png");
+    icnPause = QIcon(":/icons/pause.png");
+
+    grpFrame = new QGroupBox( this );
     grpFrame->setGeometry( QRect( 0, 0, 540, 240 ) );
     QFont grpFrame_font(  grpFrame->font() );
-    grpFrame_font.setPointSize( 16 );
+    grpFrame_font.setPointSize( 12 );
     grpFrame_font.setBold( TRUE );
     grpFrame->setFont( grpFrame_font );
     grpFrame->setTitle( "Audio Player " + id);
 
-    lblTime = new QLabel( grpFrame, "lblTime" );
+    lblTime = new QLabel( grpFrame );
     lblTime->setGeometry( QRect( 270, 100, 110, 17 ) );
     QFont lblTime_font(  lblTime->font() );
-    lblTime_font.setPointSize( 14 );
+    lblTime_font.setPointSize( 10 );
     lblTime->setFont( lblTime_font );
-    lblTime->setAlignment( int( QLabel::AlignCenter ) );
+    lblTime->setAlignment( Qt::AlignCenter );
     lblTime->setText( tr( "REMAIN" ) );
 
-    btnTimeMode = new QPushButton( grpFrame, "btnTimeMode" );
+    btnTimeMode = new QPushButton( grpFrame );
     btnTimeMode->setGeometry( QRect( 280, 60, 90, 40 ) );
     QFont btnTimeMode_font(  btnTimeMode->font() );
-    btnTimeMode_font.setPointSize( 14 );
+    btnTimeMode_font.setPointSize( 10 );
     btnTimeMode_font.setBold( FALSE );
     btnTimeMode->setFont( btnTimeMode_font );
     btnTimeMode->setText( tr( "Time Mode") );
     connect(btnTimeMode,SIGNAL(pressed()),this,SLOT(setTimeDisplay()));
 
-    lblCounter = new QLabel( grpFrame, "lblCounter" );
+    lblCounter = new QLabel( grpFrame );
     lblCounter->setGeometry( QRect( 10, 54, 260, 45 ) );
     QFont lblCounter_font(  lblCounter->font() );
-    lblCounter_font.setPointSize( 36 );
+    lblCounter_font.setPointSize( 24 );
     lblCounter->setFont( lblCounter_font );
-    lblCounter->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft ) );
+    lblCounter->setAlignment( Qt::AlignVCenter | Qt::AlignLeft );
     lblCounter->setText( tr( "00:00.00" ) );
 
-    lblEndlbl = new QLabel( grpFrame, "lblEndlbl" );
+    lblEndlbl = new QLabel( grpFrame );
     lblEndlbl->setGeometry( QRect( 10, 96, 80, 15 ) );
     QFont lblEndlbl_font(  lblEndlbl->font() );
-    lblEndlbl_font.setPointSize( 14 );
+    lblEndlbl_font.setPointSize( 10 );
     lblEndlbl->setFont( lblEndlbl_font );
-    lblEndlbl->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft ) );
+    lblEndlbl->setAlignment( Qt::AlignVCenter | Qt::AlignLeft );
     lblEndlbl->setText( tr( "End Time:" ) );
 
-    lblEnd = new QLabel( grpFrame, "lblEnd" );
+    lblEnd = new QLabel( grpFrame );
     lblEnd->setGeometry( QRect( 90, 96, 180, 15 ) );
     QFont lblEnd_font(  lblEnd->font() );
-    lblEnd_font.setPointSize( 14 );
+    lblEnd_font.setPointSize( 10 );
     lblEnd->setFont( lblEnd_font );
-    lblEnd->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft ) );
+    lblEnd->setAlignment( Qt::AlignVCenter | Qt::AlignLeft );
     lblEnd->setText( tr( "--:--:--" ) );
 
-    btnLog = new QPushButton( grpFrame, "btnLog" );
+    btnLog = new QPushButton( grpFrame );
     btnLog->setGeometry( QRect( 390, 20, 140, 40 ) );
     QFont btnLog_font(  btnLog->font() );
-    btnLog_font.setPointSize( 18 );
+    btnLog_font.setPointSize( 14 );
     btnLog->setFont( btnLog_font );
     btnLog->setText( tr( "Log this!" ) );
     btnLog->setEnabled(false);
     connect(btnLog,SIGNAL(pressed()),this,SLOT(log()));
 
-    btnLoad = new QPushButton( grpFrame, "btnLoad" );
+    btnLoad = new QPushButton( grpFrame );
     btnLoad->setGeometry( QRect( 390, 60, 140, 40 ) );
     QFont btnLoad_font(  btnLoad->font() );
-    btnLoad_font.setPointSize( 18 );
+    btnLoad_font.setPointSize( 14 );
     btnLoad->setFont( btnLoad_font );
     btnLoad->setText( tr( "Load" ) );
     connect(btnLoad,SIGNAL(pressed()),this,SLOT(load()));
 
-    btnStop = new QPushButton( grpFrame, "btnStop" );
+    btnStop = new QPushButton( grpFrame );
     btnStop->setEnabled( FALSE );
     btnStop->setGeometry( QRect( 10, 159, 110, 70 ) );
     btnStop->setText( QString::null );
-    btnStop->setPixmap( QPixmap(path + "/images/stop.png") );
+    btnStop->setIcon( QIcon(":/icons/stop.png") );
+    btnStop->setIconSize( QSize(64,64) );
     connect( btnStop, SIGNAL(pressed()), this, SLOT(stop()) );
 
-    btnPlay = new QPushButton( grpFrame, "btnPlay" );
+    btnPlay = new QPushButton( grpFrame );
     btnPlay->setEnabled( FALSE );
     btnPlay->setGeometry( QRect( 130, 159, 110, 70 ) );
     btnPlay->setText( QString::null );
-    btnPlay->setPixmap( *pixPlay );
+    btnPlay->setIcon( icnPlay );
+    btnPlay->setIconSize( QSize(64,64) );
     connect( btnPlay, SIGNAL(pressed()), this, SLOT(play()) );
 
-    btnReset = new QPushButton( grpFrame, "btnReset" );
+    btnReset = new QPushButton( grpFrame );
     btnReset->setEnabled( FALSE );
     btnReset->setGeometry( QRect( 290, 159, 80, 70 ) );
     btnReset->setText( QString::null );
-    btnReset->setPixmap( QPixmap(path + "/images/reset.png") );
+    btnReset->setIcon( QIcon(":/icons/reset.png") );
+    btnReset->setIconSize( QSize(64,64) );
 
-    btnSeekBack = new QPushButton( grpFrame, "btnSeekBack" );
+    btnSeekBack = new QPushButton( grpFrame );
     btnSeekBack->setEnabled( FALSE );
     btnSeekBack->setGeometry( QRect( 370, 159, 80, 70 ) );
     btnSeekBack->setText( QString::null );
-    btnSeekBack->setPixmap( QPixmap(path + "/images/fastbackward.png") );
+    btnSeekBack->setIcon( QIcon(":/icons/fastbackward.png") );
+    btnSeekBack->setIconSize( QSize(64,64) );
 
-    btnSeekForward = new QPushButton( grpFrame, "btnSeekForward" );
+    btnSeekForward = new QPushButton( grpFrame );
     btnSeekForward->setEnabled( FALSE );
     btnSeekForward->setGeometry( QRect( 450, 159, 80, 70 ) );
     btnSeekForward->setText( QString::null );
-    btnSeekForward->setPixmap( QPixmap(path + "/images/fastforward.png") );
+    btnSeekForward->setIcon( QIcon(":/icons/fastforward.png" ) );
+    btnSeekForward->setIconSize( QSize(64,64) );
 
-    sldSeek = new QSlider( grpFrame, "sldSeek" );
+    sldSeek = new QSlider( grpFrame );
     sldSeek->setGeometry( QRect( 10, 120, 520, 29 ) );
-    sldSeek->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7,
-    			(QSizePolicy::SizeType)4, 0, 0, 
-    			sldSeek->sizePolicy().hasHeightForWidth() ) );
-    sldSeek->setOrientation( QSlider::Horizontal );
+    sldSeek->setSizePolicy( QSizePolicy( QSizePolicy::Expanding,
+    			QSizePolicy::Preferred ) );
+    sldSeek->setOrientation( Qt::Horizontal );
     connect( sldSeek, SIGNAL(sliderReleased()), this, SLOT(seek()));
 
-    lblTitleLabel = new QLabel( grpFrame, "lblTitleLabel" );
+    lblTitleLabel = new QLabel( grpFrame );
     lblTitleLabel->setGeometry( QRect( 10, 40, 60, 20 ) );
     QFont lblTitleLabel_font(  lblTitleLabel->font() );
-    lblTitleLabel_font.setPointSize( 14 );
+    lblTitleLabel_font.setPointSize( 10 );
     lblTitleLabel->setFont( lblTitleLabel_font );
     lblTitleLabel->setMouseTracking( FALSE );
     lblTitleLabel->setAcceptDrops( FALSE );
     lblTitleLabel->setText( tr( "Title: ") );
 
-    lblTitle = new QLabel( grpFrame, "lblTitle" );
+    lblTitle = new QLabel( grpFrame );
     lblTitle->setGeometry( QRect( 80, 40, 300, 20 ) );
     QFont lblTitle_font(  lblTitle->font() );
-    lblTitle_font.setPointSize( 14 );
+    lblTitle_font.setPointSize( 10 );
     lblTitle->setFont( lblTitle_font );
 
-    lblArtistLabel = new QLabel( grpFrame, "lblArtistLabel" );
+    lblArtistLabel = new QLabel( grpFrame );
     lblArtistLabel->setGeometry( QRect( 10, 20, 60, 20 ) );
     QFont lblArtistLabel_font(  lblArtistLabel->font() );
-    lblArtistLabel_font.setPointSize( 14 );
+    lblArtistLabel_font.setPointSize( 10 );
     lblArtistLabel->setFont( lblArtistLabel_font );
     lblArtistLabel->setText( tr( "Artist: " ) );
 
-    lblArtist = new QLabel( grpFrame, "lblArtist" );
+    lblArtist = new QLabel( grpFrame );
     lblArtist->setGeometry( QRect( 80, 20, 300, 20 ) );
     QFont lblArtist_font(  lblArtist->font() );
-    lblArtist_font.setPointSize( 14 );
+    lblArtist_font.setPointSize( 10 );
     lblArtist->setFont( lblArtist_font );
-
-    qApp->unlock();
 }
 
 void AudioPlayer::clean() {

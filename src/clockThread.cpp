@@ -1,7 +1,7 @@
 /*
  * Clock module
  * clockThread.cpp
- * Provides date/time in a separate QThread 
+ * Provides date/time in a separate QThread
  *
  * Copyright (c) 2004-2005 Chris Cantwell
  *
@@ -20,6 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+
 #include "clockThread.h"
 
 void clockThread::run() {
@@ -37,13 +38,13 @@ void clockThread::run() {
 		if (minutes.length() == 1) minutes = "0" + minutes;
 		QString hours = QString::number(local.tm_hour,10);
 		if (hours.length() == 1) hours = "0" + hours;
-		
-		QCustomEvent *clockEvent = new QCustomEvent(20000);
-		QCustomEvent *dateEvent = new QCustomEvent(20001);
-		clockEvent->setData(new QString(hours + ":" + minutes + ":" + seconds));
-		dateEvent->setData(new QString(getPrettyDate(&local)));
-		QApplication::postEvent(receiver, clockEvent);
-		QApplication::postEvent(receiver, dateEvent);
+
+		ClockUpdateEvent *clockEvent = new ClockUpdateEvent((enum QEvent::Type)20000);
+		ClockUpdateEvent *dateEvent = new ClockUpdateEvent((enum QEvent::Type)20001);
+		clockEvent->setData(QString(hours + ":" + minutes + ":" + seconds));
+		dateEvent->setData(QString(getPrettyDate(&local)));
+		QApplication::postEvent(receiver, dynamic_cast<QEvent*>(clockEvent));
+		QApplication::postEvent(receiver, dynamic_cast<QEvent*>(dateEvent));
 		sleep(1);
 	}
 }

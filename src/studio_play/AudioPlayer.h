@@ -23,9 +23,11 @@
 #ifndef CLASS_AUDIO_PLAYER
 #define CLASS_AUDIO_PLAYER
 
-#include <qapplication.h>
-#include <qwidget.h>
-#include <qmutex.h>
+#include <QtGui/QApplication>
+#include <QtGui/QWidget>
+#include <QtGui/QIcon>
+#include <QtCore/QMutex>
+#include <QtCore/QEvent>
 
 #include "clockThread.h"
 #include "Config.h"
@@ -46,10 +48,10 @@ class AudioPlayer:  public QWidget,
     Q_OBJECT
 
     public:
-        AudioPlayer(QWidget *parent, const char* name, unsigned short playerId);
+        AudioPlayer(QWidget *parent, unsigned short playerId);
         ~AudioPlayer();
 		void onMessage();
-		
+
     public slots:
         void load();
         void log();
@@ -64,15 +66,15 @@ class AudioPlayer:  public QWidget,
         void onSetSample();
         void onSetState();
         void onSetTotalSamples();
-        void customEvent(QCustomEvent *event);
-        void updateEndTime();
+        void customEvent(QEvent *event);
+        void updateEndTime(QString pTime);
         QString getTime(long smpl);
 
         void drawCreate();
         void drawResize();
         void clean();
 
-        string id;
+        QString id;
 		int location;
 		int userid;
         Config* conf;
@@ -80,6 +82,7 @@ class AudioPlayer:  public QWidget,
         Audio::Input* audioFilereader;
         Audio::OutputDsp* audioPlayer;
         unsigned long _lastSample;
+        bool mRedCounter;
 
         clockThread *ck;
         QGroupBox* grpFrame;
@@ -99,14 +102,13 @@ class AudioPlayer:  public QWidget,
         int length_hours;
         int length_mins;
         int length_secs;
-        QString* strTime;
         QLabel* lblTitleLabel;
         QLabel* lblTitle;
         QLabel* lblArtistLabel;
         QLabel* lblArtist;
 
-        QPixmap* pixPlay;
-        QPixmap* pixPause;
+        QIcon icnPlay;
+        QIcon icnPause;
 };
 
 #endif

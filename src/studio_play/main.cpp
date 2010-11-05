@@ -23,8 +23,8 @@
 #include <cstdlib>
 using namespace std;
 
-#include <qapplication.h>
-#include <qstring.h>
+#include <QtGui/QApplication>
+#include <QtCore/QString>
 #include "frmPlayout.h"
 
 #include "sys/stat.h"

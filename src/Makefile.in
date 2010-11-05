@@ -1,8 +1,9 @@
 # Default command tools
 CC			=	g++ -g3
 LD			=	g++ -g3
-MOC			?=	@/usr/share/qt3/bin/moc
-UIC			?=	@/usr/share/qt3/bin/uic
+MOC			?=	@/usr/share/qt4/bin/moc
+UIC			?=	@/usr/share/qt4/bin/uic
+RCC			?=  @/usr/share/qt4/bin/rcc
 
 # Set default output location, name and version
 DEST		=	.
@@ -41,10 +42,10 @@ LDFLAGS		:=	-L$(ROOT)/src/audiolib -o $(DEST)/$(OUTPUT)
 # linker options. We also need to make a few more objects and generate
 # the necessary header files
 ifeq ($(QT_ENABLED),yes)
-	CCINC	+=	-I/usr/share/qt3/mkspecs/default -I/usr/include/qt3
+	CCINC	+=	-I/usr/include/qt4
 	CCFLAGS	+=	-pipe -W -D_REENTRANT -DQT_NO_DEBUG -DQT_THREAD_SUPPORT \
 				-DQT_SHARED
-	LIBS	+=	-L/usr/share/qt3/lib -L/usr/X11R6/lib -lqt-mt #-lXext -lX11
+	LIBS	+=	-L/usr/share/qt3/lib -L/usr/X11R6/lib -lQtGui #-lXext -lX11
 	QT_OBJS	=	$(addprefix moc_,$(APP_QTOBJS)) \
 				$(addprefix $(ROOT)/src/moc_,$(SHARED_QTOBJS))
 endif
@@ -78,14 +79,14 @@ MAKEDEPEND	=	$(CC) -M $(CCFLAGS) $(CCINC) -o $*.d $<
 .PHONY: clean
 
 # Generate the header file from the QT .ui file
-%.h: %.ui
-	@echo "Creating UI header file $@"
-	$(UIC) $< -o $@
+#%.h: %.ui
+#	@echo "Creating UI header file $@"
+#	$(UIC) $< -o $@
 
 # Create the source code file from the QT files and the header file
-%.cpp: %.h %.ui %.ui.h
-	@echo "Creating Main source file for $*: $@"
-	$(UIC) $*.ui -i $< -o $@
+#%.cpp: %.h %.ui %.ui.h
+#	@echo "Creating Main source file for $*: $@"
+#	$(UIC) $*.ui -i $< -o $@
 
 # Create the moc source code file from the header file
 moc_%.cpp: %.h
@@ -97,6 +98,9 @@ moc_%.cpp: %.h
 %.o: %.cpp
 	@echo "Creating Object file for $*: $@"
 	$(CC) $(CCFLAGS) -c $(CCINC) $< -o $@
+
+%.cpp: %.qrc
+	$(RCC) -o $@ $<
 
 # Create the required output file from the given objects and place in the
 # destination specified
@@ -115,4 +119,4 @@ clean:
 	@rm -f *.o $(OUTPUT) $(OUTPUT).$(VERSION)
 	@-$(foreach MOD,$(QT_MODS), rm -f moc_$(MOD).cpp)
 	@-$(foreach MOD,$(SHARED_QT_MODS), rm -f ../moc_$(MOD).cpp)
-	@-$(foreach MOD,$(QT_MODS), if [ -e $(MOD).ui ]; then rm -f $(MOD).cpp $(MOD).h; fi;)
+#	@-$(foreach MOD,$(QT_MODS), if [ -e $(MOD).ui ]; then rm -f $(MOD).cpp $(MOD).h; fi;)

@@ -23,16 +23,16 @@
 #include <string>
 using namespace std;
 
-#include <qlistview.h>
-#include <qstring.h>
-#include <qsimplerichtext.h>
-#include <qpainter.h>
-#include <qpixmap.h>
+#include <QtGui/QListView>
+#include <QtCore/QString>
+#include <QtGui/QTextDocument>
+#include <QtGui/QPainter>
+#include <QtGui/QPixmap>
 
 #include "ShowPlanItem.h"
 
 ShowPlanItem::ShowPlanItem( QListView * parent, QListViewItem * after,
-							const DpsShowItem& pSrc) 
+							const DpsShowItem& pSrc)
 		: QListViewItem		(parent, after),
 		  DpsShowItem		(pSrc),
 		  mIsRootElement	(true),
@@ -40,7 +40,7 @@ ShowPlanItem::ShowPlanItem( QListView * parent, QListViewItem * after,
 	init();
 }
 
-ShowPlanItem::ShowPlanItem ( QListView * parent, const DpsShowItem& pSrc) 
+ShowPlanItem::ShowPlanItem ( QListView * parent, const DpsShowItem& pSrc)
 		: QListViewItem		(parent),
 		  DpsShowItem		(pSrc),
 		  mIsRootElement	(true),
@@ -98,7 +98,7 @@ void ShowPlanItem::init() {
     active = false;
     selected = false;
 
-    lblTitle = 0; 
+    lblTitle = 0;
     lblComment = 0;
     lblLength = 0;
     lblTime = 0;
@@ -109,7 +109,7 @@ void ShowPlanItem::init() {
     lblScriptLength = 0;
 
     selectPen = new QPen( black );
-    selectPen->setWidth(0); 
+    selectPen->setWidth(0);
     unselectPen = new QPen( black );
     selectPen->setWidth(1);
 
@@ -145,7 +145,7 @@ void ShowPlanItem::setup() {
         case DpsShowItem::Finished:
             px = pixFinished;
             break;
-        default: 
+        default:
             px = pixUnloaded;
             break;
     }
@@ -203,10 +203,10 @@ void ShowPlanItem::setup() {
 							- wPix);
 		lblScriptLength = new QSimpleRichText( txtScriptLength, detailFont);
 		lblScriptLength->setWidth( TIME_WIDTH );
-		lblScriptLength->setWidth( QMIN(TIME_WIDTH, 
+		lblScriptLength->setWidth( QMIN(TIME_WIDTH,
 												lblScriptLength->widthUsed()));
 	}
-	
+
     mWidthUsed = lv->width();
     int h = 0;
     int totalHeightText = 0;
@@ -214,7 +214,7 @@ void ShowPlanItem::setup() {
     totalHeightText = lblTitle->height() + lblComment->height();
     totalHeightLength = lblLength->height() + lblTime->height();
     if (hasAudio()) {
-    	totalHeightText += QMAX(hPix, 
+    	totalHeightText += QMAX(hPix,
     					lblAudioTitle->height() + lblAudioArtist->height());
     	totalHeightLength += lblAudioLength->height();
     }
@@ -223,7 +223,7 @@ void ShowPlanItem::setup() {
     	totalHeightLength += lblScriptLength->height();
     }
     if ( mIsExpanded ) {
-    	h = QMAX( QMAX( totalHeightText, totalHeightLength ), hPix ) + 2*r;    	
+    	h = QMAX( QMAX( totalHeightText, totalHeightLength ), hPix ) + 2*r;
     }
     else {
     	h = QMAX( QMAX( lblTitle->height() + lblComment->height(),
@@ -297,8 +297,8 @@ void ShowPlanItem::paintCell(QPainter *p, const QColorGroup &cg, int column,
         hPix = px->height();
         recPix = QRect(r, r, wPix, hPix);
     }
-	
-	// Set up clipping and draw labels    
+
+	// Set up clipping and draw labels
     int top = r;
     QRegion clip(0,0,width, height());
     QRect recTitle( r + ITEM_INDENT + wPix, top,
@@ -315,7 +315,7 @@ void ShowPlanItem::paintCell(QPainter *p, const QColorGroup &cg, int column,
                     wTime,
                     lblTime->height());
 	top += lblComment->height();
-		
+
 	lblTitle->draw(p, recTitle.left(), recTitle.top(), recTitle,
                         cg, backBrush);
     lblComment->draw(p, recComment.left(), recComment.top(), recComment,
@@ -325,7 +325,7 @@ void ShowPlanItem::paintCell(QPainter *p, const QColorGroup &cg, int column,
     lblTime->draw(p, recTime.left(), recTime.top(), recTime,
                         cg, backBrush);
     clip = clip - recTitle - recComment - recLength - recTime;
-    
+
     if (mIsExpanded && hasAudio()) {
     	QRect recAudioTitle( r + ITEM_INDENT + 2*wPix, top,
     				lv->columnWidth(0) - 2*r - wLength - ITEM_INDENT - wPix,
@@ -333,14 +333,14 @@ void ShowPlanItem::paintCell(QPainter *p, const QColorGroup &cg, int column,
 		QRect recAudioLength( lv->columnWidth(0) - 15 - wLength - r, top,
 					wLength,
 					lblAudioLength->height());
-		QRect recAudioArtist( r + ITEM_INDENT + 2*wPix, 
+		QRect recAudioArtist( r + ITEM_INDENT + 2*wPix,
 					top + lblAudioTitle->height(),
 					lv->columnWidth(0) - 2*r - wLength - ITEM_INDENT - wPix,
 					lblAudioArtist->height());
-		
-		top += QMAX(pxAudio->height(), 
+
+		top += QMAX(pxAudio->height(),
 					lblAudioTitle->height() + lblAudioArtist->height());
-		
+
 		lblAudioTitle->draw(p, recAudioTitle.left(), recAudioTitle.top(),
 							recAudioTitle, cg, backBrush);
 		lblAudioArtist->draw(p, recAudioArtist.left(), recAudioArtist.top(),
@@ -356,9 +356,9 @@ void ShowPlanItem::paintCell(QPainter *p, const QColorGroup &cg, int column,
     	QRect recScriptLength( lv->columnWidth(0) - 15 - wLength - r, top,
     				wLength,
     				lblScriptLength->height());
-    				
+
     	top += QMAX(pxScript->height(), lblScriptTitle->height());
-    	
+
     	lblScriptTitle->draw(p, recScriptTitle.left(), recScriptTitle.top(),
     						recScriptTitle, cg, backBrush);
     	lblScriptLength->draw(p, recScriptLength.left(), recScriptLength.top(),
@@ -376,7 +376,7 @@ void ShowPlanItem::paintCell(QPainter *p, const QColorGroup &cg, int column,
     if (px) {
         p->drawPixmap(recPix,*px);
     }
-   	
+
    	top = lblTitle->height() + lblComment->height();
     if (mIsExpanded && pxAudio) {
     	p->drawPixmap(QRect(wPix + r, top, wPix, hPix), *pxAudio);

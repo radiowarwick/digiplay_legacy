@@ -37,8 +37,8 @@ class QTextBrowser;
 class TabPanelInfo : public TabPanel {
 	public:
 		/// Constructor
-		TabPanelInfo(QTabWidget *parent, std::string text);
-		/// Destructor 
+		TabPanelInfo(QTabWidget *parent, QString text);
+		/// Destructor
 		~TabPanelInfo();
 
 	private:

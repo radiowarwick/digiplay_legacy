@@ -21,8 +21,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#include <qtabwidget.h>
-#include <qtextbrowser.h>
+#include <QtGui/QTabWidget>
+#include <QtGui/QTextBrowser>
 
 #include "dps.h"
 #include "Auth.h"
@@ -33,14 +33,14 @@
 /**
  * Initialise the panal and draw the GUI components.
  */
-TabPanelInfo::TabPanelInfo(QTabWidget *parent, string text)
+TabPanelInfo::TabPanelInfo(QTabWidget *parent, QString text)
 		: TabPanel(parent,text) {
     // Set panel tag.
 	panelTag = "TabInfo";
-    
+
     // Initialise pointers.
 	txtInfoPanel = 0;
-    
+
     // Draw GUI components.
 	draw();
 }
@@ -59,17 +59,16 @@ TabPanelInfo::~TabPanelInfo() {
  */
 void TabPanelInfo::draw() {
 	const char* routine = "TabInfo::draw()";
-	
+
 	if (txtInfoPanel) {
 		L_WARNING(LOG_TABINFO,"Implicit clear() called");
 		clear();
 	}
-	
-	txtInfoPanel = new QTextBrowser(getPanel(), "txtInfoPanel");
+
+	txtInfoPanel = new QTextBrowser( getPanel() );
 	txtInfoPanel->setGeometry( QRect( 10, 10, 500, 610 ) );
-	txtInfoPanel->setVScrollBarMode( QTextBrowser::AlwaysOn );
-	txtInfoPanel->setHScrollBarMode( QTextBrowser::AlwaysOff );
-	txtInfoPanel->setTextFormat( QTextBrowser::RichText );
+	txtInfoPanel->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOn );
+	txtInfoPanel->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
 
 	//##############################################
 	//TODO: Add SQL to get info from DB by location#

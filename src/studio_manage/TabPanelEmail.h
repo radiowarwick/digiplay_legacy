@@ -4,20 +4,20 @@
  * Extracts and displays a list of emails from the central database, and
  * provides the facility to view the email's contents. Updates the database
  * to reflect the read\unread status of the email
- *  
+ *
  * Copyright (c) 2006 Chris Cantwell
  * Copyright (c) 2006 Ian Liverton
- *  
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- *  
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *  
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -27,7 +27,7 @@
 #ifndef CLASS_TAB_PANEL_EMAIL
 #define CLASS_TAB_PANEL_EMAIL
 
-#include <qfont.h>
+#include <QtGui/QFont>
 
 #include "dps.h"
 
@@ -35,9 +35,9 @@
 
 class QTabWidget;
 class QTextBrowser;
-class QListView;
-class QListViewItem;
-class QIconSet;
+class QTreeWidget;
+class QTreeWidgetItem;
+class QIcon;
 class Auth;
 
 class QtTrigger;
@@ -50,7 +50,7 @@ class TabPanelEmail : public TabPanel {
 	Q_OBJECT
 	public:
 		/// Constructor
-		TabPanelEmail(QTabWidget *parent, string text);
+		TabPanelEmail(QTabWidget *parent, QString text);
 		/// Destructor
 		~TabPanelEmail();
 		/// Reconfigure the panel
@@ -58,7 +58,7 @@ class TabPanelEmail : public TabPanel {
 
 	public slots:
 		/// Get the body of an email and display it
-		virtual void getEmailBody(QListViewItem *current);
+		virtual void getEmailBody(QTreeWidgetItem *current);
 		/// Check for emails and update the list
 		void getEmail();
 
@@ -69,7 +69,7 @@ class TabPanelEmail : public TabPanel {
 		void draw();
 		/// Clear the panel
 		void clear();
-	
+
         DataAccess* DB;
         DpsEmail* E;
 
@@ -77,10 +77,9 @@ class TabPanelEmail : public TabPanel {
 
 		bool flagUpdateDisabled;
 		QtTrigger* triggerEmail;
-		QListView *lstEmail;
+		QTreeWidget *lstEmail;
 		QTextBrowser *txtEmailBody;
-		QPixmap *pixEmailNew, *pixEmailOld;
-		QIconSet *icsEmailIcons;
+		QIcon *icnEmailNew, *icnEmailOld;
 		QFont fntBody;
 		int pointSize;
 };

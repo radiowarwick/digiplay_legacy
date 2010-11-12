@@ -6,5 +6,13 @@
     <file alias="reset.png">../share/dps/images/reset.png</file>
     <file alias="fastbackward.png">../share/dps/images/fastbackward.png</file>
     <file alias="fastforward.png">../share/dps/images/fastforward.png</file>
+    <file alias="email_new16.png">../share/dps/images/email_new16.png</file>
+    <file alias="email_old16.png">../share/dps/images/email_old16.png</file>
+ </qresource>
+ <qresource prefix="/images">
+    <file alias="rawdigiplay.png">../share/dps/images/rawdigiplay.png</file>
+ </qresource>
+ <qresource prefix="/styles">
+    <file alias="default.qss">../share/dps/styles/default.qss</file>
  </qresource>
 </RCC>

@@ -30,14 +30,14 @@ using std::endl;
 #include "Logger.h"
 #include "dps.h"
 
-#include <qdir.h>
-#include <qpixmap.h>
-#include <qevent.h>
-#include <qpoint.h>
-#include <qmessagebox.h>
-#include <qdragobject.h>
-#include <qapplication.h>
-#include <qheader.h>
+#include <QtCore/QDir>
+#include <QtGui/QPixmap>
+#include <QtCore/QEvent>
+#include <QtCore/QPoint>
+#include <QtGui/QMessageBox>
+//#include <qdragobject.h>
+#include <QtGui/QApplication>
+#include <QtGui/QHeaderView>
 
 /* =======================================================================
  * Directory
@@ -57,9 +57,9 @@ QPixmap *fileScript = 0;
 QPixmap *fileAwSet = 0;
 QPixmap *fileShowplan = 0;
 
-Directory::Directory( Directory * parent, const int my_id, 
+Directory::Directory( Directory * parent, const int my_id,
                         const QString& filename, DataAccess *topDB )
-    : QListViewItem( parent ), f(filename),
+    : QTreeWidgetItem( parent ), f(filename),
       showDirsOnly( parent->showDirsOnly ),
       pix( 0 ) {
 
@@ -75,9 +75,9 @@ Directory::Directory( Directory * parent, const int my_id,
 }
 
 
-Directory::Directory( QListView * parent, const int my_id,
+Directory::Directory( QTreeWidget * parent, const int my_id,
                         const QString& filename, DataAccess* topDB )
-        : QListViewItem( parent ), f(filename),
+        : QTreeWidgetItem ( parent ), f(filename),
           showDirsOnly( ( (DirectoryView*)parent )->showDirsOnly() ),
         pix( 0 ) {
 
@@ -91,9 +91,10 @@ Directory::Directory( QListView * parent, const int my_id,
 void Directory::setPixmap( QPixmap *px ) {
     pix = px;
     setup();
-    widthChanged( 0 );
-    invalidateHeight();
-    repaint();
+    //widthChanged( 0 );
+    //invalidateHeight();
+    //repaint();
+    //repaint();
 }
 
 
@@ -121,9 +122,9 @@ void Directory::setOpen( bool o ) {
         else
             setPixmap( folderTopClosed );
     }
-	int children = childCount();
-	for (int i = 0; i < children; i++)
-		delete firstChild();
+	int c = children().count();
+	for (int i = 0; i < c; i++)
+		delete children().begin().i-> firstChild();
     if ( o && !childCount() ) {
         std::string SQL;
         try {

@@ -25,6 +25,8 @@ using namespace std;
 
 #include <QtGui/QApplication>
 #include <QtCore/QString>
+#include <QtCore/QFile>
+#include <QtCore/QTextStream>
 #include "frmPlayout.h"
 
 #include "sys/stat.h"
@@ -60,13 +62,24 @@ void signalHandler(int signum) {
     cout << "Received signal: " << signum << endl;
 }
 
+void loadStyleSheet() {
+    QFile data(":/styles/default.qss");
+    QString style;
+    if (data.open(QFile::ReadOnly)) {
+        QTextStream styleIn(&data);
+        style = styleIn.readAll();
+        data.close();
+        qApp->setStyleSheet(style);
+    }
+}
+
 int main( int argc, char * argv[] )
 {
 	const char* routine = "studio_play::main";
 
     set_terminate(errorHandler);
     signal(SIGHUP, signalHandler);
-    
+
     // Configure logging
     Logger::setAppName("studio_play");
     Logger::setLogLevel(INFO);
@@ -85,8 +98,8 @@ int main( int argc, char * argv[] )
         if (v == -1) break;
         switch (v) {
             case 'h': {
-                std::cout << "USAGE: " << argv[0] 
-                        << " [--debug|--verbose|--quiet] [-h|--help]" 
+                std::cout << "USAGE: " << argv[0]
+                        << " [--debug|--verbose|--quiet] [-h|--help]"
                         << " [-v|--version]" << std::endl;
                 return 0;
                 break;
@@ -112,8 +125,12 @@ int main( int argc, char * argv[] )
     QApplication a( argc, argv );
     frmPlayout w;
 
+    // Load the style sheet
+    loadStyleSheet();
+
 	// Show main window and run application
     w.show();
     a.connect( &a, SIGNAL( lastWindowClosed() ), &a, SLOT( quit() ) );
     return a.exec();
 }
+

@@ -28,9 +28,9 @@
 #include <vector>
 using namespace std;
 
-#include <qwidget.h>
-#include <qlistview.h>
-#include <qmutex.h>
+#include <QtGui/QWidget>
+#include <QtGui/QListView>
+#include <QtCore/QMutex>
 
 #include "dps/Dps.h"
 #include "Config.h"
@@ -60,22 +60,22 @@ class Showplan : 	public QWidget,
         void configure(Auth *authModule);
 
 		void onMessage();
-		
+
         DpsShowPlan getShowplan();
 
         void setGeometry (const QRect& r);
 		void resizeEvent (QResizeEvent *e);
-	
+
 	public slots:
 		void load(const DpsShowPlan& pSrc);
 		void append(const DpsShowItem& pSrc);
 		void append(const DpsAudioItem& pSrc);
 		void append(const DpsScriptItem& pSrc);
-		
+
 	protected:
 		// Showplan has changed, so redisplay
 		virtual void showplanUpdated();
-		
+
     private slots:
     	// Slots for showplan clicking
         void clicked(QListViewItem* x);
@@ -90,11 +90,11 @@ class Showplan : 	public QWidget,
 		void moveItemTop();
 		void moveItemBottom();
 		void clearItems();
-		
+
 	private:
         void draw();
 		void clean();
-		
+
         Config* conf;
 
         QWidget* _parent;

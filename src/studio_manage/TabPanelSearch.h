@@ -35,7 +35,8 @@
 
 class QTabWidget;
 class QPushButton;
-class QListView;
+class QTreeWidget;
+class QTreeWidgetItem;
 class QLineEdit;
 class QLabel;
 class QCheckBox;
@@ -52,12 +53,12 @@ class TabPanelSearch : 	public TabPanel,
 	Q_OBJECT
 	public:
         /// Constructor
-		TabPanelSearch(QTabWidget *parent, string text);
+		TabPanelSearch(QTabWidget *parent, QString text);
         /// Destructor
 		~TabPanelSearch();
         /// ???
 		void onMessage();
-		
+
 	signals:
         /// Emitted when an item is selected from the search results.
         void audioSelected( const DpsAudioItem& );
@@ -68,7 +69,7 @@ class TabPanelSearch : 	public TabPanel,
 		/// Processes search results when they are ready.
 		void processResults();
         /// Emits the signal indicating an item is selected.
-		virtual void playlistAdd(QListViewItem *x);
+		virtual void playlistAdd(QTreeWidgetItem *x);
 
 	private:
         /// Draws the panel.
@@ -76,13 +77,13 @@ class TabPanelSearch : 	public TabPanel,
         /// Clears the panel.
 		void clear();
 		void threadExecute();
-	
+
 		bool searching;
 		Config *conf;
 		vector<DpsAudioItem> SearchResults;
 		DpsMusicSearch* library_engine;
 		QPushButton *btnLibrarySearch;
-		QListView *lstSearchResults;
+		QTreeWidget *lstSearchResults;
 		QLineEdit *txtLibrarySearchText;
 		QLabel *Searchlable;
 		QLabel *lblSearch;

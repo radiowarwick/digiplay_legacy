@@ -20,8 +20,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#include <qwidget.h>
-#include <qtabwidget.h>
+#include <QtGui/QWidget>
+#include <QtGui/QTabWidget>
 
 #include "dps.h"
 #include "Auth.h"
@@ -35,14 +35,14 @@
  * passed from the derived class's constructor. Nothing is drawn on the widget
  * at the base level, hence draw() and clean() are pure virtual functions.
  */
-TabPanel::TabPanel(QTabWidget *parent, string text) {
+TabPanel::TabPanel(QTabWidget *parent, QString text) {
     // Set parent, tab label and tab tag
 	tabParent = parent;
 	tabText = text;
 	panelTag = "Tab";
-    
+
     // Create base panel widget
-	panel = new QWidget(0,"tabPanel");
+	panel = new QWidget(0);
 }
 
 
@@ -82,8 +82,8 @@ void TabPanel::configure(Auth *authModule) {
 void TabPanel::show() {
 	int p = tabParent->indexOf(panel);
 	if (p == -1) {
-		panel->reparent(tabParent,QPoint(0,0),false);
-		tabParent->insertTab(panel,tabText);
+		panel->setParent(tabParent);
+		tabParent->insertTab(-1,panel,tabText);
 	}
 }
 
@@ -95,8 +95,8 @@ void TabPanel::show() {
 void TabPanel::hide() {
 	int p = tabParent->indexOf(panel);
 	if (p != -1) {
-		tabParent->removePage(panel);
-		panel->reparent(0,QPoint(0,0),false);
+		tabParent->removeTab(p);
+		panel->setParent(0);
 	}
 }
 

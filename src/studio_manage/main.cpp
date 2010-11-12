@@ -29,7 +29,10 @@ using namespace std;
 #include "getopt.h"
 #include "signal.h"
 
-#include <qapplication.h>
+#include <QtGui/QApplication>
+#include <QtCore/QFile>
+#include <QtCore/QTextStream>
+
 #include "frmStudioManage.h"
 #include "Security.h"
 #include "Logger.h"
@@ -59,13 +62,24 @@ void signalHandler(int signum) {
     cout << "Received signal: " << signum << endl;
 }
 
+void loadStyleSheet() {
+    QFile data(":/styles/default.qss");
+    QString style;
+    if (data.open(QFile::ReadOnly)) {
+        QTextStream styleIn(&data);
+        style = styleIn.readAll();
+        data.close();
+        qApp->setStyleSheet(style);
+    }
+}
+
 int main( int argc, char * argv[] )
 {
 	const char* routine = "studio_manage::main";
 
     set_terminate(errorHandler);
     signal(SIGHUP, signalHandler);
-    
+
     // Configure logging
     Logger::setAppName("studio_manage");
     Logger::setLogLevel(INFO);
@@ -110,6 +124,7 @@ int main( int argc, char * argv[] )
 	// Create new application and main window
     QApplication a( argc, argv );
 	frmStudioManage w;
+	loadStyleSheet();
 
 	// Show window and run application
     w.show();

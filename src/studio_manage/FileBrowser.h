@@ -27,11 +27,11 @@
 
 #include <string>
 
-#include <qlistview.h>
-#include <qfile.h>
-#include <qfileinfo.h>
-#include <qstring.h>
-#include <qtimer.h>
+#include <QtGui/QTreeWidget>
+#include <QtCore/QFile>
+#include <QtCore/QFileInfo>
+#include <QtCore/QString>
+#include <QtCore/QTimer>
 
 #include "DataAccess.h"
 
@@ -41,10 +41,10 @@ class QDragMoveEvent;
 class QDragLeaveEvent;
 class QDropEvent;
 
-class FileItem : public QListViewItem {
+class FileItem : public QTreeWidgetItem {
     public:
-        FileItem( QListViewItem *parent, const QString &s1, const QString &s2 )
-            : QListViewItem( parent, s1, s2 ), pix( 0 ) {}
+        FileItem( QTreeWidgetItem *parent, const QString &s1, const QString &s2 )
+            : QTreeWidgetItem( parent ), pix( 0 ) {}
 
         const QPixmap *pixmap( int i ) const;
         void setPixmap( QPixmap *p );
@@ -54,11 +54,11 @@ class FileItem : public QListViewItem {
 
 };
 
-class Directory : public QListViewItem {
+class Directory : public QTreeWidgetItem {
     public:
-        Directory( QListView * parent, const int my_id, 
+        Directory( QTreeWidget * parent, const int my_id,
                     const QString& filename, DataAccess *topDB);
-        Directory( Directory * parent, const int my_id, 
+        Directory( Directory * parent, const int my_id,
                     const QString& filename, DataAccess *topDB);
 
         QString text( int column ) const;
@@ -83,11 +83,11 @@ class Directory : public QListViewItem {
         std::string _uid;
 };
 
-class DirectoryView : public QListView {
+class DirectoryView : public QTreeWidget {
     Q_OBJECT
 
     public:
-        DirectoryView( QWidget *parent = 0, const char *name = 0, bool sdo = 
+        DirectoryView( QWidget *parent = 0, const char *name = 0, bool sdo =
                         FALSE );
         ~DirectoryView();
         bool showDirsOnly() { return dirsOnly; }
@@ -100,17 +100,17 @@ class DirectoryView : public QListView {
         void folderSelected( const QString & );
 
     protected slots:
-        void slotFolderSelected( QListViewItem * );
+        void slotFolderSelected( QTreeWidgetItem * );
         void openFolder();
 
     private:
         void populate();
 
         DataAccess* DB;
-        QString fullPath(QListViewItem* item);
+        QString fullPath(QTreeWidgetItem* item);
         bool dirsOnly;
-        QListViewItem *oldCurrent;
-        QListViewItem *dropItem;
+        QAbstractItemDelegate *oldCurrent;
+        QAbstractItemDelegate *dropItem;
         QPoint presspos;
         bool mousePressed;
         std::string _uid;

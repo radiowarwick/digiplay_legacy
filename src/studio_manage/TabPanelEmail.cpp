@@ -25,16 +25,15 @@
  */
 #include <cstdlib>
 
-#include <qtabwidget.h>
-#include <qtextbrowser.h>
-#include <qlistview.h>
-#include <qstring.h>
-#include <qpixmap.h>
-#include <qiconset.h>
-#include <qfont.h>
-#include <qheader.h>
-#include <qapplication.h>
-#include <qobject.h>
+#include <QtGui/QTabWidget>
+#include <QtGui/QTextBrowser>
+#include <QtGui/QTreeWidget>
+#include <QtCore/QString>
+#include <QtGui/QPixmap>
+#include <QtGui/QFont>
+#include <QtGui/QHeaderView>
+#include <QtGui/QApplication>
+#include <QtCore/QObject>
 
 #include "dps.h"
 #include "Auth.h"
@@ -48,11 +47,11 @@
  * Initialises the panel, creates components, draws the GUI components
  * and initialises the database trigger for the email table.
  */
-TabPanelEmail::TabPanelEmail(QTabWidget *parent, string text) 
+TabPanelEmail::TabPanelEmail(QTabWidget *parent, QString text)
         : TabPanel(parent,text) {
     // Set panel tag.
     panelTag = "TabEmail";
-    
+
     // Initialise object pointers.
     lstEmail = 0;
     txtEmailBody = 0;
@@ -66,7 +65,7 @@ TabPanelEmail::TabPanelEmail(QTabWidget *parent, string text)
 
     // Create a trigger on the email table so we update when changes are made.
     triggerEmail = new QtTrigger("triggerEmail","t_email");
-    
+
     // Upon triggering, run the getEmail() routine.
     connect(triggerEmail, SIGNAL(trigger()),
                             this, SLOT(getEmail()));
@@ -75,11 +74,11 @@ TabPanelEmail::TabPanelEmail(QTabWidget *parent, string text)
 
 /**
  * Clean up dynamically created objects
- */ 
+ */
 TabPanelEmail::~TabPanelEmail() {
     // Clean up GUI components
     clear();
-    
+
     // Email trigger.
     delete triggerEmail;
 
@@ -98,9 +97,10 @@ void TabPanelEmail::configure(Auth *authModule) {
         getEmail();
     }
     else {
-        lstEmail->clear();
+        lstEmail->selectAll();
+        lstEmail->clearSelection();
     }
-    
+
     // Do base level configuration (hide modules if necessary)
     TabPanel::configure(authModule);
 }
@@ -110,17 +110,17 @@ void TabPanelEmail::configure(Auth *authModule) {
  * Retrieves the body of an email, given the QListViewItem from the email
  * list.
  */
-void TabPanelEmail::getEmailBody(QListViewItem *current) {
+void TabPanelEmail::getEmailBody(QTreeWidgetItem *current) {
     const char *routine = "TabPanelEmail::getEmailBody";
-    L_INFO(LOG_TABEMAIL,"Get email body for id " + current->text(4));
+    L_INFO(LOG_TABEMAIL,"Get email body for id " + current->text(4).toStdString());
 
     // Find selected email and display email body
     // TODO: Reimplement using a map.
     for (unsigned int i = 0; i < emails.size(); ++i) {
-        if (emails[i]["id"] == string(current->text(4).ascii())) {
+        if (emails[i]["id"] == current->text(4).toStdString()) {
             txtEmailBody->setCurrentFont(fntBody);
-            txtEmailBody->setPointSize(pointSize);
-            txtEmailBody->setText(emails[i]["body"]);
+            txtEmailBody->setFontPointSize(pointSize);
+            txtEmailBody->setText(QString(emails[i]["body"].c_str()));
             markRead(emails[i]["id"]);
         }
     }
@@ -134,25 +134,25 @@ void TabPanelEmail::getEmailBody(QListViewItem *current) {
 void TabPanelEmail::getEmail(){
     const char *routine = "TabPanelEmail::getEmail";
     L_INFO(LOG_TABEMAIL,"Getting emails.");
-   
+
     // If we're not supposed to update, reset the flag and return.
     if (flagUpdateDisabled) {
         flagUpdateDisabled = false;
         return;
     }
 
-    QListViewItem *new_email = 0;
-    string last_id = "0";
+    QTreeWidgetItem *new_email = 0;
+    int last_id = 0;
     int k;
 
     // Get the message ID of the latest message currently shown
-    if (lstEmail->childCount() > 0) {
-        last_id = lstEmail->firstChild()->text(4).ascii();
+    if (lstEmail->children().count() > 0) {
+        last_id = lstEmail->topLevelItem(0)->text(4).toInt();
     }
 
     // Get the latest emails from the email module
     emails = E->getEmails();
-    
+
     // Iterate over the new list of emails
     // TODO: reimplement this when converted to using a map.
     // TODO: use iterators and find
@@ -160,41 +160,43 @@ void TabPanelEmail::getEmail(){
         // Examine the emails from the oldest to the newest
         // Get the ID of the ith email
         k = atoi(emails[i]["id"].c_str());
-        
+
         // If the email is already shown, just check it's read status
-        if (k <= atoi(last_id.c_str())) {
+        if (k <= last_id) {
             // find this email in the existing list
-            QListViewItem *x = lstEmail->findItem(emails[i]["id"].c_str(),4);
+            QTreeWidgetItem *x = lstEmail->findItems(emails[i]["id"].c_str(),Qt::MatchFixedString,4)[0];
 
             // check we found an email, and if not, carry on and ignore it
             if ( !x ) continue;
-            
+
             // Set the new flag appropriately
             if ( emails[i]["new"] == "t" )
-                x->setPixmap(0,*pixEmailNew);
+                x->setIcon(0,*icnEmailNew);
             else
-                x->setPixmap(0,*pixEmailOld);
+                x->setIcon(0,*icnEmailOld);
             continue;
         }
         // Otherwise it's a new email, so add it to the top of the list
         else {
             // if it's a new email, add it to the start of the list
-            new_email = new QListViewItem(lstEmail, 
-                                "",
-                                emails[i]["from"].c_str(),
-                                emails[i]["subject"].c_str(),
-                                emails[i]["received"].c_str(),
-                                emails[i]["id"].c_str());
-            
+            QStringList s;
+            s.append("");
+            s.append(emails[i]["from"].c_str());
+            s.append(emails[i]["subject"].c_str());
+            s.append(emails[i]["received"].c_str());
+            s.append(emails[i]["id"].c_str());
+            new_email = new QTreeWidgetItem(lstEmail, s);
+
             // Set the new flag appropriately
             if ( emails[i]["new"] == "t" )
-                new_email->setPixmap(0, *pixEmailNew);
+                new_email->setIcon(0, *icnEmailNew);
             else
-                new_email->setPixmap(0, *pixEmailOld);
-            
+                new_email->setIcon(0, *icnEmailOld);
+
             // If we've now listed over 20 emails, delete the last one
-            if (lstEmail->childCount() > 20 && lstEmail->lastItem()) {
-                delete lstEmail->lastItem();
+            int N = lstEmail->topLevelItemCount();
+            if (N > 20 && lstEmail->topLevelItem(N-1)) {
+                delete lstEmail->topLevelItem(N-1);
             }
         }
     }
@@ -211,7 +213,7 @@ void TabPanelEmail::markRead(string id) {
 
 
 /**
- * This handles drawing the contents of the form, and connecting slots, 
+ * This handles drawing the contents of the form, and connecting slots,
  * but has little actual implementation
  */
 void TabPanelEmail::draw() {
@@ -225,47 +227,43 @@ void TabPanelEmail::draw() {
 
     // Load icons and create icon set
     QString path = DPSDIR;
-    pixEmailNew = new QPixmap(path + "/images/email_new16.png");
-    pixEmailOld = new QPixmap(path + "/images/email_old16.png");
-    icsEmailIcons = new QIconSet(*pixEmailNew, QIconSet::Automatic);
-    
-    // do all form drawing here, create widgets, set properties
-    lstEmail = new QListView(getPanel(), "lstEmail" );
-    lstEmail->addColumn( QString::null );
-    lstEmail->header()->setResizeEnabled( FALSE, 
-                        lstEmail->header()->count() - 1 );
-    lstEmail->addColumn( QObject::tr( "From" ) );
-    lstEmail->header()->setResizeEnabled( FALSE, 
-                        lstEmail->header()->count() - 1 );
-    lstEmail->addColumn( QObject::tr( "Subject" ) );
-    lstEmail->header()->setResizeEnabled( FALSE, 
-                        lstEmail->header()->count() - 1 );
-    lstEmail->addColumn( QObject::tr( "Received" ) );
-    lstEmail->header()->setResizeEnabled( FALSE, 
-                        lstEmail->header()->count() - 1 );
-    lstEmail->addColumn( QObject::tr( "ID" ) );
-    lstEmail->header()->setResizeEnabled( FALSE, 
-                        lstEmail->header()->count() - 1 );
-    lstEmail->setGeometry( QRect( 10, 10, 495, 265 ) );
-    lstEmail->setVScrollBarMode( QListView::AlwaysOn );
-    lstEmail->setAllColumnsShowFocus( TRUE );
-    lstEmail->setColumnText(0, *icsEmailIcons, "");
-    lstEmail->setColumnWidthMode(1, QListView::Manual); 
-    lstEmail->setColumnWidthMode(2, QListView::Manual); 
-    lstEmail->setColumnWidthMode(3, QListView::Manual); 
-    lstEmail->setColumnWidthMode(4, QListView::Manual); 
-    lstEmail->setColumnWidth(0,22); //New
-    lstEmail->setColumnWidth(1, 180);   
-    lstEmail->setColumnWidth(2, 180);   
-    lstEmail->setColumnWidth(3, 93);    
-    lstEmail->setColumnWidth(4, 0); // Message ID
-    lstEmail->header()->setMovingEnabled( FALSE );
-    lstEmail->setSorting(-1, FALSE);
+    icnEmailNew = new QIcon(":/icons/email_new16.png");
+    icnEmailOld = new QIcon(":/icons/email_old16.png");
+    QStringList vHeaderLabels;
+    vHeaderLabels.append("");
+    vHeaderLabels.append("From");
+    vHeaderLabels.append("Subject");
+    vHeaderLabels.append("Received");
+    vHeaderLabels.append("ID");
 
-    txtEmailBody = new QTextBrowser(getPanel(), "txtEmailBody" );
+    // do all form drawing here, create widgets, set properties
+    lstEmail = new QTreeWidget(getPanel() );
+    lstEmail->setHeaderLabels(vHeaderLabels);
+    lstEmail->header()->setResizeMode( 0, QHeaderView::Fixed );
+    lstEmail->header()->setResizeMode( 1, QHeaderView::Fixed );
+    lstEmail->header()->setResizeMode( 2, QHeaderView::Fixed );
+    lstEmail->header()->setResizeMode( 3, QHeaderView::Fixed );
+    lstEmail->header()->setResizeMode( 4, QHeaderView::Fixed );
+    lstEmail->setGeometry( QRect( 10, 10, 495, 265 ) );
+    lstEmail->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOn );
+    lstEmail->setAllColumnsShowFocus( TRUE );
+//    lstEmail->setColumnText(0, *icsEmailIcons, "");
+//    lstEmail->setColumnWidthMode(1, QListView::Manual);
+//    lstEmail->setColumnWidthMode(2, QListView::Manual);
+//    lstEmail->setColumnWidthMode(3, QListView::Manual);
+//    lstEmail->setColumnWidthMode(4, QListView::Manual);
+    lstEmail->setColumnWidth(0,22); //New
+    lstEmail->setColumnWidth(1, 180);
+    lstEmail->setColumnWidth(2, 180);
+    lstEmail->setColumnWidth(3, 93);
+    lstEmail->setColumnWidth(4, 0); // Message ID
+    lstEmail->header()->setMovable( FALSE );
+    lstEmail->setSortingEnabled(FALSE);
+
+    txtEmailBody = new QTextBrowser(getPanel() );
     txtEmailBody->setGeometry( QRect( 10, 280, 495, 350 ) );
     fntBody = txtEmailBody->currentFont();
-    pointSize= txtEmailBody->pointSize();
+    pointSize= txtEmailBody->currentFont().pointSize();
 
     // connect signals and slots here
     QObject::connect( lstEmail, SIGNAL( selectionChanged(QListViewItem*) ),
@@ -279,7 +277,6 @@ void TabPanelEmail::draw() {
 void TabPanelEmail::clear() {
     delete txtEmailBody;
     delete lstEmail;
-    delete icsEmailIcons;
-    delete pixEmailOld;
-    delete pixEmailNew;
+    delete icnEmailOld;
+    delete icnEmailNew;
 }

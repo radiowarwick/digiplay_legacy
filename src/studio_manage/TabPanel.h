@@ -26,7 +26,7 @@
 #include <string>
 using namespace std;
 
-#include <qobject.h>
+#include <QtCore/QObject>
 
 class QWidget;
 class QTabWidget;
@@ -44,14 +44,14 @@ class TabPanel :    public QObject,
 	Q_OBJECT
 	public:
 		/// Constructor
-		TabPanel(QTabWidget *parent, string text);
+		TabPanel(QTabWidget *parent, QString text);
 		/// Destructor
 		virtual ~TabPanel();
-        
+
 		/// Reconfigures the panel
 		virtual void configure(Auth *authModule);
 		/// Sets the text shown on the tab
-		void setText(string text) {tabText = text;}
+		void setText(QString text) {tabText = text;}
 
 	protected:
 		// Returns a pointer to the actual panel widget
@@ -66,15 +66,15 @@ class TabPanel :    public QObject,
 		virtual void draw() = 0;
 		// Clean up the contents of the panel
 		virtual void clear() = 0;
-        
+
 		string panelTag;
 
 	private:
         void threadExecute() {}
-        
+
 		QWidget *panel;
 		QTabWidget *tabParent;
-		string tabText;
+		QString tabText;
 };
 
 #endif

@@ -27,10 +27,10 @@
 
 using namespace std;
 
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qframe.h>
-#include <qmutex.h>
+#include <QtGui/QWidget>
+#include <QtGui/QLabel>
+#include <QtGui/QFrame>
+#include <QtCore/QMutex>
 
 #include "Thread.h"
 #include "dps/DpsObject.h"
@@ -52,13 +52,13 @@ class Nownext : 	public QWidget,
 	Q_OBJECT
 
 	public:
-		Nownext(QWidget *parent, const char* name);
+		Nownext(QWidget *parent);
 		~Nownext();
 
         void configure(Auth *authModule);
 
 		void onMessage();
-		
+
         void setGeometry (const QRect& r);
 		void resizeEvent (QResizeEvent *e);
 

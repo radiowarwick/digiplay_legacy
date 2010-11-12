@@ -99,7 +99,7 @@ moc_%.cpp: %.h
 	@echo "Creating Object file for $*: $@"
 	$(CC) $(CCFLAGS) -c $(CCINC) $< -o $@
 
-%.cpp: %.qrc
+%.cpp: %.qrc $(ROOT)/share/dps/*/*
 	$(RCC) -o $@ $<
 
 # Create the required output file from the given objects and place in the

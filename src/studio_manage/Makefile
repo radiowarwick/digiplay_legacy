@@ -19,13 +19,14 @@ MODS		=	main
 #QT_OBJS		=	dlgLogin dlgWarn
 QT_MODS		=	frmStudioManage dlgLogin dlgWarn\
 				TabPanel TabPanelInfo TabPanelEmail\
-				TabPanelSearch TabPanelPlaylist TabPanelLogging\
+				TabPanelSearch
+#TabPanelPlaylist TabPanelLogging\
 				TabPanelScript TabPanelFileBrowser\
 				FileBrowser Showplan ShowPlanItem Nownext
 SHARED_MODS	=	Config DpsEmail dps clockThread \
 				Auth AuthLdap AuthPsql Logger UserConfig \
 				DataAccess Security Thread DbTrigger MessagingInterface \
-				DpsMusicSearch
+				DpsMusicSearch DpsResources
 DPS_MODS	=	DpsObject DpsHash DpsTime DpsDate DpsUser DpsGroup DpsAudioItem DpsScriptItem DpsShowItem DpsShowPlan
 SHARED_QT_MODS = QtTrigger
 

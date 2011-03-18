@@ -13,9 +13,11 @@
 #include <QtGui/QWhatsThis>
 #include <QtGui/QImage>
 #include <QtGui/QPixmap>
+#include <QtGui/QPainter>
 
 #include "dlgWarn.h"
-
+#include <iostream>
+using namespace std;
 /*
  *  Constructs a dlgWarn as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
@@ -26,11 +28,19 @@
 dlgWarn::dlgWarn( QWidget* parent, Qt::WindowFlags fl )
     : QDialog( parent, fl )
 {
-    setStyleSheet("QDialog { background-color: rgb(255,255,255) }");
+    setStyleSheet("QDialog { background: transparent }");
     setSizeGripEnabled( FALSE );
     setModal( TRUE );
+    setAttribute(Qt::WA_TranslucentBackground);
+    setWindowFlags( Qt::FramelessWindowHint);
+    setGeometry(QRect(0,0,parent->width(),parent->height()));
 
-    QWidget* privateLayoutWidget = new QWidget( this );
+    frameContent = new QFrame(this);
+    frameContent->setGeometry( QRect( width()/2-150, height()/2-100,300,200));
+    frameContent->setStyleSheet("QFrame { background: rgb(255,255,255); color: rgb(0,0,0);}");
+    frameContent->setFrameShadow(QFrame::Raised);
+
+    QWidget* privateLayoutWidget = new QWidget( frameContent );
     privateLayoutWidget->setGeometry( QRect( 10, 150, 250, 33 ) );
     Layout1 = new QHBoxLayout( privateLayoutWidget );
     Horizontal_Spacing2 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
@@ -45,30 +55,30 @@ dlgWarn::dlgWarn( QWidget* parent, Qt::WindowFlags fl )
     buttonCancel->setAutoDefault( TRUE );
     Layout1->addWidget( buttonCancel );
 
-    pixWarning = new QLabel( this );
+    pixWarning = new QLabel( frameContent );
     pixWarning->setGeometry( QRect( 240, 40, 48, 48 ) );
     pixWarning->setScaledContents( TRUE );
 
-    lblTitle = new QLabel( this );
+    lblTitle = new QLabel( frameContent );
     lblTitle->setGeometry( QRect( 10, 40, 220, 43 ) );
-    lblTitle->setStyleSheet("background-color: rgb(1,73,88); color: rgb(255,255,255);");
+    lblTitle->setStyleSheet("color: rgb(1,73,88); background-color: rgb(255,255,255);");
     QFont lblTitle_font(  lblTitle->font() );
     lblTitle_font.setFamily( "Sans Serif" );
-    lblTitle_font.setPointSize( 36 );
+    lblTitle_font.setPointSize( 30 );
     lblTitle_font.setBold( TRUE );
     lblTitle->setFont( lblTitle_font );
     lblTitle->setAlignment( Qt::AlignVCenter | Qt::AlignLeft );
 
-    lblWarn = new QLabel( this );
+    lblWarn = new QLabel( frameContent );
     lblWarn->setGeometry( QRect( 10, 100, 280, 40 ) );
     lblWarn->setAlignment( Qt::AlignVCenter );
+    lblWarn->setWordWrap(true);
 
-    pixLogout = new QLabel( this );
+    pixLogout = new QLabel( frameContent );
     pixLogout->setGeometry( QRect( 0, 0, 300, 29 ) );
     pixLogout->setScaledContents( TRUE );
 
     languageChange();
-    resize( QSize(300, 194).expandedTo(minimumSizeHint()) );
     ensurePolished();
 
     // signals and slots connections
@@ -101,10 +111,19 @@ void dlgWarn::languageChange()
     lblWarn->setText( tr( "Are you sure you would like to......." ) );
 }
 
+void dlgWarn::paintEvent(QPaintEvent *)
+{
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(QColor(0, 0, 0, 32));
+    painter.drawRect(0, 0, width(), height());
+}
+
 void dlgWarn::init() {
     QString path = DPSDIR;
-    pixWarning->setPixmap(QPixmap(path + "/images/warning48.png"));
-    pixLogout->setPixmap(QPixmap(path + "/images/loginlogo.png"));
+    pixWarning->setPixmap(QPixmap(":/images/warning48.png"));
+    pixLogout->setPixmap(QPixmap(":/images/loginlogo.png"));
 }
 
 void dlgWarn::setWarning(QString msg) {

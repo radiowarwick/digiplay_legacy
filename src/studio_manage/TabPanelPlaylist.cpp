@@ -24,15 +24,16 @@
  */
 #include <cstdlib>
 
-#include <qtabwidget.h>
-#include <qtextbrowser.h>
-#include <qstring.h>
-#include <qiconset.h>
-#include <qheader.h>
-#include <qapplication.h>
-#include <qobject.h>
-#include <qpixmap.h>
-#include <qlistview.h>
+#include <QtGui/QTabWidget>
+#include <QtGui/QTextBrowser>
+#include <QtCore/QString>
+#include <QtGui/QIconSet>
+#include <QtGui/QHeaderView>
+#include <QtGui/QApplication>
+#include <QtCore/QObject>
+#include <QtGui/QPixmap>
+#include <QtGui/QStandardItemModel>
+#include <QtGui/QTreeView>
 
 #include "Auth.h"
 #include "Logger.h"
@@ -45,10 +46,12 @@
 /**
  * Constructor.
  */
-TabPanelPlaylist::TabPanelPlaylist(QTabWidget *parent, string text)
+TabPanelPlaylist::TabPanelPlaylist(QTabWidget *parent, QString text)
 		: TabPanel(parent,text) {
     // Set panel tag
 	panelTag = "TabPlaylist";
+
+	TabPanel::setIcon(QIcon(":/icons/jingle16.png"));
 
     // Draw GUI components
     draw();
@@ -92,11 +95,16 @@ void TabPanelPlaylist::configure(Auth *authModule) {
  * Emits the \a itemSelected signal when a playlist item is selected.
  * @param   current     List item specifying the selected item
  */
-void TabPanelPlaylist::playlistAdd(QListViewItem *current) {
-	if (current->text(3)) {
-		DpsAudioItem vAudio(atoi(current->text(3).ascii()));
-        emit audioSelected( vAudio );
-	}
+void TabPanelPlaylist::playlistAdd(const QModelIndex& x) {
+    if (!x.parent().isValid())
+    {
+        return;
+    }
+    int list = x.parent().row();
+    int item = x.row();
+    QString vIdx = modPlaylist->item(list,0)->child(item,3)->text();
+    DpsAudioItem vAudio(vIdx.toLong());
+    emit audioSelected( vAudio );
 }
 
 
@@ -107,10 +115,7 @@ void TabPanelPlaylist::processPlaylistUpdate() {
     const char* routine = "TabPanelPlaylist::processPlaylistUpdate";
     L_INFO(LOG_TABPLAYLIST,"Refreshing playlist display.");
     
-    QListViewItem *new_playlist = 0, *new_track = 0, *last_track = 0;
-    
-    // Clear the display
-    lstPlaylist->clear();
+    QStandardItem *new_playlist;
 
     // Get list of playlists
     string SQL = "SELECT id,name FROM playlists ORDER BY name DESC";
@@ -124,12 +129,17 @@ void TabPanelPlaylist::processPlaylistUpdate() {
         return;
     }
 
+    modPlaylist->removeRows(0,modPlaylist->rowCount());
     // For each playlist, get the items in that playlist
     for (unsigned int j = 0; j < Playlists.size(); j++) {
-        last_track = 0;
-        string playlist = Playlists[j]["name"].c_str();
-        new_playlist = new QListViewItem(lstPlaylist, playlist);
-        new_playlist->setPixmap (0, *pixExpanded);
+        QList<QStandardItem*> s;
+        s.append(new QStandardItem(*icnExpanded,
+                QString::fromStdString(Playlists[j]["name"].c_str())));
+        s.append(new QStandardItem);
+        s.append(new QStandardItem);
+        s.append(new QStandardItem);
+        modPlaylist->appendRow(s);
+        lstPlaylist->setFirstColumnSpanned(j,modPlaylist->index(-1,0),true);
         SQL = "SELECT * FROM v_playlists WHERE playlistid = "
                 + string(Playlists[j]["id"].c_str());
         PqxxResult R;
@@ -138,19 +148,19 @@ void TabPanelPlaylist::processPlaylistUpdate() {
 
             // Populate this playlist
             for (unsigned int i = 0; i < R.size(); i++) {
-                new_track = new QListViewItem(new_playlist,last_track,
-                            R[i]["artist"].c_str(),
-                            R[i]["title"].c_str(),
-                            dps_prettyTime(atoi(R[i]["length_smpl"].c_str())),
-                            R[i]["id"].c_str());
-                new_track->setPixmap(0,*pixTrack);
-                last_track = new_track;
+                QList<QStandardItem*> s;
+                s.append(new QStandardItem(*icnTrack,
+                        QString::fromStdString(R[i]["artist"].c_str())));
+                s.append(new QStandardItem(QString::fromAscii(R[i]["title"].c_str())));
+                s.append(new QStandardItem(QString::fromStdString(dps_prettyTime(atoi(R[i]["length_smpl"].c_str())))));
+                s.append(new QStandardItem(QString::fromAscii(R[i]["id"].c_str())));
+                s.at(0)->setIcon(*icnTrack);
+                modPlaylist->item(j,0)->appendRow(s);
             }
-            new_playlist->setOpen(true);
         }
         catch (...) {
             DB->abort("PlaylistRetrieve");
-            L_ERROR(LOG_TABPLAYLIST,"Failed to get playlist '"+playlist+"'");
+            L_ERROR(LOG_TABPLAYLIST,"Failed to get playlist '"+std::string(Playlists[j][0].c_str())+"'");
             return;
         }
     }
@@ -161,16 +171,16 @@ void TabPanelPlaylist::processPlaylistUpdate() {
 /**
  * Change the icon for an item when it is expanded.
  */
-void TabPanelPlaylist::listExpanded(QListViewItem *x) {
-    x->setPixmap(0,*pixExpanded);
+void TabPanelPlaylist::listExpanded(const QModelIndex& x) {
+    modPlaylist->item(x.row(),0)->setIcon(*icnExpanded);
 }
 
 
 /**
  * Change the icon for an item when it is collapsed.
  */
-void TabPanelPlaylist::listCollapsed(QListViewItem *x) {
-    x->setPixmap(0,*pixCollapsed);
+void TabPanelPlaylist::listCollapsed(const QModelIndex& x) {
+    modPlaylist->item(x.row(),0)->setIcon(*icnCollapsed);
 }
 
 
@@ -179,49 +189,44 @@ void TabPanelPlaylist::listCollapsed(QListViewItem *x) {
  */
 void TabPanelPlaylist::draw() {
     QString path = DPSDIR;
-    pixExpanded = new QPixmap(path+"/images/expand16.png");
-    pixCollapsed = new QPixmap(path+"/images/contract16.png");
-    pixTrack = new QPixmap(path+"/images/music16.png");
+    icnExpanded = new QIcon(":/icons/expand16.png");
+    icnCollapsed = new QIcon(":/icons/contract16.png");
+    icnTrack = new QIcon("/icons/music16.png");
     
     // do all form drawing here, create widgets, set properties
-    lstPlaylist = new QListView(getPanel(), "lstEmail" );
+    modPlaylist = new QStandardItemModel;
+    QStringList vLabels;
+    vLabels.append("Artist");
+    vLabels.append("Title");
+    vLabels.append("Length");
+    vLabels.append("ID");
+    modPlaylist->setHorizontalHeaderLabels(vLabels);
 
-    lstPlaylist->setGeometry( QRect( 20, 20, 480, 610 ) );
-    lstPlaylist->setVScrollBarMode( QListView::AlwaysOn );
-    lstPlaylist->setAllColumnsShowFocus( TRUE );
-    lstPlaylist->setColumnWidthMode(3, QListView::Manual);
-    lstPlaylist->setColumnWidth(3, 0);
-    lstPlaylist->header()->setMovingEnabled( FALSE );
-    lstPlaylist->addColumn( tr( "Artist" ) );
-    lstPlaylist->header()->setResizeEnabled( FALSE,
-            lstPlaylist->header()->count() -1);
-    lstPlaylist->addColumn( tr( "Title" ) );
-    lstPlaylist->header()->setResizeEnabled( FALSE,
-            lstPlaylist->header()->count() -1);
-    lstPlaylist->addColumn( tr( "Length" ) );
-    lstPlaylist->header()->setResizeEnabled( FALSE,
-            lstPlaylist->header()->count() -1);
-    lstPlaylist->addColumn( tr( "ID" ) );
-    lstPlaylist->header()->setResizeEnabled( FALSE,
-            lstPlaylist->header()->count() -1);
-    lstPlaylist->setColumnWidthMode(0, QListView::Manual);
-    lstPlaylist->setColumnWidthMode(1, QListView::Manual);
-    lstPlaylist->setColumnWidthMode(2, QListView::Manual);
-    lstPlaylist->setColumnWidthMode(3, QListView::Manual);
+    lstPlaylist = new QTreeView( getPanel() );
+    lstPlaylist->setModel(modPlaylist);
+    lstPlaylist->setGeometry( QRect( 10, 10, 510, 620 ) );
+    lstPlaylist->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOn );
+    lstPlaylist->header()->setResizeMode(0, QHeaderView::Fixed);
+    lstPlaylist->header()->setResizeMode(1, QHeaderView::Fixed);
+    lstPlaylist->header()->setResizeMode(2, QHeaderView::Fixed);
+    lstPlaylist->header()->setMovable( FALSE );
+    lstPlaylist->header()->setDefaultAlignment(Qt::AlignLeft);
     lstPlaylist->setColumnWidth(0, 190);
     lstPlaylist->setColumnWidth(1, 185);
     lstPlaylist->setColumnWidth(2, 80);
-    lstPlaylist->setColumnWidth(3, 0);
-    lstPlaylist->header()->setMovingEnabled( FALSE );
-    lstPlaylist->setSorting(-1,FALSE);
+    lstPlaylist->setAllColumnsShowFocus( TRUE );
+    lstPlaylist->setColumnHidden(3, true);
+    lstPlaylist->setAlternatingRowColors(true);
+    lstPlaylist->setEditTriggers(QTreeView::NoEditTriggers);
+    lstPlaylist->setSortingEnabled(FALSE);
 
     // connect signals and slots here
-    QObject::connect( lstPlaylist, SIGNAL( doubleClicked(QListViewItem*) ),
-                this, SLOT( playlistAdd(QListViewItem*) ) );
-    QObject::connect( lstPlaylist, SIGNAL( expanded(QListViewItem*) ),
-                this, SLOT( listExpanded(QListViewItem*) ) );
-    QObject::connect( lstPlaylist, SIGNAL( collapsed(QListViewItem*) ),
-                this, SLOT( listCollapsed(QListViewItem*) ) );
+    QObject::connect( lstPlaylist, SIGNAL( doubleClicked(const QModelIndex&) ),
+                this, SLOT( playlistAdd(const QModelIndex&) ) );
+    QObject::connect( lstPlaylist, SIGNAL( expanded(const QModelIndex&) ),
+                this, SLOT( listExpanded(const QModelIndex&) ) );
+    QObject::connect( lstPlaylist, SIGNAL( collapsed(const QModelIndex&) ),
+                this, SLOT( listCollapsed(const QModelIndex&) ) );
 }
 
 
@@ -230,6 +235,9 @@ void TabPanelPlaylist::draw() {
  */
 void TabPanelPlaylist::clear() {
 	delete lstPlaylist;
-	delete pixAList;
-	delete pixBList;
+	if (icnAList) delete icnAList;
+	if (icnBList) delete icnBList;
+	if (icnExpanded) delete icnExpanded;
+	if (icnCollapsed) delete icnCollapsed;
+	if (icnTrack) delete icnTrack;
 }

@@ -25,16 +25,16 @@
 
 #include <QtGui/QTabWidget>
 #include <QtGui/QTextBrowser>
-#include <QtGui/QTreeWidget>
+#include <QtGui/QStandardItemModel>
+#include <QtGui/QTableView>
 #include <QtCore/QString>
-#include <QtGui/QPixmap>
+#include <QtGui/QIcon>
 #include <QtGui/QIconSet>
 #include <QtGui/QHeaderView>
 #include <QtGui/QApplication>
 #include <QtCore/QObject>
 #include <QtGui/QPushButton>
 #include <QtGui/QCheckBox>
-//#include <QtGui/QTable>
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
 #include <QtGui/QToolTip>
@@ -52,6 +52,8 @@ TabPanelSearch::TabPanelSearch(QTabWidget *parent, QString text)
 		: TabPanel(parent,text)  {
     // Set panel tag
 	panelTag = "TabSearch";
+
+	TabPanel::setIcon(QIcon(":/icons/search16.png"));
 
     // Draw GUI components
     draw();
@@ -134,13 +136,12 @@ void TabPanelSearch::Library_Search() {
         return;
     }
 
-    // Clear the results list
-    lstSearchResults->selectAll();
-    lstSearchResults->clearSelection();
+	lstSearchResults->setEnabled(false);
 
     // Display a "searching..." notice
-	new QTreeWidgetItem( lstSearchResults, QStringList("Searching......."));
-	lstSearchResults->setEnabled(false);
+    modSearch->removeRows(0,modSearch->rowCount());
+    modSearch->setRowCount(1);
+    modSearch->setItem(0,0,new QStandardItem(QString("Searching... Please wait.")));
 
     // Set search parameters
 	library_engine->searchLimit(atoi(conf->getParam("search_limit").c_str()));
@@ -156,56 +157,75 @@ void TabPanelSearch::threadExecute() {
 	// Perform search
     try {
 	    SearchResults = library_engine->query(txtLibrarySearchText->text().toStdString());
+	    SearchCompleteEvent *e = new SearchCompleteEvent((enum QEvent::Type)20000);
+	    QApplication::postEvent(this, dynamic_cast<QEvent*>(e));
     }
-    catch ( DpsMusicSearch::Error &e ) {
-        dlgWarn *warning = new dlgWarn(getPanel(), 0);
-        warning->setTitle("Oops!");
-        warning->setWarning(QString::fromStdString(e.getMessage()));
-        warning->setQuestion(false);
-        warning->exec();
-        delete warning;
-		btnLibrarySearch->setEnabled(true);
-		txtLibrarySearchText->setEnabled(true);
-		TitleCheckBox->setEnabled(true);
-		ArtistCheckBox->setEnabled(true);
-		AlbumCheckBox->setEnabled(true);
-		searching = false;
+    catch ( DpsMusicSearch::Error &s ) {
+        SearchErrorEvent *e = new SearchErrorEvent((enum QEvent::Type)20001, s);
+        QApplication::postEvent(this, dynamic_cast<QEvent*>(e));
     }
-	processResults();
+}
+
+void TabPanelSearch::customEvent(QEvent *e)
+{
+    switch (e->type()) {
+        case 20000: { // Search successful
+            processResults();
+            break;
+        }
+        case 20001: { // Search failed
+            DpsMusicSearch::Error s = dynamic_cast<SearchErrorEvent*>(e)->getError();
+            dlgWarn *warning = new dlgWarn(getPanel(), 0);
+            warning->setTitle("Oops!");
+            warning->setWarning(QString::fromStdString(s.getMessage()));
+            warning->setQuestion(false);
+            warning->exec();
+            delete warning;
+            btnLibrarySearch->setEnabled(true);
+            txtLibrarySearchText->setEnabled(true);
+            TitleCheckBox->setEnabled(true);
+            ArtistCheckBox->setEnabled(true);
+            AlbumCheckBox->setEnabled(true);
+            searching = false;
+            break;
+        }
+        default: {
+            cout << "Unknown event type" << endl;
+        }
+    }
 }
 
 void TabPanelSearch::processResults() {
-	// Clear the list and enter search results (disable updates until done)
-	lstSearchResults->setUpdatesEnabled(false);
-	lstSearchResults->clear();
+    QStandardItem *new_item;
 
     // Display information message if nothing found
 	if (SearchResults.size() == 0) {
-		new QTreeWidgetItem( lstSearchResults, QStringList("(Sorry, no matches found.)"));
+	    modSearch->removeRows(0,modSearch->rowCount());
+	    modSearch->setRowCount(1);
+	    new_item = new QStandardItem(QString("(Sorry, no matches found.)"));
+	    modSearch->setItem(0,0,new_item);
+	    modSearch->setItem(0,1,new QStandardItem(QString("")));
+	    modSearch->setItem(0,2,new QStandardItem(QString("")));
 
 		btnLibrarySearch->setEnabled(true);
 		txtLibrarySearchText->setEnabled(true);
 		TitleCheckBox->setEnabled(true);
 		ArtistCheckBox->setEnabled(true);
 		AlbumCheckBox->setEnabled(true);
-		lstSearchResults->setUpdatesEnabled(true);
-//		lstSearchResults->triggerUpdate();
 
 		searching = false;
 		return;
 	}
 
     lstSearchResults->setEnabled(true);
-	QTreeWidgetItem *x;
-
+    modSearch->removeRows(0,modSearch->rowCount());
+    modSearch->setRowCount(SearchResults.size());
 	for (unsigned int i = 0; i < SearchResults.size(); i++) {
-	    QStringList s;
-	    s.append(QString::fromStdString(SearchResults[i]["title"]));
-	    s.append(QString::fromStdString(SearchResults[i]["artist"]));
-	    s.append(QString::fromStdString(SearchResults[i]["album"]));
-	    s.append(QString::fromStdString(SearchResults[i]["id"]));
-		x = new QTreeWidgetItem(  lstSearchResults, s );
-
+	    modSearch->setItem(i,0,new QStandardItem(QString::fromAscii(SearchResults[i]["title"].c_str())));
+	    modSearch->setItem(i,1,new QStandardItem(QString::fromAscii(SearchResults[i]["artist"].c_str())));
+	    modSearch->setItem(i,2,new QStandardItem(QString::fromAscii(SearchResults[i]["album"].c_str())));
+	    modSearch->setItem(i,3,new QStandardItem(QString::fromAscii(SearchResults[i]["id"].c_str())));
+	    modSearch->item(i,0)->setIcon(*icnAudio);
 // TODO: Views currently missing censor column
 /*		if (SearchResults[i]["censor"] == "t") {
 			x->setPixmap(0,*pixCensored);
@@ -219,8 +239,6 @@ void TabPanelSearch::processResults() {
 	TitleCheckBox->setEnabled(true);
 	ArtistCheckBox->setEnabled(true);
 	AlbumCheckBox->setEnabled(true);
-	lstSearchResults->setUpdatesEnabled(true);
-//	lstSearchResults->triggerUpdate();
 	txtLibrarySearchText->setFocus();
 
 	searching = false;
@@ -230,11 +248,10 @@ void TabPanelSearch::processResults() {
 /**
  * Emits a signal indicating which item is selected.
  */
-void TabPanelSearch::playlistAdd(QTreeWidgetItem* x) {
-	if (x) {
-		DpsAudioItem vAudio(x->text(3).toLong());
-        emit audioSelected( vAudio );
-	}
+void TabPanelSearch::playlistAdd(const QModelIndex& x) {
+    QString vIdx = modSearch->item(x.row(),3)->text();
+	DpsAudioItem vAudio(vIdx.toLong());
+    emit audioSelected( vAudio );
 }
 
 
@@ -244,8 +261,8 @@ void TabPanelSearch::playlistAdd(QTreeWidgetItem* x) {
 void TabPanelSearch::draw() {
     // Load icons for display
     path = DPSDIR;
-    pixAudio = new QPixmap(path + "/images/music16.png");
-    pixCensored = new QPixmap(path + "/images/censoredmusic16.png");
+    icnAudio = new QIcon(":/icons/music16.png");
+    icnCensored = new QIcon(":/icons/censoredmusic16.png");
 
     lblSearch = new QLabel( getPanel() );
     lblSearch->setGeometry( QRect( 28, 10, 60, 20 ) );
@@ -262,7 +279,7 @@ void TabPanelSearch::draw() {
     Searchlable->setFont( Searchlable_font );
 
     txtLibrarySearchText = new QLineEdit( getPanel() );
-    txtLibrarySearchText->setGeometry( QRect( 83, 10, 330, 20 ) );
+    txtLibrarySearchText->setGeometry( QRect( 83, 8, 330, 25 ) );
 
     ArtistCheckBox = new QCheckBox( getPanel() );
     ArtistCheckBox->setGeometry( QRect( 83, 35, 70, 20 ) );
@@ -287,49 +304,35 @@ void TabPanelSearch::draw() {
 
     btnLibrarySearch = new QPushButton( getPanel() );
     btnLibrarySearch->setGeometry( QRect( 421, 10, 80, 20 ) );
-//    btnLibrarySearch->setStyleSheet("color: rgb(0,0,0);");
 
     QFont btnLibrarySearch_font(  btnLibrarySearch->font() );
     btnLibrarySearch_font.setPointSize( 10 );
     btnLibrarySearch_font.setBold( FALSE );
     btnLibrarySearch->setFont( btnLibrarySearch_font );
     btnLibrarySearch->setAutoDefault( FALSE );
-    QStringList vHeaderLabels;
-    vHeaderLabels.append("Title");
-    vHeaderLabels.append("Artist");
-    vHeaderLabels.append("Album");
-    vHeaderLabels.append("ID");
 
-    lstSearchResults = new QTreeWidget(getPanel() );
+    modSearch = new QStandardItemModel(0,4);
+    modSearch->setHeaderData(0, Qt::Horizontal, tr("Title"));
+    modSearch->setHeaderData(1, Qt::Horizontal, tr("Artist"));
+    modSearch->setHeaderData(2, Qt::Horizontal, tr("Album"));
+    modSearch->setHeaderData(3, Qt::Horizontal, tr("ID"));
+
+    lstSearchResults = new QTableView( getPanel() );
+    lstSearchResults->setModel(modSearch);
     lstSearchResults->setGeometry( QRect( 10, 60, 510, 570 ) );
     lstSearchResults->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOn );
-    lstSearchResults->setAllColumnsShowFocus( TRUE );
-    //lstSearchResults->setColumnWidthMode(3, QListView::Manual);
-    lstSearchResults->setColumnWidth(3, 0);
-    lstSearchResults->setColumnCount(4);
-    lstSearchResults->setHeaderLabels(vHeaderLabels);
-    lstSearchResults->header()->setMovable( FALSE );
-    lstSearchResults->header()->setResizeMode(
-            lstSearchResults->header()->count() - 1,
-            QHeaderView::Fixed);
-    lstSearchResults->header()->setResizeMode(
-            lstSearchResults->header()->count() - 1,
-            QHeaderView::Fixed);
-    lstSearchResults->header()->setResizeMode(
-            lstSearchResults->header()->count() - 1,
-            QHeaderView::Fixed);
-    lstSearchResults->header()->setResizeMode(
-            lstSearchResults->header()->count() - 1,
-            QHeaderView::Fixed);
-    //lstSearchResults->setColumnWidthMode(0, QTreeWidget::Manual);
-    //lstSearchResults->setColumnWidthMode(1, QListView::Manual);
-    //lstSearchResults->setColumnWidthMode(2, QListView::Manual);
-    //lstSearchResults->setColumnWidthMode(3, QListView::Manual);
+    lstSearchResults->setSelectionBehavior(QTableView::SelectRows);
+    lstSearchResults->setSelectionMode(QTableView::SingleSelection);
+    lstSearchResults->setAlternatingRowColors(true);
+    lstSearchResults->setShowGrid(false);
+    lstSearchResults->setColumnHidden(3, true);
     lstSearchResults->setColumnWidth(0, 200);
     lstSearchResults->setColumnWidth(1, 200);
-    lstSearchResults->setColumnWidth(2, 90);
-    lstSearchResults->setColumnWidth(3, 0);
-    lstSearchResults->header()->setMovable( FALSE );
+    lstSearchResults->setColumnWidth(2, 200);
+    lstSearchResults->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
+    lstSearchResults->verticalHeader()->hide();
+    lstSearchResults->verticalHeader()->setDefaultSectionSize(20);
+    lstSearchResults->setEditTriggers(QTableView::NoEditTriggers);
     lstSearchResults->sortByColumn(0);
 
     lblSearch->setText( tr( "Search:" ) );
@@ -341,8 +344,8 @@ void TabPanelSearch::draw() {
 
     connect( btnLibrarySearch, SIGNAL( clicked() ),
                 this, SLOT( Library_Search() ) );
-    connect( lstSearchResults, SIGNAL( doubleClicked(QListViewItem*) ),
-                this, SLOT( playlistAdd(QListViewItem*) ) );
+    connect( lstSearchResults, SIGNAL( doubleClicked(const QModelIndex&) ),
+                this, SLOT( playlistAdd(const QModelIndex&) ) );
     connect( txtLibrarySearchText, SIGNAL( returnPressed() ),
                 this, SLOT( Library_Search() ) );
 

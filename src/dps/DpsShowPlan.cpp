@@ -55,7 +55,7 @@ DpsShowPlan::~DpsShowPlan() {
 
 }
 
-bool DpsShowPlan::operator==(const DpsShowPlan& pSrc) {
+bool DpsShowPlan::operator==(const DpsShowPlan& pSrc) const {
 	if (mId == pSrc.mId &&
 		mOwner == pSrc.mOwner && 
 		mCreationDate == pSrc.mCreationDate &&
@@ -66,7 +66,7 @@ bool DpsShowPlan::operator==(const DpsShowPlan& pSrc) {
 	return false;
 }
 
-bool DpsShowPlan::operator!=(const DpsShowPlan& pSrc) {
+bool DpsShowPlan::operator!=(const DpsShowPlan& pSrc) const {
     return !(operator==(pSrc));
 }
 
@@ -90,40 +90,47 @@ DpsShowItem& DpsShowPlan::operator[](unsigned int pIdx) {
     return mItems[pIdx];
 }
 
-unsigned int DpsShowPlan::getId() {
+unsigned int DpsShowPlan::getId() const {
     return mId;
 }
 
-unsigned int DpsShowPlan::getSize() {
+unsigned int DpsShowPlan::getSize() const {
 	return mItems.size();
 }
 
-DpsUser DpsShowPlan::getOwner() {
+DpsUser DpsShowPlan::getOwner() const {
 	return mOwner;
 }
 
-DpsDate DpsShowPlan::getCreationDate() {
+DpsDate DpsShowPlan::getCreationDate() const {
 	return mCreationDate;
 }
 
-DpsDate DpsShowPlan::getShowDate() {
+DpsDate DpsShowPlan::getShowDate() const {
 	return mShowDate;
 }
 
-bool DpsShowPlan::isCompleted() {
+bool DpsShowPlan::isCompleted() const {
 	return mCompleted;
 }
 
-bool DpsShowPlan::isStored() {
+bool DpsShowPlan::isStored() const {
 	return mStored;
 }
 
-bool DpsShowPlan::isChanged() {
+bool DpsShowPlan::isChanged() const {
 	return mChanged;
 }
 
 DpsShowItem& DpsShowPlan::getItem(unsigned int pIdx) {
 	return operator[](pIdx);
+}
+
+const DpsShowItem& DpsShowPlan::getItem(const unsigned int pIdx) const {
+    if (pIdx >= mItems.size()) {
+        throw OutOfRange(MKEX(""));
+    }
+    return mItems.at(pIdx);
 }
 
 DpsShowItem& DpsShowPlan::getItemByHash(const DpsHash& pHash) {
@@ -133,6 +140,15 @@ DpsShowItem& DpsShowPlan::getItemByHash(const DpsHash& pHash) {
 		}
 	}
 	throw NotFound(MKEX(""));
+}
+
+unsigned int DpsShowPlan::getItemIndex(const DpsShowItem& pSrc) {
+    vector<DpsShowItem>::iterator x;
+    x = find(mItems.begin(), mItems.end(), pSrc);
+    if (x == mItems.end()) {
+        throw OutOfRange(MKEX(""));
+    }
+    return (x - mItems.begin());
 }
 
 DpsShowItem& DpsShowPlan::getNextItem(const DpsShowItem& pSrc) {

@@ -28,11 +28,11 @@
 #include "TabPanelInfo.h"
 #include "TabPanelEmail.h"
 #include "TabPanelSearch.h"
-//#include "TabPanelPlaylist.h"
-//#include "TabPanelLogging.h"
-//#include "TabPanelScript.h"
+#include "TabPanelPlaylist.h"
+#include "TabPanelLogging.h"
+#include "TabPanelScript.h"
 //#include "TabPanelFileBrowser.h"
-//#include "Nownext.h"
+#include "Nownext.h"
 #include "Showplan.h"
 #include "dlgLogin.h"
 #include "dlgWarn.h"
@@ -48,15 +48,15 @@
 
 Auth *authModule;
 UserConfig *userConfig;
-//Showplan *sp;
-//Nownext *nownext;
+Showplan *sp;
+Nownext *nownext;
 TabPanelInfo *tabPanelInfo;
 TabPanelEmail *tabPanelEmail;
 TabPanelSearch *tabPanelSearch;
 //TabPanelFileBrowser *tabPanelFileBrowser;
-//TabPanelPlaylist *tabPanelPlaylist;
-//TabPanelLogging *tabPanelLogging;
-//TabPanelScript *tabPanelScript;
+TabPanelPlaylist *tabPanelPlaylist;
+TabPanelLogging *tabPanelLogging;
+TabPanelScript *tabPanelScript;
 
 Config *conf;
 clockThread *ck;
@@ -226,17 +226,16 @@ void frmStudioManage::init() {
 
     //Load Images
     cout << " -> Loading Images and setting contact information... ";
-//  pixFade->setPixmap(QPixmap(path + "/images/fade.png"));
-    pixLogo->setPixmap(QPixmap(path + "/images/rawdigiplay.png"));
+    pixLogo->setPixmap(QPixmap(":/images/rawdigiplay.png"));
     lblContactPhone->setText(QString::fromStdString(conf->getParam("contact_phone")));
     lblContactSms->setText(QString::fromStdString(conf->getParam("contact_sms")));
     lblContactEmail->setText(QString::fromStdString(conf->getParam("contact_email")));
     cout << "success." << endl;
 
     //Load Now/Next widget
-//    nownext = new Nownext( this );
-//    nownext->setGeometry( QRect( 0, 0, 1030, 30 ) );
-//    nownext->configure(authModule);
+    nownext = new Nownext( this );
+    nownext->setGeometry( QRect( 0, 0, 1030, 30 ) );
+    nownext->configure(authModule);
 
     // Load tab panels after removing the template tab.
     tabManage->removeTab(tabManage->currentIndex());
@@ -255,36 +254,36 @@ void frmStudioManage::init() {
 //    tabPanelFileBrowser->configure(authModule);
 //    cout << " success." << endl;
 
-//    cout << " -> Playlist panel..." << flush;
-//    tabPanelPlaylist = new TabPanelPlaylist(tabManage, "Playlist");
-//    tabPanelPlaylist->configure(authModule);
-//    cout << " success." << endl;
+    cout << " -> Playlist panel..." << flush;
+    tabPanelPlaylist = new TabPanelPlaylist(tabManage, "Playlist");
+    tabPanelPlaylist->configure(authModule);
+    cout << " success." << endl;
 
     cout << " -> Email panel..." << flush;
     tabPanelEmail = new TabPanelEmail(tabManage,"Email");
     tabPanelEmail->configure(authModule);
     cout << " success." << endl;
 
-//    cout << " -> Logging panel..." << flush;
-//    tabPanelLogging = new TabPanelLogging(tabManage,"Logging");
-//    tabPanelLogging->configure(authModule);
-//    cout << " success." << endl;
+    cout << " -> Logging panel..." << flush;
+    tabPanelLogging = new TabPanelLogging(tabManage,"Logging");
+    tabPanelLogging->configure(authModule);
+    cout << " success." << endl;
 
-//    cout << " -> Script panel..." << flush;
-//    tabPanelScript = new TabPanelScript(tabManage,"Script");
-//    tabPanelScript->configure(authModule);
-//    cout << " success." << endl;
+    cout << " -> Script panel..." << flush;
+    tabPanelScript = new TabPanelScript(tabManage,"Script");
+    tabPanelScript->configure(authModule);
+    cout << " success." << endl;
 
-//    cout << " -> Showplan..." << flush;
-//    sp = new Showplan(this,"sp");
-//    sp->setGeometry( QRect( 550, 40, 470, 670) );
-//    sp->configure(authModule);
-//    cout << "success." << endl;
+    cout << " -> Showplan..." << flush;
+    sp = new Showplan(this);
+    sp->setGeometry( QRect( 550, 40, 470, 670) );
+    sp->configure(authModule);
+    cout << "success." << endl;
 
-//    connect ( tabPanelSearch, SIGNAL( audioSelected( const DpsAudioItem& ) ),
-//                sp, SLOT( append( const DpsAudioItem& ) ) );
-//    connect ( tabPanelPlaylist, SIGNAL( audioSelected( const DpsAudioItem& ) ),
-//                sp, SLOT( append( const DpsAudioItem& ) ) );
+    connect ( tabPanelSearch, SIGNAL( audioSelected( const DpsAudioItem& ) ),
+                sp, SLOT( append( const DpsAudioItem& ) ) );
+    connect ( tabPanelPlaylist, SIGNAL( audioSelected( const DpsAudioItem& ) ),
+                sp, SLOT( append( const DpsAudioItem& ) ) );
 
 //    connect ( tabPanelFileBrowser, SIGNAL( audioSelected( const DpsAudioItem& ) ),
 //                sp, SLOT( append( const DpsAudioItem& ) ) );
@@ -295,12 +294,12 @@ void frmStudioManage::init() {
 //    connect ( tabPanelFileBrowser, SIGNAL( awsetSelected( QString ) ),
 //                this, SLOT( updateAwSet( QString ) ) );
 
-//    connect ( sp, SIGNAL( scriptSelected( int ) ),
-//                tabPanelScript, SLOT( loadScript( int ) ) );
-//    connect ( sp, SIGNAL( scriptDeselected() ),
-//                tabPanelScript, SLOT( clearScript() ) );
-//    connect ( tabPanelScript, SIGNAL( scriptDone() ),
-//                sp, SLOT( scriptDone() ) );
+    connect ( sp, SIGNAL( scriptSelected( const DpsScriptItem& ) ),
+                tabPanelScript, SLOT( loadScript( const DpsScriptItem& ) ) );
+    connect ( sp, SIGNAL( scriptDeselected() ),
+                tabPanelScript, SLOT( clearScript() ) );
+    connect ( tabPanelScript, SIGNAL( scriptDone(const DpsScriptItem&) ),
+                sp, SLOT( scriptDone(const DpsScriptItem&) ) );
 
     cout << "Interface initialisation complete." << endl;
     cout << "Setting initial configuration values..." << flush;
@@ -421,7 +420,7 @@ void frmStudioManage::btnLoginClicked()
             authModule->closeSession();
             conf->setParam("user_aw_set","0");
             conf->setParam("userid","0");
-//            sp->clear();
+            sp->clear();
             tabManage->setCurrentIndex(0);
             btnLogin->setText("Log In");
         }
@@ -429,10 +428,10 @@ void frmStudioManage::btnLoginClicked()
     }
     tabPanelInfo->configure(authModule);
     tabPanelSearch->configure(authModule);
-//    tabPanelPlaylist->configure(authModule);
+    tabPanelPlaylist->configure(authModule);
     tabPanelEmail->configure(authModule);
-//    tabPanelLogging->configure(authModule);
-//    tabPanelScript->configure(authModule);
+    tabPanelLogging->configure(authModule);
+    tabPanelScript->configure(authModule);
 //    tabPanelFileBrowser->configure(authModule);
 }
 

@@ -62,7 +62,7 @@ DpsDate::~DpsDate() {
 	
 }
 
-bool DpsDate::operator==(const DpsDate& pSrc) {
+bool DpsDate::operator==(const DpsDate& pSrc) const {
 	if (mYear == pSrc.mYear &&
 		mMonth == pSrc.mMonth &&
 		mDay == pSrc.mDay &&
@@ -72,7 +72,7 @@ bool DpsDate::operator==(const DpsDate& pSrc) {
 	return false;
 }
 
-bool DpsDate::operator!=(const DpsDate& pSrc) {
+bool DpsDate::operator!=(const DpsDate& pSrc) const {
 	return !operator==(pSrc);
 }
 
@@ -84,19 +84,19 @@ DpsDate& DpsDate::operator=(const DpsDate& pSrc) {
 	return *this;
 }
 
-unsigned int DpsDate::getYears() {
+unsigned int DpsDate::getYears() const {
 	return mYear;
 }
 
-unsigned int DpsDate::getMonths() {
+unsigned int DpsDate::getMonths() const {
 	return mMonth;
 }
 
-unsigned int DpsDate::getDays() {
+unsigned int DpsDate::getDays() const {
 	return mDay;
 }
 
-DpsTime DpsDate::getTime() {
+DpsTime DpsDate::getTime() const {
 	return mTime;
 }
 

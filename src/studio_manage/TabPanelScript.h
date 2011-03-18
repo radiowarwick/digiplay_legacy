@@ -43,7 +43,7 @@ class TabPanelScript : public TabPanel {
 	Q_OBJECT
 	public:
         /// Constructor.
-		TabPanelScript(QTabWidget *parent, string text);
+		TabPanelScript(QTabWidget *parent, QString text);
         /// Destructor.
 		~TabPanelScript();
         /// Reconfigures the panel.
@@ -51,13 +51,13 @@ class TabPanelScript : public TabPanel {
 
 	public slots:
         /// Loads the specified script.
-		void loadScript( int id );
+		void loadScript( const DpsScriptItem& );
         /// Clears the display area.
 		void clearScript();
 	
 	signals:
         /// Emitted when a script is deemed read/finished.
-		void scriptDone();
+		void scriptDone(const DpsScriptItem&);
 
 	private slots:
         /// Process script done button and emits signal.
@@ -70,6 +70,8 @@ class TabPanelScript : public TabPanel {
 		void clear();
 
         DataAccess* DB;
+
+        DpsScriptItem currentItem;
 
 	    QLabel *lblScriptName, *lblScriptDuration;
 	    QLineEdit *txtScriptName, *txtScriptDuration;

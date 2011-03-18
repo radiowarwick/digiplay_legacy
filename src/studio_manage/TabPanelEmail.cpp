@@ -52,6 +52,8 @@ TabPanelEmail::TabPanelEmail(QTabWidget *parent, QString text)
     // Set panel tag.
     panelTag = "TabEmail";
 
+    TabPanel::setIcon(QIcon(":/icons/email_new16.png"));
+
     // Initialise object pointers.
     lstEmail = 0;
     txtEmailBody = 0;
@@ -146,7 +148,7 @@ void TabPanelEmail::getEmail(){
     int k;
 
     // Get the message ID of the latest message currently shown
-    if (lstEmail->children().count() > 0) {
+    if (lstEmail->topLevelItemCount() > 0) {
         last_id = lstEmail->topLevelItem(0)->text(4).toInt();
     }
 
@@ -266,8 +268,8 @@ void TabPanelEmail::draw() {
     pointSize= txtEmailBody->currentFont().pointSize();
 
     // connect signals and slots here
-    QObject::connect( lstEmail, SIGNAL( selectionChanged(QListViewItem*) ),
-                            this, SLOT( getEmailBody(QListViewItem*) ) );
+//    QObject::connect( lstEmail, SIGNAL( selectionChanged(QListViewItem*) ),
+//                            this, SLOT( getEmailBody(QListViewItem*) ) );
 }
 
 

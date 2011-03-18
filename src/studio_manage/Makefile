@@ -19,10 +19,12 @@ MODS		=	main
 #QT_OBJS		=	dlgLogin dlgWarn
 QT_MODS		=	frmStudioManage dlgLogin dlgWarn\
 				TabPanel TabPanelInfo TabPanelEmail\
-				TabPanelSearch
-#TabPanelPlaylist TabPanelLogging\
-				TabPanelScript TabPanelFileBrowser\
-				FileBrowser Showplan ShowPlanItem Nownext
+				TabPanelSearch TabPanelPlaylist TabPanelLogging\
+				TabPanelScript\
+				ShowplanModel ShowplanView ShowplanDelegate Showplan \
+				Nownext
+#				TabPanelScript #TabPanelFileBrowser\
+#				FileBrowser 
 SHARED_MODS	=	Config DpsEmail dps clockThread \
 				Auth AuthLdap AuthPsql Logger UserConfig \
 				DataAccess Security Thread DbTrigger MessagingInterface \

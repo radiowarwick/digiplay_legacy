@@ -41,12 +41,13 @@
 #include "Auth.h"
 #include "dlgWarn.h"
 
-#include "ShowPlanItem.h"
-
+#include "ShowplanModel.h"
+#include "ShowplanView.h"
+#include "ShowplanDelegate.h"
 #include "Showplan.h"
 
-Showplan::Showplan(QWidget *parent, const char* name)
-        : QWidget(parent, name),
+Showplan::Showplan(QWidget *parent)
+        : QWidget(parent),
           mActive		(0),
           mSelected		(0),
           mIsItemActive (false),
@@ -74,16 +75,16 @@ void Showplan::onMessage() {
 	L_INFO(LOG_DB,"Showplan received message");
 	mLock.lock();
     if (conf->getParam("next_on_showplan") == ""
-                        && getSize() > 0
-                        && getLastItem().getHash() != mActive) {
+                        && modShowplan->getSize() > 0
+                        && modShowplan->getLastItem().getHash() != mActive) {
         L_INFO(LOG_DB,"Processing track load event");
         if (!mIsItemActive) {
-            mActive = getFirstItem().getHash();
+            mActive = modShowplan->getFirstItem().getHash();
         }
         else {
-        	getItemByHash(mActive).setState(DpsShowItem::Finished);
+            modShowplan->getItemByHash(mActive).setState(DpsShowItem::Finished);
             try {
-        	   mActive = getNextItem(getItemByHash(mActive)).getHash();
+        	   mActive = modShowplan->getNextItem(modShowplan->getItemByHash(mActive)).getHash();
             }
             catch (int e) {
                 cout << "Caught exception - no next item." << endl;
@@ -94,10 +95,10 @@ void Showplan::onMessage() {
 //                activePoint = (ShowPlanItem*)activePoint->nextSibling();
 //            }
         }
-        getItemByHash(mActive).setState(DpsShowItem::Loaded);
+        modShowplan->getItemByHash(mActive).setState(DpsShowItem::Loaded);
         mIsItemActive = true;
         //??
-        lstShowPlan->ensureItemVisible(lstShowPlan->selectedItem());
+        lstShowPlan->scrollTo(lstShowPlan->currentIndex(), QListView::EnsureVisible);
         //if (lstShowPlan->selectedItem()) {
         //    selectionChanged(lstShowPlan->selectedItem());
         //}
@@ -126,83 +127,109 @@ void Showplan::resizeEvent(QResizeEvent *e) {
 }
 
 void Showplan::load(const DpsShowPlan& pSrc) {
-	DpsShowPlan::operator=(pSrc);
+	modShowplan->loadShowplan(pSrc);
+	selectionChanged(lstShowPlan->currentIndex());
 }
 
 void Showplan::append(const DpsShowItem& pSrc) {
-	DpsShowPlan::append(pSrc);
+	modShowplan->append(pSrc);
+	selectionChanged(lstShowPlan->currentIndex());
 }
 
 void Showplan::append(const DpsAudioItem& pSrc) {
-	DpsShowPlan::append(DpsShowItem(pSrc));
+	modShowplan->append(DpsShowItem(pSrc));
+	selectionChanged(lstShowPlan->currentIndex());
 }
 
 void Showplan::append(const DpsScriptItem& pSrc) {
-	DpsShowPlan::append(DpsShowItem(pSrc));
+	modShowplan->append(DpsShowItem(pSrc));
+	selectionChanged(lstShowPlan->currentIndex());
+}
+
+void Showplan::clear() {
+    modShowplan->clear();
+    selectionChanged(QModelIndex());
+}
+
+void Showplan::scriptDone(const DpsScriptItem& pSrc) {
+    cout << "TODO: IMPLEMENT" << endl;
 }
 
 void Showplan::showplanUpdated() {
-	ShowPlanItem * vNew = 0;
-	DpsHash vSelectedHash;
+//	DpsHash vSelectedHash;
+//
+//	if (lstShowPlan->currentIndex().isValid()) {
+//	    vSelectedHash = modShowplan->getItem(lstShowPlan->currentIndex().row()).getHash();
+//	}
 
-	if (lstShowPlan->selectedItem()) {
-		vSelectedHash = (dynamic_cast<DpsShowItem*>(lstShowPlan->selectedItem()))->getHash();
-	}
+//    if (mShowplan->getSize() == 0) {
+//        mIsItemActive = false;
+//        mIsItemSelected = false;
+//    }
 
-    if (getSize() == 0) {
-        mIsItemActive = false;
-        mIsItemSelected = false;
-    }
-
-	lstShowPlan->clear();
-	for (unsigned int i = 0; i < getSize(); ++i) {
-		vNew = new ShowPlanItem(lstShowPlan, vNew, getItem(i));
-		if (mIsItemSelected && getItem(i).getHash() == vSelectedHash) {
-			lstShowPlan->setSelected(dynamic_cast<QListViewItem*>(vNew), true);
-		}
-		if (std::find(mExpandedItems.begin(), mExpandedItems.end(), getItem(i).getHash())
-				!= mExpandedItems.end()) {
-			vNew->expand();
-		}
-	}
-	lstShowPlan->ensureItemVisible(lstShowPlan->selectedItem());
-	selectionChanged(lstShowPlan->selectedItem());
-	updateNextTrack();
+//	lstShowPlan->clear();
+//	for (unsigned int i = 0; i < getSize(); ++i) {
+//		vNew = new ShowPlanItem(lstShowPlan, vNew, getItem(i));
+//		if (mIsItemSelected && getItem(i).getHash() == vSelectedHash) {
+//			lstShowPlan->setSelected(dynamic_cast<QListViewItem*>(vNew), true);
+//		}
+//		if (std::find(mExpandedItems.begin(), mExpandedItems.end(), getItem(i).getHash())
+//				!= mExpandedItems.end()) {
+//			vNew->expand();
+//		}
+//	}
+//	lstShowPlan->scrollTo(lstShowPlan->currentIndex(), QListView::EnsureVisible);
+//	//selectionChanged(lstShowPlan->selectedItem());
+//	updateNextTrack();
 }
 
 void Showplan::removeItem() {
-	if (getSize() == 0) return;
-	if (!mIsItemSelected) return;
-	DpsShowPlan::erase(getItemByHash(mSelected));
+	if (modShowplan->getSize() == 0) return;
+    const QModelIndex& vIdx = lstShowPlan->currentIndex();
+    if (!vIdx.isValid()) return;
+	modShowplan->erase(lstShowPlan->currentIndex().row());
+	selectionChanged(lstShowPlan->currentIndex());
 }
 
 void Showplan::moveItemUp() {
-	if (getSize() == 0) return;
-	if (!mIsItemSelected) return;
-	moveUp(getItemByHash(mSelected));
+	if (modShowplan->getSize() == 0) return;
+	const QModelIndex& vIdx = lstShowPlan->currentIndex();
+	if (!vIdx.isValid()) return;
+	const DpsShowItem& vCurrent = modShowplan->getItem(vIdx.row());
+	modShowplan->moveUp(vCurrent);
+	selectionChanged(lstShowPlan->currentIndex());
 }
 
 void Showplan::moveItemDown() {
-	if (getSize() == 0) return;
-	if (!mIsItemSelected) return;
-	moveDown(getItemByHash(mSelected));
+    if (modShowplan->getSize() == 0) return;
+    const QModelIndex& vIdx = lstShowPlan->currentIndex();
+    if (!vIdx.isValid()) return;
+    const DpsShowItem& vCurrent = modShowplan->getItem(vIdx.row());
+    modShowplan->moveDown(vCurrent);
+    selectionChanged(lstShowPlan->currentIndex());
 }
 
 void Showplan::moveItemTop() {
-	if (getSize() == 0) return;
-	if (!mIsItemSelected) return;
-	moveTop(getItemByHash(mSelected));
+    if (modShowplan->getSize() == 0) return;
+    const QModelIndex& vIdx = lstShowPlan->currentIndex();
+    if (!vIdx.isValid()) return;
+    const DpsShowItem& vCurrent = modShowplan->getItem(vIdx.row());
+    modShowplan->moveTop(vCurrent);
+    selectionChanged(lstShowPlan->currentIndex());
 }
 
 void Showplan::moveItemBottom() {
-	if (getSize() == 0) return;
-	if (!mIsItemSelected) return;
-	moveBottom(getItemByHash(mSelected));
+    if (modShowplan->getSize() == 0) return;
+    const QModelIndex& vIdx = lstShowPlan->currentIndex();
+    if (!vIdx.isValid()) return;
+    const DpsShowItem& vCurrent = modShowplan->getItem(vIdx.row());
+    modShowplan->moveBottom(vCurrent);
+    selectionChanged(lstShowPlan->currentIndex());
 }
 
 void Showplan::clearItems() {
-    dlgWarn *dlg = new dlgWarn(this, "");
-    dlg->setTitle("Clear All");
+    dlgWarn *dlg = new dlgWarn(this->parentWidget());
+    dlg->setTitle("Clear all");
     dlg->setWarning("Are you sure you wish to clear the show plan?");
     if ( dlg->exec() != QDialog::Accepted ){
         delete dlg;
@@ -212,22 +239,10 @@ void Showplan::clearItems() {
 	clear();
 }
 
-void Showplan::clicked(QListViewItem *x) {
-    // if no item is clicked, then there should now be nothing selected
-    // so disable all the appropriate buttons
-    if (!x) {
-        btnMoveBottom->setEnabled(false);
-        btnMoveDown->setEnabled(false);
-        btnMoveUp->setEnabled(false);
-        btnMoveTop->setEnabled(false);
-        btnDelete->setEnabled(false);
-        selectionChanged(0);
-    }
-}
 
-void Showplan::doubleClicked(QListViewItem *x, const QPoint& p, int i) {
-	if (!x) return;
-	DpsHash vH = reinterpret_cast<ShowPlanItem*>(x)->getHash();
+void Showplan::doubleClicked(const QModelIndex& x) {
+	if (!x.isValid()) return;
+	DpsHash vH = modShowplan->getItem(x.row()).getHash();
 	vector<DpsHash>::iterator vHIt;
 	if ((vHIt = std::find(mExpandedItems.begin(), mExpandedItems.end(), vH))
 						== mExpandedItems.end()) {
@@ -239,9 +254,9 @@ void Showplan::doubleClicked(QListViewItem *x, const QPoint& p, int i) {
 	showplanUpdated();
 }
 
-void Showplan::selectionChanged(QListViewItem* x) {
+void Showplan::selectionChanged(const QModelIndex& x) {
 	// If x is null, we're not having anything selected.
-    if ( ! x ) {
+    if ( ! x.isValid() ) {
         btnMoveUp->setEnabled(false);
         btnMoveDown->setEnabled(false);
         btnMoveTop->setEnabled(false);
@@ -251,30 +266,29 @@ void Showplan::selectionChanged(QListViewItem* x) {
         return;
     }
 
-    // Type cast to a ShowPlanItem.
-    ShowPlanItem * y = dynamic_cast<ShowPlanItem*>(x);
-	if ( ! y ) {
-        btnMoveUp->setEnabled(false);
-        btnMoveDown->setEnabled(false);
-        btnMoveTop->setEnabled(false);
-        btnMoveBottom->setEnabled(false);
-        btnDelete->setEnabled(false);
-		mIsItemSelected = false;
-		return;
-	}
+    DpsShowItem& y = modShowplan->getItem(x.row());
 
     // If item is unloaded, activate applicable move buttons
-    if ( y->getState() == ShowPlanItem::Unloaded ) {
-        ShowPlanItem *z = (ShowPlanItem*)x->itemAbove();
-        if ( z && z->getState() == ShowPlanItem::Unloaded) {
-            btnMoveUp->setEnabled(true);
-            btnMoveTop->setEnabled(true);
-        }
-        else {
+    if ( y.getState() == DpsShowItem::Unloaded ) {
+        if (x.row() == 0) {
             btnMoveUp->setEnabled(false);
             btnMoveTop->setEnabled(false);
         }
-        if ( y == (ShowPlanItem*)lstShowPlan->lastItem() ) {
+        else {
+            DpsShowItem& z = modShowplan->getItem(x.row() - 1);
+            // Up buttons
+            if (z.getState() == DpsShowItem::Loaded) {
+                btnMoveUp->setEnabled(false);
+                btnMoveTop->setEnabled(false);
+            }
+            else {
+                btnMoveUp->setEnabled(true);
+                btnMoveTop->setEnabled(true);
+            }
+        }
+
+        // Down buttons
+        if (x.row() + 1 == modShowplan->getSize()) {
             btnMoveBottom->setEnabled(false);
             btnMoveDown->setEnabled(false);
         }
@@ -283,8 +297,9 @@ void Showplan::selectionChanged(QListViewItem* x) {
             btnMoveDown->setEnabled(true);
         }
         btnDelete->setEnabled(true);
+
         // Change the selected item pointer to the new item.
-		mSelected = y->getHash();
+		mSelected = y.getHash();
 		mIsItemSelected = true;
     }
     else {
@@ -299,7 +314,7 @@ void Showplan::selectionChanged(QListViewItem* x) {
 
 void Showplan::updateNextTrack() {
     mLock.lock();
-    if (getSize() == 0) {
+    if (modShowplan->getSize() == 0) {
 		conf->setParam("next_on_showplan","");
 		mLock.unlock();
 		return;
@@ -307,11 +322,11 @@ void Showplan::updateNextTrack() {
 
 	DpsShowItem x;
     if ( ! mIsItemActive ) {
-        x = getFirstItem();
+        x = modShowplan->getFirstItem();
     }
     else {
         try {
-            x = getNextItem(getItemByHash(mActive));
+            x = modShowplan->getNextItem(modShowplan->getItemByHash(mActive));
         }
         catch (DpsShowPlan::Error&) {
             mLock.unlock();
@@ -325,10 +340,10 @@ void Showplan::updateNextTrack() {
             	conf->setParam("next_on_showplan", x.getAudioItem()["md5"]);
                 break;
         	}
-            if (x == getLastItem()) {
+            if (x == modShowplan->getLastItem()) {
                 break;
             }
-            x = getNextItem(x);
+            x = modShowplan->getNextItem(x);
         }
 	}
 	catch (DpsShowPlan::Error&) {
@@ -341,74 +356,80 @@ void Showplan::updateNextTrack() {
 void Showplan::draw() {
     QString path = DPSDIR;
 
-    grpFrame = new QGroupBox( this, "grpShowplan" );
+    grpFrame = new QGroupBox( this );
     grpFrame->setGeometry( QRect( 0, 0, 470, 670 ) );
-    QFont grpFrame_font(  grpFrame->font() );
-    grpFrame_font.setFamily( "Sans Serif" );
-    grpFrame_font.setPointSize( 16 );
-    grpFrame_font.setBold( TRUE );
-    grpFrame->setFont( grpFrame_font );
-    grpFrame->setFrameShadow( QGroupBox::Sunken );
-    grpFrame->setLineWidth( 1 );
+//    QFont grpFrame_font(  grpFrame->font() );
+//    grpFrame_font.setFamily( "Sans Serif" );
+//    grpFrame_font.setPointSize( 12 );
+//    //grpFrame_font.setBold( TRUE );
+//    grpFrame->setFont( grpFrame_font );
+//    //grpFrame->setFrameShadow( QGroupBox::Sunken );
+//    //grpFrame->setLineWidth( 1 );
     grpFrame->setFlat( FALSE );
-    grpFrame->setTitle( "Showplan" );
+//    grpFrame->setTitle( "Showplan" );
 
-    lstShowPlan = new QListView( grpFrame, "lstShowPlan" );
-    lstShowPlan->addColumn( tr( "Item" ) );
-    lstShowPlan->header()->setClickEnabled( FALSE,
-            lstShowPlan->header()->count() - 1 );
-    lstShowPlan->header()->setResizeEnabled( FALSE,
-            lstShowPlan->header()->count() - 1 );
+    modShowplan = new ShowplanModel;
+    modShowplan->setHeaderData(0, Qt::Horizontal, tr("Item"));
+
+    lstShowPlan = new ShowplanView( grpFrame );
+//    lstShowPlan = new QListView(grpFrame);
+    lstShowPlan->setModel(modShowplan);
     lstShowPlan->setGeometry( QRect( 10, 20, 450, 580 ) );
-    lstShowPlan->setPaletteBackgroundColor( QColor( 255, 255, 255 ) );
-    QFont lstShowPlan_font(  lstShowPlan->font() );
-    lstShowPlan_font.setPointSize( 10 );
-    lstShowPlan_font.setBold( FALSE );
-    lstShowPlan->setFont( lstShowPlan_font );
-    lstShowPlan->setFrameShape( QListView::Box );
-    lstShowPlan->setFrameShadow( QListView::Plain );
-    lstShowPlan->setVScrollBarMode( QListView::AlwaysOn );
-    lstShowPlan->setHScrollBarMode( QListView::AlwaysOff );
-    lstShowPlan->setAllColumnsShowFocus( TRUE );
-    lstShowPlan->setResizeMode( QListView::NoColumn );
-    lstShowPlan->setColumnWidth(0,lstShowPlan->width() - 5);
-    lstShowPlan->setSorting(-1);
-    lstShowPlan->header()->hide();
+    lstShowPlan->setItemDelegate(new ShowplanDelegate);
+    lstShowPlan->setResizeMode(QListView::Adjust);
+//    lstShowPlan->header()->setClickEnabled( FALSE,
+//            lstShowPlan->header()->count() - 1 );
+//    lstShowPlan->header()->setResizeEnabled( FALSE,
+//            lstShowPlan->header()->count() - 1 );
+//    lstShowPlan->setPaletteBackgroundColor( QColor( 255, 255, 255 ) );
+//    QFont lstShowPlan_font(  lstShowPlan->font() );
+//    lstShowPlan_font.setPointSize( 10 );
+//    lstShowPlan_font.setBold( FALSE );
+//    lstShowPlan->setFont( lstShowPlan_font );
+//    lstShowPlan->setFrameShape( QListView::Box );
+//    lstShowPlan->setFrameShadow( QListView::Plain );
+    lstShowPlan->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOn );
+    lstShowPlan->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
+    lstShowPlan->setSelectionMode(QListView::SingleSelection);
+    lstShowPlan->setSelectionBehavior(QListView::SelectRows);
+//    lstShowPlan->setResizeMode( QListView::Fixed );
+    //lstShowPlan->set(0,lstShowPlan->width() - 5);
+    //lstShowPlan->setSorting(-1);
 
-    btnMoveTop = new QPushButton( grpFrame, "btnMoveTop" );
+    btnMoveTop = new QPushButton( grpFrame );
     btnMoveTop->setAutoDefault( FALSE );
     btnMoveTop->setGeometry( QRect( 10, 600, 75, 60 ) );
     btnMoveTop->setEnabled( FALSE );
-    btnMoveTop->setPixmap(QPixmap(path + "/images/movetop32.png"));
+    btnMoveTop->setIcon(QIcon(":/icons/movetop32.png"));
 
-    btnMoveUp = new QPushButton( grpFrame, "btnMoveUp" );
+    btnMoveUp = new QPushButton( grpFrame );
     btnMoveUp->setAutoDefault( FALSE );
     btnMoveUp->setGeometry( QRect( 85, 600, 75, 60 ) );
     btnMoveUp->setEnabled( FALSE );
-    btnMoveUp->setPixmap(QPixmap(path + "/images/moveup32.png"));
+    btnMoveUp->setIcon(QIcon(":/icons/moveup32.png"));
 
-    btnDelete = new QPushButton( grpFrame, "btnDelete" );
+    btnDelete = new QPushButton( grpFrame );
     btnDelete->setAutoDefault( FALSE );
     btnDelete->setGeometry( QRect( 160, 600, 75, 60 ) );
     btnDelete->setEnabled( FALSE );
-    btnDelete->setPixmap(QPixmap(path + "/images/delete48.png"));
+    btnDelete->setIcon(QIcon(":/icons/delete48.png"));
 
-    btnClear = new QPushButton( grpFrame, "btnClear" );
+    btnClear = new QPushButton( grpFrame );
     btnClear->setAutoDefault( FALSE );
     btnClear->setGeometry( QRect( 235, 600, 75, 60 ) );
-    btnClear->setPixmap(QPixmap(path + "/images/clear32.png"));
+    btnClear->setIcon(QIcon(":/icons/clear32.png"));
 
-    btnMoveBottom = new QPushButton( grpFrame, "btnMoveBottom" );
+    btnMoveBottom = new QPushButton( grpFrame );
     btnMoveBottom->setAutoDefault( FALSE );
     btnMoveBottom->setGeometry( QRect( 385, 600, 75, 60 ) );
     btnMoveBottom->setEnabled( FALSE );
-    btnMoveBottom->setPixmap(QPixmap(path + "/images/movebottom32.png"));
+    btnMoveBottom->setIcon(QIcon(":/icons/movebottom32.png"));
 
-    btnMoveDown = new QPushButton( grpFrame, "btnMoveDown" );
+    btnMoveDown = new QPushButton( grpFrame );
     btnMoveDown->setAutoDefault( FALSE );
     btnMoveDown->setGeometry( QRect( 310, 600, 75, 60 ) );
     btnMoveDown->setEnabled( FALSE );
-    btnMoveDown->setPixmap(QPixmap(path + "/images/movedown32.png"));
+    btnMoveDown->setIcon(QIcon(":/icons/movedown32.png"));
 
     connect( btnDelete, SIGNAL( clicked() ),        this, SLOT( removeItem() ));
     connect( btnMoveBottom, SIGNAL( clicked() ),    this, SLOT( moveItemBottom() ));
@@ -416,12 +437,12 @@ void Showplan::draw() {
     connect( btnMoveTop, SIGNAL( clicked() ),       this, SLOT( moveItemTop() ));
     connect( btnMoveUp, SIGNAL( clicked() ),        this, SLOT( moveItemUp() ));
     connect( btnClear, SIGNAL( clicked() ),         this, SLOT( clearItems() ));
-    connect( lstShowPlan, SIGNAL( selectionChanged(QListViewItem*) ),
-                this, SLOT( selectionChanged(QListViewItem*) ));
-    connect( lstShowPlan, SIGNAL( clicked(QListViewItem*) ),
-                this, SLOT( clicked(QListViewItem*) ));
-    connect( lstShowPlan, SIGNAL( doubleClicked(QListViewItem*, const QPoint&, int)),
-    			this, SLOT( doubleClicked(QListViewItem*, const QPoint&, int)));
+    connect( lstShowPlan, SIGNAL( itemSelected(const QModelIndex&) ),
+                this, SLOT( selectionChanged(const QModelIndex&) ));
+//    connect( lstShowPlan, SIGNAL( clicked(const QModelIndex&) ),
+//                this, SLOT( clicked(const QModelIndex&) ));
+    connect( lstShowPlan, SIGNAL( doubleClicked(const QModelIndex&)),
+    			this, SLOT( doubleClicked(const QModelIndex&)));
 }
 
 void Showplan::clean() {

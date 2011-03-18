@@ -102,3 +102,29 @@ QPushButton[id="LoginButton"] {
 QLabel[id="BottomBar"], QLabel[id="TopBar"] {
     background-color: rgb(177,240,254);
 }
+
+/**********************************
+ * Now / Next frame
+ **********************************/
+QFrame[id="TopBarFrame"] {
+    background-color: rgb(3, 157, 189);
+}
+
+QLabel[id="TopBarNext"] {
+    background-color: rgb(3, 157, 189);
+    color: rgb(255, 255, 255);
+    font-family: "Sans Serif";
+    font-size: 16px;
+}
+
+QLabel[id="TopBarNow"] {
+    background-color: rgb(3, 157, 189);
+    color: rgb(255, 255, 255);
+    font-family: "Sans Serif";
+    font-weight: bold;
+    font-size: 16px;
+}
+
+QLabel[id="TopBarBorder"] {
+    background-color: rgb(0,0,0);
+}

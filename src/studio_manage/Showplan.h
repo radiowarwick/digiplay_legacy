@@ -35,10 +35,10 @@ using namespace std;
 #include "dps/Dps.h"
 #include "Config.h"
 #include "MessagingInterface.h"
+#include "ShowplanModel.h"
+#include "ShowplanView.h"
 
 class QGroupBox;
-class QListView;
-class QListViewItem;
 class QPushButton;
 class QPainter;
 class QColorGroup;
@@ -46,15 +46,13 @@ class QString;
 class QSimpleRichText;
 
 class Auth;
-class ShowPlanItem;
 
 class Showplan : 	public QWidget,
-					public MessagingInterface,
-					public DpsShowPlan {
+					public MessagingInterface {
 	Q_OBJECT
 
 	public:
-		Showplan(QWidget *parent, const char* name);
+		Showplan(QWidget *parent);
 		virtual ~Showplan();
 
         void configure(Auth *authModule);
@@ -66,11 +64,17 @@ class Showplan : 	public QWidget,
         void setGeometry (const QRect& r);
 		void resizeEvent (QResizeEvent *e);
 
+	signals:
+		void scriptSelected( const DpsScriptItem& );
+		void scriptDeselected();
+
 	public slots:
 		void load(const DpsShowPlan& pSrc);
 		void append(const DpsShowItem& pSrc);
 		void append(const DpsAudioItem& pSrc);
 		void append(const DpsScriptItem& pSrc);
+		void clear();
+		void scriptDone( const DpsScriptItem& pSrc );
 
 	protected:
 		// Showplan has changed, so redisplay
@@ -78,9 +82,8 @@ class Showplan : 	public QWidget,
 
     private slots:
     	// Slots for showplan clicking
-        void clicked(QListViewItem* x);
-        void doubleClicked(QListViewItem* x, const QPoint& p, int i);
-        void selectionChanged(QListViewItem* x);
+        void doubleClicked(const QModelIndex& x);
+        void selectionChanged(const QModelIndex& x);
         void updateNextTrack();
 
 		// Slots for showplan buttons
@@ -97,9 +100,10 @@ class Showplan : 	public QWidget,
 
         Config* conf;
 
+        ShowplanModel* modShowplan;
         QWidget* _parent;
 		QGroupBox* grpFrame;
-        QListView* lstShowPlan;
+        ShowplanView* lstShowPlan;
         QPushButton* btnDelete;
 		QPushButton* btnMoveBottom;
 		QPushButton* btnMoveDown;

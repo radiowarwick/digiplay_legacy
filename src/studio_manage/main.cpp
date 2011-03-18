@@ -77,8 +77,8 @@ int main( int argc, char * argv[] )
 {
 	const char* routine = "studio_manage::main";
 
-    set_terminate(errorHandler);
-    signal(SIGHUP, signalHandler);
+//    set_terminate(errorHandler);
+//    signal(SIGHUP, signalHandler);
 
     // Configure logging
     Logger::setAppName("studio_manage");

@@ -11,6 +11,7 @@
 
 #include <QtGui/QDialog>
 
+class QFrame;
 class QVBoxLayout;
 class QHBoxLayout;
 class QGridLayout;
@@ -26,6 +27,7 @@ public:
     dlgWarn( QWidget* parent = 0, Qt::WindowFlags fl = 0 );
     ~dlgWarn();
 
+    QFrame* frameContent;
     QPushButton* buttonOk;
     QPushButton* buttonCancel;
     QLabel* pixWarning;
@@ -41,6 +43,8 @@ public slots:
 protected:
     QHBoxLayout* Layout1;
     QSpacerItem* Horizontal_Spacing2;
+
+    virtual void paintEvent(QPaintEvent *paintevent);
 
 protected slots:
     virtual void languageChange();

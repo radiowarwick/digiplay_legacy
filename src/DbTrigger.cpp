@@ -22,8 +22,8 @@ TriggerRoot::TriggerRoot() {
         	L_ERROR(LOG_DB,e.what());
         	throw -1;
         }
-        enabled = true;
 		threadStart();
+        enabled = true;
     }
 }
 

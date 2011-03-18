@@ -18,6 +18,7 @@ class QSpacerItem;
 class QLabel;
 class QLineEdit;
 class QPushButton;
+class QFrame;
 
 class dlgLogin : public QDialog
 {
@@ -27,6 +28,7 @@ public:
     dlgLogin( QWidget* parent = 0, Qt::WindowFlags fl = 0 );
     ~dlgLogin();
 
+    QFrame* frmLogin;
     QLabel* lblLoginUsername;
     QLabel* lblLoginPassword;
     QLineEdit* txtLoginPassword;
@@ -42,6 +44,8 @@ public:
 protected:
     QHBoxLayout* Layout1;
     QSpacerItem* Horizontal_Spacing2;
+
+    virtual void paintEvent(QPaintEvent *paintevent);
 
 protected slots:
     virtual void languageChange();

@@ -38,8 +38,8 @@ class DpsUser : public DpsObject {
 		DpsUser(const DpsUser& pSrc);
 		virtual ~DpsUser();
 		
-		bool operator==(const DpsUser& pSrc);
-		bool operator!=(const DpsUser& pSrc);
+		bool operator==(const DpsUser& pSrc) const;
+		bool operator!=(const DpsUser& pSrc) const;
 		DpsUser& operator=(const DpsUser& pSrc);
 		
 	private:

@@ -38,6 +38,8 @@ TabPanelInfo::TabPanelInfo(QTabWidget *parent, QString text)
     // Set panel tag.
 	panelTag = "TabInfo";
 
+	TabPanel::setIcon(QIcon(":/icons/info16.png"));
+
     // Initialise pointers.
 	txtInfoPanel = 0;
 

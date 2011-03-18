@@ -29,7 +29,7 @@
 #include "MessagingInterface.h"
 
 class QTabWidget;
-class QListView;
+class QTreeWidget;
 class QLineEdit;
 class QLabel;
 class QPushButton;
@@ -46,7 +46,7 @@ class TabPanelLogging : public TabPanel,
     Q_OBJECT
     public:
         /// Constructor
-        TabPanelLogging(QTabWidget *parent, string text);
+        TabPanelLogging(QTabWidget *parent, QString text);
         /// Destructor
         ~TabPanelLogging();
         /// Reconfigure the panel
@@ -69,7 +69,7 @@ class TabPanelLogging : public TabPanel,
         DataAccess* DB;
         QtTrigger* triggerLog;
 		int location, userid;
-		QListView *lstRecentlyLogged;
+		QTreeWidget *lstRecentlyLogged;
 		QLineEdit *txtArtist, *txtTitle, *txtReclibID;
 		QLabel *lblArtist, *lblTitle, *lblReclibID, *lblRecentlyLogged;
 		QPushButton *btnLog;

@@ -65,24 +65,26 @@ class DpsShowPlan : public DpsObject {
 		virtual ~DpsShowPlan();
 		
 		// Operators
-		virtual bool operator==(const DpsShowPlan& pSrc);
-		virtual bool operator!=(const DpsShowPlan& pSrc);
+		virtual bool operator==(const DpsShowPlan& pSrc) const;
+		virtual bool operator!=(const DpsShowPlan& pSrc) const;
 		virtual DpsShowPlan& operator=(const DpsShowPlan& pSrc);
 		virtual DpsShowItem& operator[](unsigned int pIdx);
 		
 		// Get showplan information
-		unsigned int getId();
-		unsigned int getSize();
-		DpsUser getOwner();
-		DpsDate getCreationDate();
-		DpsDate getShowDate();
-		DpsTime getLength();
-		bool isCompleted();
-		bool isStored();
-		bool isChanged();
+		unsigned int getId() const;
+		unsigned int getSize() const;
+		DpsUser getOwner() const;
+		DpsDate getCreationDate() const;
+		DpsDate getShowDate() const;
+		DpsTime getLength() const;
+		bool isCompleted() const;
+		bool isStored() const;
+		bool isChanged() const;
 		
 		DpsShowItem& getItem(unsigned int pIdx);
+		const DpsShowItem& getItem(const unsigned int pIdx) const;
 		DpsShowItem& getItemByHash(const DpsHash& pHash);
+		unsigned int getItemIndex(const DpsShowItem& pSrc);
 		DpsShowItem& getNextItem(const DpsShowItem& pSrc);
 		DpsShowItem& getFirstItem();
 		DpsShowItem& getLastItem();

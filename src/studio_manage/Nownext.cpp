@@ -24,9 +24,10 @@
  */
 #include <cstdlib>
 
-#include <qapplication.h>
-#include <qstring.h>
-#include <qpixmap.h>
+#include <QtGui/QApplication>
+#include <QtCore/QString>
+#include <QtGui/QPixmap>
+#include <QtCore/QVariant>
 
 #include "dps/DpsObject.h"
 #include "dps.h"
@@ -41,8 +42,8 @@ using namespace std;
  * Nownext
  * =======================================================================
  */
-Nownext::Nownext(QWidget *parent, const char* name) 
-        : QWidget(parent, name) {
+Nownext::Nownext(QWidget *parent)
+        : QWidget(parent) {
     conf = new Config("digiplay",this);
 	DB = new DataAccess();
 	trigger = new QtTrigger( "trigger", "CHANGEME" );
@@ -100,16 +101,16 @@ void Nownext::updateDisplay() {
 			if (atoi(R[0]["starttime"].c_str()) <= current_time ) {
 				strShowTime=formatTime( atoi(R[0]["starttime"].c_str()),
 										atoi(R[0]["endtime"].c_str()) );
-				lblNow->setText( string("On now: ") + R[0]["name"].c_str() + strShowTime);
+				lblNow->setText( QString::fromStdString(string("On now: ") + R[0]["name"].c_str() + strShowTime));
 
 				strShowTime=formatTime( atoi(R[1]["starttime"].c_str()),
 										atoi(R[1]["endtime"].c_str()) );
-				lblNext->setText( string("On next: ") + R[1]["name"].c_str() + strShowTime);
+				lblNext->setText( QString::fromStdString(string("On next: ") + R[1]["name"].c_str() + strShowTime));
 			}
 			else {
 				strShowTime=formatTime( atoi(R[0]["starttime"].c_str()),
 										atoi(R[0]["endtime"].c_str()) );
-				lblNext->setText( string("On next: ") + R[0]["name"].c_str() + strShowTime);
+				lblNext->setText( QString::fromStdString(string("On next: ") + R[0]["name"].c_str() + strShowTime));
 				lblNow->setText( "On now: " );
 			}
 		}
@@ -117,12 +118,12 @@ void Nownext::updateDisplay() {
 			strShowTime=formatTime( atoi(R[0]["starttime"].c_str()),
 									atoi(R[0]["endtime"].c_str()) );
 			if (atoi(R[0]["starttime"].c_str()) <= current_time ) {
-				lblNow->setText( string("On now: ") + R[0]["name"].c_str() + strShowTime);
+				lblNow->setText( QString::fromStdString(string("On now: ") + R[0]["name"].c_str() + strShowTime));
 				lblNext->setText( "On next: " );
 			}
 			else {
 				lblNow->setText( "On now: " );
-				lblNext->setText( string("On next: ") + R[0]["name"].c_str() +strShowTime);
+				lblNext->setText( QString::fromStdString(string("On next: ") + R[0]["name"].c_str() +strShowTime));
 			}
 		}
 		else {
@@ -191,47 +192,36 @@ void Nownext::resizeEvent(QResizeEvent *e) {
 void Nownext::draw() {
     QString path = DPSDIR;
 
-    frameOutline = new QFrame( this, "frameOutline" );
+    frameOutline = new QFrame( this );
     frameOutline->setGeometry( QRect( 0, 0, 1030, 30 ) );
-    frameOutline->setPaletteBackgroundColor( QColor( 3, 157, 189 ) );
+    frameOutline->setProperty("id","TopBarFrame");
     frameOutline->setFrameShape( QFrame::StyledPanel );
     frameOutline->setFrameShadow( QFrame::Plain );
     frameOutline->setLineWidth( 0 );
 
-    frameInternal = new QFrame( frameOutline, "frameInternal" );
+    frameInternal = new QFrame( frameOutline );
     frameInternal->setGeometry( QRect( 514, 0, 2, 37 ) );
     frameInternal->setFrameShape( QFrame::StyledPanel );
     frameInternal->setFrameShadow( QFrame::Raised );
 
-    pixFade = new QLabel( frameOutline, "pixFade" );
+    pixFade = new QLabel( frameOutline );
     pixFade->setGeometry( QRect( 960, 0, 43, 30 ) );
     pixFade->setPixmap( QPixmap(path + "/images/fade.png") );
     pixFade->setScaledContents( TRUE );
 
-    lblNext = new QLabel( frameOutline, "lblNext" );
+    lblNext = new QLabel( frameOutline );
     lblNext->setGeometry( QRect( 520, 0, 440, 31 ) );
-    lblNext->setPaletteForegroundColor( QColor( 255, 255, 255 ) );
-    lblNext->setPaletteBackgroundColor( QColor( 3, 157, 189 ) );
-    QFont lblNext_font(  lblNext->font() );
-    lblNext_font.setFamily( "Sans Serif" );
-    lblNext_font.setPointSize( 18 );
-    lblNext->setFont( lblNext_font );
+    lblNext->setProperty("id","TopBarNext");
     lblNext->setText ( "On next: " );
 
-    lblNow = new QLabel( frameOutline, "lblNow" );
+    lblNow = new QLabel( frameOutline );
     lblNow->setGeometry( QRect( 0, 0, 512, 31 ) );
-    lblNow->setPaletteForegroundColor( QColor( 255, 255, 255 ) );
-    lblNow->setPaletteBackgroundColor( QColor( 3, 157, 189 ) );
-    QFont lblNow_font(  lblNow->font() );
-    lblNow_font.setFamily( "Sans Serif" );
-    lblNow_font.setPointSize( 18 );
-    lblNow_font.setBold( TRUE );
-    lblNow->setFont( lblNow_font );
+    lblNow->setProperty("id","TopBarNow");
     lblNow->setText( "On now: RaW 1251AM" );
 
-    Area_of_Black = new QLabel( frameOutline, "Area_of_Black" );
+    Area_of_Black = new QLabel( frameOutline );
     Area_of_Black->setGeometry( QRect( 1003, 0, 21, 30 ) );
-    Area_of_Black->setPaletteBackgroundColor( QColor( 0, 0, 0 ) );
+    Area_of_Black->setProperty("id","TopBarBorder");
 
 	updateDisplay();
 }

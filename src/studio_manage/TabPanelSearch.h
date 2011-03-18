@@ -26,6 +26,7 @@
 #define CLASS_TAB_PANEL_SEARCH
 
 //#include "frmStudioManage.h"
+#include <QtCore/QEvent>
 
 #include "Showplan.h"
 #include "TabPanel.h"
@@ -35,15 +36,16 @@
 
 class QTabWidget;
 class QPushButton;
-class QTreeWidget;
-class QTreeWidgetItem;
+class QStandardItemModel;
+class QTableView;
 class QLineEdit;
 class QLabel;
 class QCheckBox;
-class QPixmap;
+class QIcon;
 
 class Auth;
 class Config;
+
 
 /**
  * TabPanel class for providing a music library search.
@@ -52,13 +54,40 @@ class TabPanelSearch : 	public TabPanel,
 						public MessagingInterface {
 	Q_OBJECT
 	public:
+        /// Event class issued when search thread completes to trigger update
+	    /// of display.
+        class SearchCompleteEvent : public QEvent {
+        public:
+            SearchCompleteEvent(Type type) : QEvent(type) {}
+            SearchCompleteEvent(const SearchCompleteEvent& pSrc)
+                : QEvent(pSrc) {}
+            virtual ~SearchCompleteEvent() {}
+        };
+
+        /// Event class issued when search thread produces an error.
+        class SearchErrorEvent : public QEvent {
+        public:
+            SearchErrorEvent(Type type, DpsMusicSearch::Error& e)
+                : QEvent(type), mError(e) {}
+            SearchErrorEvent(const SearchErrorEvent& pSrc)
+                : QEvent(pSrc), mError(pSrc.mError) {}
+            virtual ~SearchErrorEvent() {}
+
+            DpsMusicSearch::Error getError() {
+                return mError;
+            }
+
+        private:
+            DpsMusicSearch::Error mError;
+        };
+
         /// Constructor
 		TabPanelSearch(QTabWidget *parent, QString text);
         /// Destructor
 		~TabPanelSearch();
         /// ???
 		void onMessage();
-
+		void customEvent(QEvent *e);
 	signals:
         /// Emitted when an item is selected from the search results.
         void audioSelected( const DpsAudioItem& );
@@ -69,7 +98,7 @@ class TabPanelSearch : 	public TabPanel,
 		/// Processes search results when they are ready.
 		void processResults();
         /// Emits the signal indicating an item is selected.
-		virtual void playlistAdd(QTreeWidgetItem *x);
+		virtual void playlistAdd(const QModelIndex&);
 
 	private:
         /// Draws the panel.
@@ -83,7 +112,8 @@ class TabPanelSearch : 	public TabPanel,
 		vector<DpsAudioItem> SearchResults;
 		DpsMusicSearch* library_engine;
 		QPushButton *btnLibrarySearch;
-		QTreeWidget *lstSearchResults;
+		QStandardItemModel *modSearch;
+		QTableView *lstSearchResults;
 		QLineEdit *txtLibrarySearchText;
 		QLabel *Searchlable;
 		QLabel *lblSearch;
@@ -91,8 +121,8 @@ class TabPanelSearch : 	public TabPanel,
 		QCheckBox *AlbumCheckBox;
 		QCheckBox *TitleCheckBox;
 		QString path;
-		QPixmap *pixAudio;
-		QPixmap *pixCensored;
+		QIcon *icnAudio;
+		QIcon *icnCensored;
 };
 
 #endif

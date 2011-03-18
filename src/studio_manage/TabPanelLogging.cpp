@@ -23,14 +23,14 @@
  */
 #include <cstdlib>
 
-#include <qtabwidget.h>
-#include <qlistview.h>
-#include <qstring.h>
-#include <qheader.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qobject.h>
-#include <qpushbutton.h>
+#include <QtGui/QTabWidget>
+#include <QtGui/QTreeWidget>
+#include <QtCore/QString>
+#include <QtGui/QHeaderView>
+#include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
+#include <QtCore/QObject>
+#include <QtGui/QPushButton>
 
 #include "Auth.h"
 #include "Logger.h"
@@ -44,10 +44,12 @@
 /**
  * Constructs a new logging panel.
  */
-TabPanelLogging::TabPanelLogging(QTabWidget *parent, string text)
+TabPanelLogging::TabPanelLogging(QTabWidget *parent, QString text)
         : TabPanel(parent,text) {
     // Set panel tag
     panelTag = "TabLogging";
+
+    TabPanel::setIcon(QIcon(":/icons/log16.png"));
 
     // Create GUI components
     draw();
@@ -160,9 +162,9 @@ void TabPanelLogging::buttonPressed() {
     const char *routine = "TabPanelLogging::buttonPressed";
     
     // Retrieve values from text fields
-    string artist = txtArtist->text().ascii();
-    string title = txtTitle->text().ascii();
-    string reclibid = txtReclibID->text().ascii();
+    string artist = txtArtist->text().toStdString();
+    string title = txtTitle->text().toStdString();
+    string reclibid = txtReclibID->text().toStdString();
 
     // Try to log record
     if (logRecord(artist, title) != 0)
@@ -206,16 +208,16 @@ void TabPanelLogging::processLogUpdate() {
     }
     
     // Populate the list with the retrieved tracks.
+    QTreeWidgetItem *new_item;
     for (unsigned int i = 0; i < R.size(); i++) {
         time_t thetime(atoi(R[i]["datetime"].c_str()));
         dte = localtime(&thetime);
         strftime(date, 30, "%Ex %H:%M", dte);
-        artist = R[i]["track_artist"].c_str();
-        title = R[i]["track_title"].c_str();
-        lstRecentlyLogged->insertItem(
-                new QListViewItem(  lstRecentlyLogged, 
-                                    lstRecentlyLogged->lastItem(), 
-                                    date, artist, title   ));
+        QStringList s;
+        s.append(QString::fromAscii(date));
+        s.append(QString::fromAscii(R[i]["track_artist"].c_str()));
+        s.append(QString::fromAscii(R[i]["track_title"].c_str()));
+        new_item = new QTreeWidgetItem(lstRecentlyLogged, s);
     }
     L_INFO(LOG_TABLOGGING,"List of recently logged tracks updated successfully.");
 }
@@ -227,76 +229,54 @@ void TabPanelLogging::processLogUpdate() {
 void TabPanelLogging::draw() {
 
     // do all form drawing here, create widgets, set properties
-    lblReclibID = new QLabel( getPanel(), "lblReclibID" );
+    lblReclibID = new QLabel( getPanel() );
     lblReclibID->setGeometry( QRect( 10, 10, 111, 20 ) );
-    QFont lblReclibID_font(  lblReclibID->font() );
-    lblReclibID_font.setPointSize( 12 );
-    lblReclibID_font.setBold( FALSE );
-    lblReclibID->setFont( lblReclibID_font );
 
-    lblArtist = new QLabel( getPanel(), "lblArtist" );
+    lblArtist = new QLabel( getPanel() );
     lblArtist->setGeometry( QRect( 32, 40, 120, 20 ) );
-    QFont lblArtist_font(  lblArtist->font() );
-    lblArtist_font.setPointSize( 12 );
-    lblArtist_font.setBold( FALSE );
-    lblArtist->setFont( lblArtist_font );
 
-    lblTitle = new QLabel( getPanel(), "lblTitle" );
+    lblTitle = new QLabel( getPanel() );
     lblTitle->setGeometry( QRect( 39, 70, 68, 20 ) );
-    QFont lblTitle_font(  lblTitle->font() );
-    lblTitle_font.setPointSize( 12 );
-    lblTitle_font.setBold( FALSE );
-    lblTitle->setFont( lblTitle_font );
 
-    lblRecentlyLogged = new QLabel( getPanel(), "lblRecentlyLogged" );
+    lblRecentlyLogged = new QLabel( getPanel() );
     lblRecentlyLogged->setGeometry( QRect( 10, 98, 121, 21 ) );
-    QFont lblRecentlyLogged_font(  lblRecentlyLogged->font() );
-    lblRecentlyLogged_font.setPointSize( 12 );
-    lblRecentlyLogged->setFont( lblRecentlyLogged_font );
 
-    txtArtist = new QLineEdit( getPanel(), "txtArtist" );
-    txtArtist->setGeometry( QRect( 80, 40, 260, 21 ) );
+    txtArtist = new QLineEdit( getPanel() );
+    txtArtist->setGeometry( QRect( 80, 38, 260, 25 ) );
 
-    txtTitle = new QLineEdit( getPanel(), "txtTitle" );
-    txtTitle->setGeometry( QRect( 80, 70, 260, 22 ) );
+    txtTitle = new QLineEdit( getPanel() );
+    txtTitle->setGeometry( QRect( 80, 68, 260, 25 ) );
 
-    btnLog = new QPushButton( getPanel(), "btnLog" );
+    btnLog = new QPushButton( getPanel() );
     btnLog->setGeometry( QRect( 401, 10, 100, 50 ) );
-    QFont btnLog_font(  btnLog->font() );
-    btnLog_font.setPointSize( 12 );
-    btnLog_font.setBold( FALSE );
-    btnLog->setFont( btnLog_font );
 
-    txtReclibID = new QLineEdit( getPanel(), "txtReclibID" );
-    txtReclibID->setGeometry( QRect( 80, 10, 90, 21 ) );
+    txtReclibID = new QLineEdit( getPanel() );
+    txtReclibID->setGeometry( QRect( 80, 8, 90, 25 ) );
 
-    lstRecentlyLogged = new QListView( getPanel(), "lstRecentlyLogged" );
-    lstRecentlyLogged->addColumn( tr( "Date/Time" ) );
-    lstRecentlyLogged->header()->setResizeEnabled( FALSE,
-            lstRecentlyLogged->header()->count() -1 );
-    lstRecentlyLogged->addColumn( tr( "Artist" ) );
-    lstRecentlyLogged->header()->setResizeEnabled( FALSE,
-            lstRecentlyLogged->header()->count() -1 );
-    lstRecentlyLogged->addColumn( tr( "Title" ) );
-    lstRecentlyLogged->header()->setResizeEnabled( FALSE,
-            lstRecentlyLogged->header()->count() -1 );
+    QStringList vHeaderLabels;
+    vHeaderLabels.append("Date/Time");
+    vHeaderLabels.append("Artist");
+    vHeaderLabels.append("Title");
+
+    lstRecentlyLogged = new QTreeWidget( getPanel() );
+    lstRecentlyLogged->setHeaderLabels(vHeaderLabels);
+    lstRecentlyLogged->header()->setResizeMode( 0, QHeaderView::Fixed );
+    lstRecentlyLogged->header()->setResizeMode( 1, QHeaderView::Fixed );
+    lstRecentlyLogged->header()->setResizeMode( 2, QHeaderView::Fixed );
     lstRecentlyLogged->setGeometry( QRect( 10, 120, 491, 510 ) );
     lstRecentlyLogged->setAllColumnsShowFocus( TRUE );
-    lstRecentlyLogged->setVScrollBarMode( QListView::AlwaysOn );
+    lstRecentlyLogged->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOn );
     lstRecentlyLogged->setColumnWidth(0,90);
     lstRecentlyLogged->setColumnWidth(1,194);
     lstRecentlyLogged->setColumnWidth(2,194);
-    lstRecentlyLogged->header()->setMovingEnabled( FALSE );
-    lstRecentlyLogged->setSorting(-1, FALSE);
+    lstRecentlyLogged->header()->setMovable( FALSE );
+    lstRecentlyLogged->setSortingEnabled(FALSE);
 
     lblReclibID->setText( tr( "Reclib ID:" ) );
     lblArtist->setText( tr( "Artist:" ) );
     lblTitle->setText( tr( "Title:" ) );
     lblRecentlyLogged->setText( tr( "Recently Logged" ) );
     btnLog->setText( tr( "Log" ) );
-    lstRecentlyLogged->header()->setLabel( 0, tr( "Date/Time" ) );
-    lstRecentlyLogged->header()->setLabel( 1, tr( "Artist" ) );
-    lstRecentlyLogged->header()->setLabel( 2, tr( "Title" ) );
 
     //Disable reclib ID logging until data is available....
     txtReclibID->setEnabled(FALSE);

@@ -37,7 +37,7 @@ DpsUser::~DpsUser() {
 	
 }
 
-bool DpsUser::operator==(const DpsUser& pSrc) {
+bool DpsUser::operator==(const DpsUser& pSrc) const {
 	if (mId == pSrc.mId &&
 		mName == pSrc.mName) {
 			return true;
@@ -45,7 +45,7 @@ bool DpsUser::operator==(const DpsUser& pSrc) {
 	return false;
 }
 
-bool DpsUser::operator!=(const DpsUser& pSrc) {
+bool DpsUser::operator!=(const DpsUser& pSrc) const {
 	return !operator==(pSrc);
 }
 

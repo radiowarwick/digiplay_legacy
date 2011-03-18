@@ -83,7 +83,7 @@ void TabPanel::show() {
 	int p = tabParent->indexOf(panel);
 	if (p == -1) {
 		panel->setParent(tabParent);
-		tabParent->insertTab(-1,panel,tabText);
+		tabParent->insertTab(-1,panel,tabIcon,tabText);
 	}
 }
 

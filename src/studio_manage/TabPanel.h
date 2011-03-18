@@ -27,6 +27,7 @@
 using namespace std;
 
 #include <QtCore/QObject>
+#include <QtGui/QIcon>
 
 class QWidget;
 class QTabWidget;
@@ -51,7 +52,9 @@ class TabPanel :    public QObject,
 		/// Reconfigures the panel
 		virtual void configure(Auth *authModule);
 		/// Sets the text shown on the tab
-		void setText(QString text) {tabText = text;}
+		void setText(const QString& text) {tabText = text;}
+		/// Sets the icon shown on the tab
+		void setIcon(const QIcon& pIcon) {tabIcon = pIcon;}
 
 	protected:
 		// Returns a pointer to the actual panel widget
@@ -75,6 +78,7 @@ class TabPanel :    public QObject,
 		QWidget *panel;
 		QTabWidget *tabParent;
 		QString tabText;
+		QIcon tabIcon;
 };
 
 #endif

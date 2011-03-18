@@ -42,15 +42,15 @@ class DpsDate : public DpsObject {
 		DpsDate(const DpsDate& pSrc);
 		virtual ~DpsDate();
 		
-		bool operator==(const DpsDate& pSrc);
-		bool operator!=(const DpsDate& pSrc);
+		bool operator==(const DpsDate& pSrc) const;
+		bool operator!=(const DpsDate& pSrc) const;
 		DpsDate& operator=(const DpsDate& pSrc);
 		
 		// Getters
-		unsigned int getYears();
-		unsigned int getMonths();
-		unsigned int getDays();
-		DpsTime getTime();
+		unsigned int getYears() const;
+		unsigned int getMonths() const;
+		unsigned int getDays() const;
+		DpsTime getTime() const;
 		
 	private:
 		unsigned int mYear;

@@ -21,19 +21,19 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#include <qtabwidget.h>
-#include <qtextbrowser.h>
-#include <qlistview.h>
-#include <qstring.h>
-#include <qpixmap.h>
-#include <qiconset.h>
-#include <qheader.h>
-#include <qapplication.h>
-#include <qobject.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qtextedit.h>
-#include <qpushbutton.h>
+#include <QtGui/QTabWidget>
+#include <QtGui/QTextBrowser>
+#include <QtGui/QTreeWidget>
+#include <QtCore/QString>
+#include <QtGui/QPixmap>
+#include <QtGui/QIconSet>
+#include <QtGui/QHeaderView>
+#include <QtGui/QApplication>
+#include <QtCore/QObject>
+#include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
+#include <QtGui/QTextEdit>
+#include <QtGui/QPushButton>
 
 #include "Auth.h"
 #include "Logger.h"
@@ -45,8 +45,13 @@
 /**
  * Constructor.
  */
-TabPanelScript::TabPanelScript(QTabWidget *parent, string text)
+TabPanelScript::TabPanelScript(QTabWidget *parent, QString text)
             : TabPanel(parent,text) {
+    // set panel tag
+    panelTag = "TabScript";
+
+    TabPanel::setIcon(QIcon(":/icons/script16.png"));
+
     // Draw GUI components
     draw();
 
@@ -79,10 +84,10 @@ void TabPanelScript::configure(Auth *authModule) {
  * Retrieves and displays a script given its id.
  * @param   id      Database ID of the script to display
  */
-void TabPanelScript::loadScript( int id ) {
+void TabPanelScript::loadScript( const DpsScriptItem& pSrc ) {
 	//gets the id of a script when clicked on in the 
 	//showplan and shoul then load it.
-	string SQL = "SELECT name, contents, length FROM scripts " 
+/*	string SQL = "SELECT name, contents, length FROM scripts "
 				 "WHERE id=" + dps_itoa(id) +" LIMIT 1;";
 	PqxxResult R;
 	try {
@@ -100,7 +105,7 @@ void TabPanelScript::loadScript( int id ) {
 	}
 	else {
 		//toss wank.  Something fucked up good.
-	}
+	}*/
 }
 
 
@@ -120,7 +125,7 @@ void TabPanelScript::clearScript() {
  * Emit a signal when the "done" button is pressed.
  */
 void TabPanelScript::btnScriptDoneClicked() {
-	emit scriptDone();
+	emit scriptDone(currentItem);
 }
 
 
@@ -129,40 +134,38 @@ void TabPanelScript::btnScriptDoneClicked() {
  */
 void TabPanelScript::draw() {
     // do all form drawing here, create widgets, set properties
-    lblScriptName = new QLabel( getPanel(), "lblScriptName" );
+    lblScriptName = new QLabel( getPanel() );
     lblScriptName->setGeometry( QRect( 10, 11, 151, 16 ) );
-    QFont lblScriptName_font(  lblScriptName->font() );
-    lblScriptName_font.setPointSize( 12 );
-    lblScriptName_font.setBold( FALSE );
-    lblScriptName->setFont( lblScriptName_font );
-    lblScriptName->setAlignment( int( QLabel::AlignVCenter 
-                                            | QLabel::AlignLeft ) );
+//    QFont lblScriptName_font(  lblScriptName->font() );
+//    lblScriptName_font.setPointSize( 12 );
+//    lblScriptName_font.setBold( FALSE );
+//    lblScriptName->setFont( lblScriptName_font );
+    lblScriptName->setAlignment( Qt::AlignVCenter | Qt::AlignLeft );
 
-    txtScriptBody = new QTextEdit( getPanel(), "txtScriptBody" );
+    txtScriptBody = new QTextEdit( getPanel() );
     txtScriptBody->setGeometry( QRect( 9, 68, 490, 560 ) );
     txtScriptBody->setReadOnly(true);
 
-    lblScriptDuration = new QLabel( getPanel(), "lblScriptDuration" );
+    lblScriptDuration = new QLabel( getPanel() );
     lblScriptDuration->setGeometry( QRect( 240, 11, 60, 16 ) );
-    QFont lblScriptDuration_font(  lblScriptDuration->font() );
-    lblScriptDuration_font.setPointSize( 12 );
-    lblScriptDuration_font.setBold( FALSE );
-    lblScriptDuration->setFont( lblScriptDuration_font );
-    lblScriptDuration->setAlignment( int( QLabel::AlignVCenter 
-                                            | QLabel::AlignLeft ) );
+//    QFont lblScriptDuration_font(  lblScriptDuration->font() );
+//    lblScriptDuration_font.setPointSize( 12 );
+//    lblScriptDuration_font.setBold( FALSE );
+//    lblScriptDuration->setFont( lblScriptDuration_font );
+    lblScriptDuration->setAlignment( Qt::AlignVCenter | Qt::AlignLeft );
 
-    btnScriptDone = new QPushButton( getPanel(), "btnScriptDone" );
+    btnScriptDone = new QPushButton( getPanel() );
     btnScriptDone->setGeometry( QRect( 330, 26, 171, 30 ) );
-    QFont btnScriptDone_font(  btnScriptDone->font() );
-    btnScriptDone_font.setPointSize( 12 );
-    btnScriptDone_font.setBold( FALSE );
-    btnScriptDone->setFont( btnScriptDone_font );
+//    QFont btnScriptDone_font(  btnScriptDone->font() );
+//    btnScriptDone_font.setPointSize( 12 );
+//    btnScriptDone_font.setBold( FALSE );
+//    btnScriptDone->setFont( btnScriptDone_font );
 
-    txtScriptName = new QLineEdit( getPanel(), "txtScriptName" );
+    txtScriptName = new QLineEdit( getPanel() );
     txtScriptName->setGeometry( QRect( 10, 30, 220, 21 ) );
     txtScriptName->setReadOnly(true);
 
-    txtScriptDuration = new QLineEdit( getPanel(), "txtScriptDuration" );
+    txtScriptDuration = new QLineEdit( getPanel() );
     txtScriptDuration->setGeometry( QRect( 238, 30, 70, 21 ) );
     txtScriptDuration->setReadOnly(true);
 

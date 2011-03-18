@@ -30,9 +30,10 @@
 #include "dps/Dps.h"
 
 class QTabWidget;
-class QPixmap;
-class QListView;
-class QListViewItem;
+class QIcon;
+class QTreeView;
+class QStandardItemModel;
+class QModelIndex;
 
 class Auth;
 class DataAccess;
@@ -45,7 +46,7 @@ class TabPanelPlaylist : public TabPanel {
 	Q_OBJECT
 	public:
         /// Constructor.
-		TabPanelPlaylist(QTabWidget *parent, string text);
+		TabPanelPlaylist(QTabWidget *parent, QString text);
         /// Destructor.
 		~TabPanelPlaylist();
         /// Reconfigures the panel.
@@ -59,11 +60,11 @@ class TabPanelPlaylist : public TabPanel {
         /// Refreshes the contents of the playlist.
         void processPlaylistUpdate();
         /// Processes when a playlist item is selected and emits signal.
-		virtual void playlistAdd(QListViewItem *current);
+		virtual void playlistAdd(const QModelIndex&);
         /// Changes the icon when a playlist is expanded.
-		virtual void listExpanded(QListViewItem *x);
+		virtual void listExpanded(const QModelIndex&);
         /// Changes the icen when a playlist is collapsed.
-		virtual void listCollapsed(QListViewItem *x);
+		virtual void listCollapsed(const QModelIndex&);
 
 	private:
         /// Draws the panel.
@@ -73,9 +74,10 @@ class TabPanelPlaylist : public TabPanel {
 
         DataAccess* DB;
         QtTrigger* triggerPlaylist;
-		QListView *lstPlaylist;
-		QPixmap *pixAList, *pixBList;
-		QPixmap *pixExpanded, *pixCollapsed, *pixTrack;
+		QTreeView *lstPlaylist;
+		QStandardItemModel *modPlaylist;
+		QIcon *icnAList, *icnBList;
+		QIcon *icnExpanded, *icnCollapsed, *icnTrack;
 };
 
 #endif

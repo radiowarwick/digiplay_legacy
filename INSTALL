@@ -42,41 +42,44 @@ Compilation of Code
 This software requires the following software to be installed. Under debian
 this can be achieved by running apt-get install <package-list> where
 <package-list> is:
+    cmake
+    cmake-curses-gui (optional)
 	libpqxx-dev
-	libreadline5-dev
-	libncurses5-dev
-	libqt3-mt-dev
+	libreadline-dev
+	libncurses-dev
+	libqt4-dev
 	libldap2-dev
 	libcdparanoia0 (for playin application)
-	libflac++-dev (for new flac audio encoding)
+	libflac++-dev (for flac audio encoding)
+    libmpg123-dev (for MP3 audio encoding)
+    libasound-dev (for ALSA support)
+    libjack-dev (for JACK support)
 This will implicitly install the actual libraries as well. Other distributions
 and/or package management systems may require manual installation of these
 libraries.
 
-For development of the Digiplay Studio GUI the following packages are required:
-	qt3-designer
-	qt3-dev-tools
-
 To generate code documentation:
 	doxygen
-	
-Then do
-	make sue			(Sustainer service)
-	make backend		(System management application and tools)
-	make tools			(Management tools only)
-	make studio			(Studio applications)
-	make playin			(Audio playin application)
 
-	make all			(Make the lot!)
+In the top of the code tree create a build sub-directory in which to build
+digiplay. For the default options run (from the 'build' directory):
+    cmake ../
+    make install
+The generated libraries and applications will be installed in a 'dist'
+subdirectory.
 
-This stuff isn't tested with the new Make system:
-	make install		(Installs the binaries in the INSTALLDIR directory)
-	make uninstall		(Removes the binaries from their INSTALLDIR directory)
-						INSTALLDIR is specified in the Makefile or on 
-						commandline
-	make suebackup		(Backup sustainer playlist to SUE_FILE)
-	make suerestore		(Restore sustainer playlist from SUE_FILE)
-						SUE_FILE is specified in the Makefile or on commandline
+To customise the build and select the installation directory it is recommended
+to use the ncurses interface to cmake:
+    ccmake ../
+
+Select the desired components to build. All applications are selected by
+default, but only basic audio formats are enabled. Select additional formats as
+desired. Press 'c' to configure the build. Missing -dev packages and libraries
+will be identified at this stage. When configuration completes successfully,
+press 'g' to write out the Makefiles.
+
+Now run 'make'.
+
 
 Website Installation (In Progress)
 ----------------------------------

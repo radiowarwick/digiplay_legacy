@@ -6,7 +6,12 @@ set(VERSION 0.99)
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/dist CACHE PATH "" FORCE)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/src ${CMAKE_MODULE_PATH})
 
-set(CMAKE_CXX_FLAGS "-Wall -O3 -D_THREAD_SAFE -D_FILE_OFFSET_BITS=64 -DDEBUG=4 -fPIC -DVERSION=\"${VERSION}\" -DDPSDIR=\"\\\"${CMAKE_INSTALL_PREFIX}/share/dps\\\"\"")
+set(CMAKE_CXX_FLAGS "-Wall -O3 -fPIC")
+add_definitions(-D_THREAD_SAFE)
+add_definitions(-D_FILE_OFFSET_BITS=64)
+add_definitions(-DDEBUG=4)
+add_definitions(-DVERSION="\\"${VERSION}\\"")
+add_definitions(-DDPSDIR="\\"${CMAKE_INSTALL_PREFIX}/share/dps\\"")
 
 include_directories(${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/audiolib)
 
@@ -32,3 +37,5 @@ CMAKE_DEPENDENT_OPTION(ENABLE_OSS "Enable OSS audio support." ON
                         "BUILD_AUDIO_LIBRARY" OFF)
 
 add_subdirectory(src)
+add_subdirectory(share)
+

@@ -30,20 +30,26 @@ set(STUDIO_PLAY_HEADERS frmPlayout.h
 
 set(STUDIO_PLAY_RCCS    ../DpsResources.qrc)
 
-find_package(Qt4)
+find_library(M_LIB m)
+mark_as_advanced(M_LIB)
+find_package(Threads)
+find_package(Pqxx)
+find_package(Qt4 COMPONENTS QtCore QtGui REQUIRED)
+
+include_directories(${Pqxx_INCLUDE_DIRS})
 INCLUDE(${QT_USE_FILE})
 ADD_DEFINITIONS(${QT_DEFINITIONS})
-
 QT4_ADD_RESOURCES(STUDIO_PLAY_RCC_SRCS ${STUDIO_PLAY_RCCS})
 QT4_WRAP_CPP(STUDIO_PLAY_HEADERS_MOC ${STUDIO_PLAY_HEADERS})
 
-add_executable(studio_play ${STUDIO_PLAY_SOURCES} ${STUDIO_PLAY_HEADERS_MOC}
+add_executable(studio_play ${STUDIO_PLAY_SOURCES}
+                           ${STUDIO_PLAY_HEADERS_MOC}
                            ${STUDIO_PLAY_RCC_SRCS})
 target_link_libraries(studio_play dpsaudio)
-target_link_libraries(studio_play pqxx)
-target_link_libraries(studio_play m)
-target_link_libraries(studio_play pthread)
 target_link_libraries(studio_play ${QT_LIBRARIES})
+target_link_libraries(studio_play ${Pqxx_LIBRARIES})
+target_link_libraries(studio_play ${M_LIB})
+target_link_libraries(studio_play ${CMAKE_THREAD_LIBS_INIT})
 set_target_properties(studio_play PROPERTIES VERSION ${VERSION})
 add_dependencies(studio_play dpsaudio)
 

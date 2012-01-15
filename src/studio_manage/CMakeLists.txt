@@ -64,19 +64,25 @@ set(STUDIO_MANAGE_HEADERS frmStudioManage.h
 
 set(STUDIO_MANAGE_RCCS  ../DpsResources.qrc)
 
-find_package(Qt4)
+find_library(M_LIB m)
+mark_as_advanced(M_LIB)
+find_package(Threads)
+find_package(Pqxx REQUIRED)
+find_package(Qt4 COMPONENTS QtCore QtGui REQUIRED)
+
+include_directories(${Pqxx_INCLUDE_DIRS})
 INCLUDE(${QT_USE_FILE})
 ADD_DEFINITIONS(${QT_DEFINITIONS})
-
 QT4_ADD_RESOURCES(STUDIO_MANAGE_RCC_SRCS ${STUDIO_MANAGE_RCCS})
 QT4_WRAP_CPP(STUDIO_MANAGE_HEADERS_MOC ${STUDIO_MANAGE_HEADERS})
 
 add_executable(studio_manage ${STUDIO_MANAGE_SOURCES}
-                             ${STUDIO_MANAGE_HEADERS_MOC})
-target_link_libraries(studio_manage pqxx)
-target_link_libraries(studio_manage m)
-target_link_libraries(studio_manage pthread)
+                             ${STUDIO_MANAGE_HEADERS_MOC}
+                             ${STUDIO_MANAGE_RCC_SRCS})
 target_link_libraries(studio_manage ${QT_LIBRARIES})
+target_link_libraries(studio_manage ${Pqxx_LIBRARIES})
+target_link_libraries(studio_manage ${M_LIB})
+target_link_libraries(studio_manage ${CMAKE_THREAD_LIBS_INIT})
 set_target_properties(studio_manage PROPERTIES VERSION ${VERSION})
 
 install(TARGETS studio_manage

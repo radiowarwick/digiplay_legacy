@@ -20,9 +20,12 @@ option(BUILD_AUDIO_LIBRARY "Build audio library." ON)
 option(BUILD_STUDIO_MANAGE "Build studio management application." ON)
 option(BUILD_SUE_SCHED "Build sustainer scheduler application." ON)
 option(BUILD_ADMIN "Build digiplay administration tool." ON)
+option(BUILD_PLAYIN "Build CD ripping and import tool." ON)
 CMAKE_DEPENDENT_OPTION(BUILD_STUDIO_PLAY "Build studio playout application." ON
                         "BUILD_AUDIO_LIBRARY" OFF)
 CMAKE_DEPENDENT_OPTION(BUILD_SUE_PLAY "Build sustainer playout application." ON
+                        "BUILD_AUDIO_LIBRARY" OFF)
+CMAKE_DEPENDENT_OPTION(BUILD_EXTRA_TOOLS "Build additional audio tools." ON
                         "BUILD_AUDIO_LIBRARY" OFF)
 
 CMAKE_DEPENDENT_OPTION(ENABLE_FLAC "Enable FLAC audio support." OFF

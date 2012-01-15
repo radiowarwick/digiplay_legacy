@@ -17,10 +17,14 @@ set(SUESCHED_HEADERS    ../DataAccess.h
                         ../Thread.h
     )
 
+find_library(M_LIB m)
+find_package(Threads)
+find_package(Pqxx)
+
 add_executable(sueplay ${SUE_PLAY_SOURCES})
-target_link_libraries(sueplay pqxx)
-target_link_libraries(sueplay m)
-target_link_libraries(sueplay pthread)
+target_link_libraries(sueplay ${Pqxx_LIBRARIES})
+target_link_libraries(sueplay ${M_LIB})
+target_link_libraries(sueplay ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(sueplay dpsaudio)
 set_target_properties(sueplay PROPERTIES VERSION ${VERSION})
 install(TARGETS sueplay

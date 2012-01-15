@@ -23,10 +23,14 @@ set(SUESCHED_HEADERS    sched_bin.h
                         ../Thread.h
     )
 
+find_library(M_LIB m)
+find_package(Threads)
+find_package(Pqxx)
+
 add_executable(suesched ${SUESCHED_SOURCES})
-target_link_libraries(suesched pqxx)
-target_link_libraries(suesched m)
-target_link_libraries(suesched pthread)
+target_link_libraries(suesched ${Pqxx_LIBRARIES})
+target_link_libraries(suesched ${M_LIB})
+target_link_libraries(suesched ${CMAKE_THREAD_LIBS_INIT})
 set_target_properties(suesched PROPERTIES VERSION ${VERSION})
 install(TARGETS suesched
     RUNTIME DESTINATION bin OPTIONAL

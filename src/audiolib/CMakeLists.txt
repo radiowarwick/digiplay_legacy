@@ -14,6 +14,7 @@ set(AUDIOLIB_SOURCES    AudioPacket.cpp
                         ProcessFader.cpp
                         ProcessLink.cpp
                         ProcessMixer.cpp
+                        ../Thread.cpp
     )
 
 set(AUDIOLIB_HEADERS    AudioPacket.h
@@ -32,6 +33,7 @@ set(AUDIOLIB_HEADERS    AudioPacket.h
                         ProcessFader.h
                         ProcessLink.h
                         ProcessMixer.h
+                        ../Thread.h
     )
 
 add_library(dpsaudio SHARED ${AUDIOLIB_SOURCES})

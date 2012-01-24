@@ -97,7 +97,7 @@ frmPlayout::~frmPlayout()
  */
 void frmPlayout::languageChange()
 {
-    setWindowTitle( tr( "RaW Digital Playout System" ) );
+    setWindowTitle( tr( "Digiplay Playout System" ) );
 }
 
 void frmPlayout::init() {

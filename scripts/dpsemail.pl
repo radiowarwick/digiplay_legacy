@@ -35,7 +35,7 @@ my $time_received = time();
 # get header fields and trim them to remove leading and trailing spaces
 my $h_subject = trim($email->head->get("Subject"));
 my $h_from    = trim($email->head->get("From"));
-my $h_spam    = trim($email->head->get("X-Spam-Flag-RaW"));
+my $h_spam    = trim($email->head->get("X-Spam-Flag"));
 
 # use a MIME parser to parse the email
 my $parser = MIME::Parser->new;

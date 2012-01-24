@@ -1,4 +1,4 @@
-{include file="rfile:dpsstudiotopframe.tpl" title="RaW Digiplay Manager" studio="t" access_playlist=$VIEWER.access_playlist}
+{include file="rfile:dpsstudiotopframe.tpl" title="Digiplay Manager" studio="t" access_playlist=$VIEWER.access_playlist}
 <div class='bigTitle'>Station Jingle Packages</div>
 	{if $VIEWER.jinglepkgs}
 	<div class='subTitle'>Currently there are following Jingle Packages available:</div>

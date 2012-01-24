@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>RaW DPS website login</title>
+		<title>Digiplay login</title>
 		<link rel="stylesheet" type="text/css" href="DPS/stylesheet.css" />
 	</head>
 	<body>
@@ -17,7 +17,7 @@
 		If you need to access the logon page you may do so <a href="?templateid=11&fwdtid={$fieldData.templateID}">here</a>.
 		{else}
 		<div class="login_container">
-			<div class="login_header"><img src="DPS/images/dps_header.JPG" alt="RaW DPS Manager" width="294" height="30" /></div>
+			<div class="login_header"><img src="DPS/images/dps_header.JPG" alt="Digiplay Manager" width="294" height="30" /></div>
 			<div class="login_title">Login</div>
 			<div class="login_form">
 				<form name="dpsloginForm" method="post" action="{$CONFIG.general.siteRoot}">
@@ -36,7 +36,7 @@
 					Copyright &#169 RaW 1251AM, 2006
 				</div>
 				<div class="login_container_footer_right">
-					<a href="http://www.radio.warwick.ac.uk"><img src="DPS/images/homeexit.png" alt="Exit"></a>
+					<a href="/"><img src="DPS/images/homeexit.png" alt="Exit"></a>
 				</div>
 				<div class="login_container_footer_right">
 					{templateLink id="59" text="<img src=\"DPS/images/homehelp.png\" alt=\"Help\">" alt="Help"}

@@ -47,7 +47,7 @@ using namespace std;
 
 #define MIN(x,y) (((x) < (y)) ? x : y)
 
-#define NAME "RaW // Radio Warwick // Audio archive playin"
+#define NAME "Digiplay audio archive playin (CD Ripper)"
 
 static int logDebug = 0;
 static int logVerbose = 0;

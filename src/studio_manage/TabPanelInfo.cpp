@@ -84,8 +84,8 @@ void TabPanelInfo::draw() {
 		"<H3>Playing Music out</H3>\n"
 		"<P>Click the load button on any of the three players to load the top track in the show plan. Use the play \\ stop \\ pause buttons like a normal CD player. You can jump through the track by dragging the position bar when in pause or stop mode. Click the time button to toggle between the Elapsed and Remaining time display.\n"
 		"<H3>Problems or Suggestions?</H3>\n"
-		"If the software \"Crashes\" or \"Locks up\", please send an email to: <b>digiplay@radio.warwick.ac.uk</b> and say what you'd done just before it crashed and what the software was doing at the time. This will help us improve the software which will in turn help you.\n"
-		"If you have any suggestions for features you'd like to see in RaW Digiplay, please send an email to the same address above.</p><p>Thanks,</p><P>RaW Digiplay Development Team</p>" ) );
+		"If the software \"Crashes\" or \"Locks up\", please find a member of the engineering team and say what you'd done just before it crashed and what the software was doing at the time. This will help us improve the software which will in turn help you.\n"
+		"If you have any suggestions for features you'd like to see in Digiplay, please find an engineer and let them know.</p><p>Thanks,</p><P>Digiplay Development Team</p>" ) );
 }
 
 

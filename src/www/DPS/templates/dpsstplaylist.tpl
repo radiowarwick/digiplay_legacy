@@ -1,4 +1,4 @@
-{include file="rfile:dpsstudiotopframe.tpl" title="RaW Digiplay Manager" access_playlist='t' studio=$VIEWER.studioAccess}
+{include file="rfile:dpsstudiotopframe.tpl" title="Digiplay Manager" access_playlist='t' studio=$VIEWER.studioAccess}
     <div>Select Playlist:
         {foreach from=$VIEWER.playlists item="playlist"}
             | {templateLink id=$VIEWER.templateID text=$playlist.name

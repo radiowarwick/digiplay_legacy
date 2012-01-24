@@ -1,4 +1,4 @@
-{include file="rfile:dpssuetopframe.tpl" title="RaW Digiplay Manager" nexttrack=$VIEWER.sueNextTrack Access_EditSue=$VIEWER.Access_EditSue Access_ViewSue=$VIEWER.Access_ViewSue Access_ViewSue='t'}
+{include file="rfile:dpssuetopframe.tpl" title="Digiplay Manager" nexttrack=$VIEWER.sueNextTrack Access_EditSue=$VIEWER.Access_EditSue Access_ViewSue=$VIEWER.Access_ViewSue Access_ViewSue='t'}
 	    <div class="bigTitle">Sue Stamp's Stats</div>
 	    <table class="suestats">
 	      <tr><th>Tracks currently on Sue Playlist</th><td>{$VIEWER.suePlaylistTracks}</td></tr>

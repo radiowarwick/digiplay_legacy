@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>RaW Digiplay Manager</title>
+		<title>Digiplay Manager</title>
 		<link rel="stylesheet" type="text/css" href="DPS/stylesheet.css" />
 	</head>
 	<body>
@@ -30,7 +30,7 @@
 						<p>If you need to access the logon page you may do so 
 						{templateLink id=11 text="here" _fwdtid=$VIEWER.templateID}</p>
 						{else}
-						An unspecified error has occured. Please contact the RaW webmaster.
+						An unspecified error has occured. Please contact a member of the engineering team.
 						{/if}
 					</div>
 				</div>

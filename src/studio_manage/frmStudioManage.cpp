@@ -166,7 +166,7 @@ frmStudioManage::~frmStudioManage()
  */
 void frmStudioManage::languageChange()
 {
-    setWindowTitle( tr( "RaW // Radio Warwick // Digital Playout System" ) );
+    setWindowTitle( tr( "Digiplay Studio Management Interface" ) );
     //tabManage->changeTab( tabPageInfo, tr( "Starting Tab" ) );
     lblClock->setText( tr( "17:56:56" ) );
     btnLogin->setText( tr( "Log In" ) );
@@ -226,7 +226,7 @@ void frmStudioManage::init() {
 
     //Load Images
     cout << " -> Loading Images and setting contact information... ";
-    pixLogo->setPixmap(QPixmap(":/images/rawdigiplay.png"));
+    pixLogo->setPixmap(QPixmap(":/images/digiplay.png"));
     lblContactPhone->setText(QString::fromStdString(conf->getParam("contact_phone")));
     lblContactSms->setText(QString::fromStdString(conf->getParam("contact_sms")));
     lblContactEmail->setText(QString::fromStdString(conf->getParam("contact_email")));

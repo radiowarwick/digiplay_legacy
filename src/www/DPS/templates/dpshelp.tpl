@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>RaW Digiplay Manager</title>
+		<title>Digiplay Manager</title>
 		<link rel="stylesheet" type="text/css" href="DPS/stylesheet.css" />
 	</head>
 	<body>

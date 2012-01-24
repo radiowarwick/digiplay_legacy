@@ -1,4 +1,4 @@
-{include file="rfile:dpsmusictopframe.tpl" title="RaW Digiplay Manager" RequestTrack=$VIEWER.RequestTrack}
+{include file="rfile:dpsmusictopframe.tpl" title="Digiplay Manager" RequestTrack=$VIEWER.RequestTrack}
 	    <div class="bigTitle">Requested Tracks</div>
 	    <div class="subTitle">
 	      {$VIEWER.requestedNum} track(s) have been requested

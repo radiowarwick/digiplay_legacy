@@ -1,5 +1,5 @@
 /**
- * OSS output module for RaW Digiplay (the original OutputDsp.cpp really)
+ * OSS output module for Digiplay (the original OutputDsp.cpp really)
  * @author Phil Ashby
  * @date June-2009
  *

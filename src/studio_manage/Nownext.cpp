@@ -217,7 +217,7 @@ void Nownext::draw() {
     lblNow = new QLabel( frameOutline );
     lblNow->setGeometry( QRect( 0, 0, 512, 31 ) );
     lblNow->setProperty("id","TopBarNow");
-    lblNow->setText( "On now: RaW 1251AM" );
+    lblNow->setText( "On now: " );
 
     Area_of_Black = new QLabel( frameOutline );
     Area_of_Black->setGeometry( QRect( 1003, 0, 21, 30 ) );

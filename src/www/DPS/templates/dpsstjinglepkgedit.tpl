@@ -1,4 +1,4 @@
-{include file="rfile:dpsstudiotopframe.tpl" title="RaW Digiplay Manager" studio="t" access_playlist=$VIEWER.access_playlist}
+{include file="rfile:dpsstudiotopframe.tpl" title="Digiplay Manager" studio="t" access_playlist=$VIEWER.access_playlist}
 
 <div class='bigTitle'>Station Jingle Package</div>
 <form name="dpsStationUpdateJinglePkgForm" method="post" action="{$CONFIG.general.siteRoot}">

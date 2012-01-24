@@ -1,4 +1,4 @@
-{include file="rfile:dpsstudiotopframe.tpl" title="RaW Digiplay Manager" studio=$VIEWER.studioAccess access_playlist=$VIEWER.access_playlist}
+{include file="rfile:dpsstudiotopframe.tpl" title="Digiplay Manager" studio=$VIEWER.studioAccess access_playlist=$VIEWER.access_playlist}
 			<div class="rightLinks">{templateLink id=86 text="<<< Go back to your files"}</div>
 	    <div class=FloatL"><div class="bigTitle">Edit Track Details</div></div>
 			{if $VIEWER.authError == 't'}

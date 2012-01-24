@@ -1,5 +1,5 @@
 #===============================================================
-# RaW Digital Playout Makefile
+# Digital Playout Makefile
 # Relative Path to Root of tree
 ROOT		=	../..
 

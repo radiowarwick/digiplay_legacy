@@ -1,13 +1,13 @@
 <html>
   <head>
-    <title>RaW Digiplay Manager</title>
+    <title>Digiplay Manager</title>
     <link rel="stylesheet" type="text/css" href="DPS/stylesheet.css" />
   </head>
   <body>
   <div class="centreContainer">
   <div class="home_titleBar">
     <div class="home_titleL">
-      {templateLink id="12" text="<img class='home_title' src='DPS/images/hometitle.gif' alt='Raw Digiplay Manager'>"}
+      {templateLink id="12" text="<img class='home_title' src='DPS/images/hometitle.gif' alt='Digiplay Manager'>"}
       <img class="home_titleOverlap" src="DPS/images/hometitlebgMid.png">
     </div> 
     <div class="home_titleMid">

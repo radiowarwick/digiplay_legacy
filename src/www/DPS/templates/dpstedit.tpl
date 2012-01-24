@@ -1,4 +1,4 @@
-{include file="rfile:dpsmusictopframe.tpl" title="RaW Digiplay Manager"  RequestTrack=$VIEWER.RequestTrack}
+{include file="rfile:dpsmusictopframe.tpl" title="Digiplay Manager"  RequestTrack=$VIEWER.RequestTrack}
 			<div class="bigTitle">Edit Track Details</div>
 			{if $VIEWER.searchValue}
 			<div class="musicTrackDetailsLinks">{templateLink id=20 text="Go back to the search screen" _dpsSearchVal=$VIEWER.searchValue _dpsSearchType=$VIEWER.searchType _dpsSearchPage=$VIEWER.page}</div>

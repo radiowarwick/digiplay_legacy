@@ -1,4 +1,4 @@
--- RaW Digiplay views for database scheme
+-- Digiplay views for database schema
 -- --------------------------------------
 --
 -- v_tree_getInherited(int,int)

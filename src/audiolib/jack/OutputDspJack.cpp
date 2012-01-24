@@ -1,5 +1,5 @@
 /**
- * JACK output module for RaW Digiplay
+ * JACK output module for  Digiplay
  * @author Phil Ashby
  * @date June-2009
  *

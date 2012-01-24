@@ -1,4 +1,4 @@
-{include file="rfile:dpsmusictopframe.tpl" title="RaW Digiplay Manager" RequestTrack=$VIEWER.RequestTrack}
+{include file="rfile:dpsmusictopframe.tpl" title="Digiplay Manager" RequestTrack=$VIEWER.RequestTrack}
 			<div class="musicResultInfo">
 				{if $VIEWER.searchValue != ""}
 				<b>Found:</b><br>

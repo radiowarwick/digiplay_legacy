@@ -1,4 +1,4 @@
-{include file="rfile:dpsmusictopframe.tpl" title="RaW Digiplay Manager" RequestTrack=$VIEWER.RequestTrack}
+{include file="rfile:dpsmusictopframe.tpl" title="Digiplay Manager" RequestTrack=$VIEWER.RequestTrack}
 	    <div class="bigTitle">Track Details</div>
 	    <div class="rightLinks">{templateLink id=20 text="Go back to search screen"}</div>
 	    {foreach from=$VIEWER.tracksDetails item=trackDetails}

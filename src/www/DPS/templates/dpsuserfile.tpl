@@ -1,4 +1,4 @@
-{include file="rfile:dpsfiletopframe.tpl" title="RaW Digiplay Manager" studio=$VIEWER.studioAccess access_playlist=$VIEWER.access_playlist}
+{include file="rfile:dpsfiletopframe.tpl" title="Digiplay Manager" studio=$VIEWER.studioAccess access_playlist=$VIEWER.access_playlist}
 	<div class="bigTitle">User File System {$DATA.rootDir}</div>
 	<div class="subTitle">Please click on a file or folder for options</div>
 	{if $ERRORS.rootdir}

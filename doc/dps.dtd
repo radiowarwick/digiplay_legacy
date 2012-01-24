@@ -1,4 +1,4 @@
-<!-- DTD for RaW Digital Playout System -->
+<!-- DTD for Digital Playout System -->
 <!ELEMENT audio (segment?)>
 	<!ATTLIST audio md5 CDATA #REQUIRED>
     <!ATTLIST audio filetype (raw|flac|wav) #REQUIRED>

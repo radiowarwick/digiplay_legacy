@@ -114,7 +114,7 @@ dlgLogin::~dlgLogin()
  */
 void dlgLogin::languageChange()
 {
-    setWindowTitle( tr( "RaW // Digiplay // Login" ) );
+    setWindowTitle( tr( "Digiplay Login" ) );
     lblLoginUsername->setText( tr( "Username:" ) );
     lblLoginPassword->setText( tr( "Password:" ) );
     buttonOk->setText( tr( "&OK" ) );

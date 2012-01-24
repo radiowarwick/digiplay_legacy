@@ -1,5 +1,5 @@
 /**
- * ALSA output module for RaW Digiplay (based on the original OutputDsp.cpp)
+ * ALSA output module for Digiplay (based on the original OutputDsp.cpp)
  * @author Phil Ashby
  * @date June-2009
  *

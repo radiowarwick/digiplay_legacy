@@ -87,7 +87,7 @@ int main( int argc, char * argv[] )
     Logger::initLogDir();
 
     if (isRoot()) {
-        L_INFO(LOG_DB,"Attempting to drop to unprivilaged user.");
+        L_INFO(LOG_DB,"Attempting to drop to unprivileged user.");
         dropPrivilage();
     }
 
@@ -106,7 +106,7 @@ int main( int argc, char * argv[] )
             }
             case 'v': {
                 std::cout.precision(1);
-                std::cout << "DPS Studio Playout Application Version "
+                std::cout << "Digiplay Studio Playout Application Version "
                             << VERSION << std::endl;
                 return 0;
                 break;

@@ -69,7 +69,7 @@ void processOptions(int argc, char *argv[]) {
             }
             case 'v': {
                 std::cout.precision(1);
-                std::cout << "DPS Sustainer Scheduling Application Version "
+                std::cout << "Digiplay Sustainer Scheduling Application Version "
                             << VERSION << std::endl;
                 exit(0);
                 break;

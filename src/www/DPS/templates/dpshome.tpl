@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>RaW Digiplay Manager</title>
+		<title>Digiplay Manager</title>
 		<link rel="stylesheet" type="text/css" href="DPS/stylesheet.css" />
 	</head>
 	<body>
@@ -80,7 +80,7 @@
 						<!--{templateLink id="47" text="Further playlist"}--><br>
 					</div>
 					<div class="home_scheduleBox">
-						<img src="DPS/images/homerawschedule.gif" alt="RaW Schedule"><br>
+						<img src="DPS/images/homerawschedule.gif" alt="Schedule"><br>
 						<table class="home_schedule">
 							<tr><th>Current Show:</th><td>{$VIEWER.scheduleCurrent.name}</td></tr>
 							<tr><th>Last Show:</th><td>{$VIEWER.scheduleLast.name}</td></tr>

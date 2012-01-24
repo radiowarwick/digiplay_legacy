@@ -1,4 +1,4 @@
-{include file="rfile:dpsshowtopframe.tpl" title="RaW Digiplay Manager"}
+{include file="rfile:dpsshowtopframe.tpl" title="Digiplay Manager"}
 {if $VIEWER.error}
 	{$VIEWER.error}
 {else}

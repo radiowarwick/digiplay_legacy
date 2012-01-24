@@ -1,4 +1,4 @@
-{include file="rfile:dpsstudiotopframe.tpl" title="RaW Digiplay Manager"}
+{include file="rfile:dpsstudiotopframe.tpl" title="Digiplay Manager"}
 	<br>
 	<br>
 <div class='stationtitle'>Station Audiowall</div>

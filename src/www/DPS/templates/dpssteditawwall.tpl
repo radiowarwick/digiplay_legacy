@@ -1,4 +1,4 @@
-{include file="rfile:dpsstudiotopframe.tpl" title="RaW Digiplay Manager" studio=$VIEWER.studioAccess access_playlist=$VIEWER.access_playlist}
+{include file="rfile:dpsstudiotopframe.tpl" title="Digiplay Manager" studio=$VIEWER.studioAccess access_playlist=$VIEWER.access_playlist}
   <br>
   <br>
   <div class='FloatL'><div class='bigTitle'>Edit Audiowall</div></div>

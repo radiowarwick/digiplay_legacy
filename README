@@ -12,6 +12,8 @@ digiplay
  |
  |-> db (Database schema and related files)
  |
+ |-> debian (Files for generating Debian packages)
+ |
  |-> doc (Documentation, usage instructions etc)
  |
  |-> lib (Libraries when compiled)

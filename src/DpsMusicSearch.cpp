@@ -81,8 +81,7 @@ std::vector<DpsAudioItem> DpsMusicSearch::query(std::string search_string) {
     }
     query = "@(" + query + ") " + strQueryString;
 
-    //std::string s_host = conf->getParam("sphinx_host");
-    std::string s_host = "127.0.0.1";
+    std::string s_host = conf->getParam("sphinx_host");
     int         s_port = atoi(conf->getParam("sphinx_port").c_str());
 
     Q.clear();

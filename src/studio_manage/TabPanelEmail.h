@@ -58,7 +58,7 @@ class TabPanelEmail : public TabPanel {
 
 	public slots:
 		/// Get the body of an email and display it
-		virtual void getEmailBody(QTreeWidgetItem *current);
+		virtual void getEmailBody();
 		/// Check for emails and update the list
 		void getEmail();
 

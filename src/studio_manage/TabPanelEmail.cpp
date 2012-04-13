@@ -112,14 +112,15 @@ void TabPanelEmail::configure(Auth *authModule) {
  * Retrieves the body of an email, given the QListViewItem from the email
  * list.
  */
-void TabPanelEmail::getEmailBody(QTreeWidgetItem *current) {
+void TabPanelEmail::getEmailBody() {
     const char *routine = "TabPanelEmail::getEmailBody";
-    L_INFO(LOG_TABEMAIL,"Get email body for id " + current->text(4).toStdString());
+    QTreeWidgetItem * x = *(lstEmail->selectedItems().begin());
+    L_INFO(LOG_TABEMAIL,"Get email body for id " + x->text(4).toStdString());
 
     // Find selected email and display email body
     // TODO: Reimplement using a map.
     for (unsigned int i = 0; i < emails.size(); ++i) {
-        if (emails[i]["id"] == current->text(4).toStdString()) {
+        if (emails[i]["id"] == x->text(4).toStdString()) {
             txtEmailBody->setCurrentFont(fntBody);
             txtEmailBody->setFontPointSize(pointSize);
             txtEmailBody->setText(QString(emails[i]["body"].c_str()));
@@ -268,8 +269,8 @@ void TabPanelEmail::draw() {
     pointSize= txtEmailBody->currentFont().pointSize();
 
     // connect signals and slots here
-//    QObject::connect( lstEmail, SIGNAL( selectionChanged(QListViewItem*) ),
-//                            this, SLOT( getEmailBody(QListViewItem*) ) );
+    connect( lstEmail, SIGNAL( itemSelectionChanged() ),
+                            this, SLOT( getEmailBody() ) );
 }
 
 

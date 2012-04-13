@@ -83,6 +83,7 @@ target_link_libraries(studio_manage ${QT_LIBRARIES})
 target_link_libraries(studio_manage ${Pqxx_LIBRARIES})
 target_link_libraries(studio_manage ${M_LIB})
 target_link_libraries(studio_manage ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(studio_manage sphinxclient)
 set_target_properties(studio_manage PROPERTIES VERSION ${VERSION})
 
 install(TARGETS studio_manage

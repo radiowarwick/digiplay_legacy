@@ -33,6 +33,8 @@
 #include "dps/Dps.h"
 #include "Logger.h"
 
+#include "sphinxclient.h"
+
 DpsMusicSearch::DpsMusicSearch() {
     // Create a configuration object
     conf = new Config("digiplay");
@@ -52,111 +54,47 @@ DpsMusicSearch::~DpsMusicSearch() {
 std::vector<DpsAudioItem> DpsMusicSearch::query(std::string search_string) {
 	const char* routine = "DpsMusicSearch::query";
 	strQueryString = search_string;
-	
-    std::string SQL;
-	vector<string> searchTerms;
-    string buf; // Buffer string for splitting up search terms
-	int noTerms=0;
-	int i;
     
     // Convert to lowercase
     std::transform(strQueryString.begin(), strQueryString.end(),
                    strQueryString.begin(), ::tolower);
 
-    // Remove "the" if it's at the start
-    // This is no longer needed as the fulltext query handles it
-
-    strQueryString = DB->esc(strQueryString);
+    //strQueryString = DB->esc(strQueryString);
     lastQuery_string = strQueryString;
 
-    // Check to see if there are any lexemes in the query
-    SQL = "SELECT numnode(plainto_tsquery('" + strQueryString + "'));";
+    std::string indexes;
+    if (searchTitle_flag) indexes += "title title-delta ";
+    if (searchArtist_flag) indexes += "artist artist-delta ";
+    if (searchAlbum_flag) indexes += "album album-delta ";
+    //std::string s_host = conf->getParam("sphinx_host");
+    std::string s_host = "127.0.0.1";
+    int         s_port = atoi(conf->getParam("sphinx_port").c_str());
 
-    PqxxResult R2;
-    try {
-        R2 = DB->exec("MusicQueryCheck",SQL);
-        DB->abort("MusicQueryCheck");
+    Q.clear();
+    sphinx_client * s = sphinx_create( SPH_TRUE );
+    sphinx_result * r;
+    if (!s) {
+        cout << "FAILED TO CREATE SPHINX SEARCH" << endl;
     }
-    catch (...) {
-        DB->abort("MusicQueryCheck");
-        L_ERROR(LOG_DB,"Failed to check query for lexemes.");
-        throw SQLError(MKEX(SQL));
-    }
-
-    if (string(R2[0]["numnode"].c_str()) == "0") {
-        throw VagueError(MKEX(""));
-    } 
     else {
-    	SQL =   "SELECT id, md5, artist, title, album, censor, "
-                "querytree(plainto_tsquery('" + strQueryString 
-                + "')::tsquery) FROM v_audio_music WHERE dir = 2";
-
-        int censor_start = atoi(conf->getParam("censor_start").c_str());
-        int censor_end   = atoi(conf->getParam("censor_end").c_str());
-        time_t tim=time(NULL);
-        tm *now=localtime(&tim);
-	
-	    if (censor_start < censor_end) {
-		    //showing PM & hiding AM
-		    if (now->tm_hour < censor_end && now->tm_hour > censor_start) {
-		    	SQL += " AND censor = 'f'";
-		    }
-	    } 
-	    else {
-		    if (now->tm_hour < censor_end || now->tm_hour > censor_start) {
-			    SQL += " AND censor = 'f'";
-		    }
-	    }
-	
-	    if (searchArtist_flag || searchTitle_flag || searchAlbum_flag) {
-	        bool needsDelimitor = false;
-	        SQL += " AND to_tsvector(";
-	        if (searchTitle_flag == true) {
-	            SQL += "title";
-	            needsDelimitor = true;
-	        }
-	        if (searchArtist_flag == true) {
-	            if (needsDelimitor) {
-	                SQL += " || ' ' || ";
-	                needsDelimitor = false;
-	            }
-	            SQL += "artist";
-	            needsDelimitor = true;
-	        }
-	        if (searchAlbum_flag == true) {
-	            if (needsDelimitor) {
-	                SQL += " || ' ' || ";
-	                needsDelimitor = false;
-	            }
-	            SQL += "album";
-	        }
-	        SQL += ")::tsvector @@ plainto_tsquery('" + strQueryString 
-                    + "')::tsquery ORDER BY title";
-	    }
-
-	    if (searchLimit_value > 0) {
-	        SQL += " LIMIT " + dps_itoa(searchLimit_value);
-	    }
-	
-	    PqxxResult R;
-	    try {
-	        R = DB->exec("MusicSearch",SQL);
-	        DB->abort("MusicSearch");
-	    }
-	    catch (...) {
-	        DB->abort("MusicSearch");
-	        L_ERROR(LOG_DB,"Failed to search for music.");
-	        throw SQLError(MKEX(SQL));
-	    }
-	
-		Q.clear();
-	
-	    for (unsigned int i = 0; i < R.size(); i++) {
-		    Q.push_back(DpsAudioItem(atoi(R[i]["id"].c_str())));
-	    }
-	    
-		return Q;
-	}
+        sphinx_set_server( s, s_host.c_str(), s_port);
+        sphinx_set_match_mode ( s, SPH_MATCH_BOOLEAN );
+        sphinx_set_sort_mode ( s, SPH_SORT_RELEVANCE, NULL );
+        sphinx_set_limits( s, 0, 25,25,25);
+        r = sphinx_query( s, strQueryString.c_str(), indexes.c_str(), NULL);
+        if (!r) {
+            cout << "Failed to perform query." << endl;
+            cout << sphinx_error(s) << endl;
+        }
+        else {
+            cout << "Found: " << r->total_found << " out of " << r->total << endl;
+            for (int i = 0; i < r->num_matches; ++i) {
+                cout << "ID: " << sphinx_get_id( r, i ) << endl;
+                Q.push_back(DpsAudioItem(sphinx_get_id(r, i)));
+            }
+        }
+    }
+    return Q;
 }
 
 bool DpsMusicSearch::searchTitle() {

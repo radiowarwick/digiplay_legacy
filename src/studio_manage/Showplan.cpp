@@ -129,21 +129,25 @@ void Showplan::resizeEvent(QResizeEvent *e) {
 void Showplan::load(const DpsShowPlan& pSrc) {
 	modShowplan->loadShowplan(pSrc);
 	selectionChanged(lstShowPlan->currentIndex());
+	updateNextTrack();
 }
 
 void Showplan::append(const DpsShowItem& pSrc) {
 	modShowplan->append(pSrc);
 	selectionChanged(lstShowPlan->currentIndex());
+	updateNextTrack();
 }
 
 void Showplan::append(const DpsAudioItem& pSrc) {
 	modShowplan->append(DpsShowItem(pSrc));
 	selectionChanged(lstShowPlan->currentIndex());
+	updateNextTrack();
 }
 
 void Showplan::append(const DpsScriptItem& pSrc) {
 	modShowplan->append(DpsShowItem(pSrc));
 	selectionChanged(lstShowPlan->currentIndex());
+	updateNextTrack();
 }
 
 void Showplan::clear() {

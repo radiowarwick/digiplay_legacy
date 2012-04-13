@@ -23,7 +23,7 @@
     <file alias="script16.png">../share/dps/images/script16.png</file>
  </qresource>
  <qresource prefix="/images">
-    <file alias="rawdigiplay.png">../share/dps/images/rawdigiplay.png</file>
+    <file alias="digiplay.png">../share/dps/images/digiplay.png</file>
     <file alias="loginlogo.png">../share/dps/images/loginlogo.png</file>
     <file alias="warning48.png">../share/dps/images/warning48.png</file>
  </qresource>

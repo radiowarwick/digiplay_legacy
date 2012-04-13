@@ -62,10 +62,25 @@ std::vector<DpsAudioItem> DpsMusicSearch::query(std::string search_string) {
     //strQueryString = DB->esc(strQueryString);
     lastQuery_string = strQueryString;
 
-    std::string indexes;
-    if (searchTitle_flag) indexes += "title title-delta ";
-    if (searchArtist_flag) indexes += "artist artist-delta ";
-    if (searchAlbum_flag) indexes += "album album-delta ";
+    std::string query;
+    bool comma = false;
+    if (searchTitle_flag) {
+        if (comma) query += ",";
+        comma = true;
+        query += "title";
+    }
+    if (searchArtist_flag) {
+        if (comma) query += ",";
+        comma = true;
+        query += "artist";
+    }
+    if (searchAlbum_flag) {
+        if (comma) query += ",";
+        comma = true;
+        query += "album";
+    }
+    query = "@(" + query + ") " + strQueryString;
+
     //std::string s_host = conf->getParam("sphinx_host");
     std::string s_host = "127.0.0.1";
     int         s_port = atoi(conf->getParam("sphinx_port").c_str());
@@ -81,7 +96,7 @@ std::vector<DpsAudioItem> DpsMusicSearch::query(std::string search_string) {
         sphinx_set_match_mode ( s, SPH_MATCH_BOOLEAN );
         sphinx_set_sort_mode ( s, SPH_SORT_RELEVANCE, NULL );
         sphinx_set_limits( s, 0, 25,25,25);
-        r = sphinx_query( s, strQueryString.c_str(), indexes.c_str(), NULL);
+        r = sphinx_query( s, query.c_str(), "music music-delta", NULL);
         if (!r) {
             cout << "Failed to perform query." << endl;
             cout << sphinx_error(s) << endl;

@@ -159,7 +159,7 @@ void TabPanelEmail::getEmail(){
     // Iterate over the new list of emails
     // TODO: reimplement this when converted to using a map.
     // TODO: use iterators and find
-    for (unsigned int i = 0; i < emails.size(); i++) {
+    for (unsigned int i = emails.size() - 1; i > 0; i--) {
         // Examine the emails from the oldest to the newest
         // Get the ID of the ith email
         k = atoi(emails[i]["id"].c_str());
@@ -247,7 +247,7 @@ void TabPanelEmail::draw() {
     lstEmail->header()->setResizeMode( 2, QHeaderView::Fixed );
     lstEmail->header()->setResizeMode( 3, QHeaderView::Fixed );
     lstEmail->header()->setResizeMode( 4, QHeaderView::Fixed );
-    lstEmail->setGeometry( QRect( 10, 10, 495, 265 ) );
+    lstEmail->setGeometry( QRect( 5, 5, 516, 270 ) );
     lstEmail->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOn );
     lstEmail->setAllColumnsShowFocus( TRUE );
 //    lstEmail->setColumnText(0, *icsEmailIcons, "");
@@ -260,11 +260,13 @@ void TabPanelEmail::draw() {
     lstEmail->setColumnWidth(2, 180);
     lstEmail->setColumnWidth(3, 93);
     lstEmail->setColumnWidth(4, 0); // Message ID
+    lstEmail->setColumnHidden(4, true);
+    lstEmail->setAlternatingRowColors(true);
     lstEmail->header()->setMovable( FALSE );
     lstEmail->setSortingEnabled(FALSE);
 
     txtEmailBody = new QTextBrowser(getPanel() );
-    txtEmailBody->setGeometry( QRect( 10, 280, 495, 350 ) );
+    txtEmailBody->setGeometry( QRect( 5, 280, 516, 348 ) );
     fntBody = txtEmailBody->currentFont();
     pointSize= txtEmailBody->currentFont().pointSize();
 

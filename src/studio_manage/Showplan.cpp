@@ -361,7 +361,7 @@ void Showplan::draw() {
     QString path = DPSDIR;
 
     grpFrame = new QGroupBox( this );
-    grpFrame->setGeometry( QRect( 0, 0, 470, 670 ) );
+    grpFrame->setGeometry( QRect( 0, 0, 470, 660 ) );
 //    QFont grpFrame_font(  grpFrame->font() );
 //    grpFrame_font.setFamily( "Sans Serif" );
 //    grpFrame_font.setPointSize( 12 );
@@ -369,7 +369,7 @@ void Showplan::draw() {
 //    grpFrame->setFont( grpFrame_font );
 //    //grpFrame->setFrameShadow( QGroupBox::Sunken );
 //    //grpFrame->setLineWidth( 1 );
-    grpFrame->setFlat( FALSE );
+    grpFrame->setFlat( TRUE );
 //    grpFrame->setTitle( "Showplan" );
 
     modShowplan = new ShowplanModel;
@@ -378,7 +378,7 @@ void Showplan::draw() {
     lstShowPlan = new ShowplanView( grpFrame );
 //    lstShowPlan = new QListView(grpFrame);
     lstShowPlan->setModel(modShowplan);
-    lstShowPlan->setGeometry( QRect( 10, 20, 450, 580 ) );
+    lstShowPlan->setGeometry( QRect( 0, 0, 468, 598 ) );
     lstShowPlan->setItemDelegate(new ShowplanDelegate);
     lstShowPlan->setResizeMode(QListView::Adjust);
 //    lstShowPlan->header()->setClickEnabled( FALSE,
@@ -402,36 +402,36 @@ void Showplan::draw() {
 
     btnMoveTop = new QPushButton( grpFrame );
     btnMoveTop->setAutoDefault( FALSE );
-    btnMoveTop->setGeometry( QRect( 10, 600, 75, 60 ) );
+    btnMoveTop->setGeometry( QRect( 0, 600, 75, 61 ) );
     btnMoveTop->setEnabled( FALSE );
     btnMoveTop->setIcon(QIcon(":/icons/movetop32.png"));
 
     btnMoveUp = new QPushButton( grpFrame );
     btnMoveUp->setAutoDefault( FALSE );
-    btnMoveUp->setGeometry( QRect( 85, 600, 75, 60 ) );
+    btnMoveUp->setGeometry( QRect( 78, 600, 75, 61 ) );
     btnMoveUp->setEnabled( FALSE );
     btnMoveUp->setIcon(QIcon(":/icons/moveup32.png"));
 
     btnDelete = new QPushButton( grpFrame );
     btnDelete->setAutoDefault( FALSE );
-    btnDelete->setGeometry( QRect( 160, 600, 75, 60 ) );
+    btnDelete->setGeometry( QRect( 156, 600, 75, 61 ) );
     btnDelete->setEnabled( FALSE );
     btnDelete->setIcon(QIcon(":/icons/delete48.png"));
 
     btnClear = new QPushButton( grpFrame );
     btnClear->setAutoDefault( FALSE );
-    btnClear->setGeometry( QRect( 235, 600, 75, 60 ) );
+    btnClear->setGeometry( QRect( 235, 600, 75, 61 ) );
     btnClear->setIcon(QIcon(":/icons/clear32.png"));
 
     btnMoveBottom = new QPushButton( grpFrame );
     btnMoveBottom->setAutoDefault( FALSE );
-    btnMoveBottom->setGeometry( QRect( 385, 600, 75, 60 ) );
+    btnMoveBottom->setGeometry( QRect( 393, 600, 75, 61 ) );
     btnMoveBottom->setEnabled( FALSE );
     btnMoveBottom->setIcon(QIcon(":/icons/movebottom32.png"));
 
     btnMoveDown = new QPushButton( grpFrame );
     btnMoveDown->setAutoDefault( FALSE );
-    btnMoveDown->setGeometry( QRect( 310, 600, 75, 60 ) );
+    btnMoveDown->setGeometry( QRect( 314, 600, 75, 61 ) );
     btnMoveDown->setEnabled( FALSE );
     btnMoveDown->setIcon(QIcon(":/icons/movedown32.png"));
 

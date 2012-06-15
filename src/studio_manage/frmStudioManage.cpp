@@ -30,7 +30,7 @@
 #include "TabPanelSearch.h"
 #include "TabPanelPlaylist.h"
 #include "TabPanelLogging.h"
-#include "TabPanelScript.h"
+//#include "TabPanelScript.h"
 //#include "TabPanelFileBrowser.h"
 #include "Nownext.h"
 #include "Showplan.h"
@@ -56,7 +56,7 @@ TabPanelSearch *tabPanelSearch;
 //TabPanelFileBrowser *tabPanelFileBrowser;
 TabPanelPlaylist *tabPanelPlaylist;
 TabPanelLogging *tabPanelLogging;
-TabPanelScript *tabPanelScript;
+//TabPanelScript *tabPanelScript;
 
 Config *conf;
 clockThread *ck;
@@ -80,7 +80,7 @@ frmStudioManage::frmStudioManage( QWidget* parent, Qt::WindowFlags fl )
 
     tabManage = new QTabWidget( this );
     tabManage->setEnabled( TRUE );
-    tabManage->setGeometry( QRect( 10, 40, 530, 670 ) );
+    tabManage->setGeometry( QRect( 10, 40, 530, 660 ) );
     tabManage->setTabShape( QTabWidget::Rounded );
 
     tabPageInfo = new QWidget( tabManage );
@@ -89,10 +89,10 @@ frmStudioManage::frmStudioManage( QWidget* parent, Qt::WindowFlags fl )
     mBottomFrame = new QFrame( this );
     mBottomFrame->setProperty("id","BottomFrame");
     mBottomFrame->setProperty("BottomFrame","True");
-    mBottomFrame->setGeometry( QRect( 0, 712, 1030, 50 ) );
+    mBottomFrame->setGeometry( QRect( 0, 712, 1030, 60 ) );
 
     pixLogo = new QLabel( mBottomFrame );
-    pixLogo->setGeometry( QRect( 5, 7, 260, 40 ) );
+    pixLogo->setGeometry( QRect( 0, 0, 250, 60 ) );
     pixLogo->setProperty("BottomFrame","True");
     pixLogo->setProperty("id","Logo");
     pixLogo->setScaledContents( TRUE );
@@ -100,47 +100,40 @@ frmStudioManage::frmStudioManage( QWidget* parent, Qt::WindowFlags fl )
     btnLogin = new QPushButton( mBottomFrame );
     btnLogin->setEnabled( TRUE );
     btnLogin->setProperty("id","LoginButton");
-    btnLogin->setGeometry( QRect( 764, 3, 250, 45 ) );
+    btnLogin->setGeometry( QRect( 768, 5, 250, 45 ) );
     btnLogin->setAutoDefault( FALSE );
 
     lblClock = new QLabel( mBottomFrame );
-    lblClock->setGeometry( QRect( 270, 3, 140, 30 ) );
+    lblClock->setGeometry( QRect( 260, 0, 140, 35 ) );
     lblClock->setProperty("BottomFrame","True");
     lblClock->setProperty("id","Clock");
 
     lblDate = new QLabel( mBottomFrame );
-    lblDate->setGeometry( QRect( 430, 3, 320, 30 ) );
+    lblDate->setGeometry( QRect( 430, 0, 320, 35 ) );
     lblDate->setProperty("BottomFrame","True");
     lblDate->setProperty("id","Date");
     lblDate->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
     lblContactEmail = new QLabel( mBottomFrame );
-    lblContactEmail->setGeometry( QRect( 270, 30, 210, 20 ) );
+    lblContactEmail->setGeometry( QRect( 260, 30, 220, 27 ) );
     lblContactEmail->setProperty("BottomFrame","True");
     lblContactEmail->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 
     lblContactSms = new QLabel( mBottomFrame );
-    lblContactSms->setGeometry( QRect( 470, 30, 140, 20 ) );
+    lblContactSms->setGeometry( QRect( 470, 30, 140, 27 ) );
     lblContactSms->setProperty("BottomFrame","True");
     lblContactSms->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
 
     lblContactPhone = new QLabel( mBottomFrame );
-    lblContactPhone->setGeometry( QRect( 610, 30, 140, 20 ) );
+    lblContactPhone->setGeometry( QRect( 610, 30, 140, 25 ) );
     lblContactPhone->setProperty("BottomFrame","True");
     lblContactPhone->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
-    mLblTopBar = new QLabel( this );
-    mLblTopBar->setGeometry( QRect( 0, 30, 1030, 6 ) );
-    mLblTopBar->setProperty("id","TopBar");
 //    frame10 = new QFrame( this );
 //    frame10->setGeometry( QRect( 0, 30, 1030, 6 ) );
 //    frame10->setStyleSheet("background-color: rgb(177,240,254);");
 //    frame10->setFrameShape( QFrame::StyledPanel );
 //    frame10->setFrameShadow( QFrame::Raised );
-
-    mLblBottomBar = new QLabel( this );
-    mLblBottomBar->setGeometry( QRect( 0, 761, 1024, 7 ) );
-    mLblBottomBar->setProperty("id","BottomBar");
 
     languageChange();
     resize( QSize(1024, 768).expandedTo(minimumSizeHint()) );
@@ -173,8 +166,6 @@ void frmStudioManage::languageChange()
     lblDate->setText( tr( "Wednesday 26th September 2004" ) );
     lblContactPhone->setText( tr( "01234567890" ) );
     lblContactEmail->setText( tr( "studio@example.com" ) );
-    mLblBottomBar->setText( QString::null );
-    mLblTopBar->setText( QString::null );
     lblContactSms->setText( tr( "01234567890" ) );
 }
 
@@ -269,14 +260,14 @@ void frmStudioManage::init() {
     tabPanelLogging->configure(authModule);
     cout << " success." << endl;
 
-    cout << " -> Script panel..." << flush;
-    tabPanelScript = new TabPanelScript(tabManage,"Script");
-    tabPanelScript->configure(authModule);
-    cout << " success." << endl;
+//    cout << " -> Script panel..." << flush;
+//    tabPanelScript = new TabPanelScript(tabManage,"Script");
+//    tabPanelScript->configure(authModule);
+//    cout << " success." << endl;
 
     cout << " -> Showplan..." << flush;
     sp = new Showplan(this);
-    sp->setGeometry( QRect( 550, 40, 470, 670) );
+    sp->setGeometry( QRect( 547, 40, 470, 660) );
     sp->configure(authModule);
     cout << "success." << endl;
 
@@ -294,12 +285,12 @@ void frmStudioManage::init() {
 //    connect ( tabPanelFileBrowser, SIGNAL( awsetSelected( QString ) ),
 //                this, SLOT( updateAwSet( QString ) ) );
 
-    connect ( sp, SIGNAL( scriptSelected( const DpsScriptItem& ) ),
-                tabPanelScript, SLOT( loadScript( const DpsScriptItem& ) ) );
-    connect ( sp, SIGNAL( scriptDeselected() ),
-                tabPanelScript, SLOT( clearScript() ) );
-    connect ( tabPanelScript, SIGNAL( scriptDone(const DpsScriptItem&) ),
-                sp, SLOT( scriptDone(const DpsScriptItem&) ) );
+//    connect ( sp, SIGNAL( scriptSelected( const DpsScriptItem& ) ),
+//                tabPanelScript, SLOT( loadScript( const DpsScriptItem& ) ) );
+//    connect ( sp, SIGNAL( scriptDeselected() ),
+//                tabPanelScript, SLOT( clearScript() ) );
+//    connect ( tabPanelScript, SIGNAL( scriptDone(const DpsScriptItem&) ),
+//                sp, SLOT( scriptDone(const DpsScriptItem&) ) );
 
     cout << "Interface initialisation complete." << endl;
     cout << "Setting initial configuration values..." << flush;
@@ -431,7 +422,7 @@ void frmStudioManage::btnLoginClicked()
     tabPanelPlaylist->configure(authModule);
     tabPanelEmail->configure(authModule);
     tabPanelLogging->configure(authModule);
-    tabPanelScript->configure(authModule);
+//    tabPanelScript->configure(authModule);
 //    tabPanelFileBrowser->configure(authModule);
 }
 

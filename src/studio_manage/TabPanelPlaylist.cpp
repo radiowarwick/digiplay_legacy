@@ -118,7 +118,7 @@ void TabPanelPlaylist::processPlaylistUpdate() {
     QStandardItem *new_playlist;
 
     // Get list of playlists
-    string SQL = "SELECT id,name FROM playlists ORDER BY name DESC";
+    string SQL = "SELECT id,name FROM playlists ORDER BY name ASC";
     PqxxResult Playlists;
     try {
         Playlists = DB->exec("PlaylistRetrieve", SQL);
@@ -149,12 +149,12 @@ void TabPanelPlaylist::processPlaylistUpdate() {
             // Populate this playlist
             for (unsigned int i = 0; i < R.size(); i++) {
                 QList<QStandardItem*> s;
-                s.append(new QStandardItem(*icnTrack,
+                s.append(new QStandardItem(*icnAudio,
                         QString::fromStdString(R[i]["artist"].c_str())));
                 s.append(new QStandardItem(QString::fromAscii(R[i]["title"].c_str())));
                 s.append(new QStandardItem(QString::fromStdString(dps_prettyTime(atoi(R[i]["length_smpl"].c_str())))));
                 s.append(new QStandardItem(QString::fromAscii(R[i]["id"].c_str())));
-                s.at(0)->setIcon(*icnTrack);
+                s.at(0)->setIcon(*icnAudio);
                 modPlaylist->item(j,0)->appendRow(s);
             }
         }
@@ -191,7 +191,7 @@ void TabPanelPlaylist::draw() {
     QString path = DPSDIR;
     icnExpanded = new QIcon(":/icons/expand16.png");
     icnCollapsed = new QIcon(":/icons/contract16.png");
-    icnTrack = new QIcon("/icons/music16.png");
+    icnAudio = new QIcon("/icons/music16.png");
     
     // do all form drawing here, create widgets, set properties
     modPlaylist = new QStandardItemModel;
@@ -204,7 +204,7 @@ void TabPanelPlaylist::draw() {
 
     lstPlaylist = new QTreeView( getPanel() );
     lstPlaylist->setModel(modPlaylist);
-    lstPlaylist->setGeometry( QRect( 10, 10, 510, 620 ) );
+    lstPlaylist->setGeometry( QRect( 5, 5, 516, 623 ) );
     lstPlaylist->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOn );
     lstPlaylist->header()->setResizeMode(0, QHeaderView::Fixed);
     lstPlaylist->header()->setResizeMode(1, QHeaderView::Fixed);
@@ -239,5 +239,5 @@ void TabPanelPlaylist::clear() {
 	if (icnBList) delete icnBList;
 	if (icnExpanded) delete icnExpanded;
 	if (icnCollapsed) delete icnCollapsed;
-	if (icnTrack) delete icnTrack;
+	if (icnAudio) delete icnAudio;
 }

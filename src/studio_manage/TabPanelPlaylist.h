@@ -77,7 +77,7 @@ class TabPanelPlaylist : public TabPanel {
 		QTreeView *lstPlaylist;
 		QStandardItemModel *modPlaylist;
 		QIcon *icnAList, *icnBList;
-		QIcon *icnExpanded, *icnCollapsed, *icnTrack;
+		QIcon *icnExpanded, *icnCollapsed, *icnAudio;
 };
 
 #endif

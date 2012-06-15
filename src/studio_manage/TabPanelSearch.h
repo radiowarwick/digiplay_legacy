@@ -115,7 +115,7 @@ class TabPanelSearch : 	public TabPanel,
 		QStandardItemModel *modSearch;
 		QTableView *lstSearchResults;
 		QLineEdit *txtLibrarySearchText;
-		QLabel *Searchlable;
+		QLabel *lblSearchBy;
 		QLabel *lblSearch;
 		QCheckBox *ArtistCheckBox;
 		QCheckBox *AlbumCheckBox;

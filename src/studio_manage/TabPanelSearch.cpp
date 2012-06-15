@@ -267,49 +267,27 @@ void TabPanelSearch::draw() {
 
     lblSearch = new QLabel( getPanel() );
     lblSearch->setGeometry( QRect( 28, 10, 60, 20 ) );
-    QFont lblSearch_font(  lblSearch->font() );
-    lblSearch_font.setPointSize( 10 );
-    lblSearch_font.setBold( FALSE );
-    lblSearch->setFont( lblSearch_font );
 
-    Searchlable = new QLabel( getPanel() );
-    Searchlable->setGeometry( QRect( 10, 33, 67, 20 ) );
-    QFont Searchlable_font(  Searchlable->font() );
-    Searchlable_font.setPointSize( 10 );
-    Searchlable_font.setBold( FALSE );
-    Searchlable->setFont( Searchlable_font );
+    lblSearchBy = new QLabel( getPanel() );
+    lblSearchBy->setGeometry( QRect( 11, 33, 69, 20 ) );
 
     txtLibrarySearchText = new QLineEdit( getPanel() );
     txtLibrarySearchText->setGeometry( QRect( 83, 8, 330, 25 ) );
 
     ArtistCheckBox = new QCheckBox( getPanel() );
     ArtistCheckBox->setGeometry( QRect( 83, 35, 70, 20 ) );
-    QFont ArtistCheckBox_font(  ArtistCheckBox->font() );
-    ArtistCheckBox_font.setBold( FALSE );
-    ArtistCheckBox->setFont( ArtistCheckBox_font );
     ArtistCheckBox->setChecked( TRUE );
 
     TitleCheckBox = new QCheckBox( getPanel() );
     TitleCheckBox->setGeometry( QRect( 190, 35, 60, 20 ) );
-    QFont TitleCheckBox_font(  TitleCheckBox->font() );
-    TitleCheckBox_font.setBold( FALSE );
-    TitleCheckBox->setFont( TitleCheckBox_font );
     TitleCheckBox->setChecked( TRUE );
 
     AlbumCheckBox = new QCheckBox( getPanel() );
     AlbumCheckBox->setGeometry( QRect( 290, 35, 91, 20 ) );
-    QFont AlbumCheckBox_font(  AlbumCheckBox->font() );
-    AlbumCheckBox_font.setBold( FALSE );
-    AlbumCheckBox->setFont( AlbumCheckBox_font );
     AlbumCheckBox->setChecked( TRUE );
 
     btnLibrarySearch = new QPushButton( getPanel() );
     btnLibrarySearch->setGeometry( QRect( 421, 10, 80, 20 ) );
-
-    QFont btnLibrarySearch_font(  btnLibrarySearch->font() );
-    btnLibrarySearch_font.setPointSize( 10 );
-    btnLibrarySearch_font.setBold( FALSE );
-    btnLibrarySearch->setFont( btnLibrarySearch_font );
     btnLibrarySearch->setAutoDefault( FALSE );
 
     modSearch = new QStandardItemModel(0,4);
@@ -320,16 +298,16 @@ void TabPanelSearch::draw() {
 
     lstSearchResults = new QTableView( getPanel() );
     lstSearchResults->setModel(modSearch);
-    lstSearchResults->setGeometry( QRect( 10, 60, 510, 570 ) );
+    lstSearchResults->setGeometry( QRect( 5, 60, 516, 568 ) );
     lstSearchResults->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOn );
     lstSearchResults->setSelectionBehavior(QTableView::SelectRows);
     lstSearchResults->setSelectionMode(QTableView::SingleSelection);
     lstSearchResults->setAlternatingRowColors(true);
     lstSearchResults->setShowGrid(false);
     lstSearchResults->setColumnHidden(3, true);
-    lstSearchResults->setColumnWidth(0, 200);
-    lstSearchResults->setColumnWidth(1, 200);
-    lstSearchResults->setColumnWidth(2, 200);
+    lstSearchResults->setColumnWidth(0, 197);
+    lstSearchResults->setColumnWidth(1, 150);
+    lstSearchResults->setColumnWidth(2, 150);
     lstSearchResults->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
     lstSearchResults->verticalHeader()->hide();
     lstSearchResults->verticalHeader()->setDefaultSectionSize(20);
@@ -339,7 +317,7 @@ void TabPanelSearch::draw() {
     lblSearch->setText( tr( "Search:" ) );
     TitleCheckBox->setText( tr( "Title" ) );
     AlbumCheckBox->setText( tr( "Album" ) );
-    Searchlable->setText( tr( "Search by:" ) );
+    lblSearchBy->setText( tr( "Search by:" ) );
     ArtistCheckBox->setText( tr( "Artist" ) );
     btnLibrarySearch->setText( tr( "Search" ) );
 
@@ -360,7 +338,7 @@ void TabPanelSearch::clear() {
 	delete btnLibrarySearch;
 	delete lstSearchResults;
 	delete txtLibrarySearchText;
-	delete Searchlable;
+	delete lblSearchBy;
 	delete ArtistCheckBox;
 	delete AlbumCheckBox;
 	delete TitleCheckBox;

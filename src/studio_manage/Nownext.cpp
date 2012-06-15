@@ -193,35 +193,35 @@ void Nownext::draw() {
     QString path = DPSDIR;
 
     frameOutline = new QFrame( this );
-    frameOutline->setGeometry( QRect( 0, 0, 1030, 30 ) );
+    frameOutline->setGeometry( QRect( 0, 0, 1024, 30 ) );
     frameOutline->setProperty("id","TopBarFrame");
     frameOutline->setFrameShape( QFrame::StyledPanel );
     frameOutline->setFrameShadow( QFrame::Plain );
     frameOutline->setLineWidth( 0 );
 
     frameInternal = new QFrame( frameOutline );
-    frameInternal->setGeometry( QRect( 514, 0, 2, 37 ) );
+    frameInternal->setGeometry( QRect( 514, 0, 0, 37 ) );
     frameInternal->setFrameShape( QFrame::StyledPanel );
     frameInternal->setFrameShadow( QFrame::Raised );
 
-    pixFade = new QLabel( frameOutline );
-    pixFade->setGeometry( QRect( 960, 0, 43, 30 ) );
-    pixFade->setPixmap( QPixmap(path + "/images/fade.png") );
-    pixFade->setScaledContents( TRUE );
+//    pixFade = new QLabel( frameOutline );
+//    pixFade->setGeometry( QRect( 960, 0, 43, 30 ) );
+//    pixFade->setPixmap( QPixmap(path + "/images/fade.png") );
+//    pixFade->setScaledContents( TRUE );
 
     lblNext = new QLabel( frameOutline );
-    lblNext->setGeometry( QRect( 520, 0, 440, 31 ) );
+    lblNext->setGeometry( QRect( 520, 1, 440, 28 ) );
     lblNext->setProperty("id","TopBarNext");
     lblNext->setText ( "On next: " );
 
     lblNow = new QLabel( frameOutline );
-    lblNow->setGeometry( QRect( 0, 0, 512, 31 ) );
+    lblNow->setGeometry( QRect( 5, 1, 512, 28 ) );
     lblNow->setProperty("id","TopBarNow");
     lblNow->setText( "On now: " );
 
-    Area_of_Black = new QLabel( frameOutline );
-    Area_of_Black->setGeometry( QRect( 1003, 0, 21, 30 ) );
-    Area_of_Black->setProperty("id","TopBarBorder");
+//    Area_of_Black = new QLabel( frameOutline );
+//    Area_of_Black->setGeometry( QRect( 1003, 0, 21, 30 ) );
+//    Area_of_Black->setProperty("id","TopBarBorder");
 
 	updateDisplay();
 }

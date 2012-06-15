@@ -68,7 +68,7 @@ void TabPanelInfo::draw() {
 	}
 
 	txtInfoPanel = new QTextBrowser( getPanel() );
-	txtInfoPanel->setGeometry( QRect( 10, 10, 500, 610 ) );
+	txtInfoPanel->setGeometry( QRect( 5, 5, 516, 623 ) );
 	txtInfoPanel->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOn );
 	txtInfoPanel->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
 

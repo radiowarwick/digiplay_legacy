@@ -29,8 +29,11 @@
 #include "MessagingInterface.h"
 
 class QTabWidget;
-class QTreeWidget;
+class QStandardItemModel;
+class QTableView;
 class QLineEdit;
+class QIcon;
+class QIconSet;
 class QLabel;
 class QPushButton;
 
@@ -69,10 +72,12 @@ class TabPanelLogging : public TabPanel,
         DataAccess* DB;
         QtTrigger* triggerLog;
 		int location, userid;
-		QTreeWidget *lstRecentlyLogged;
-		QLineEdit *txtArtist, *txtTitle, *txtReclibID;
-		QLabel *lblArtist, *lblTitle, *lblReclibID, *lblRecentlyLogged;
+		QStandardItemModel *modLog;
+		QTableView *lstRecentlyLogged;
+		QLineEdit *txtArtist, *txtTitle;
+		QLabel *lblArtist, *lblTitle, *lblRecentlyLogged;
 		QPushButton *btnLog;
+		QIcon *icnAudio;
 };
 
 #endif

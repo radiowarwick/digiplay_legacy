@@ -24,8 +24,11 @@
 #include <cstdlib>
 
 #include <QtGui/QTabWidget>
-#include <QtGui/QTreeWidget>
+#include <QtGui/QStandardItemModel>
+#include <QtGui/QTableView>
 #include <QtCore/QString>
+#include <QtGui/QIcon>
+#include <QtGui/QIconSet>
 #include <QtGui/QHeaderView>
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
@@ -164,14 +167,14 @@ void TabPanelLogging::buttonPressed() {
     // Retrieve values from text fields
     string artist = txtArtist->text().toStdString();
     string title = txtTitle->text().toStdString();
-    string reclibid = txtReclibID->text().toStdString();
+//    string reclibid = txtReclibID->text().toStdString();
 
     // Try to log record
     if (logRecord(artist, title) != 0)
         L_ERROR(LOG_TABLOGGING, "Logging failed");
         
     // Reset text fields
-    txtReclibID->setText("");
+    //txtReclibID->setText("");
     txtArtist->setText("");
     txtTitle->setText("");
     
@@ -191,9 +194,6 @@ void TabPanelLogging::processLogUpdate() {
     tm *dte;
     char date[30];
     
-    // Clear the list
-    lstRecentlyLogged->clear();
-
     // Retrieve the last 50 tracks logged.
     // TODO - Change the 1 in this SQL query to the System Define
     string SQL = "SELECT * FROM log WHERE userid != 1 ORDER BY datetime DESC LIMIT 50;";
@@ -208,16 +208,16 @@ void TabPanelLogging::processLogUpdate() {
     }
     
     // Populate the list with the retrieved tracks.
-    QTreeWidgetItem *new_item;
+    modLog->removeRows(0,modLog->rowCount());
+    modLog->setRowCount(R.size());
     for (unsigned int i = 0; i < R.size(); i++) {
         time_t thetime(atoi(R[i]["datetime"].c_str()));
         dte = localtime(&thetime);
         strftime(date, 30, "%Ex %H:%M", dte);
-        QStringList s;
-        s.append(QString::fromAscii(date));
-        s.append(QString::fromAscii(R[i]["track_artist"].c_str()));
-        s.append(QString::fromAscii(R[i]["track_title"].c_str()));
-        new_item = new QTreeWidgetItem(lstRecentlyLogged, s);
+        modLog->setItem(i,0,new QStandardItem(QString::fromAscii(date)));
+	modLog->setItem(i,1,new QStandardItem(QString::fromAscii(R[i]["track_title"].c_str())));
+        modLog->setItem(i,2,new QStandardItem(QString::fromAscii(R[i]["track_artist"].c_str())));
+	modLog->item(i,0)->setIcon(*icnAudio);
     }
     L_INFO(LOG_TABLOGGING,"List of recently logged tracks updated successfully.");
 }
@@ -229,57 +229,60 @@ void TabPanelLogging::processLogUpdate() {
 void TabPanelLogging::draw() {
 
     // do all form drawing here, create widgets, set properties
-    lblReclibID = new QLabel( getPanel() );
-    lblReclibID->setGeometry( QRect( 10, 10, 111, 20 ) );
+    //lblReclibID = new QLabel( getPanel() );
+    //lblReclibID->setGeometry( QRect( 10, 10, 111, 20 ) );
+    icnAudio = new QIcon(":/icons/music16.png");
 
     lblArtist = new QLabel( getPanel() );
-    lblArtist->setGeometry( QRect( 32, 40, 120, 20 ) );
+    lblArtist->setGeometry( QRect( 32, 10, 120, 20 ) );
 
     lblTitle = new QLabel( getPanel() );
-    lblTitle->setGeometry( QRect( 39, 70, 68, 20 ) );
+    lblTitle->setGeometry( QRect( 39, 37, 68, 20 ) );
 
     lblRecentlyLogged = new QLabel( getPanel() );
-    lblRecentlyLogged->setGeometry( QRect( 10, 98, 121, 21 ) );
+    lblRecentlyLogged->setGeometry( QRect( 10, 58, 121, 21 ) );
 
     txtArtist = new QLineEdit( getPanel() );
-    txtArtist->setGeometry( QRect( 80, 38, 260, 25 ) );
+    txtArtist->setGeometry( QRect( 83, 8, 330, 25 ) );
 
     txtTitle = new QLineEdit( getPanel() );
-    txtTitle->setGeometry( QRect( 80, 68, 260, 25 ) );
+    txtTitle->setGeometry( QRect( 83, 34, 330, 25 ) );
 
     btnLog = new QPushButton( getPanel() );
-    btnLog->setGeometry( QRect( 401, 10, 100, 50 ) );
+    btnLog->setGeometry( QRect( 419, 8, 100, 50 ) );
 
-    txtReclibID = new QLineEdit( getPanel() );
-    txtReclibID->setGeometry( QRect( 80, 8, 90, 25 ) );
+    //txtReclibID = new QLineEdit( getPanel() );
+    //txtReclibID->setGeometry( QRect( 80, 8, 90, 25 ) );
 
-    QStringList vHeaderLabels;
-    vHeaderLabels.append("Date/Time");
-    vHeaderLabels.append("Artist");
-    vHeaderLabels.append("Title");
+    modLog = new QStandardItemModel(0,3);
+    modLog->setHeaderData(0, Qt::Horizontal, tr("Date/Time"));
+    modLog->setHeaderData(1, Qt::Horizontal, tr("Title"));
+    modLog->setHeaderData(2, Qt::Horizontal, tr("Artist"));
 
-    lstRecentlyLogged = new QTreeWidget( getPanel() );
-    lstRecentlyLogged->setHeaderLabels(vHeaderLabels);
-    lstRecentlyLogged->header()->setResizeMode( 0, QHeaderView::Fixed );
-    lstRecentlyLogged->header()->setResizeMode( 1, QHeaderView::Fixed );
-    lstRecentlyLogged->header()->setResizeMode( 2, QHeaderView::Fixed );
-    lstRecentlyLogged->setGeometry( QRect( 10, 120, 491, 510 ) );
-    lstRecentlyLogged->setAllColumnsShowFocus( TRUE );
+    lstRecentlyLogged = new QTableView( getPanel() );
+    lstRecentlyLogged->setModel(modLog);
+    lstRecentlyLogged->setGeometry( QRect( 5, 80, 516, 548 ) );
     lstRecentlyLogged->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOn );
-    lstRecentlyLogged->setColumnWidth(0,90);
-    lstRecentlyLogged->setColumnWidth(1,194);
-    lstRecentlyLogged->setColumnWidth(2,194);
-    lstRecentlyLogged->header()->setMovable( FALSE );
-    lstRecentlyLogged->setSortingEnabled(FALSE);
+    lstRecentlyLogged->setSelectionBehavior(QTableView::SelectRows);
+    lstRecentlyLogged->setSelectionMode(QTableView::SingleSelection);
+    lstRecentlyLogged->setAlternatingRowColors(true);
+    lstRecentlyLogged->setShowGrid(false);
+    lstRecentlyLogged->setColumnWidth(0, 130);
+    lstRecentlyLogged->setColumnWidth(1, 206);
+    lstRecentlyLogged->setColumnWidth(2, 160);
+    lstRecentlyLogged->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
+    lstRecentlyLogged->verticalHeader()->hide();
+    lstRecentlyLogged->verticalHeader()->setDefaultSectionSize(20);
+    lstRecentlyLogged->setEditTriggers(QTableView::NoEditTriggers);
 
-    lblReclibID->setText( tr( "Reclib ID:" ) );
+    //lblReclibID->setText( tr( "Reclib ID:" ) );
     lblArtist->setText( tr( "Artist:" ) );
     lblTitle->setText( tr( "Title:" ) );
     lblRecentlyLogged->setText( tr( "Recently Logged" ) );
     btnLog->setText( tr( "Log" ) );
 
     //Disable reclib ID logging until data is available....
-    txtReclibID->setEnabled(FALSE);
+    //txtReclibID->setEnabled(FALSE);
 
     // connect signals and slots here
     connect( btnLog, SIGNAL( clicked() ), 
@@ -296,6 +299,6 @@ void TabPanelLogging::clear() {
     delete lstRecentlyLogged;
     delete txtArtist;
     delete txtTitle;
-    delete txtReclibID;
+    //delete txtReclibID;
     delete btnLog;
 }

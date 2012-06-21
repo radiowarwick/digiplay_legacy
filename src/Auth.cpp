@@ -186,7 +186,7 @@ void Auth::closeSession() {
 	addPrivilage("TabInfo");
 	addPrivilage("TabSearch");
 	addPrivilage("TabLogging");
-    addPrivilage("TabFileBrowser");
+    //addPrivilage("TabFileBrowser");
 }
 
 void Auth::addPrivilage(string privilage) {

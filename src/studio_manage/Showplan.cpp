@@ -292,7 +292,7 @@ void Showplan::selectionChanged(const QModelIndex& x) {
         }
 
         // Down buttons
-        if (x.row() + 1 == modShowplan->getSize()) {
+        if (x.row() + 1 == (signed)modShowplan->getSize()) {
             btnMoveBottom->setEnabled(false);
             btnMoveDown->setEnabled(false);
         }
@@ -405,35 +405,41 @@ void Showplan::draw() {
     btnMoveTop->setGeometry( QRect( 0, 600, 75, 61 ) );
     btnMoveTop->setEnabled( FALSE );
     btnMoveTop->setIcon(QIcon(":/icons/movetop32.png"));
+    btnMoveTop->setIconSize(QSize(32,32));
 
     btnMoveUp = new QPushButton( grpFrame );
     btnMoveUp->setAutoDefault( FALSE );
     btnMoveUp->setGeometry( QRect( 78, 600, 75, 61 ) );
     btnMoveUp->setEnabled( FALSE );
     btnMoveUp->setIcon(QIcon(":/icons/moveup32.png"));
+    btnMoveUp->setIconSize(QSize(32,32));
 
     btnDelete = new QPushButton( grpFrame );
     btnDelete->setAutoDefault( FALSE );
     btnDelete->setGeometry( QRect( 156, 600, 75, 61 ) );
     btnDelete->setEnabled( FALSE );
     btnDelete->setIcon(QIcon(":/icons/delete48.png"));
+    btnDelete->setIconSize(QSize(32,32));
 
     btnClear = new QPushButton( grpFrame );
     btnClear->setAutoDefault( FALSE );
     btnClear->setGeometry( QRect( 235, 600, 75, 61 ) );
     btnClear->setIcon(QIcon(":/icons/clear32.png"));
+    btnClear->setIconSize(QSize(32,32));
 
     btnMoveBottom = new QPushButton( grpFrame );
     btnMoveBottom->setAutoDefault( FALSE );
     btnMoveBottom->setGeometry( QRect( 393, 600, 75, 61 ) );
     btnMoveBottom->setEnabled( FALSE );
     btnMoveBottom->setIcon(QIcon(":/icons/movebottom32.png"));
+    btnMoveBottom->setIconSize(QSize(32,32));
 
     btnMoveDown = new QPushButton( grpFrame );
     btnMoveDown->setAutoDefault( FALSE );
     btnMoveDown->setGeometry( QRect( 314, 600, 75, 61 ) );
     btnMoveDown->setEnabled( FALSE );
     btnMoveDown->setIcon(QIcon(":/icons/movedown32.png"));
+    btnMoveDown->setIconSize(QSize(32,32));
 
     connect( btnDelete, SIGNAL( clicked() ),        this, SLOT( removeItem() ));
     connect( btnMoveBottom, SIGNAL( clicked() ),    this, SLOT( moveItemBottom() ));

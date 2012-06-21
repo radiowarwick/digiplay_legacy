@@ -114,8 +114,6 @@ void TabPanelPlaylist::playlistAdd(const QModelIndex& x) {
 void TabPanelPlaylist::processPlaylistUpdate() {
     const char* routine = "TabPanelPlaylist::processPlaylistUpdate";
     L_INFO(LOG_TABPLAYLIST,"Refreshing playlist display.");
-    
-    QStandardItem *new_playlist;
 
     // Get list of playlists
     string SQL = "SELECT id,name FROM playlists ORDER BY name ASC";
@@ -164,6 +162,7 @@ void TabPanelPlaylist::processPlaylistUpdate() {
             return;
         }
     }
+    lstPlaylist->expandAll();
     DB->abort("PlaylistRetrieve");
 }
 
@@ -191,7 +190,7 @@ void TabPanelPlaylist::draw() {
     QString path = DPSDIR;
     icnExpanded = new QIcon(":/icons/expand16.png");
     icnCollapsed = new QIcon(":/icons/contract16.png");
-    icnAudio = new QIcon("/icons/music16.png");
+    icnAudio = new QIcon(":/icons/music16.png");
     
     // do all form drawing here, create widgets, set properties
     modPlaylist = new QStandardItemModel;

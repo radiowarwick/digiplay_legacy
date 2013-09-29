@@ -49,7 +49,9 @@ AudioWallManager::~AudioWallManager() {
 
 void AudioWallManager::onMessage() {
 	unsigned int awset = atoi(conf->getParam(_name.ascii()).c_str());
-	load(awset);
+	if(_awset != awset) {
+		load(awset);
+	}
 }
 
 void AudioWallManager::refreshWall() {

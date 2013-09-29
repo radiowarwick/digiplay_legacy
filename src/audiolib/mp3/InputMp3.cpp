@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include "Counter.h"
 #include "CircularCache.h"
 #include "InputMp3.h"

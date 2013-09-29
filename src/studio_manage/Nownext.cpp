@@ -23,7 +23,7 @@
  *
  */
 #include <cstdlib>
-
+#include <unistd.h>
 #include <qapplication.h>
 #include <qstring.h>
 #include <qpixmap.h>

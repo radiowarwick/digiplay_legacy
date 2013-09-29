@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include <unistd.h>
 
 #include <pqxx/pqxx>
 

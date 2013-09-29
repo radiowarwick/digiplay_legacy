@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <unistd.h>
 using std::ofstream;
 using std::cout;
 using std::endl;

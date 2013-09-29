@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include "Logger.h"
 #include "DataAccess.h"
 

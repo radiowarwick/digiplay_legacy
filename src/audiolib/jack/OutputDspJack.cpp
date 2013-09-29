@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <string.h>
+#include <unistd.h>
 using namespace std;
 
 #include <jack/jack.h>

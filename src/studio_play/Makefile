@@ -26,7 +26,7 @@ HDRS		=
 
 # Compiler and linker options
 #LIBS		=	-lpq -lpqxx -lm -lpthread -ldpsaudio
-LIBS		=	-lpqxx -lm -lpthread ../audiolib/libdpsaudio.so.0.99
+LIBS		=	-lpqxx -lm -lpthread -lasound ../audiolib/libdpsaudio.so.0.99
 #LIBS		=	-lpq -lpqxx -lm -lpthread\
 /home/cc/tmp/dps-test/src/audio/libdpsaudio.so.0.99
 

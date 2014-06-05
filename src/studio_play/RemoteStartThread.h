@@ -1,9 +1,9 @@
 /*
  * Remote Starts module
  * remoteStartThread.h
- * Provides triggering of audio players through the parallel port
+ * Provides triggering of audio players through the MIDI port
  *
- * Copyright (c) 2005-2006 Ian Liverton
+ * Copyright (c) 2014 Jonty Sewell
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 
 #include <qapplication.h>
 #include <qobject.h>
+#include <alsa/asoundlib.h>
 
 #include "Thread.h"
 
@@ -51,6 +52,8 @@ class RemoteStartThread : public QObject,
 	private:
 		ThreadMutex mutex;
 		QObject *receiver;
+
+		snd_seq_t *seq_handle;
 		
 		bool stopped;
 		int status;

@@ -75,6 +75,7 @@ class AudioPlayer:  public QWidget,
         string id;
 		int location;
 		int userid;
+        int audioid;
         Config* conf;
         DataAccess* DB;
         Audio::Input* audioFilereader;

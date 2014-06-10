@@ -144,6 +144,8 @@ void AudioPlayer::load() {
     conf->setParam("next_on_showplan","");
     conf->setParam("player" + id + "_md5", string(R[0]["md5"].c_str()));
 
+    audioid = atoi(R[0]["id"].c_str());
+
 	qApp->lock();
     lblTitle->setText(R[0]["title"].c_str());
     lblArtist->setText(R[0]["artist"].c_str());
@@ -213,9 +215,9 @@ void AudioPlayer::log() {
 				
     // Try and insert into database
     string SQL = "INSERT INTO log "
-                "(userid, datetime, track_title, track_artist, location) "
+                "(userid, datetime, track_title, track_artist, location, audioid) "
                 "VALUES (" + dps_itoa(userid) + ", " + dps_itoa(now) + ", '"
-                + title + "', '" + artist + "', " + dps_itoa(location) + ");";
+                + title + "', '" + artist + "', " + dps_itoa(location) + ", " + dps_itoa(audioid) + ");";
     DB->exec("AudioPlayerLog",SQL);
     DB->commit("AudioPlayerLog");
 }

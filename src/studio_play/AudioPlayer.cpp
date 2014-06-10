@@ -46,8 +46,8 @@ using namespace Audio;
 AudioPlayer::AudioPlayer(QWidget *parent, const char* name, unsigned short playerId) 
         : QWidget(parent,name) {
 
-    drawCreate();
     id = dps_itoa(playerId);
+    drawCreate();
     DB = new DataAccess();
     conf = new Config("digiplay",this);
     std::string device = conf->getParam("channel_" + id);
@@ -384,12 +384,12 @@ void AudioPlayer::drawCreate() {
     pixPause = new QPixmap(path + "/images/pause.png");
 
     grpFrame = new QGroupBox( this, "grpFrame" );
-    grpFrame->setGeometry( QRect( 0, 0, 540, 240 ) );
+    grpFrame->setGeometry( QRect( 0, 0, 540, 245 ) );
     QFont grpFrame_font(  grpFrame->font() );
     grpFrame_font.setPointSize( 16 );
     grpFrame_font.setBold( TRUE );
     grpFrame->setFont( grpFrame_font );
-    grpFrame->setTitle( "Audio Player " + id);
+    grpFrame->setTitle( "Player " + id);
 
     lblTime = new QLabel( grpFrame, "lblTime" );
     lblTime->setGeometry( QRect( 270, 100, 110, 17 ) );
@@ -451,14 +451,14 @@ void AudioPlayer::drawCreate() {
 
     btnStop = new QPushButton( grpFrame, "btnStop" );
     btnStop->setEnabled( FALSE );
-    btnStop->setGeometry( QRect( 10, 159, 110, 70 ) );
+    btnStop->setGeometry( QRect( 7, 155, 130, 83 ) );
     btnStop->setText( QString::null );
     btnStop->setPixmap( QPixmap(path + "/images/stop.png") );
     connect( btnStop, SIGNAL(pressed()), this, SLOT(stop()) );
 
     btnPlay = new QPushButton( grpFrame, "btnPlay" );
     btnPlay->setEnabled( FALSE );
-    btnPlay->setGeometry( QRect( 130, 159, 110, 70 ) );
+    btnPlay->setGeometry( QRect( 140, 155, 130, 83 ) );
     btnPlay->setText( QString::null );
     btnPlay->setPixmap( *pixPlay );
     connect( btnPlay, SIGNAL(pressed()), this, SLOT(play()) );

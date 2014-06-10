@@ -56,20 +56,20 @@ void frmPlayout::init() {
 
     // Create audio players
     audioPlayer1 = new AudioPlayer(this,"audioPlayer1",1);
-    audioPlayer1->setGeometry(10,10,540,240);
+    audioPlayer1->setGeometry(10,10,540,245);
     audioPlayer2 = new AudioPlayer(this,"audioPlayer2",2);
-    audioPlayer2->setGeometry(10,260,540,240);
+    audioPlayer2->setGeometry(10,262,540,245);
     audioPlayer3 = new AudioPlayer(this,"audioPlayer3",3);
-    audioPlayer3->setGeometry(10,510,540,240);
+    audioPlayer3->setGeometry(10,514,540,245);
 
 	// Create the station audio wall
     stnAudioWall = new AudioWall(this,"stnAudioWall",4,3);
-	stnAudioWall->setGeometry(560,0,460,373);
+	stnAudioWall->setGeometry(555,10,460,373);
 	stnAudioWallMan = new AudioWallManager(stnAudioWall, "station_aw_set");
 	
     // Create the user audio wall
 	usrAudioWall = new AudioWall(this,"usrAudioWall",4,3);
-	usrAudioWall->setGeometry(560,373,460,373);
+	usrAudioWall->setGeometry(555,386,460,373);
 	usrAudioWallMan = new AudioWallManager(usrAudioWall, "user_aw_set");
 
     // Link the audio walls to the fourth channel

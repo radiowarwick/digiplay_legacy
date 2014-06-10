@@ -1,0 +1,6 @@
+*.o
+moc_*
+*.so*
+src/studio_play/frmPlayout.h
+src/studio_play/frmPlayout.cpp
+src/studio_play/studio_play

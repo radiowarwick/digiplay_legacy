@@ -220,6 +220,8 @@ void AudioPlayer::log() {
                 + title + "', '" + artist + "', " + dps_itoa(location) + ", " + dps_itoa(audioid) + ");";
     DB->exec("AudioPlayerLog",SQL);
     DB->commit("AudioPlayerLog");
+
+    btnLog->setPaletteBackgroundColor(QColor(QRgb(12632256)));
 }
 
 void AudioPlayer::play() {
@@ -311,6 +313,11 @@ void AudioPlayer::onSetState() {
                 btnLoad->setEnabled(false);
                 sldSeek->setEnabled(false);
                 btnPlay->setPixmap(*pixPause);
+
+                if(btnLog->isEnabled()) {
+                    btnLog->setPaletteBackgroundColor(QColor(QRgb(16711680)));
+                }
+
                 qApp->unlock();
             }
             break;
@@ -328,6 +335,7 @@ void AudioPlayer::onSetState() {
                 btnPlay->setPixmap(*pixPlay);
                 sldSeek->setMaxValue(_totalSamples);
                 sldSeek->setEnabled(true);
+                btnLog->setPaletteBackgroundColor(QColor(QRgb(12632256)));
                 qApp->unlock();
                 onSetSample();
             }
@@ -454,24 +462,6 @@ void AudioPlayer::drawCreate() {
     btnPlay->setText( QString::null );
     btnPlay->setPixmap( *pixPlay );
     connect( btnPlay, SIGNAL(pressed()), this, SLOT(play()) );
-
-    btnReset = new QPushButton( grpFrame, "btnReset" );
-    btnReset->setEnabled( FALSE );
-    btnReset->setGeometry( QRect( 290, 159, 80, 70 ) );
-    btnReset->setText( QString::null );
-    btnReset->setPixmap( QPixmap(path + "/images/reset.png") );
-
-    btnSeekBack = new QPushButton( grpFrame, "btnSeekBack" );
-    btnSeekBack->setEnabled( FALSE );
-    btnSeekBack->setGeometry( QRect( 370, 159, 80, 70 ) );
-    btnSeekBack->setText( QString::null );
-    btnSeekBack->setPixmap( QPixmap(path + "/images/fastbackward.png") );
-
-    btnSeekForward = new QPushButton( grpFrame, "btnSeekForward" );
-    btnSeekForward->setEnabled( FALSE );
-    btnSeekForward->setGeometry( QRect( 450, 159, 80, 70 ) );
-    btnSeekForward->setText( QString::null );
-    btnSeekForward->setPixmap( QPixmap(path + "/images/fastforward.png") );
 
     sldSeek = new QSlider( grpFrame, "sldSeek" );
     sldSeek->setGeometry( QRect( 10, 120, 520, 29 ) );

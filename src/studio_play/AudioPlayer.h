@@ -93,9 +93,6 @@ class AudioPlayer:  public QWidget,
         QPushButton* btnLog;
         QPushButton* btnStop;
         QPushButton* btnPlay;
-        QPushButton* btnReset;
-        QPushButton* btnSeekBack;
-        QPushButton* btnSeekForward;
         QSlider* sldSeek;
         int length_hours;
         int length_mins;

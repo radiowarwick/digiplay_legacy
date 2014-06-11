@@ -143,11 +143,15 @@ void AudioWallItem::updateButton(bool force) {
             QPushButton::setEnabled(true);
             break;
         case STATE_PLAY:
-            QPushButton::setText("PLAYING\n" 
+            if (!(smpl - _lastSample < 1764)) {
+                QPushButton::setText("PLAYING\n" 
                     + dps_prettyTime(_totalSamples - smpl));
-            QPushButton::setPaletteForegroundColor(QColor(QRgb(16776960)));
-            QPushButton::setPaletteBackgroundColor(QColor(QRgb(16711680)));
-            QPushButton::setEnabled(true);
+                QPushButton::setPaletteForegroundColor(QColor(QRgb(16776960)));
+                QPushButton::setPaletteBackgroundColor(QColor(QRgb(16711680)));
+                QPushButton::setEnabled(true);
+
+                _lastSample = smpl;
+            }
             break;
         case STATE_PAUSE:
             break;

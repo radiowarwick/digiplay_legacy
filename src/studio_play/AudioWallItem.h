@@ -61,6 +61,7 @@ class AudioWallItem :   public QPushButton,
         QColor bgColour;
         QColor fgColour;
         QFont font;
+        unsigned long _lastSample;
         
         bool newItemAvailable;
         AudioWallItemSpec newItem;

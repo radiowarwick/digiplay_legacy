@@ -55,6 +55,8 @@ AudioPlayer::AudioPlayer(QWidget *parent, const char* name, unsigned short playe
     conf->setParam("player" + id + "_md5","");
     grpFrame = 0;
 
+    userid = atoi(conf->getParam("userid").c_str());
+
     // Setup track end counter
     ck = new clockThread(this);
     ck->start();
@@ -105,7 +107,7 @@ void AudioPlayer::load() {
         return;
     }
     
-    string SQL = "SELECT * FROM v_audio WHERE md5='"
+    string SQL = "SELECT * FROM v_studio_play WHERE md5='"
                     + conf->getParam("next_on_showplan") + "'";
     PqxxResult R = DB->exec("AudioPlayerLoad",SQL);
     DB->abort("AudioPlayerLoad");
@@ -145,6 +147,8 @@ void AudioPlayer::load() {
     conf->setParam("player" + id + "_md5", string(R[0]["md5"].c_str()));
 
     audioid = atoi(R[0]["id"].c_str());
+    vocalStartSample = atoi(R[0]["vocal_start"].c_str());
+    vocalEndSample = atoi(R[0]["vocal_end"].c_str());
 
 	qApp->lock();
     lblTitle->setText(R[0]["title"].c_str());
@@ -153,6 +157,31 @@ void AudioPlayer::load() {
     btnStop->setEnabled(true);
     btnLog->setEnabled(true);
     sldSeek->setEnabled(true);
+
+    if(vocalStartSample == 0) {
+        lblVocalStart->setEnabled(false);
+        lblVocalStartLabel->setEnabled(false);
+    } else {
+        lblVocalStart->setEnabled(true);
+        lblVocalStartLabel->setEnabled(true);
+    }
+
+    if(vocalEndSample == 0) {
+        lblVocalEnd->setEnabled(false);
+        lblVocalEndLabel->setEnabled(false);
+    } else {
+        lblVocalEnd->setEnabled(true);
+        lblVocalEndLabel->setEnabled(true);
+    }
+
+    if(strcmp(conf->getParam("can_update").c_str(), "true") == 0) {
+        btnVocalStart->setEnabled(true);
+        btnVocalEnd->setEnabled(true);
+    } else {
+        btnVocalStart->setEnabled(false);
+        btnVocalEnd->setEnabled(false);
+    }
+
 	qApp->unlock();
 
     // Set last sample to be the end sample and update counter
@@ -253,6 +282,38 @@ void AudioPlayer::seek(unsigned long sample) {
     audioFilereader->seek(sample);
 }
 
+void AudioPlayer::setVocalStart() {
+    setVocalStart(sldSeek->value());
+}
+
+void AudioPlayer::setVocalStart(unsigned long sample) {
+    vocalStartSample = sample;
+    lblVocalStart->setEnabled(true);
+    lblVocalStartLabel->setEnabled(true);
+    lblVocalStart->setText(getTime(vocalStartSample - sample));
+
+    // Try and update database
+    string SQL = "UPDATE audio SET vocal_start = " + dps_itoa(vocalStartSample) + " WHERE id = " + dps_itoa(audioid) + ";";
+    DB->exec("AudioPlayerVocalStart",SQL);
+    DB->commit("AudioPlayerVocalStart");
+}
+
+void AudioPlayer::setVocalEnd() {
+    setVocalEnd(sldSeek->value());
+}
+
+void AudioPlayer::setVocalEnd(unsigned long sample) {
+    vocalEndSample = sample;
+    lblVocalEnd->setEnabled(true);
+    lblVocalEndLabel->setEnabled(true);
+    lblVocalEnd->setText(getTime(vocalEndSample - sample));
+
+    // Try and update database
+    string SQL = "UPDATE audio SET vocal_end = " + dps_itoa(vocalEndSample) + " WHERE id = " + dps_itoa(audioid) + ";";
+    DB->exec("AudioPlayerVocalEnd",SQL);
+    DB->commit("AudioPlayerVocalEnd");
+}
+
 void AudioPlayer::setTimeDisplay() {
     qApp->lock();
     if (lblTime->text() == "ELAPSED") {
@@ -277,8 +338,20 @@ void AudioPlayer::onMessage() {
         L_INFO(LOG_PLAYOUT, "Config updated: ENABLED LOAD");
         btnLoad->setEnabled(true);
     }
-    qApp->unlock();
+
 	userid = atoi(conf->getParam("userid").c_str());
+
+    if(btnPlay->isEnabled() == true) {
+        if(strcmp(conf->getParam("can_update").c_str(), "true") == 0) {
+            btnVocalStart->setEnabled(true);
+            btnVocalEnd->setEnabled(true);
+        } else {
+            btnVocalStart->setEnabled(false);
+            btnVocalEnd->setEnabled(false);
+        }
+    }
+
+    qApp->unlock();
 }
 
 void AudioPlayer::onSetSample() {
@@ -301,7 +374,32 @@ void AudioPlayer::onSetSample() {
 	}
 	else {
       	lblCounter->setText(getTime(_currentSample));
-	} 
+	}
+
+    if(vocalStartSample > 0) {
+        if(vocalStartSample > _currentSample) {
+            lblVocalStart->setText(getTime(vocalStartSample - _currentSample));
+            lblVocalStartNegative->setText( tr( "" ) );
+        } else {
+            lblVocalStart->setText(getTime(_currentSample - vocalStartSample));
+            lblVocalStartNegative->setText( tr( "-" ) );
+        }
+    } else {
+        lblVocalStart->setText("N/A");
+    }
+
+    if(vocalEndSample > 0) {
+        if(vocalEndSample > _currentSample) {
+            lblVocalEnd->setText(getTime(vocalEndSample - _currentSample));
+            lblVocalEndNegative->setText( tr( "" ) );
+        } else {
+            lblVocalEnd->setText(getTime(_currentSample - vocalEndSample));
+            lblVocalEndNegative->setText( tr( "-" ) );
+        }
+    } else {
+        lblVocalEnd->setText("N/A");
+    }
+
     qApp->unlock();
 }
 
@@ -498,6 +596,68 @@ void AudioPlayer::drawCreate() {
     QFont lblArtist_font(  lblArtist->font() );
     lblArtist_font.setPointSize( 14 );
     lblArtist->setFont( lblArtist_font );
+
+    lblVocalStartLabel = new QLabel( grpFrame, "lblVocalStartLabel" );
+    lblVocalStartLabel->setGeometry( QRect( 280, 170, 120, 25 ) );
+    QFont lblVocalStartLabel_font( lblVocalStartLabel->font() );
+    lblVocalStartLabel_font.setPointSize( 18 );
+    lblVocalStartLabel->setFont( lblVocalStartLabel_font );
+    lblVocalStartLabel->setText( tr( "Vocal Start: " ) );
+    lblVocalStartLabel->setEnabled(false);
+
+    lblVocalEndLabel = new QLabel( grpFrame, "lblVocalEndLabel" );
+    lblVocalEndLabel->setGeometry( QRect( 280, 200, 120, 25 ) );
+    QFont lblVocalEndLabel_font( lblVocalEndLabel->font() );
+    lblVocalEndLabel_font.setPointSize( 18 );
+    lblVocalEndLabel->setFont( lblVocalEndLabel_font );
+    lblVocalEndLabel->setText( tr( "Vocal End: " ) );
+    lblVocalEndLabel->setEnabled(false);
+
+    lblVocalStart = new QLabel( grpFrame, "lblVocalStart" );
+    lblVocalStart->setGeometry( QRect( 412, 170, 100, 25 ) );
+    QFont lblVocalStart_font( lblVocalStart->font() );
+    lblVocalStart_font.setPointSize( 18 );
+    lblVocalStart->setFont( lblVocalStart_font );
+    lblVocalStart->setText( tr( "N/A" ) );
+    lblVocalStart->setEnabled(false);
+
+    lblVocalEnd = new QLabel( grpFrame, "lblVocalEnd" );
+    lblVocalEnd->setGeometry( QRect( 412, 200, 100, 25 ) );
+    QFont lblVocalEnd_font( lblVocalEnd->font() );
+    lblVocalEnd_font.setPointSize( 18 );
+    lblVocalEnd->setFont( lblVocalEnd_font );
+    lblVocalEnd->setText( tr( "N/A" ) );
+    lblVocalEnd->setEnabled(false);
+
+    lblVocalStartNegative = new QLabel( grpFrame, "lblVocalStartNegative" );
+    lblVocalStartNegative->setGeometry( QRect( 402, 170, 8, 25 ) );
+    QFont lblVocalStartNegative_font( lblVocalStartNegative->font() );
+    lblVocalStartNegative_font.setPointSize( 18 );
+    lblVocalStartNegative->setFont( lblVocalStartNegative_font );
+
+    lblVocalEndNegative = new QLabel( grpFrame, "lblVocalEndNegative" );
+    lblVocalEndNegative->setGeometry( QRect( 402, 200, 8, 25 ) );
+    QFont lblVocalEndNegative_font( lblVocalEndNegative->font() );
+    lblVocalEndNegative_font.setPointSize( 18 );
+    lblVocalEndNegative->setFont( lblVocalEndNegative_font );
+
+    btnVocalStart = new QPushButton( grpFrame, "btnVocalStart" );
+    btnVocalStart->setGeometry( QRect( 503, 170, 25, 25 ) );
+    QFont btnVocalStart_font( btnVocalStart->font() );
+    btnVocalStart_font.setPointSize( 18 );
+    btnVocalStart->setFont( btnVocalStart_font );
+    btnVocalStart->setText( tr( "X" ) );
+    btnVocalStart->setEnabled(false);
+    connect( btnVocalStart, SIGNAL(pressed()), this, SLOT(setVocalStart()) );
+
+    btnVocalEnd = new QPushButton( grpFrame, "btnVocalEnd" );
+    btnVocalEnd->setGeometry( QRect( 503, 200, 25, 25 ) );
+    QFont btnVocalEnd_font( btnVocalEnd->font() );
+    btnVocalEnd_font.setPointSize( 18 );
+    btnVocalEnd->setFont( btnVocalEnd_font );
+    btnVocalEnd->setText( tr( "X" ) );
+    btnVocalEnd->setEnabled(false);
+    connect( btnVocalEnd, SIGNAL(pressed()), this, SLOT(setVocalEnd()) );
 
     qApp->unlock();
 }

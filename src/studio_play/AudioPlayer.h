@@ -58,6 +58,10 @@ class AudioPlayer:  public QWidget,
         void stop();
         void seek();
         void seek(unsigned long sample);
+        void setVocalStart();
+        void setVocalStart(unsigned long sample);
+        void setVocalEnd();
+        void setVocalEnd(unsigned long sample);
         void setTimeDisplay();
 
     private:
@@ -81,6 +85,8 @@ class AudioPlayer:  public QWidget,
         Audio::Input* audioFilereader;
         Audio::OutputDsp* audioPlayer;
         unsigned long _lastSample;
+        unsigned long vocalStartSample;
+        unsigned long vocalEndSample;
 
         clockThread *ck;
         QGroupBox* grpFrame;
@@ -102,6 +108,16 @@ class AudioPlayer:  public QWidget,
         QLabel* lblTitle;
         QLabel* lblArtistLabel;
         QLabel* lblArtist;
+        QLabel* lblVocalStartLabel;
+        QLabel* lblVocalStart;
+        QLabel* lblVocalEndLabel;
+        QLabel* lblVocalEnd;
+        QLabel* lblVocalStartNegative;
+        QLabel* lblVocalEndNegative;
+
+
+        QPushButton* btnVocalStart;
+        QPushButton* btnVocalEnd;
 
         QPixmap* pixPlay;
         QPixmap* pixPause;

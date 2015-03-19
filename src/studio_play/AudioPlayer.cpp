@@ -67,6 +67,8 @@ AudioPlayer::AudioPlayer(QWidget *parent, const char* name, unsigned short playe
     audioFilereader = 0;
     audioPlayer = new OutputDsp(device);
 
+    logged = 0;
+
     length_hours = 0;
     length_mins = 0;
     length_secs = 0;
@@ -155,7 +157,8 @@ void AudioPlayer::load() {
     lblArtist->setText(R[0]["artist"].c_str());
     btnPlay->setEnabled(true);
     btnStop->setEnabled(true);
-    btnLog->setEnabled(true);
+    btnLog->setEnabled(false);
+    logged = 0;
     sldSeek->setEnabled(true);
 
     if(vocalStartSample == 0) {
@@ -250,6 +253,7 @@ void AudioPlayer::log() {
     DB->exec("AudioPlayerLog",SQL);
     DB->commit("AudioPlayerLog");
 
+    logged = 1;
     btnLog->setPaletteBackgroundColor(QColor(QRgb(12632256)));
 }
 
@@ -257,9 +261,13 @@ void AudioPlayer::play() {
     if (audioFilereader) {
         if (_state == STATE_PLAY) {
             audioFilereader->pause();
+	    btnLog->setEnabled(false);
         }
         else {
             audioFilereader->play();
+	    if ((strcmp(conf->getParam("can_update").c_str(), "true") == 0) && (logged == 0)) {
+		btnLog->setEnabled(true);
+	    }
         }
     }
 }

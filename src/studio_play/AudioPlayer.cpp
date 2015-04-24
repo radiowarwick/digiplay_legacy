@@ -280,6 +280,7 @@ void AudioPlayer::pause() {
 
 void AudioPlayer::stop() {
     audioFilereader->stop();
+    btnLog->setEnabled(false);
 }
 
 void AudioPlayer::seek() {

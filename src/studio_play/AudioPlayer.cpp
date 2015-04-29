@@ -264,10 +264,10 @@ void AudioPlayer::play() {
 	    btnLog->setEnabled(false);
         }
         else {
-            audioFilereader->play();
 	    if ((strcmp(conf->getParam("userid").c_str(), "0") != 0) && (logged == 0)) {
 		btnLog->setEnabled(true);
 	    }
+	    audioFilereader->play();
         }
     }
 }

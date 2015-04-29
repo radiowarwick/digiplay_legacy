@@ -260,8 +260,8 @@ void AudioPlayer::log() {
 void AudioPlayer::play() {
     if (audioFilereader) {
         if (_state == STATE_PLAY) {
-            audioFilereader->pause();
 	    btnLog->setEnabled(false);
+	    audioFilereader->pause();
         }
         else {
 	    if ((strcmp(conf->getParam("userid").c_str(), "0") != 0) && (logged == 0)) {
@@ -452,7 +452,8 @@ void AudioPlayer::onSetState() {
             	qApp->lock();
                 btnPlay->setPixmap(*pixPlay);
                 sldSeek->setEnabled(true);
-                qApp->unlock();
+                btnLog->setPaletteBackgroundColor(QColor(QRgb(12632256)));
+		qApp->unlock();
             }
             break;
     }
